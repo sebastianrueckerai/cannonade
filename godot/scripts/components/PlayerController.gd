@@ -54,10 +54,8 @@ var availableSupply := 0.0
 var supplyNeed := 0.0
 var voidSelected := false
 var wallColor := Color.WHITE
-
-## Input injection for automated tests: when set, used instead of the mouse.
-var simulated_aim = null  # Vector3 world point or null
-var simulated_actions := {}  # action name -> true for one frame
+## last mouse position in viewport coordinates
+var mousePosition := Vector2.ZERO
 
 
 func _check_inputs() -> void:
@@ -80,34 +78,29 @@ func ibr(x: int, z: int) -> bool:
 
 
 # --------------------------------------------------------------- input
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouse:
+		mousePosition = event.position
+
+
 func button_down(action: String) -> bool:
-	if simulated_actions.get(action, false):
-		simulated_actions.erase(action)
-		return true
-	if simulated_aim != null:
-		return false
-	return InputMap.has_action(action) and Input.is_action_just_pressed(action)
+	return Input.is_action_just_pressed(action)
 
 
 ## Replaces Physics.Raycast from the mouse: intersect the view ray with the
 ## ground plane. Returns [hit, point, tile (BuildingPlace or null)].
 func _pick() -> Array:
-	var point: Vector3
-	if simulated_aim != null:
-		point = simulated_aim
-	else:
-		var cam := get_viewport().get_camera_3d()
-		if cam == null:
-			return [false, Vector3.ZERO, null]
-		var mouse := get_viewport().get_mouse_position()
-		var origin := cam.project_ray_origin(mouse)
-		var dir := cam.project_ray_normal(mouse)
-		if absf(dir.y) < 1e-5:
-			return [false, Vector3.ZERO, null]
-		var t := (0.1 - origin.y) / dir.y
-		if t < 0:
-			return [false, Vector3.ZERO, null]
-		point = origin + dir * t
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return [false, Vector3.ZERO, null]
+	var origin := cam.project_ray_origin(mousePosition)
+	var dir := cam.project_ray_normal(mousePosition)
+	if absf(dir.y) < 1e-5:
+		return [false, Vector3.ZERO, null]
+	var t := (0.1 - origin.y) / dir.y
+	if t < 0:
+		return [false, Vector3.ZERO, null]
+	var point := origin + dir * t
 	var xz: Vector2i = map.tile_index_at(point)
 	if xz.x < 0:
 		return [true, point, null]
@@ -328,7 +321,6 @@ func manage_player_actions() -> void:
 			drop(nextWall, true)
 		elif button_down("build_building") and U.alive(nextBuilding):
 			drop(nextBuilding, false)
-	simulated_actions.clear()
 
 
 func _build(tile, n: Node3D) -> Node3D:
@@ -500,13 +492,3 @@ func get_next_wall() -> void:
 	nextWall = wall
 	wallColor = U.get_color(nextWall)
 	switch_casting_shadows(nextWall, false)
-
-
-## Debug helper (PrintLogicMap): rows from top (high z) to bottom.
-func logic_map_string(arr: PackedByteArray, size_x: int, size_z: int) -> String:
-	var s := ""
-	for j in range(size_z - 1, -1, -1):
-		for i in size_x:
-			s += "# " if arr[i * size_z + j] != 0 else "X "
-		s += "\n"
-	return s

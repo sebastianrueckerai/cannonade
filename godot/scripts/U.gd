@@ -91,13 +91,6 @@ func set_parent(n: Node3D, parent: Node) -> void:
 	parent.add_child(n)
 
 
-## Unity's transform.SetParent(null) / parent = null: keeps the world transform.
-func detach_to(n: Node3D, new_parent: Node) -> void:
-	var xf := n.global_transform
-	n.get_parent().remove_child(n)
-	new_parent.add_child(n)
-	n.global_transform = xf
-
 
 func world() -> Node:
 	return get_tree().current_scene

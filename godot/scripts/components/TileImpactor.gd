@@ -22,9 +22,6 @@ func _exit_tree() -> void:
 	U.projectiles.erase(self)
 
 
-func get_velocity() -> float:
-	return velocity
-
 
 func shoot_down() -> void:
 	U.destroy(go)

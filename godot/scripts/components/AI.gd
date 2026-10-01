@@ -239,18 +239,14 @@ func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 	if plans == null:
 		plans = []
 	_begin_slice()
-	var _t0 := Time.get_ticks_usec()
-	var _spots := 0
 	var potential: Array = []
 	for ix in map.sizeX:
 		for iz in map.sizeZ:
 			if inPlanRange[ix * map.sizeZ + iz] != 0:
 				potential.append_array(_get_plans_for_spot(ix, iz, maxUp, maxDown, maxLeft, maxRight))
-				_spots += 1
 				await _yield_if_needed()
 				if _abort_search:
 					return plans
-	var _t1 := Time.get_ticks_usec()
 	var standalone: Array = []
 	var additions: Array = []
 	for pi in potential.size():
@@ -264,7 +260,6 @@ func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 			await _yield_if_needed()
 			if _abort_search:
 				return plans
-	var _t2 := Time.get_ticks_usec()
 	var costs := _start_expotential_wall_costs()
 	while standalone.size() > 0 and plans.size() < max_plans:
 		var scored: Array = []
@@ -308,10 +303,6 @@ func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 			plans[i] = candidate
 			additions.remove_at(candidate_idx)
 	connectionMemo = null
-	if game.profile:
-		print("search: spots=%d plans=%d standalone? additions=%d construct=%.1fms filter=%.1fms score=%.1fms" % [
-			_spots, potential.size(), additions.size(), (_t1 - _t0) / 1000.0, (_t2 - _t1) / 1000.0,
-			(Time.get_ticks_usec() - _t2) / 1000.0])
 	return plans
 
 

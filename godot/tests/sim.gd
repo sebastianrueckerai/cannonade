@@ -15,6 +15,10 @@ var frame_times: Array = []
 var stats := {"max_projectiles": 0, "shots": 0, "rounds": 0}
 var _last_proj_ids := {}
 var autobuild := false
+var _walls_last := {}
+var _walls_lost := {}
+var _max_walls := {}
+var _max_active := {}
 var _next_autobuild := 1.0
 var _ship_start := {}
 
@@ -35,7 +39,6 @@ func _ready() -> void:
 	get_tree().root.add_child.call_deferred(main)
 	await get_tree().process_frame
 	get_tree().current_scene = main
-	main.game.profile = true
 
 
 var _last_tick := 0
@@ -56,6 +59,14 @@ func _process(_delta: float) -> void:
 			stats["shots"] += 1
 	stats["max_projectiles"] = maxi(stats["max_projectiles"], U.projectiles.size())
 	stats["rounds"] = g.roundNumber
+	for p in g.players:
+		var k: int = p.playerID
+		var walls: int = p.wallTiles.size()
+		if walls < _walls_last.get(k, 0):
+			_walls_lost[k] = true
+		_walls_last[k] = walls
+		_max_walls[k] = maxi(_max_walls.get(k, 0), walls)
+		_max_active[k] = maxi(_max_active.get(k, 0), p.activeCannons.size())
 	if autobuild and U.time >= _next_autobuild:
 		_next_autobuild = U.time + 0.5
 		_autobuild(g)
@@ -122,6 +133,33 @@ func _count_enclosed(g) -> int:
 	return n
 
 
+## The game actually got played: rounds alternate on time, every AI builds,
+## arms itself and fights, ships sail and shoot.
+func _check_outcome(g) -> void:
+	var expected_rounds := int(seconds / (g.roundDuration + 1.0))
+	if g.roundNumber != expected_rounds:
+		_fail("expected %d round changes, got %d" % [expected_rounds, g.roundNumber])
+	var battle_happened: bool = g.roundNumber >= 1
+	for p in g.players:
+		var k: int = p.playerID
+		if not p.has_method("search_best_building_plans"):
+			continue
+		if _max_walls.get(k, 0) < 5:
+			_fail("AI %d built only %d walls" % [k, _max_walls.get(k, 0)])
+		if _max_active.get(k, 0) < 1:
+			_fail("AI %d never had an active gun" % k)
+		if battle_happened and not _walls_lost.get(k, false):
+			_fail("AI %d never lost a wall in battle" % k)
+	if battle_happened and stats["shots"] == 0:
+		_fail("nobody fired")
+	if g.fleet.ships.size() > 0:
+		var moved: int = stats.get("ships_moved", 0)
+		if moved != g.fleet.ships.size():
+			_fail("only %d of %d ships moved" % [moved, g.fleet.ships.size()])
+		if stats["shots"] == 0:
+			_fail("ships never fired")
+
+
 func _fail(msg: String) -> void:
 	if not failures.has(msg):
 		failures.append(msg)
@@ -165,9 +203,7 @@ func _finish() -> void:
 	if stats.has("ships_moved"):
 		stats["ships_moved"] = stats["ships_moved"].size()
 	print("stats: ", stats)
-	print("profile us: supply/select=%d actions=%d" % main.game.profile_data)
-	var SM = load("res://scripts/StatesMap.gd")
-	print("statesMap.update_tile: calls=%d total=%.1fms" % [SM.profile_calls, SM.profile_usec / 1000.0])
+	_check_outcome(main.game)
 	if failures.is_empty():
 		print("SIM PASSED")
 		get_tree().quit(0)

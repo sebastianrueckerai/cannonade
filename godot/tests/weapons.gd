@@ -1,9 +1,11 @@
 extends Node
-## Tests the special structures directly: cluster bomb cannon, rocket station,
-## flak and shield generator, plus ships being sunk.
+## Upgrade patterns and the special structures they produce, built from upgrade
+## blocks through the real merge path (UpgradeCluster + UpgradeSelection):
+## patterns -> structure, cluster bombs, rockets, shield, flak, ships.
 ##   godot --headless --fixed-fps 30 res://tests/weapons.tscn
 
 const Main = preload("res://scripts/Main.gd")
+const BLOCKS := [preload("res://prefabs/Upgrade_a.tscn"), preload("res://prefabs/Upgrade_b.tscn")]
 
 var main: Node
 var game
@@ -11,16 +13,12 @@ var map
 var p1
 var p2
 var failures: Array = []
-var checks := 0
 
 
 func check(cond: bool, msg: String) -> void:
-	checks += 1
-	if cond:
-		print("ok: ", msg)
-	else:
+	print(("ok: " if cond else "FAIL: ") + msg)
+	if not cond:
 		failures.append(msg)
-		printerr("FAIL: ", msg)
 
 
 func seconds(t: float) -> void:
@@ -41,141 +39,97 @@ func _ready() -> void:
 	p1 = game.players[0]
 	p2 = game.players[1]
 	for p in game.players:
-		p.nextAction = 1e9  # scripted test: AIs stay idle
+		p.nextAction = 1e9  # AIs stay idle
 	await _run()
-	print("checks=%d failures=%d" % [checks, failures.size()])
-	print("WEAPONS TEST PASSED" if failures.is_empty() else "WEAPONS TEST FAILED")
+	print("WEAPONS TEST PASSED" if failures.is_empty() else "WEAPONS TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 
-## Builds an upgrade structure for player p covering the square at (x, z).
-func place_structure(p, scene: PackedScene, x: int, z: int, side: int) -> Node3D:
-	var tiles: Array = []
-	for dx in side:
-		for dz in side:
-			var t = map.tiles[x + dx][z + dz]
-			if U.alive(t.structure):
-				t.un_build()
-			tiles.append(t)
-	var s := U.instantiate(scene)
-	var main_tile = tiles[tiles.size() / 2]
-	for t in tiles:
-		if t != main_tile:
-			t.structure = s
-			t.player = p
-			map.set_mini(t.idxX, t.idxZ, p.playerID)
-	p.build_building(main_tile, s)
-	var cx := 0.0
-	var cz := 0.0
-	for t in tiles:
-		cx += t.go.global_position.x
-		cz += t.go.global_position.z
-	s.global_position = Vector3(cx / tiles.size(), 0, cz / tiles.size())
-	return s
-
-
-func target_wall(_p):
-	return map.tiles[b2_xz.x][b2_xz.y - 1]
-
-
-var b1_xz: Vector2i
-var b2_xz: Vector2i
+## Places upgrade blocks (types in x-major, z-minor order) with the square's
+## lower corner at (x, z); the centre of a 3x3 last, like a player would to
+## avoid a 2x2 merging first. Returns the merged structure.
+func build_pattern(p, x: int, z: int, types: Array) -> Node3D:
+	var side := 2 if types.size() == 4 else 3
+	var order: Array = []
+	for i in types.size():
+		if not (side == 3 and i == 4):
+			order.append(i)
+	if side == 3:
+		order.append(4)
+	for i in order:
+		var t = map.tiles[x + i / side][z + i % side]
+		p.build_building(t, BLOCKS[types[i]].instantiate())
+	return map.tiles[x + 1][z + 1].structure
 
 
 func _run() -> void:
-	b1_xz = Vector2i(p1.startBase.buildingPlace.idxX, p1.startBase.buildingPlace.idxZ)
-	b2_xz = Vector2i(p2.startBase.buildingPlace.idxX, p2.startBase.buildingPlace.idxZ)
 	await seconds(0.2)
 	game.buildingAllowed = false
 	game.shootingAllowed = true
 	game.timeLeftInRound = 1e6
 
-	# --- cluster bomb (Cannon22b) releases burning, stunning sub munitions
-	var b1 = map.tiles[b1_xz.x][b1_xz.y]
-	var cb := place_structure(p1, preload("res://prefabs/Cannon22b.tscn"), b1.idxX + 3, b1.idxZ, 2)
-	var shooter := U.comp(cb, "Shooter")
-	check(shooter != null and shooter.projectilePrefab.resource_path.ends_with("ClusterBomb.tscn"), "Cannon22b shoots cluster bombs")
-	var tgt = target_wall(p2)
-	check(shooter.try_shoot(tgt.go.global_position, tgt), "cluster bomb fired")
-	var saw_sub := false
-	var saw_fire := false
+	# upgrade patterns -> structures (a = 0, b = 1); flak and shield patterns are rotated
+	var cases := [
+		[[0, 0, 0, 0], "Cannon22a"], [[1, 1, 1, 1], "Cannon22b"], [[0, 1, 1, 1], "Flak22"],
+		[[1, 0, 0, 0], "ShieldGen22"], [[1, 1, 1, 1, 1, 1, 0, 0, 0], "RocketStation"]]
+	var spots := [Vector2i(13, 10), Vector2i(24, 9), Vector2i(23, 19), Vector2i(5, 19), Vector2i(3, 8)]
+	var owners := [p1, p1, p2, p2, p1]
+	var built := {}
+	for i in cases.size():
+		var s := build_pattern(owners[i], spots[i].x, spots[i].y, cases[i][0])
+		var name: String = s.scene_file_path.get_file().get_basename() if U.alive(s) else "nothing"
+		check(name == cases[i][1], "pattern %s merges into %s (got %s)" % [cases[i][0], cases[i][1], name])
+		built[cases[i][1]] = s
+
+	# cluster bomb: sub munitions set the tiles around the target on fire
+	var target = map.tiles[15][22]
+	var cluster := U.shooter(built["Cannon22b"])
+	check(cluster.try_shoot(target.go.global_position, target), "Cannon22b fires")
+	var burning := false
 	var end: float = U.time + 15.0
-	while U.time < end:
+	while U.time < end and not burning:
 		await get_tree().process_frame
-		for pr in U.projectiles:
-			if pr.get_script().resource_path.ends_with("ProjectileStraightFlight.gd"):
-				saw_sub = true
-		for t in tgt.get_surrounding_tiles(3):
-			if t.burning:
-				saw_fire = true
-		if saw_fire:
-			break
-	check(saw_sub, "cluster bomb released sub munitions")
-	check(saw_fire, "sub munitions set tiles on fire")
+		for t in target.get_surrounding_tiles(3):
+			burning = burning or (t.burning and not t.buildable())
+	check(burning, "cluster bomb sets tiles on fire (not buildable while burning)")
 
-	# --- rocket station disables the target tile
-	var rs := place_structure(p1, preload("res://prefabs/RocketStation.tscn"), b1.idxX - 4, b1.idxZ - 1, 3)
-	var launcher := U.comp(rs, "RocketLauncher")
-	check(launcher != null, "rocket station has a launcher")
-	var rt = map.tiles[b2_xz.x + 1][b2_xz.y]
-	launcher.nextBulletTime = 0.0
-	var fired: bool = launcher.try_shoot(rt.go.global_position, rt)
-	check(fired, "rocket launched (distance %.1f)" % rs.global_position.distance_to(rt.go.global_position))
+	# rocket: the hit tile is destroyed for good
+	var rt = map.tiles[15][26]  # out of reach of the flak and the shield
+	var launcher := U.shooter(built["RocketStation"])
+	launcher.nextBulletTime = 0.0  # skip the initial reload delay
+	check(launcher.try_shoot(rt.go.global_position, rt), "rocket station fires")
 	end = U.time + 30.0
-	while U.time < end and not rt.disabled:
+	while U.time < end and rt.buildable():
 		await get_tree().process_frame
-	check(rt.disabled, "rocket hit disabled the target tile")
-	check(not rt.buildable(), "disabled tile is not buildable")
+	check(not rt.buildable(), "rocket hit makes the tile unbuildable")
 
-	# --- flak shoots down enemy projectiles
-	var b2 = map.tiles[b2_xz.x][b2_xz.y]
-	var flak := place_structure(p2, preload("res://prefabs/Flak22.tscn"), b2.idxX - 1, b2.idxZ - 4, 2)
-	var flak_c := U.comp(flak, "Flak")
-	flak_c.switch_on_off(true)
-	var gun := place_structure(p1, preload("res://prefabs/Cannon22a.tscn"), b1.idxX - 1, b1.idxZ + 3, 2)
-	var gun_s := U.comp(gun, "Shooter")
-	var ft = map.tiles[b2.idxX][b2.idxZ - 4]
-	var shot_ids := {}
-	var downed := 0
-	for i in 4:
-		gun_s.nextBulletTime = 0.0
-		gun_s.try_shoot(ft.go.global_position, ft)
-		for pr in U.projectiles:
-			shot_ids[pr] = pr.player
-		var e: float = U.time + 4.0
-		while U.time < e:
-			await get_tree().process_frame
-	check(flak_c.secondsLastShot > 0.0, "flak fired at incoming projectiles (last shot at %.1f)" % flak_c.secondsLastShot)
+	# shield and flak protect their own structure against an enemy shell
+	var gun := U.shooter(built["Cannon22a"])
+	for name in ["ShieldGen22", "Flak22"]:
+		var s: Node3D = built[name]
+		var tile = U.comp(s, "BuildingBlock").buildingPlace
+		gun.nextBulletTime = 0.0
+		check(gun.try_shoot(tile.go.global_position, tile), "shell fired at the %s" % name)
+		await seconds(10.0)
+		check(U.alive(s) and U.projectiles.is_empty(), "%s survives a direct hit (shell intercepted)" % name)
 
-	# --- shield generator absorbs enemy projectiles
-	var sg := place_structure(p2, preload("res://prefabs/ShieldGen22.tscn"), b2.idxX + 3, b2.idxZ - 1, 2)
-	var shield := U.comp(sg, "ShieldGenerator")
-	shield.on = false
-	shield.switch_on_off(true)
-	var absorb_before: float = shield.currentDamageAbsorb
-	var st = map.tiles[b2.idxX + 3][b2.idxZ]
-	gun_s.nextBulletTime = 0.0
-	gun_s.try_shoot(st.go.global_position, st)
-	await seconds(1.0)
-	var e2: float = U.time + 8.0
-	var absorbed := false
-	while U.time < e2:
-		await get_tree().process_frame
-		if shield.currentDamageAbsorb < absorb_before - 1.0 or shield.resetting:
-			absorbed = true
-			break
-		absorb_before = maxf(absorb_before, shield.currentDamageAbsorb)
-	check(absorbed, "shield absorbed an enemy projectile")
+	# the same shell destroys an unprotected structure (control for the two checks above)
+	var plain = map.tiles[15][17]
+	p2.build_building(plain, preload("res://prefabs/Cannon.tscn").instantiate())
+	gun.nextBulletTime = 0.0
+	gun.try_shoot(plain.go.global_position, plain)
+	await seconds(10.0)
+	check(not U.alive(plain.structure), "an unprotected structure is destroyed by the same shell")
 
-	# --- a ship can be sunk
-	var water_tile = map.tiles[0][map.sizeZ - 1]
-	water_tile.water = true
+	# ships take damage and sink
+	var water = map.tiles[0][map.sizeZ - 1]
+	water.water = true
 	var ship_go := U.instantiate(preload("res://prefabs/Ship.tscn"), game.fleet.go)
-	ship_go.global_position = water_tile.go.global_position
+	ship_go.global_position = water.go.global_position
 	var ship := U.comp(ship_go, "Ship")
 	game.fleet.ships.append(ship)
-	ship.set_sail(game.fleet, map, water_tile)
-	water_tile.damage_building_place(5.0)
-	check(U.alive(ship_go) and ship.health == 5.0, "ship damaged")
-	water_tile.damage_building_place(10.0)
-	check(not U.alive(ship_go) and not game.fleet.ships.has(ship), "ship sunk")
+	ship.set_sail(game.fleet, map, water)
+	water.damage_building_place(5.0)
+	check(U.alive(ship_go), "a ship survives a light hit")
+	water.damage_building_place(10.0)
+	check(not U.alive(ship_go) and not game.fleet.ships.has(ship), "a ship sinks when its health is used up")

@@ -84,18 +84,22 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 
 `./run_tests.sh` runs everything headless (set `GODOT=/path/to/godot` if needed):
 
-* `tests/check_scripts` – every script and scene loads.
-* `tests/flood_test` – the optimised enclosure flood fill equals the original algorithm.
-* `tests/human` – the human player via injected input (placing, rotating, stacking,
-  discarding, combining, upgrade clusters, enclosing a gun and firing).
-* `tests/weapons` – cluster bombs, rockets, flak, shield generator, ships.
-* `tests/menu_test` – menu → game → Esc → menu.
-* `tests/sim` – full games (`--mode=single|versus|ai2|ai4`) with invariant checks and
-  frame time statistics.
+* `tests/check_scripts` – every script and generated scene loads.
+* `tests/flood_test` – enclosure detection: walls enclose areas, gaps open them, and the
+  optimised flood fill matches the original algorithm (kept in the test) on random edits.
+* `tests/human` – the human player through real mouse / key events: placing, rotating,
+  discarding and stacking walls, buildings, combining, and firing from an enclosed gun.
+* `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
+  cluster bombs, rockets, shield, flak and ships behave as in the game.
+* `tests/menu_test` – menu → chosen game mode → Esc → menu.
+* `tests/sim` – full games (`--mode=single|ai2|ai4`): rounds alternate, AIs build, arm
+  themselves and fight, ships sail and shoot; map invariants hold; frame times are printed.
 
-`tests/screenshot.tscn` renders screenshots (needs a display, e.g. `xvfb-run`):
+The runner fails on any engine or script error output and times out hung tests.
+
+`tools/screenshot.tscn` renders screenshots (needs a display, e.g. `xvfb-run`):
 
 ```sh
 xvfb-run godot --path godot --rendering-driver opengl3 --fixed-fps 30 \
-    res://tests/screenshot.tscn -- --mode=ai2 --at=5,30 --out=/tmp/shot
+    res://tools/screenshot.tscn -- --mode=ai2 --at=5,30 --out=/tmp/shot
 ```

@@ -113,9 +113,6 @@ func un_build() -> void:
 	map.statesMap.update_tile(self)
 
 
-func can_build_next_to(direction: int) -> bool:
-	return not U.alive(structure) or block().connectorsUpDownLeftRight[direction]
-
 
 func build(building: Node3D, p) -> void:
 	var bb = U.comp(building, "BuildingBlock")

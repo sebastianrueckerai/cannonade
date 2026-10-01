@@ -1,35 +1,75 @@
 extends Node
-## Checks that StatesMap.waterflow_blocks() gives exactly the same open / closed
-## grids as the original algorithm (waterflow_reference) for random edits.
+## Enclosure detection (StatesMap): walls around an area enclose it, a broken
+## wall opens it again, and the optimised flood fill gives exactly the open /
+## closed grids of the original algorithm for random edits.
 ##   godot --headless res://tests/flood_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
 const StatesMap = preload("res://scripts/StatesMap.gd")
-const WALLS := [preload("res://prefabs/BlockCorner.tscn"), preload("res://prefabs/BlockCross.tscn"),
-	preload("res://prefabs/BlockLine.tscn"), preload("res://prefabs/BlockThree.tscn"),
+const Ring = preload("res://tests/ring.gd")
+const OTHER := [preload("res://prefabs/BlockLine.tscn"), preload("res://prefabs/BlockCorner.tscn"),
 	preload("res://prefabs/Cannon.tscn")]
 
 
-const RING := {
-	Vector2i(-1, 1): [false, true, false, true], Vector2i(1, 1): [false, true, true, false],
-	Vector2i(-1, -1): [true, false, false, true], Vector2i(1, -1): [true, false, true, false],
-	Vector2i(0, -1): [false, false, true, true], Vector2i(0, 1): [false, false, true, true],
-	Vector2i(-1, 0): [true, true, false, false], Vector2i(1, 0): [true, true, false, false]}
-var _mismatches := 0
-var _t_ref := 0
+## The original cell by cell flood fill (Unity StatesMap.Waterflow), as reference.
+class ReferenceStatesMap extends StatesMap:
+	var willVisit := PackedByteArray()
+
+	func _reset_visited_will_visit() -> void:
+		super._reset_visited_will_visit()
+		willVisit = _new_grid()
+
+	func waterflow(start_x: int, start_z: int, use_initial_open := false) -> void:
+		waterflow_reference(start_x, start_z, use_initial_open)
+
+	func waterflow_reference(start_x: int, start_z: int, use_initial_open := false) -> void:
+		var found_edge := false
+		var queue: Array[Vector2i] = [Vector2i(start_x, start_z)]
+		var head := 0
+		var edge_grid := initialOpen if use_initial_open else open
+		while head < queue.size():
+			var xz: Vector2i = queue[head]
+			head += 1
+			var x := xz.x
+			var z := xz.y
+			visited[idx(x, z)] = 1
+			for nx in range(maxi(0, x - 1), mini(sizeFineX - 1, x + 1) + 1):
+				for nz in range(maxi(0, z - 1), mini(sizeFineZ - 1, z + 1) + 1):
+					var ni := nx * sizeFineZ + nz
+					if not found_edge and edge_grid[ni] != 0:
+						found_edge = true
+					if willVisit[ni] == 0 and visited[ni] == 0 and accessible[ni] != 0:
+						willVisit[ni] = 1
+						queue.append(Vector2i(nx, nz))
+		var touched := {}
+		for xz in queue:
+			var i := idx(xz.x, xz.y)
+			open[i] = 1 if found_edge else 0
+			closed[i] = 0 if found_edge else 1
+			var tile = map.tiles[xz.x / 3][xz.y / 3]
+			if not touched.has(tile):
+				touched[tile] = true
+				tile.reset_color(not found_edge)
+				if not found_edge:
+					tile.destroy_decorations()
+
+var ok := true
+var mismatches := 0
+var ref: ReferenceStatesMap
+var cur
 
 
-func _check(ref, cur, tile) -> void:
-	var p0: int = StatesMap.profile_usec
-	StatesMap.use_reference = true
+func _check(cond: bool, msg: String) -> void:
+	print(("ok: " if cond else "FAIL: ") + msg)
+	ok = ok and cond
+
+
+## Feed the same tile change to the reference and compare the grids.
+func _compare(tile) -> void:
 	ref.update_tile(tile)
-	StatesMap.use_reference = false
-	_t_ref += StatesMap.profile_usec - p0
-	StatesMap.profile_usec = p0
 	if ref.open != cur.open or ref.closed != cur.closed:
-		_mismatches += 1
-		if _mismatches < 5:
-			printerr("mismatch at %d,%d" % [tile.idxX, tile.idxZ])
+		mismatches += 1
+		printerr("mismatch at %d,%d" % [tile.idxX, tile.idxZ])
 		ref.open = cur.open.duplicate()
 		ref.closed = cur.closed.duplicate()
 
@@ -45,50 +85,70 @@ func _ready() -> void:
 		p.nextAction = 1e9
 	var map = game.map
 	var player = game.players[0]
-	var cur = map.statesMap
-	var ref := StatesMap.new()
+	cur = map.statesMap
+	ref = ReferenceStatesMap.new()
 	ref.reset(map)
 	ref.open = cur.open.duplicate()
 	ref.closed = cur.closed.duplicate()
-	var mismatches := 0
-	var ops := 600
-	var t_blocks := 0
-	var t_ref := 0
+
+	# behaviour: a ring encloses its centre, breaking one wall opens it again
+	var c := Vector2i(5, 5)
+	Ring.build(player, map, c.x, c.y, _compare)
+	_check(map.is_tile_enclosed(c.x, c.y), "ring of walls encloses the centre tile")
+	_check(not map.is_tile_enclosed(c.x + 3, c.y), "tile outside the ring stays open")
+	var gap = map.tiles[c.x][c.y + 1]
+	gap.un_build()
+	_compare(gap)
+	_check(not map.is_tile_enclosed(c.x, c.y), "breaking one wall opens the area")
+	# a larger area: every inner tile is enclosed, a gap in the side opens all of them
+	Ring.build_rect(player, map, 9, 4, 14, 8, _compare)
+	_check(_inner(map, 9, 4, 14, 8).all(func(t): return map.is_tile_enclosed(t.x, t.y)), "4x3 area inside a wall rectangle is enclosed")
+	gap = map.tiles[9][6]
+	gap.un_build()
+	_compare(gap)
+	_check(_inner(map, 9, 4, 14, 8).all(func(t): return not map.is_tile_enclosed(t.x, t.y)), "a gap in the side opens the whole area")
+
+	# equivalence with the original algorithm over random edits
 	seed(5)
-	for i in ops:
-		var x := randi_range(1, map.sizeX - 2)
-		var z := randi_range(1, map.sizeZ - 2)
+	for i in 600:
+		var x := randi_range(1, map.sizeX - 3)
+		var z := randi_range(1, map.sizeZ - 3)
 		var tile = map.tiles[x][z]
-		var p0: int = StatesMap.profile_usec
-		if i % 3 == 0 and x > 1 and z > 1 and x < map.sizeX - 2 and z < map.sizeZ - 2:
-			# build a ring around (x, z) with matching wall pieces
-			var free_ring := true
-			for dx in [-1, 0, 1]:
-				for dz in [-1, 0, 1]:
-					if U.alive(map.tiles[x + dx][z + dz].structure) or map.tiles[x + dx][z + dz].water:
-						free_ring = false
-			if free_ring:
-				for k in RING:
-					var t = map.tiles[x + k.x][z + k.y]
-					player._build_from_random_prefabs(t, RING[k])
-					_check(ref, cur, t)
+		if i % 3 == 0:
+			var x1 := mini(x + randi_range(2, 5), map.sizeX - 2)
+			var z1 := mini(z + randi_range(2, 5), map.sizeZ - 2)
+			if _rect_free(map, x, z, x1, z1):
+				Ring.build_rect(player, map, x, z, x1, z1, _compare)
 				continue
 		if U.alive(tile.structure):
-			if tile.upgradeCluster == null:
-				tile.un_build()
+			tile.un_build()
 		elif not tile.water:
-			var w: Node3D = WALLS[randi() % WALLS.size()].instantiate()
+			var w: Node3D = OTHER[randi() % OTHER.size()].instantiate()
 			for r in randi() % 4:
-				U.comp(w, "BuildingBlock").rotate_clockwise()
+				w.get_node("BuildingBlock").rotate_clockwise()
 			player.build_building(tile, w)
-		t_blocks += StatesMap.profile_usec - p0
-		_check(ref, cur, tile)
-	mismatches = _mismatches
-	t_ref = _t_ref
-	var enclosed := 0
-	for c in cur.closed:
-		enclosed += c
-	print("ops=%d mismatches=%d closed_cells=%d blocks=%.1fms reference=%.1fms" % [ops, mismatches, enclosed,
-			t_blocks / 1000.0, t_ref / 1000.0])
-	print("FLOOD TEST PASSED" if mismatches == 0 else "FLOOD TEST FAILED")
-	get_tree().quit(0 if mismatches == 0 else 1)
+		_compare(tile)
+	var closed := 0
+	for v in cur.closed:
+		closed += v
+	_check(closed > 0, "random edits produced enclosed areas (%d closed cells)" % closed)
+	_check(mismatches == 0, "optimised flood fill equals the original (%d mismatches)" % mismatches)
+	print("FLOOD TEST PASSED" if ok else "FLOOD TEST FAILED")
+	get_tree().quit(0 if ok else 1)
+
+
+func _rect_free(map, x0: int, z0: int, x1: int, z1: int) -> bool:
+	for x in range(x0, x1 + 1):
+		for z in range(z0, z1 + 1):
+			var t = map.tiles[x][z]
+			if U.alive(t.structure) or t.water:
+				return false
+	return true
+
+
+func _inner(_map, x0: int, z0: int, x1: int, z1: int) -> Array:
+	var out: Array = []
+	for x in range(x0 + 1, x1):
+		for z in range(z0 + 1, z1):
+			out.append(Vector2i(x, z))
+	return out

@@ -22,8 +22,6 @@ var fleet = null
 var timeLeftInRound := 0.0
 var roundNumber := 0
 var started := false
-var profile := false
-var profile_data := [0, 0]
 
 signal round_changed(round_number: int, building: bool)
 
@@ -131,15 +129,7 @@ func _process(delta: float) -> void:
 		return
 	_update_round_time(delta)
 	for p in players:
-		var t0 := Time.get_ticks_usec()
 		p.manage_supply_and_active_buildings()
 		p.try_get_next_building()
 		p.update_point_and_tile_selected()
-		var t1 := Time.get_ticks_usec()
 		p.manage_player_actions()
-		var t2 := Time.get_ticks_usec()
-		if profile:
-			profile_data[0] += t1 - t0
-			profile_data[1] += t2 - t1
-			if t2 - t1 > 50000:
-				print("slow manage_player_actions %.1fms player %d t=%.2f" % [(t2 - t1) / 1000.0, p.playerID, U.time])

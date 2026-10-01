@@ -220,11 +220,3 @@ func _average_tile_color_from_neighbours(x: int, z: int) -> void:
 
 func is_tile_enclosed(x: int, z: int) -> bool:
 	return statesMap.is_closed(x * 3, z * 3)
-
-
-func friendly_tile_nearby(x: int, z: int, r: int, player) -> bool:
-	for xi in range(maxi(x - r, 0), mini(x + r, sizeX - 1) + 1):
-		for zi in range(maxi(z - r, 0), mini(z + r, sizeZ - 1) + 1):
-			if get_mini(xi, zi) == player.playerID:
-				return true
-	return false
