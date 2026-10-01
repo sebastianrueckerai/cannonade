@@ -106,14 +106,53 @@ Layouts are saved under a name (**Save**) to `user://scenarios/` and loaded from
 in the same list. Scenarios are `ScenarioDef` resources, so they can also be edited as
 text.
 
-**Playing:** pick the match – **AI vs AI** (default), **Player vs AI** or **Player vs
+**Playing:** pick the match – **AI vs AI** (default), **Player vs AI**, **Player vs
 dormant AI** (red never fires; the player is blue and aims with the mouse, fires with
-Space) – what each AI aims at (walls as in the game, guns, supply or random) and a time
+Space) or **AI vs dormant AI** – what each AI aims at (walls as in the game, guns, supply or random) and a time
 limit, then **Play**. There is no build phase and no random pieces. Speed: pause, 1×, 2×,
 4×, 8×. The panel on the right shows shots, hits, shells intercepted by flak, hits
 absorbed by shields and walls / guns / buildings lost per side. The battle ends when a
 side has no working gun left, or at the time limit. **Back to editing** restores the
-layout as it was before Play.
+layout as it was before Play. The speed buttons are for watching: at 4× and 8× the game
+takes coarser steps (flak misses more), so judge balance with **Run** (below).
+
+**Mirror** copies the current side's layout to the other side, mirrored top to bottom
+(it replaces the other side; Ctrl+Z undoes it) – a fair starting point for "what if
+one side had X instead of Y". The example *mirror_forts* is such a pair.
+
+## Battle lab: win rates and sweeps
+
+**In the Sandbox:** set the match, targets and time limit, choose the number of seeds
+next to **Run** and press it. The layout is played in a background process at normal
+speed (a short battle takes about a second) and the panel on the right shows how often each
+layout wins and the mean stats. Each seed is played twice, the second time with the two
+layouts swapped (blue's layout on red's side, in red): battles are usually decided by
+who breaches a wall first, and in a tie the side the game processes first (blue) wins,
+so the swap keeps the comparison fair. Results are therefore per *layout*. Each battle
+is also written to `user://lab/last_run.csv`.
+
+**From the command line** (headless, for longer runs and sweeps):
+
+```sh
+# 20 seeds of an example or a saved scenario (name or .tres path)
+godot --headless --fixed-fps 30 res://tools/lab.tscn -- --scenario=flak_vs_cannons --runs=20
+
+# sweep one catalog value, write every battle to a CSV
+godot --headless --fixed-fps 30 res://tools/lab.tscn -- --scenario=mirror_forts --runs=10 \
+    --sweep=flak22.salvo_interval=0.5:3:0.5 --csv=flak.csv
+
+# change values first (several with ";"), red aims at guns, red's layout never fires
+godot --headless --fixed-fps 30 res://tools/lab.tscn -- --scenario=my_test \
+    --set="cannon.reload=1.5;flak22.shoot_range=5" --targets=walls,guns --match=dormant
+```
+
+Values are `<building id>.<field>`, where the field belongs to the building or one of
+its behaviours (`flak22.salvo_interval`, `cannon.reload`, `supply.produces.supply`,
+`cannon.projectile.splash_range`); the names are the ones in the Inspector, in
+snake_case. `--sweep` takes `from:to:step` or a list `a,b,c`. Other options: `--seed=N`
+(first seed), `--limit=SECONDS`, `--swap=false`, `--speed=F`, `--out=PATH`; see
+`scripts/sandbox/BattleLab.gd`. A seed always gives the same battle (headless), so runs
+can be repeated and compared.
 
 ## How the port is structured
 
@@ -176,8 +215,11 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 * `tests/catalog_test` – shipped data is valid; data problems are reported, not crashed on;
   duplicate a building, change it, press F5: it works in the running game (incl. recipes).
 * `tests/sandbox_test` – the sandbox through real mouse / key input: drawing walls, placing,
-  erasing, undo / redo, save / load, battles in all three match setups, AI target choice,
-  stats and result, back to editing; every shipped example loads and fights.
+  erasing, undo / redo, mirror, save / load, battles in the match setups, AI target choice,
+  stats and result, back to editing, a background Run; every shipped example loads and fights.
+* `tests/lab_test` – the battle lab command line as a subprocess: sweeps and `--set` change
+  what the battles use, swapped battles report per layout, seeds replay exactly, CSV
+  output, readable errors.
 * `tests/sim` – full games (`--mode=single|ai2|ai4`): rounds alternate, AIs build, arm
   themselves and fight, ships sail and shoot; map invariants hold; frame times are printed.
 

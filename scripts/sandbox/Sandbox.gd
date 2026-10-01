@@ -11,11 +11,12 @@ const SandboxUI = preload("res://scripts/sandbox/SandboxUI.gd")
 
 const SIDE_COLORS := ["#2a4fbf", "#b8322a"]
 const SIDE_NAMES := ["Blue", "Red"]
-const MATCHES := ["AI vs AI", "Player vs AI", "Player vs dormant AI"]
+const MATCHES := ["AI vs AI", "Player vs AI", "Player vs dormant AI", "AI vs dormant AI"]
 const TARGETS := ["walls", "guns", "supply", "random"]
 const SPEEDS := [0.0, 1.0, 2.0, 4.0, 8.0]
 const USER_DIR := "user://scenarios"
 const EXAMPLE_DIR := "res://data/scenarios"
+const LAB_DIR := "user://lab"
 
 enum Mode { EDIT, BATTLE, ENDED }
 
@@ -34,6 +35,8 @@ var rot := 0
 var match_index := 0
 var targets := ["walls", "walls"]
 var time_limit := 180.0
+## the side that never fires in the "dormant" match setups
+var dormant_side := 1
 var speed := 1.0
 var undo_stack: Array = []
 var redo_stack: Array = []
@@ -41,6 +44,12 @@ var battle_start := 0.0
 ## -1 = running, 0 / 1 = winner side, 2 = draw / time up
 var winner := -1
 var ui: SandboxUI
+## grass and trees on the map (the battle lab turns them off)
+var decorate := true
+
+## background battle lab run (Run button): process id, or -1
+var lab_pid := -1
+var lab_result := ""
 
 var _hover := Vector2i(-1, -1)
 var _stroke_before = null
@@ -73,7 +82,7 @@ func _make_world(kinds: Array) -> void:
 	world.name = "World"
 	world.config = {
 		"players": kinds, "size": scenario.map_size, "round": 1e9, "pitch": 60.0, "fov": 30.0,
-		"ships": 0, "seed": scenario.seed, "decorate": true, "colors": SIDE_COLORS,
+		"ships": 0, "seed": scenario.seed, "decorate": false, "colors": SIDE_COLORS,
 		"hud": false, "previews": false, "start_bases": false}
 	add_child(world)
 	world.ui.visible = false  # the sandbox panels show the same information
@@ -135,6 +144,7 @@ func snapshot() -> Array:
 
 
 func apply_items(items: Array) -> void:
+	map.statesMap.begin_batch()
 	var walls := [{}, {}]
 	for it in items:
 		if it["id"] == "wall":
@@ -144,6 +154,7 @@ func apply_items(items: Array) -> void:
 			_place_wall(it["side"], Vector2i(it["x"], it["z"]), walls[it["side"]])
 		else:
 			place_building(it["side"], Catalog.get_def(it["id"]), it["x"], it["z"], it.get("rot", 0))
+	map.statesMap.end_batch()
 
 
 func _key(it: Dictionary) -> String:
@@ -152,6 +163,7 @@ func _key(it: Dictionary) -> String:
 
 ## Changes the world to `items` with as few edits as possible (undo / redo).
 func restore(items: Array) -> void:
+	map.statesMap.begin_batch()
 	var want := {}
 	for it in items:
 		want[_key(it)] = it
@@ -175,6 +187,7 @@ func restore(items: Array) -> void:
 	for x in map.sizeX:
 		for z in map.sizeZ:
 			_reshape_wall(Vector2i(x, z))
+	map.statesMap.end_batch()
 
 
 func _is_wall_of(xz: Vector2i, s: int, walls = null) -> bool:
@@ -293,6 +306,28 @@ func anchor_for(def: BuildingDef, xz: Vector2i) -> Vector2i:
 	return xz - Vector2i(off, off)
 
 
+## Replaces the other side's layout with this side's, mirrored top to bottom.
+func mirror(from_side: int) -> void:
+	if mode != Mode.EDIT:
+		return
+	begin_edit()
+	var items: Array = []
+	for it in snapshot():
+		if it["side"] == from_side:
+			items.append(it)
+			items.append(mirrored(it, 1 - from_side, map.sizeZ))
+	restore(items)
+	end_edit()
+
+
+## `it` mirrored top to bottom on a map `size_z` tiles high, owned by `new_side`.
+static func mirrored(it: Dictionary, new_side: int, size_z: int) -> Dictionary:
+	var def := Catalog.get_def(it["id"])
+	var n: int = def.size if def != null else 1
+	return {"side": new_side, "id": it["id"], "x": it["x"], "z": size_z - it["z"] - n,
+		"rot": (it.get("rot", 0) + 2) % 4}
+
+
 func undo() -> void:
 	if mode != Mode.EDIT or undo_stack.is_empty():
 		return
@@ -352,7 +387,7 @@ func play() -> void:
 		return
 	end_edit()
 	scenario.items.assign(snapshot())
-	var kinds := ["ai", "ai"] if match_index == 0 else ["human", "ai"]
+	var kinds := ["human", "ai"] if match_index in [1, 2] else ["ai", "ai"]
 	_make_world(kinds)
 	apply_items(scenario.items)
 	for s in 2:
@@ -360,7 +395,7 @@ func play() -> void:
 		p.stats = {}
 		if p.has_method("search_best_building_plans"):
 			p.targetMode = targets[s]
-			p.dormant = match_index == 2 and s == 1
+			p.dormant = match_index in [2, 3] and s == dormant_side
 	game.buildingAllowed = false
 	game.shootingAllowed = true
 	game.timeLeftInRound = 1e9
@@ -403,6 +438,63 @@ func _check_battle_end() -> void:
 	game.started = false
 	battle_ended.emit(winner)
 	ui.refresh()
+
+
+# ------------------------------------------------------------- battle lab
+## Plays the current layout with seeds 1..runs in a headless background
+## process (tools/lab.tscn: normal speed, each seed also with the layouts
+## swapped) with the current match setup. Progress and the result end up in
+## lab_result.
+func run_lab(runs: int) -> bool:
+	if mode != Mode.EDIT or lab_pid > 0:
+		return false
+	end_edit()
+	scenario.items.assign(snapshot())
+	DirAccess.make_dir_recursive_absolute(LAB_DIR)
+	var layout := LAB_DIR.path_join("layout.tres")
+	var out := ProjectSettings.globalize_path(LAB_DIR.path_join("result.txt"))
+	ResourceSaver.save(scenario, layout)
+	DirAccess.remove_absolute(out)
+	var cmd := ["--headless", "--fixed-fps", "30"]
+	if FileAccess.file_exists("res://project.godot") and not OS.has_feature("template"):
+		cmd += ["--path", ProjectSettings.globalize_path("res://")]
+	cmd += ["res://tools/lab.tscn", "--", "--scenario=" + layout, "--runs=%d" % runs,
+		"--match=" + ("dormant" if match_index in [2, 3] else "ai"),
+		"--targets=%s,%s" % targets, "--limit=%d" % time_limit, "--out=" + out,
+		"--csv=" + ProjectSettings.globalize_path(LAB_DIR.path_join("last_run.csv"))]
+	lab_pid = OS.create_process(OS.get_executable_path(), cmd)
+	lab_result = "Starting %d battles ..." % (2 * runs) if lab_pid > 0 else "Could not start the battle lab"
+	return lab_pid > 0
+
+
+func stop_lab() -> void:
+	if lab_pid > 0:
+		OS.kill(lab_pid)
+		lab_pid = -1
+		lab_result = "Stopped"
+
+
+func _poll_lab() -> void:
+	if lab_pid <= 0:
+		return
+	var running := OS.is_process_running(lab_pid)
+	var path := ProjectSettings.globalize_path(LAB_DIR.path_join("result.txt"))
+	var text := FileAccess.get_file_as_string(path) if FileAccess.file_exists(path) else ""
+	var progress := text.begins_with("running ")
+	if progress:
+		var k := text.trim_prefix("running ")
+		lab_result = "Running battle %d of %d ..." % [int(k.get_slice("/", 0)) + 1, int(k.get_slice("/", 1))]
+	elif text != "":
+		lab_result = text
+	if not running:
+		lab_pid = -1
+		if text == "" or progress:
+			lab_result = "The battle lab stopped without a result"
+		ui.refresh()
+
+
+func _exit_tree() -> void:
+	stop_lab()
 
 
 # ------------------------------------------------------------------ input
@@ -466,6 +558,7 @@ func _process(delta: float) -> void:
 	if _marker_timer <= 0:
 		_marker_timer = 0.25
 		_update_markers()
+		_poll_lab()
 	_update_ghost()
 	ui.update_live()
 

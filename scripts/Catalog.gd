@@ -24,6 +24,8 @@ var ids: Array[String] = []
 ## readable problems found while loading ("<file>: <problem>")
 var errors: Array[String] = []
 var _dir := BUILDINGS_DIR
+## spawn_wall_for cache: connectors -> [def, quarter turns]
+var _wall_shapes := {}
 
 
 func _ready() -> void:
@@ -38,6 +40,7 @@ func load_dir(dir: String, replace_cache := false) -> void:
 	defs = {}
 	ids = []
 	errors = []
+	_wall_shapes = {}
 	var files := DirAccess.get_files_at(dir)
 	if files.is_empty():
 		errors.append("%s: no building files found" % dir)
@@ -429,11 +432,19 @@ func spawn_wall_for(connectors: Array) -> Node3D:
 	var n := want.count(true)
 	if n < 2:
 		want = [true, true, false, false] if (want[0] or want[1]) else [false, false, true, true]
+	var key := str(want)
+	if _wall_shapes.has(key):  # [def, quarter turns]
+		var hit: Array = _wall_shapes[key]
+		var g := spawn(hit[0])
+		for r in hit[1]:
+			U.comp(g, "BuildingBlock").rotate_counter_clockwise()
+		return g
 	for def in of_category(BuildingDef.Category.WALL):
 		var go := spawn(def)
 		var bb := U.comp(go, "BuildingBlock")
 		for r in 4:
 			if bb.connects_up_down_left_right() == want:
+				_wall_shapes[key] = [def, r]
 				return go
 			bb.rotate_counter_clockwise()
 		go.free()

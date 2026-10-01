@@ -11,6 +11,9 @@ var visited := PackedByteArray()
 var sizeFineX := 0
 var sizeFineZ := 0
 var map = null
+## While true, update_tile only records the tile; end_batch() recomputes all
+## areas once (much faster when a whole layout is placed at once).
+var batching := false
 ## tileFull[x * sizeZ + z] = 1 when all 9 fine cells of the tile are accessible
 var tileFull := PackedByteArray()
 
@@ -79,6 +82,8 @@ func _reset_open_closed() -> void:
 
 
 func update_tile(bp) -> void:
+	if batching:
+		return
 	_update_tile_in_accessible_grid(bp)
 	_reset_visited_will_visit()
 	var x: int = bp.idxX * 3
@@ -90,6 +95,15 @@ func update_tile(bp) -> void:
 	_set_subgrid_false(open, x_from, z_from, x_to, z_to)
 	_set_subgrid_false(closed, x_from, z_from, x_to, z_to)
 	update_open_closed_spaces_in(x_from, z_from, x_to, z_to, true)
+
+
+func begin_batch() -> void:
+	batching = true
+
+
+func end_batch() -> void:
+	batching = false
+	update_open_closed_spaces()
 
 
 func _set_subgrid_false(grid: PackedByteArray, x_from: int, z_from: int, x_to: int, z_to: int) -> void:

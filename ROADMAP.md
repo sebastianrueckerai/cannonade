@@ -19,6 +19,10 @@ Legend: `[ ]` open · `[~]` started · `[x]` done · **(decide)** needs a decisi
    guns, press Play, and watch what happens. Example question: how many flak guns defeat
    how many cannons?
 
+Both are in place (rounds A–C). Candidates for the next round: use the lab on the
+breach rule and other (test) ideas below, sandbox polish for players, the 4-AI
+performance spike.
+
 ---
 
 ## Done: round A – building catalog (data-driven buildings)
@@ -136,14 +140,46 @@ Main menu → **Sandbox** (`scenes/sandbox.tscn`, `scripts/sandbox/`). Test:
 - (test) The example scenario is one-sided (blue wins in ~11 s at seed 4242); more
   balanced examples would make better starting points
 
-## Next: round C – experiments (battle lab)
-- [ ] Headless batch runner: `--scenario=x --runs=50 --seeds=1..50` prints win rates and
-      mean stats per side, e.g. "4 flak vs 6 cannons: blue wins 72%". Uses the deterministic
-      fixed step, as the tests already do
-- [ ] Parameter sweeps: run a scenario while varying one catalog value (e.g. flak salvo
-      1.0–3.0 s) and print a table
-- [ ] Scenario variants in the editor: duplicate, mirror a base to the other side
-- [ ] Results to CSV for spreadsheets
+## Done: round C – experiments (battle lab)
+
+`scripts/sandbox/BattleLab.gd`, `tools/lab.tscn`; test `tests/lab_test` (CLI as a subprocess).
+
+- [x] Headless batch runner: `--scenario --runs --seed` prints win rates and mean stats
+      per side; per-battle lines while running
+- [x] Parameter sweeps (`--sweep=id.field=a:b:step` or a list) and one-off changes
+      (`--set`), on any field of a building, its behaviours or its projectile
+- [x] Results to CSV (`--csv`), one row per battle
+- [x] Sandbox: **Run N seeds** button (background process, result in the side panel,
+      `user://lab/last_run.csv`); **Mirror** copies one side's layout to the other;
+      "duplicate" = Save under a new name
+- [x] New match setup **AI vs dormant AI**
+- [x] Fair comparisons: every seed is also played with the layouts swapped; results are
+      per layout (`--swap=false` turns it off)
+- [x] Reproducible: a seed gives the same battle wherever it runs in a batch (Godot's
+      frame-time jitter fix is turned off in the lab)
+- [x] Placing a whole layout recomputes the enclosed areas once (`StatesMap.begin_batch`):
+      0.7 s → 0.03 s per layout
+- [x] Example `mirror_forts` (two identical forts)
+
+**Findings (from the lab)**
+- Identical mirrored forts, walls targeted: blue won 65 %, red 25 % before the swap –
+  in a tie within one frame the side processed first wins. With the swap: 45 / 45 / 10.
+  With guns targeted it was already about even (50 / 45)
+- Battles are decided within ~6 s: the first wall breach opens the fort and every gun
+  inside goes inactive at once
+- 8× speed changes results (flak at 0.25 s salvo: blue 100 % at 1×, 50 % at 8×), as the
+  game steps 0.27 s per frame; the in-game speed buttons are only for watching
+
+**Left over from round C**
+- [ ] Sweeps and `--set` only from the command line; the Sandbox Run uses the data as saved
+- [ ] Sweep of two values at once (grid), or of several buildings' field at once
+- [ ] The Sandbox's own Play still gives blue the tie advantage **(decide)**: randomise
+      or alternate the processing order per battle?
+- [ ] Accurate fast-forward in the Sandbox (several game steps per frame instead of a
+      bigger step) **(spike)**
+- (test) Breach rule: today one wall hit can switch off a whole fort. Ideas: guns stay
+  active for a few seconds after a breach, only buildings near the gap go off, or walls
+  get more health – the lab can compare these quickly
 
 ---
 
@@ -205,4 +241,5 @@ Main menu → **Sandbox** (`scenes/sandbox.tscn`, `scripts/sandbox/`). Test:
 - [x] Mouse wheel zoom to the cursor, middle mouse panning
 - [x] Round A: buildings and projectiles as data (`data/`, `Catalog`, F5 reload);
       combining now uses the upgrade block up; any building can be a recipe part
-- [x] Round B: Sandbox editor + battle lab (menu entry, `scripts/sandbox/`)
+- [x] Round B: Sandbox editor + battle (menu entry, `scripts/sandbox/`)
+- [x] Round C: battle lab – batch runs, sweeps, CSV, Run button, fair side swap

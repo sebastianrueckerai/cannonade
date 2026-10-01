@@ -1,7 +1,7 @@
 extends Node
 ## Sandbox through real mouse / key input: drawing walls, placing and erasing,
-## undo / redo, save / load, battles with the three match setups, target
-## choice, stats, winner and Reset.
+## undo / redo, save / load, mirror, battles with all match setups, target
+## choice, stats, winner and Reset, background runs.
 ##   godot --headless --fixed-fps 30 res://tests/sandbox_test.tscn
 
 const SandboxScene = preload("res://scenes/sandbox.tscn")
@@ -236,6 +236,31 @@ func _run() -> void:
 	check(sb.player(1).stats.get("shots", 0) == 0, "the dormant AI never fires")
 	check(sb.player(0).stats.get("shots", 0) >= 1, "the player fires with Space")
 	await ui_click("Play")
+
+	# Mirror: blue's layout replaces red's, mirrored top to bottom; undo brings red's back
+	await key(KEY_1)
+	await ui_click("Mirror")
+	check(structure_id(Vector2i(5, 25)) == "cannon" and structure_id(Vector2i(21, 22)) == ""
+			and sb.player(1).cannons.size() == sb.player(0).cannons.size(), "Mirror copies blue's layout to red, mirrored")
+	check(sb.map.is_tile_enclosed(5, 25) and sb.map.tiles[5][25].player == sb.player(1), "the mirrored walls enclose red's copy")
+	await key(KEY_Z, true)
+	check(structure_id(Vector2i(21, 22)) == "cannon" and structure_id(Vector2i(5, 25)) == "", "Ctrl+Z undoes the mirror")
+
+	# Run: the layout is played in a background process with the match settings
+	await select_option("Match", 3)  # AI vs dormant AI
+	(sb.ui.find_child("Runs", true, false) as SpinBox).value = 2
+	await ui_click("Run")
+	var deadline := Time.get_ticks_msec() + 120000
+	while sb.lab_pid > 0 and Time.get_ticks_msec() < deadline:
+		await frames(1)
+	var lab_text: String = sb.ui.find_child("Lab", true, false).text
+	print(lab_text)
+	var shots := Array(lab_text.split("\n")).filter(func(l): return l.begins_with("shots"))
+	check(lab_text.contains("4 battles (seeds 1-2, also swapped)") and lab_text.contains("Blue's layout wins"),
+			"Run shows the result of 2 seeds, each played both ways round")
+	check(shots.size() == 1 and float(shots[0].split(" ", false)[1]) > 0 and float(shots[0].split(" ", false)[2]) == 0,
+			"the runs use the match setting: the dormant red layout never fires")
+	await select_option("Match", 0)
 
 	# every shipped example loads completely and everything in it works
 	for path in sb.saved_scenarios():

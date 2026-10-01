@@ -8,6 +8,9 @@ var _side_buttons: Array = []
 var _speed_buttons: Array = []
 var _edit_controls: Array = []
 var _play: Button
+var _run: Button
+var _runs: SpinBox
+var _lab: Label
 var _undo: Button
 var _redo: Button
 var _scenarios: OptionButton
@@ -130,6 +133,19 @@ func _build_top() -> void:
 		var b := _button(bar, "Speed%d" % i, "Pause" if v == 0 else "%dx" % v, "Battle speed",
 				func(): sandbox.set_speed(v); refresh(), true)
 		_speed_buttons.append(b)
+	bar.add_child(VSeparator.new())
+	_runs = SpinBox.new()
+	_runs.name = "Runs"
+	_runs.min_value = 1
+	_runs.max_value = 500
+	_runs.value = 20
+	_runs.tooltip_text = "How many seeds the Run button plays"
+	bar.add_child(_runs)
+	_run = _button(bar, "Run", "Run", "Play this layout in the background with seeds 1, 2, 3, ... and the " +
+			"match settings, at normal speed, and show win rates. Each seed is played twice, the second time " +
+			"with the two layouts swapped, so the side that happens to act first gets no edge; " +
+			"results are per layout", _on_run)
+	_runs.value_changed.connect(func(_v): refresh())
 
 
 func _build_bottom() -> void:
@@ -150,6 +166,8 @@ func _build_bottom() -> void:
 		_side_buttons.append(b)
 	_tool("wall", "Wall", "Click and drag to draw walls; corners connect automatically", bar)
 	_tool("erase", "Erase", "Remove what is under the cursor (right mouse button erases too)", bar)
+	_edit_controls.append(_button(bar, "Mirror", "Mirror", "Copy this side's layout to the other side, " +
+			"mirrored top to bottom (replaces the other side; Ctrl+Z undoes)", func(): sandbox.mirror(sandbox.side)))
 	var base: BuildingDef = Catalog.base_def()
 	if base != null:
 		_tool(base.id, "Base", "Move this side's base", bar)
@@ -186,11 +204,22 @@ func _build_side_panel() -> void:
 	_stats = Label.new()
 	_stats.name = "Stats"
 	v.add_child(_stats)
+	_lab = Label.new()
+	_lab.name = "Lab"
+	_lab.add_theme_font_override("font", _mono())
+	_lab.add_theme_font_size_override("font_size", 13)
+	v.add_child(_lab)
 	_message = Label.new()
 	_message.name = "Message"
 	_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_message.custom_minimum_size = Vector2(280, 0)
 	v.add_child(_message)
+
+
+func _mono() -> Font:
+	var f := SystemFont.new()
+	f.font_names = PackedStringArray(["monospace", "DejaVu Sans Mono", "Consolas", "Menlo"])
+	return f
 
 
 func show_message(text: String, seconds := 4.0) -> void:
@@ -203,6 +232,14 @@ func _on_play() -> void:
 		sandbox.play()
 	else:
 		sandbox.reset()
+
+
+func _on_run() -> void:
+	if sandbox.lab_pid > 0:
+		sandbox.stop_lab()
+	else:
+		sandbox.run_lab(int(_runs.value))
+	refresh()
 
 
 func _on_save() -> void:
@@ -239,6 +276,8 @@ func refresh() -> void:
 	_undo.disabled = not editing or sandbox.undo_stack.is_empty()
 	_redo.disabled = not editing or sandbox.redo_stack.is_empty()
 	_play.text = "Play" if editing else "Back to editing"
+	_run.text = "Stop" if sandbox.lab_pid > 0 else "Run %d seeds" % int(_runs.value)
+	_run.disabled = not editing and sandbox.lab_pid <= 0
 	var current := ""
 	if _scenarios.selected >= 0:
 		current = _scenarios.get_item_metadata(_scenarios.selected)
@@ -262,6 +301,7 @@ func refresh() -> void:
 func update_live() -> void:
 	if Time.get_ticks_msec() / 1000.0 > _message_until:
 		_message.text = "" if Catalog.errors.is_empty() else "Building data problems:\n" + "\n".join(Catalog.errors)
+	_lab.text = sandbox.lab_result
 	var g = sandbox.game
 	if g == null:
 		return

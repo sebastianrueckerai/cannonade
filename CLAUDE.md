@@ -20,7 +20,9 @@ round, update it: tick off what is done, park unfinished work, open questions, i
   the behaviour components from the data.
 - `scripts/sandbox/` – Sandbox editor + battle lab (`scenes/sandbox.tscn`). It wraps a
   `Main` built from a `config` dictionary; layouts are `ScenarioDef` item lists
-  (`data/scenarios/` examples, `user://scenarios/` saves).
+  (`data/scenarios/` examples, `user://scenarios/` saves). `BattleLab.gd` (`tools/lab.tscn`)
+  plays a scenario many times headless; the Sandbox's Run button starts it as a subprocess.
+  Use it to check balance claims instead of guessing.
 - `scripts/Main.gd` – builds a game from a mode (`single`, `versus`, `ai2`, `ai4`) or a config;
   `scripts/CameraRig.gd` – zoom / pan.
 - `prefabs/`, `materials/` – generated from the Unity prefabs (the converter is in git
