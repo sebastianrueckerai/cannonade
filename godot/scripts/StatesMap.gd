@@ -12,6 +12,10 @@ var willVisit := PackedByteArray()
 var sizeFineX := 0
 var sizeFineZ := 0
 var map = null
+## tileFull[x * sizeZ + z] = 1 when all 9 fine cells of the tile are accessible
+var tileFull := PackedByteArray()
+## Use the original cell by cell flood fill (for equivalence tests).
+static var use_reference := false
 
 
 func idx(x: int, z: int) -> int:
@@ -55,6 +59,8 @@ func _reset_visited_will_visit() -> void:
 
 func _reset_accessible_grid() -> void:
 	accessible = _new_grid()
+	tileFull = PackedByteArray()
+	tileFull.resize(map.sizeX * map.sizeZ)
 	for xc in map.sizeX:
 		for zc in map.sizeZ:
 			_update_tile_in_accessible_grid(map.tiles[xc][zc])
@@ -76,7 +82,12 @@ func _reset_open_closed() -> void:
 	closed = _new_grid()
 
 
+static var profile_usec := 0
+static var profile_calls := 0
+
+
 func update_tile(bp) -> void:
+	var _t0 := Time.get_ticks_usec()
 	_update_tile_in_accessible_grid(bp)
 	_reset_visited_will_visit()
 	var x: int = bp.idxX * 3
@@ -88,6 +99,8 @@ func update_tile(bp) -> void:
 	_set_subgrid_false(open, x_from, z_from, x_to, z_to)
 	_set_subgrid_false(closed, x_from, z_from, x_to, z_to)
 	update_open_closed_spaces_in(x_from, z_from, x_to, z_to, true)
+	profile_usec += Time.get_ticks_usec() - _t0
+	profile_calls += 1
 
 
 func _set_subgrid_false(grid: PackedByteArray, x_from: int, z_from: int, x_to: int, z_to: int) -> void:
@@ -99,15 +112,19 @@ func _set_subgrid_false(grid: PackedByteArray, x_from: int, z_from: int, x_to: i
 func _update_tile_in_accessible_grid(bp) -> void:
 	var x: int = bp.idxX * 3
 	var z: int = bp.idxZ * 3
+	var full := 1
 	if U.alive(bp.structure):
 		var grid: Array = U.comp(bp.structure, "BuildingBlock").accessGrid
 		for dx in 3:
 			for dz in 3:
 				accessible[idx(x + dx, z + dz)] = 1 if grid[dx][dz] else 0
+				if not grid[dx][dz]:
+					full = 0
 	else:
 		for dx in 3:
 			for dz in 3:
 				accessible[idx(x + dx, z + dz)] = 1
+	tileFull[bp.idxX * map.sizeZ + bp.idxZ] = full
 
 
 func update_open_closed_spaces() -> void:
@@ -125,6 +142,95 @@ func update_open_closed_spaces_in(x_from: int, z_from: int, x_to: int, z_to: int
 
 
 func waterflow(start_x: int, start_z: int, use_initial_open := false) -> void:
+	if use_reference:
+		waterflow_reference(start_x, start_z, use_initial_open)
+	else:
+		waterflow_blocks(start_x, start_z, use_initial_open)
+
+
+## Same result as waterflow_reference(), but tiles whose 9 cells are all
+## accessible are handled as one 3x3 block (they are always reached completely).
+## `visited` doubles as the original willVisit grid (cells are marked when queued).
+func waterflow_blocks(start_x: int, start_z: int, use_initial_open := false) -> void:
+	var fz := sizeFineZ
+	var fx := sizeFineX
+	var zs: int = map.sizeZ
+	var edge := initialOpen if use_initial_open else open
+	var found_edge := false
+	var cells := PackedInt32Array()  # visited fine cells
+	var queue := PackedInt32Array()  # fine cell index, or -(tile + 1) for a block
+	# enqueue the start cell
+	_enqueue(start_x * fz + start_z, cells, queue, zs, true)
+	var head := 0
+	while head < queue.size():
+		var q := queue[head]
+		head += 1
+		if q >= 0:
+			var x := q / fz
+			var z := q % fz
+			for nx in range(x - 1, x + 2):
+				var row := nx * fz
+				for nz in range(z - 1, z + 2):
+					var ni := row + nz
+					if not found_edge and edge[ni] != 0:
+						found_edge = true
+					if visited[ni] == 0 and accessible[ni] != 0:
+						_enqueue(ni, cells, queue, zs, false)
+		else:
+			var t := -q - 1
+			var bx := (t / zs) * 3
+			var bz := (t % zs) * 3
+			var x0 := maxi(bx - 1, 0)
+			var x1 := mini(bx + 3, fx - 1)
+			var z0 := maxi(bz - 1, 0)
+			var z1 := mini(bz + 3, fz - 1)
+			for nx in range(x0, x1 + 1):
+				var row := nx * fz
+				var ring_x := nx == bx - 1 or nx == bx + 3
+				for nz in range(z0, z1 + 1):
+					var ni := row + nz
+					if not found_edge and edge[ni] != 0:
+						found_edge = true
+					if (ring_x or nz == bz - 1 or nz == bz + 3) and visited[ni] == 0 and accessible[ni] != 0:
+						_enqueue(ni, cells, queue, zs, false)
+	var v_open := 1 if found_edge else 0
+	var v_closed := 0 if found_edge else 1
+	var touched := PackedByteArray()
+	touched.resize(tileFull.size())
+	for ci in cells:
+		open[ci] = v_open
+		closed[ci] = v_closed
+		var t := (ci / fz / 3) * zs + (ci % fz) / 3
+		if touched[t] == 0:
+			touched[t] = 1
+			var tile = map.tiles[t / zs][t % zs]
+			tile.reset_color(not found_edge)
+			if not found_edge:
+				tile.destroy_decorations()
+
+
+func _enqueue(ci: int, cells: PackedInt32Array, queue: PackedInt32Array, zs: int, start: bool) -> void:
+	var fz := sizeFineZ
+	var tx := ci / fz / 3
+	var tz := (ci % fz) / 3
+	var t := tx * zs + tz
+	if tileFull[t] != 0:
+		# the whole block (except preset border cells) is reached
+		for dx in 3:
+			var row := (tx * 3 + dx) * fz + tz * 3
+			for dz in 3:
+				var c := row + dz
+				if visited[c] == 0 or (start and c == ci):
+					visited[c] = 1
+					cells.append(c)
+		queue.append(-t - 1)
+	else:
+		visited[ci] = 1
+		cells.append(ci)
+		queue.append(ci)
+
+
+func waterflow_reference(start_x: int, start_z: int, use_initial_open := false) -> void:
 	var found_edge := false
 	var queue: Array[Vector2i] = [Vector2i(start_x, start_z)]
 	var head := 0

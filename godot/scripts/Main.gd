@@ -3,7 +3,7 @@ extends Node3D
 ## (singlePlayer, multiPlayer, 4ai) and wires up camera, light and UI.
 ##
 ## Command line (after "--"): --mode=single|versus|ai2|ai4 --seed=N
-##   --timescale=F --quit-after=SECONDS --no-decorations
+##   --round=SECONDS --size=TILES --timescale=F --quit-after=SECONDS --no-decorations
 
 const GameController = preload("res://scripts/components/GameController.gd")
 const MapScript = preload("res://scripts/components/Map.gd")
@@ -55,7 +55,12 @@ func _ready() -> void:
 		Engine.time_scale = float(args["timescale"])
 	if args.has("quit-after"):
 		quit_after = float(args["quit-after"])
-	build(MODES[mode], not args.has("no-decorations"))
+	var cfg: Dictionary = MODES[mode].duplicate()
+	if args.has("round"):
+		cfg["round"] = float(args["round"])
+	if args.has("size"):
+		cfg["size"] = int(args["size"])
+	build(cfg, not args.has("no-decorations"))
 
 
 func _parse_args() -> Dictionary:

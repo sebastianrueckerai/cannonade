@@ -29,6 +29,11 @@ var lastHighlight = null
 ## Segment memo used by BuildingPlan during one plan search (null otherwise)
 var connectionMemo = null
 var searchStamp := 0
+var sliceBudgetUsec := 4000
+var _searching := false
+## set when the game was left while a search was running
+var _abort_search := false
+var _slice_start := 0
 
 
 func setup() -> void:
@@ -68,8 +73,36 @@ func update_plans() -> void:
 		if p.can_be_finished() and not p.finished():
 			active.append(p)
 	activePlans = active
-	if activePlans.size() < nActivePlans:
-		activePlans = search_best_building_plans(activePlans, nActivePlans)
+	if activePlans.size() < nActivePlans and not _searching:
+		_run_search()
+
+
+## The plan search is expensive in GDScript; it runs as a coroutine spread over
+## several frames (at most sliceBudgetUsec per frame) so the game stays smooth.
+func _run_search() -> void:
+	_searching = true
+	var result: Array = await search_best_building_plans(activePlans.duplicate(), nActivePlans)
+	if _abort_search or not is_instance_valid(self):
+		return
+	activePlans = result
+	_searching = false
+
+
+func _yield_if_needed() -> void:
+	if Time.get_ticks_usec() - _slice_start > sliceBudgetUsec:
+		# caches are only valid while the map cannot change, i.e. within one slice
+		connectionMemo = null
+		await (Engine.get_main_loop() as SceneTree).process_frame
+		if not is_instance_valid(self) or not is_inside_tree():
+			_abort_search = true
+			return
+		_begin_slice()
+
+
+func _begin_slice() -> void:
+	_slice_start = Time.get_ticks_usec()
+	connectionMemo = {}
+	searchStamp += 1
 
 
 func _update_double_stack_plan() -> void:
@@ -205,8 +238,7 @@ func mark_buildable_area_waterflow(x: int, z: int, buildable := true) -> void:
 func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 	if plans == null:
 		plans = []
-	connectionMemo = {}
-	searchStamp += 1
+	_begin_slice()
 	var _t0 := Time.get_ticks_usec()
 	var _spots := 0
 	var potential: Array = []
@@ -215,21 +247,34 @@ func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 			if inPlanRange[ix * map.sizeZ + iz] != 0:
 				potential.append_array(_get_plans_for_spot(ix, iz, maxUp, maxDown, maxLeft, maxRight))
 				_spots += 1
+				await _yield_if_needed()
+				if _abort_search:
+					return plans
 	var _t1 := Time.get_ticks_usec()
 	var standalone: Array = []
 	var additions: Array = []
-	for p in potential:
+	for pi in potential.size():
+		var p = potential[pi]
 		var compatible: bool = p.can_be_compatible_all(plans)
 		if compatible and p.can_be_finished():
 			standalone.append(p)
 		if not compatible:
 			additions.append(p)
+		if pi % 64 == 0:
+			await _yield_if_needed()
+			if _abort_search:
+				return plans
 	var _t2 := Time.get_ticks_usec()
 	var costs := _start_expotential_wall_costs()
 	while standalone.size() > 0 and plans.size() < max_plans:
 		var scored: Array = []
-		for p in standalone:
+		for si in standalone.size():
+			var p = standalone[si]
 			scored.append([p.calculate_compatibility_score(plans, costs), p])
+			if si % 64 == 0:
+				await _yield_if_needed()
+				if _abort_search:
+					return plans
 		scored.sort_custom(func(a, b): return a[0] > b[0])
 		var best = scored[0][1]
 		best.ensure_compatibility_all(plans)
@@ -247,6 +292,10 @@ func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 		var plan_score: int = plans[i].calculate_score(costs)
 		var others: Array = plans.slice(0, i) + plans.slice(i + 1)
 		for j in additions.size():
+			if j % 64 == 0:
+				await _yield_if_needed()
+				if _abort_search:
+					return plans
 			if plans[i].can_be_combined(additions[j]):
 				var new_candidate = plans[i].combine(additions[j])
 				var new_score: int = new_candidate.calculate_score(costs)
@@ -359,7 +408,7 @@ func highlight_building_place(tile) -> void:
 	if U.alive(lastHighlight):
 		lastHighlight.reset_color()
 	lastHighlight = tile
-	U.set_color(tile.model(), Color.BLACK)
+	tile.set_tile_color(Color.BLACK)
 
 
 func try_build_walled_in_gun() -> bool:

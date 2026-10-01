@@ -178,7 +178,7 @@ func get_surrounding_tiles(r: int) -> Array:
 func set_on_fire(burn_for_seconds: float) -> void:
 	burning = true
 	burnUntil = U.time + burn_for_seconds
-	U.set_color(model(), Color.RED)
+	set_tile_color(Color.RED)
 
 
 func reset_color(enclosed = null) -> void:
@@ -187,6 +187,17 @@ func reset_color(enclosed = null) -> void:
 	var c := wallColor
 	if not isWall:
 		c = enclosedColor if enclosed else openColor
+	set_tile_color(c)
+
+
+var _applied_color = null
+
+
+## Colour of the tile slab (skips the material write when nothing changes).
+func set_tile_color(c: Color) -> void:
+	if _applied_color == c:
+		return
+	_applied_color = c
 	U.set_color(model(), c)
 
 

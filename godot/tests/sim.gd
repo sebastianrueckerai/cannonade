@@ -14,6 +14,9 @@ var failures: Array = []
 var frame_times: Array = []
 var stats := {"max_projectiles": 0, "shots": 0, "rounds": 0}
 var _last_proj_ids := {}
+var autobuild := false
+var _next_autobuild := 1.0
+var _ship_start := {}
 
 
 func _ready() -> void:
@@ -23,6 +26,9 @@ func _ready() -> void:
 			var kv := a.substr(2).split("=", true, 1)
 			args[kv[0]] = kv[1] if kv.size() > 1 else "true"
 	seconds = float(args.get("seconds", "60"))
+	autobuild = args.has("autobuild")
+	Main.requested_args = args
+	Main.requested_mode = args.get("mode", "ai2")
 	report_every = float(args.get("report", "10"))
 	main = Main.new()
 	main.name = "Main"
@@ -32,8 +38,14 @@ func _ready() -> void:
 	main.game.profile = true
 
 
+var _last_tick := 0
+
+
 func _process(_delta: float) -> void:
-	var t0 := Time.get_ticks_usec()
+	var now := Time.get_ticks_usec()
+	if _last_tick > 0 and U.time > 1.0:
+		frame_times.append(now - _last_tick)
+	_last_tick = now
 	if main == null or main.game == null:
 		return
 	var g = main.game
@@ -44,6 +56,15 @@ func _process(_delta: float) -> void:
 			stats["shots"] += 1
 	stats["max_projectiles"] = maxi(stats["max_projectiles"], U.projectiles.size())
 	stats["rounds"] = g.roundNumber
+	if autobuild and U.time >= _next_autobuild:
+		_next_autobuild = U.time + 0.5
+		_autobuild(g)
+	for ship in g.fleet.ships:
+		if not _ship_start.has(ship):
+			_ship_start[ship] = ship.go.global_position
+		elif ship.go.global_position.distance_to(_ship_start[ship]) > 0.5:
+			stats["ships_moved"] = stats.get("ships_moved", {})
+			stats["ships_moved"][ship.get_instance_id()] = true
 	if U.time >= next_report:
 		next_report += report_every
 		_report(g)
@@ -52,7 +73,21 @@ func _process(_delta: float) -> void:
 		_report(g)
 		_check_invariants(g)
 		_finish()
-	frame_times.append(Time.get_ticks_usec() - t0)
+
+
+## Very simple stand-in for a human: places walls on free tiles in range.
+func _autobuild(g) -> void:
+	for p in g.players:
+		if p.has_method("search_best_building_plans") or not g.buildingAllowed or not U.alive(p.nextWall):
+			continue
+		var cands: Array = []
+		for x in g.map.sizeX:
+			for z in g.map.sizeZ:
+				var t = g.map.tiles[x][z]
+				if p.ibr(x, z) and not U.alive(t.structure) and t.buildable():
+					cands.append(t)
+		if not cands.is_empty():
+			p.build_next_wall(cands[U.rint(0, cands.size())])
 
 
 func _report(g) -> void:
@@ -127,8 +162,12 @@ func _finish() -> void:
 			total += f
 		print("frames=%d mean=%.2fms p50=%.2fms p99=%.2fms max=%.2fms" % [n, total / 1000.0 / n,
 				frame_times[n / 2] / 1000.0, frame_times[int(n * 0.99)] / 1000.0, frame_times[-1] / 1000.0])
+	if stats.has("ships_moved"):
+		stats["ships_moved"] = stats["ships_moved"].size()
 	print("stats: ", stats)
 	print("profile us: supply/select=%d actions=%d" % main.game.profile_data)
+	var SM = load("res://scripts/StatesMap.gd")
+	print("statesMap.update_tile: calls=%d total=%.1fms" % [SM.profile_calls, SM.profile_usec / 1000.0])
 	if failures.is_empty():
 		print("SIM PASSED")
 		get_tree().quit(0)
