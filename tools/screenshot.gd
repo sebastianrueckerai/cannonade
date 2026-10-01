@@ -25,6 +25,13 @@ func _ready() -> void:
 	get_tree().root.add_child.call_deferred(main)
 	await get_tree().process_frame
 	get_tree().current_scene = main
+	if args.has("zoom"):  # wheel notches towards the screen centre
+		var ev := InputEventMouseButton.new()
+		ev.button_index = MOUSE_BUTTON_WHEEL_UP
+		ev.position = get_viewport().get_visible_rect().size / 2.0
+		ev.pressed = true
+		for i in int(args["zoom"]):
+			main.camera._unhandled_input(ev)
 	if args.has("fov"):
 		main.camera.fov = float(args["fov"])
 	if args.has("look"):

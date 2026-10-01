@@ -11,6 +11,7 @@ const ShipFleet = preload("res://scripts/components/ShipFleet.gd")
 const UpgradeSelection = preload("res://scripts/components/UpgradeSelection.gd")
 const PlayerController = preload("res://scripts/components/PlayerController.gd")
 const AIScript = preload("res://scripts/components/AI.gd")
+const CameraRig = preload("res://scripts/CameraRig.gd")
 
 const MODES := {
 	# Assets/Scenes/singlePlayer.unity: one human against the ship fleet
@@ -117,11 +118,12 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	fleet.enemyPlayers = game.players.duplicate()
 	game.round_changed.connect(_on_round_changed)
 	game.start_game()
+	camera.capture_home_view(map.sizeX * map.tileSize / 2.0)
 	_on_round_changed(0, true)
 
 
 func _setup_environment(cfg: Dictionary) -> void:
-	camera = Camera3D.new()
+	camera = CameraRig.new()
 	camera.name = "MainCamera"
 	camera.fov = cfg["fov"]
 	camera.far = 500.0
@@ -196,7 +198,7 @@ func _setup_ui() -> void:
 	ui.add_child(phase_label)
 	var help := Label.new()
 	help.name = "Help"
-	help.text = "LMB: place wall   RMB: place building / combine   X / Y: rotate wall   Space: fire   Esc: menu"
+	help.text = "LMB: place wall   RMB: place building / combine   X / Y: rotate wall   Space: fire   Wheel: zoom   MMB drag: pan   Esc: menu"
 	help.add_theme_font_size_override("font_size", 14)
 	help.add_theme_color_override("font_outline_color", Color.BLACK)
 	help.add_theme_constant_override("outline_size", 4)

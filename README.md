@@ -32,8 +32,10 @@ Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 |-------------------|----------------------------------------------------------|
 | left mouse        | place the next wall (or stack it on one of your walls)   |
 | right mouse       | place the next building / combine it with an upgrade      |
-| X / mouse wheel   | rotate the wall clockwise                                |
-| Y or Z / wheel    | rotate the wall counter-clockwise                        |
+| X                 | rotate the wall clockwise                                |
+| Y or Z            | rotate the wall counter-clockwise                        |
+| mouse wheel       | zoom in / out (towards the cursor; fully out shows the whole map) |
+| middle mouse drag | pan the view while zoomed in                              |
 | Space             | fire (battle phase)                                       |
 | click outside map | discard the current wall / building                       |
 | Esc               | back to the menu                                          |
@@ -96,6 +98,7 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
   cluster bombs, rockets, shield, flak and ships behave as in the game.
 * `tests/menu_test` – menu → chosen game mode → Esc → menu.
+* `tests/camera_test` – wheel zoom towards the cursor within its limits, middle mouse panning.
 * `tests/sim` – full games (`--mode=single|ai2|ai4`): rounds alternate, AIs build, arm
   themselves and fight, ships sail and shoot; map invariants hold; frame times are printed.
 
