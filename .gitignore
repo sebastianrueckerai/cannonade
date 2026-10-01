@@ -273,3 +273,6 @@ __pycache__/
 /sysinfo.txt
 *.utmp
 /[Aa]ssets/AssetStoreTools*
+
+# Local secrets
+.env.tools
