@@ -19,7 +19,14 @@ func _ready() -> void:
 	var bb := U.comp(go, "BuildingBlock")
 	if bb:
 		player = bb.player
+	currentDamageAbsorb = maxDamageAbsorb
+	refresh()
+
+
+## Recomputes derived values after the parameters changed (catalog reload).
+func refresh() -> void:
 	regenPerSecond = maxDamageAbsorb / secondsToReset
+	currentDamageAbsorb = minf(currentDamageAbsorb, maxDamageAbsorb)
 
 
 func get_supply_needed() -> float:

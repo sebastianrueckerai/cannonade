@@ -7,7 +7,6 @@ extends "res://scripts/components/Component.gd"
 @export var useRandomSeed := false
 @export var initialShips := 7
 
-var upgradeSelection = null
 var wallSpawns: Array = []
 var buildingSpawns: Array = []
 var supplyBars: Array = []
@@ -27,7 +26,6 @@ signal round_changed(round_number: int, building: bool)
 
 
 func start_game() -> void:
-	upgradeSelection.initialize()
 	if useRandomSeed:
 		seed(randomSeed)
 	buildingAllowed = true
@@ -76,7 +74,6 @@ func _initialize_players() -> void:
 		p.map = map
 		p.wallSpawn = wallSpawns[i] if i < wallSpawns.size() else null
 		p.buildingSpawn = buildingSpawns[i] if i < buildingSpawns.size() else null
-		p.upgradeSelection = upgradeSelection
 		p.inBuildRange = PackedByteArray()
 		p.inBuildRange.resize(map.sizeX * map.sizeZ)
 		p.supplyBar = supplyBars[i] if i < supplyBars.size() else null

@@ -6,7 +6,7 @@ extends Node
 
 const Main = preload("res://scripts/Main.gd")
 const BuildingPlan = preload("res://scripts/BuildingPlan.gd")
-const BLOCKS := [preload("res://prefabs/Upgrade_a.tscn"), preload("res://prefabs/Upgrade_b.tscn")]
+const BLOCKS := {0: "upgrade_a", 1: "upgrade_b"}
 
 var main: Node
 var game
@@ -59,7 +59,7 @@ func build_pattern(p, x: int, z: int, types: Array) -> Node3D:
 		order.append(4)
 	for i in order:
 		var t = map.tiles[x + i / side][z + i % side]
-		p.build_building(t, BLOCKS[types[i]].instantiate())
+		p.build_building(t, Catalog.spawn(BLOCKS[types[i]]))
 	return map.tiles[x + 1][z + 1].structure
 
 
@@ -71,25 +71,25 @@ func _run() -> void:
 
 	# upgrade patterns -> structures (a = 0, b = 1); flak and shield patterns are rotated
 	var cases := [
-		[[0, 0, 0, 0], "Cannon22a"], [[1, 1, 1, 1], "Cannon22b"], [[0, 1, 1, 1], "Flak22"],
-		[[1, 0, 0, 0], "ShieldGen22"], [[1, 1, 1, 1, 1, 1, 0, 0, 0], "RocketStation"],
-		# an adjacent pair of b blocks: along x a supply depot, along z a Cannon22d
-		[[1, 0, 1, 0], "Supply22"], [[0, 1, 0, 1], "Supply22"],
-		[[1, 1, 0, 0], "Cannon22d"], [[0, 0, 1, 1], "Cannon22d"]]
+		[[0, 0, 0, 0], "cannon22a"], [[1, 1, 1, 1], "cannon22b"], [[0, 1, 1, 1], "flak22"],
+		[[1, 0, 0, 0], "shield22"], [[1, 1, 1, 1, 1, 1, 0, 0, 0], "rocket_station"],
+		# an adjacent pair of b blocks: along x a supply depot, along z a cannon22d
+		[[1, 0, 1, 0], "supply22"], [[0, 1, 0, 1], "supply22"],
+		[[1, 1, 0, 0], "cannon22d"], [[0, 0, 1, 1], "cannon22d"]]
 	var spots := [Vector2i(13, 10), Vector2i(24, 9), Vector2i(23, 19), Vector2i(5, 19), Vector2i(3, 8),
 		Vector2i(8, 13), Vector2i(20, 13), Vector2i(8, 26), Vector2i(20, 27)]
 	var owners := [p1, p1, p2, p2, p1, p1, p1, p1, p1]
 	var built := {}
 	for i in cases.size():
 		var s := build_pattern(owners[i], spots[i].x, spots[i].y, cases[i][0])
-		var name: String = s.scene_file_path.get_file().get_basename() if U.alive(s) else "nothing"
+		var name: String = Catalog.def_of(s).id if U.alive(s) else "nothing"
 		check(name == cases[i][1], "pattern %s merges into %s (got %s)" % [cases[i][0], cases[i][1], name])
 		built[cases[i][1]] = s
 
 	# cluster bomb: sub munitions set the tiles around the target on fire
 	var target = map.tiles[15][22]
-	var cluster := U.shooter(built["Cannon22b"])
-	check(cluster.try_shoot(target.go.global_position, target), "Cannon22b fires")
+	var cluster := U.shooter(built["cannon22b"])
+	check(cluster.try_shoot(target.go.global_position, target), "cannon22b fires")
 	var burning := false
 	var end: float = U.time + 15.0
 	while U.time < end and not burning:
@@ -100,7 +100,7 @@ func _run() -> void:
 
 	# rocket: the hit tile is destroyed for good
 	var rt = map.tiles[15][26]  # out of reach of the flak and the shield
-	var launcher := U.shooter(built["RocketStation"])
+	var launcher := U.shooter(built["rocket_station"])
 	launcher.nextBulletTime = 0.0  # skip the initial reload delay
 	check(launcher.try_shoot(rt.go.global_position, rt), "rocket station fires")
 	end = U.time + 30.0
@@ -109,8 +109,8 @@ func _run() -> void:
 	check(not rt.buildable(), "rocket hit makes the tile unbuildable")
 
 	# shield and flak protect their own structure against an enemy shell
-	var gun := U.shooter(built["Cannon22a"])
-	for name in ["ShieldGen22", "Flak22"]:
+	var gun := U.shooter(built["cannon22a"])
+	for name in ["shield22", "flak22"]:
 		var s: Node3D = built[name]
 		var tile = U.comp(s, "BuildingBlock").buildingPlace
 		gun.nextBulletTime = 0.0
@@ -120,7 +120,7 @@ func _run() -> void:
 
 	# the same shell destroys an unprotected structure (control for the two checks above)
 	var plain = map.tiles[15][17]
-	p2.build_building(plain, preload("res://prefabs/Cannon.tscn").instantiate())
+	p2.build_building(plain, Catalog.spawn("cannon"))
 	gun.nextBulletTime = 0.0
 	gun.try_shoot(plain.go.global_position, plain)
 	await seconds(10.0)
@@ -129,19 +129,19 @@ func _run() -> void:
 	# the AI lays out a supply depot so that it really becomes one, even when a
 	# block already placed forces a turned layout
 	var origin := Vector2i(24, 14)
-	# a b block in this corner also fits the turned (Cannon22d) layout
-	p2.build_building(map.tiles[origin.x + 1][origin.y + 1], BLOCKS[1].instantiate())
+	# a b block in this corner also fits the turned (cannon22d) layout
+	p2.build_building(map.tiles[origin.x + 1][origin.y + 1], Catalog.spawn("upgrade_b"))
 	for dx in 2:
 		for dz in 2:
 			p2.mark_buildable_area_line_of_sight(origin.x + dx, origin.y + dz)
 	var plan := BuildingPlan.new(origin.x, origin.y, p2, 1, 1, 2, 2)
-	check(plan.try_initialize_xz_upgrade_tiles("Supply22", game.upgradeSelection), "AI finds a supply depot layout")
+	check(plan.try_initialize_xz_upgrade_tiles("supply22"), "AI finds a supply depot layout")
 	for xz in plan.xz2UpgradeTilesType:
 		if not U.alive(map.tiles[xz.x][xz.y].structure):
-			p2.build_building(map.tiles[xz.x][xz.y], BLOCKS[plan.xz2UpgradeTilesType[xz]].instantiate())
+			p2.build_building(map.tiles[xz.x][xz.y], Catalog.spawn(plan.xz2UpgradeTilesType[xz]))
 	var depot = map.tiles[origin.x + 1][origin.y + 1].structure
-	check(U.alive(depot) and depot.scene_file_path.ends_with("Supply22.tscn"),
-			"the AI's layout merges into a supply depot (got %s)" % [depot.scene_file_path.get_file() if U.alive(depot) else "nothing"])
+	check(U.alive(depot) and Catalog.def_of(depot).id == "supply22",
+			"the AI's layout merges into a supply depot (got %s)" % [Catalog.def_of(depot).id if U.alive(depot) else "nothing"])
 
 	# ships take damage and sink
 	var water = map.tiles[0][map.sizeZ - 1]

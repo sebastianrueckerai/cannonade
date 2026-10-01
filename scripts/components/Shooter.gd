@@ -3,7 +3,7 @@ extends "res://scripts/components/Component.gd"
 
 @export var projectileSpawn: NodePath
 @export var arcPrefab: PackedScene
-@export var projectilePrefab: PackedScene
+@export var projectile: ProjectileDef
 @export var barrel: NodePath
 @export var cooldown: NodePath
 @export var supplyNeeded := 0.0
@@ -32,7 +32,7 @@ var _barrel_rot_z := 0.0
 
 func _ready() -> void:
 	nextBulletTime = U.time
-	vOpt = sqrt(maxDesiredRange * gravity)
+	refresh()
 	var b := _barrel()
 	if b:
 		_barrel_rot_y = b.rotation.y
@@ -55,6 +55,11 @@ func _barrel() -> Node3D:
 
 func _spawn() -> Node3D:
 	return get_node_or_null(projectileSpawn) as Node3D
+
+
+## Recomputes derived values after the parameters changed (catalog reload).
+func refresh() -> void:
+	vOpt = sqrt(maxDesiredRange * gravity)
 
 
 func get_supply_needed() -> float:
@@ -125,9 +130,8 @@ func try_shoot(destination: Vector3, destination_tile) -> bool:
 		if cd:
 			cd.run(secondsBetweenShots)
 		var rot := Basis(Vector3.UP, go.global_rotation.y)
-		var projectile_go := U.instantiate_at(projectilePrefab, U.world(), _spawn().global_position, rot)
-		var projectile := U.projectile(projectile_go)
-		projectile.player = player
-		projectile.fly_towards(destination, destination_tile, distance, vOpt, angleRads, flyTime, gravity,
+		var shell := Catalog.spawn_projectile(projectile, U.world(), _spawn().global_position, rot)
+		shell.player = player
+		shell.fly_towards(destination, destination_tile, distance, vOpt, angleRads, flyTime, gravity,
 				ascendingPart, damage)
 	return shot

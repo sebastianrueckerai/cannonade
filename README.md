@@ -46,6 +46,37 @@ guns that need supply only work with enough supply buildings inside your walls.
 Upgrade blocks placed in 2×2 / 3×3 squares merge into bigger guns, rocket stations,
 flak, shield generators or supply depots depending on their pattern.
 
+## Buildings are data
+
+Every building is a file in `data/buildings/` (the file name is its id); projectiles are
+in `data/projectiles/`. Numbers in these files win over anything in the model scenes.
+
+**Change a building:** open its `.tres` in Godot (double-click in the FileSystem dock), edit
+the fields in the Inspector, save, and press **F5** in the running game. Placed buildings
+use the new numbers right away (a reload already running finishes first).
+
+**Make a new building type:**
+1. Right-click a similar file in `data/buildings/` → *Duplicate…* → give it a new name
+   (that name is the id).
+2. In the Inspector set the name, size, health, `consumes` / `produces` (e.g. `supply`),
+   and `draw_weight` (> 0 to have it offered as the next building).
+3. Under *Behaviour*, add or remove entries ("Add Element" → *New CannonBehaviour*,
+   *FlakBehaviour*, *ShieldBehaviour*, *RocketBehaviour*, *WallBehaviour*) and fill in
+   their numbers. A cannon needs a projectile: pick one from `data/projectiles/` or
+   duplicate one there too.
+4. Under *Recipe*, say how it is obtained: a `recipe_pattern` (ids of single-tile
+   buildings in a size × size square, column by column from the lower left, `*` = any;
+   turned versions match too) or a `recipe_combine` (`[placed building, building it is
+   placed on]`).
+5. Save and press F5 (or restart). Problems in the data are listed in the main menu and
+   in the F5 message, never a crash.
+
+The model (`model`) can be any scene; reuse another building's model while prototyping.
+Behaviours look for parts by node name: `Barrel` and `ProjectileSpawn` (cannons),
+`RocketSpawn` (rockets), `Guns` (flak), `Shield` (shield), `Progress Bar` (reload ring).
+A genuinely new kind of behaviour needs a small script in `scripts/components/` plus a
+parameter resource in `scripts/data/`.
+
 ## How the port is structured
 
 * The scenes in `prefabs/` and `materials/` were generated from the Unity prefabs by a
@@ -73,6 +104,10 @@ geometry). A few things were changed on purpose:
   by 90°. Unity accepted any rotation, so an adjacent pair of b blocks always became a
   Cannon22d and the supply depot (the same pair along the other axis) could never be
   built; the AI also only plans layouts that merge into the structure it wants.
+* Combining an upgrade block into a building uses the block up (Unity kept it, so it
+  could be combined again and again).
+* Any single-tile building can be part of an upgrade pattern, not only upgrade blocks.
+* The start base is walled in with all four wall shapes (Unity only used three).
 * Splash damage hits each tile in range (Unity damaged the target tile once per splash tile).
 * The shield generator regenerates per second (Unity added `Time.time` every frame) and
   absorbs several hits before it resets.
@@ -99,6 +134,8 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
   cluster bombs, rockets, shield, flak and ships behave as in the game.
 * `tests/menu_test` – menu → chosen game mode → Esc → menu.
 * `tests/camera_test` – wheel zoom towards the cursor within its limits, middle mouse panning.
+* `tests/catalog_test` – shipped data is valid; data problems are reported, not crashed on;
+  duplicate a building, change it, press F5: it works in the running game (incl. recipes).
 * `tests/sim` – full games (`--mode=single|ai2|ai4`): rounds alternate, AIs build, arm
   themselves and fight, ships sail and shoot; map invariants hold; frame times are printed.
 

@@ -4,8 +4,6 @@ extends Node
 ##   godot --headless --fixed-fps 30 res://tests/human.tscn
 
 const Main = preload("res://scripts/Main.gd")
-const CANNON := preload("res://prefabs/Cannon.tscn")
-const UPGRADE_A := preload("res://prefabs/Upgrade_a.tscn")
 
 var main: Node
 var game
@@ -102,7 +100,7 @@ func _run() -> void:
 
 	# rotating the next wall with X / Y (a corner piece: not rotation symmetric)
 	U.destroy(human.nextWall)
-	human.nextWall = U.instantiate(preload("res://prefabs/BlockCorner.tscn"), human.wallSpawn)
+	human.nextWall = Catalog.spawn("wall_corner", human.wallSpawn)
 	var bb = U.comp(human.nextWall, "BuildingBlock")
 	var before: Array = bb.connects_up_down_left_right()
 	await point_at_tile(b)
@@ -158,8 +156,8 @@ func _run() -> void:
 
 	# right click with an upgrade on a combinable block builds the combination (supply)
 	var up_tile := free_tile_in_range()
-	human.build_building(map.tiles[up_tile.x][up_tile.y], UPGRADE_A.instantiate())
-	_offer_building(UPGRADE_A)
+	human.build_building(map.tiles[up_tile.x][up_tile.y], Catalog.spawn("upgrade_a"))
+	_offer_building("upgrade_a")
 	await point_at_tile(up_tile)
 	await press("build_building")
 	var combined = map.tiles[up_tile.x][up_tile.y].structure
@@ -167,7 +165,7 @@ func _run() -> void:
 
 	# a gun inside the walls fires at the enemy in the battle phase
 	map.tiles[b.x][b.y].un_build()
-	_offer_building(CANNON)
+	_offer_building("cannon")
 	await point_at_tile(b)
 	await press("build_building")
 	await frames(2)  # active guns are re-evaluated every frame
@@ -183,6 +181,6 @@ func _run() -> void:
 
 
 ## Replaces the randomly drawn next building (fixture for a specific piece).
-func _offer_building(scene: PackedScene) -> void:
+func _offer_building(id: String) -> void:
 	U.destroy(human.nextBuilding)
-	human.nextBuilding = U.instantiate(scene, human.buildingSpawn)
+	human.nextBuilding = Catalog.spawn(id, human.buildingSpawn)

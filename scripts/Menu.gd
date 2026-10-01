@@ -30,6 +30,12 @@ func _ready() -> void:
 	quit.custom_minimum_size = Vector2(0, 36)
 	quit.pressed.connect(get_tree().quit)
 	box.add_child(quit)
+	if not Catalog.errors.is_empty():
+		var problems := Label.new()
+		problems.text = "Problems in the building data (data/buildings):\n" + "\n".join(Catalog.errors)
+		problems.add_theme_color_override("font_color", Color(1, 0.45, 0.4))
+		problems.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		box.add_child(problems)
 
 
 func _start(mode: String) -> void:

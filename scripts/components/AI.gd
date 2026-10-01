@@ -13,7 +13,9 @@ var nextAction := 0.0
 var nActivePlans := 3
 var nFinishedPlans := 12
 var consecutiveShots := 1
-var preferredUpgrade := "Cannon22c"
+## catalog ids of the structures the AI builds from upgrade blocks
+var preferredUpgrade := "cannon22c"
+var supplyUpgrade := "supply22"
 var activePlans: Array = []
 var finishedPlans: Array = []
 var upgradePlan = null
@@ -330,7 +332,7 @@ func try_stack_next_wall() -> bool:
 func _try_set_upgrade_plan(upgrade_name: String) -> void:
 	upgradePlan = null
 	for bp in finishedPlans + activePlans:
-		if bp.try_initialize_xz_upgrade_tiles(upgrade_name, upgradeSelection):
+		if bp.try_initialize_xz_upgrade_tiles(upgrade_name):
 			upgradePlan = bp
 			break
 
@@ -340,7 +342,7 @@ func try_build_upgrade() -> bool:
 	if not available:
 		return false
 	if availableSupply * 0.85 < supplyNeed:
-		return true if _try_build_supply_on_existing_unbuildable_update() else try_build_upgrade_in_plan("Supply22")
+		return true if _try_build_supply_on_existing_unbuildable_update() else try_build_upgrade_in_plan(supplyUpgrade)
 	return try_build_upgrade_in_plan(preferredUpgrade)
 
 
@@ -352,7 +354,7 @@ func _try_build_supply_on_existing_unbuildable_update() -> bool:
 		var can_build: bool = ibr(coords.x, coords.y) and tile.buildable()
 		var cluster = UpgradeCluster.new(tile, self)
 		if can_build and can_combine_next_building_with_tile(tile) and not cluster.can_be_built():
-			combine_building(U.comp(nextBuilding, "Upgrade"), tile)
+			combine_building(tile)
 			highlight_building_place(tile)
 			return true
 	return false

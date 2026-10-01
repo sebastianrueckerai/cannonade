@@ -7,17 +7,10 @@ const UpgradeCluster = preload("res://scripts/UpgradeCluster.gd")
 @export var mainColorHexCode := "#1f1f5e"
 @export var highlightPosColorHexCode := "#aaaadd"
 @export var highlightNegColorHexCode := "#ad3030"
-@export var startBasePrefab: PackedScene = preload("res://prefabs/Base.tscn")
-@export var cannonPrefab: PackedScene = preload("res://prefabs/Cannon.tscn")
-@export var buildingPrefabs: Array = [
-	preload("res://prefabs/Cannon.tscn"), preload("res://prefabs/Upgrade_a.tscn"),
-	preload("res://prefabs/Upgrade_b.tscn")]
-@export var buildingProbabilites: Array = [1.0, 1.0, 1.0]
 @export var discardFlySeconds := 1.0
 @export var secondsBetweenBuildings := 0.3
 @export var maxSupply := 100.0
 
-var upgradeSelection = null
 ## ProgressBar controls (0..1)
 var supplyBar: Range = null
 var supplyNeededBar: Range = null
@@ -58,16 +51,7 @@ var wallColor := Color.WHITE
 var mousePosition := Vector2.ZERO
 
 
-func _check_inputs() -> void:
-	if buildingPrefabs.size() != buildingProbabilites.size():
-		push_error("Need a Probability for each building prefab!")
-	for p in buildingProbabilites:
-		if p == 0:
-			push_error("Probability for building prefabs must be > 0!")
-
-
 func setup() -> void:
-	_check_inputs()
 	mainColor = Color.html(mainColorHexCode)
 	highlightPosColor = Color.html(highlightPosColorHexCode)
 	highlightNegColor = Color.html(highlightNegColorHexCode)
@@ -152,34 +136,26 @@ func update_point_and_tile_selected() -> void:
 
 
 func can_combine_next_building_with_tile(tile) -> bool:
-	var upgrade := U.comp(nextBuilding, "Upgrade")
-	var combi := U.comp(tile.structure, "Combinable")
-	if combi != null and upgrade != null:
-		return tile.buildable() and combi.upgradeType2CombinationPrefabs.has(upgrade.upgradeType)
-	return false
+	return tile.buildable() and _combination(nextBuilding, tile) != null
+
+
+## The building made by placing `placed` onto the building on `tile` (or null).
+func _combination(placed: Node3D, tile) -> BuildingDef:
+	var a := Catalog.def_of(placed)
+	var b := Catalog.def_of(tile.structure)
+	if a == null or b == null:
+		return null
+	return Catalog.combination(a.id, b.id)
 
 
 func try_get_next_building() -> void:
 	if not U.alive(nextBuilding) and secondsLastBuilding + secondsBetweenBuildings < U.time:
 		secondsLastBuilding = 0.0
-		if buildingPrefabs.is_empty():
+		var def := Catalog.draw(BuildingDef.Category.BUILDING)
+		if def == null:
 			return
-		var choice := _choose_random_index(buildingProbabilites)
-		nextBuilding = U.instantiate(buildingPrefabs[choice], buildingSpawn)
+		nextBuilding = Catalog.spawn(def, buildingSpawn)
 		switch_casting_shadows(nextBuilding, false)
-
-
-func _choose_random_index(probs: Array) -> int:
-	var total := 0.0
-	for p in probs:
-		total += p
-	var rnd := U.rfloat(0.0, 1.0)
-	var cumulative := 0.0
-	for i in probs.size():
-		cumulative += probs[i]
-		if rnd < cumulative / total:
-			return i
-	return probs.size() - 1
 
 
 func next_wall_to_gui() -> void:
@@ -330,13 +306,17 @@ func _build(tile, n: Node3D) -> Node3D:
 
 
 func _combine_next_building_with_selected_tile() -> Node3D:
-	var b := combine_building(U.comp(nextBuilding, "Upgrade"), buildableTileSelected)
-	return b
+	return combine_building(buildableTileSelected)
 
 
-func combine_building(upgrade, tile) -> Node3D:
-	var combine_prefab: PackedScene = U.comp(tile.structure, "Combinable").upgradeType2CombinationPrefabs[upgrade.upgradeType]
-	var combined := U.instantiate(combine_prefab)
+## Places the next building onto the building on `tile`, replacing both with
+## their combination. (Unity kept the placed piece, so it could be used again.)
+func combine_building(tile) -> Node3D:
+	var def := _combination(nextBuilding, tile)
+	var combined := Catalog.spawn(def)
+	U.destroy(nextBuilding)
+	nextBuilding = null
+	secondsLastBuilding += U.time
 	tile.un_build()
 	build_building(tile, combined)
 	return combined
@@ -366,7 +346,8 @@ func build_building(tile, building: Node3D) -> void:
 		supports[key] = support
 	elif supply != null:
 		supplies[key] = supply
-	elif upgrade != null:
+	# any building can be part of an upgrade pattern (not only upgrade blocks)
+	if upgrade != null:
 		build_upgrade(tile)
 
 
@@ -396,16 +377,16 @@ func build_wall(tile, wall: Node3D) -> void:
 
 
 func build_start_base(tile) -> void:
-	var n := _build(tile, U.instantiate(startBasePrefab))
+	var n := _build(tile, Catalog.spawn(Catalog.base_def()))
 	startBase = U.comp(n, "BuildingBlock")
 	U.set_color(n, mainColor)
 	_wall_in(tile)
 
 
 func _build_from_random_prefabs(tile, plan: Array) -> void:
-	var order := U.shuffle_index(buildingPrefabs.size())
-	for i in order:
-		var new_go := U.instantiate(map.wallPrefabs[i])
+	var walls := Catalog.drawable(BuildingDef.Category.WALL)
+	for i in U.shuffle_index(walls.size()):
+		var new_go := Catalog.spawn(walls[i])
 		var bb := U.comp(new_go, "BuildingBlock")
 		bb.setup()
 		var rotations: int = bb.fits_plan_with_clockwise_rotations_of_input(plan)
@@ -483,9 +464,7 @@ func drop(droppable: Node3D, is_wall := true) -> void:
 
 
 func get_next_wall() -> void:
-	var n: int = map.wallPrefabs.size()
-	var choice := U.rint(0, n)
-	var wall := U.instantiate(map.wallPrefabs[choice], wallSpawn)
+	var wall := Catalog.spawn(Catalog.draw(BuildingDef.Category.WALL), wallSpawn)
 	var rotations := U.rint(0, 4)
 	for i in rotations:
 		U.comp(wall, "BuildingBlock").rotate_counter_clockwise()

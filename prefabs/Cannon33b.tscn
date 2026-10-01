@@ -1,10 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/components/Shooter.gd" id="1"]
-[ext_resource type="PackedScene" path="res://prefabs/ArcRenderer.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://prefabs/Bullet.tscn" id="3"]
-[ext_resource type="Script" path="res://scripts/components/BuildingBlock.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/components/UpgradedStructure.gd" id="5"]
 [ext_resource type="Material" path="res://materials/Cooldown.tres" id="6"]
 [ext_resource type="Script" path="res://scripts/components/Cooldown.gd" id="7"]
 [ext_resource type="Material" path="res://materials/GunMetal.tres" id="8"]
@@ -36,35 +31,6 @@ size = Vector3(1, 1, 1)
 size = Vector3(1, 1, 1)
 
 [node name="Cannon33b" type="Node3D"]
-
-[node name="Shooter" type="Node" parent="."]
-script = ExtResource("1")
-projectileSpawn = NodePath("../Barrel/Cylinder/Nozzel/ProjectileSpawn")
-arcPrefab = ExtResource("2")
-projectilePrefab = ExtResource("3")
-barrel = NodePath("../Barrel")
-cooldown = NodePath("../Progress Bar")
-supplyNeeded = 9
-minRange = 1
-maxDesiredRange = 40
-gravity = 5
-ascendingPart = 0.6
-secondsBetweenShots = 2
-damage = 10
-turns = true
-nextBulletTime = 0
-
-[node name="BuildingBlock" type="Node" parent="."]
-script = ExtResource("4")
-connectorsUpDownLeftRight = [false, false, false, false]
-accessColFromDownLeft = [true, true, true, true, true, true, true, true, true]
-probabilityModifier = 1
-health = 10
-
-[node name="UpgradedStructure" type="Node" parent="."]
-script = ExtResource("5")
-signature = PackedInt32Array(1, 1, 1, 1, 0, 1, 1, 1, 1)
-defaultForSize = false
 
 [node name="Progress Bar" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.572093, 0, 0, 0, 0, -0.461365, 0, 0.461365, 0, 0, 0.853, 0)

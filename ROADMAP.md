@@ -21,11 +21,11 @@ Legend: `[ ]` open · `[~]` started · `[x]` done · **(decide)** needs a decisi
 
 ---
 
-## Next: round A – building catalog (data-driven buildings)
+## Done: round A – building catalog (data-driven buildings)
 
 Behaviour must stay identical to today; the existing tests prove it.
 
-**Format (recommended, waiting for confirmation).** One Godot resource file per building
+**Format (decided).** One Godot resource file per building
 in `data/buildings/*.tres` (a `BuildingDef` resource class). It is plain text, so it diffs
 well and can be edited in any text editor. In the Godot editor it is a form with typed
 fields, dropdowns and pickers, so no parsing code or schema is needed. The alternative,
@@ -71,17 +71,30 @@ entry. The behaviour finds its anchors in the model by name. These are today's
 components, with their numbers moved into data.
 
 **Tasks**
-- [ ] `BuildingDef`, behaviour parameter resources, `BuildingCatalog` autoload (loads `data/buildings/`)
-- [ ] Move the existing buildings into data: Cannon, Upgrade a / b, Supply, Base, the
-      4 wall shapes, Cannon22a–d, Cannon33a–c, Flak22, ShieldGen22, RocketStation, Supply22
-- [ ] `UpgradeSelection`, `Combinable` and the "next building" pool read the catalog
-- [ ] Recipe matching on building ids, not only a / b block types (allows e.g. "2×2 flak → flak battery")
-- [ ] Catalog validation at load with readable errors: ambiguous patterns (the Supply22 /
-      Cannon22d kind of clash), unknown ids, missing anchors, recipes that can never complete
-- [ ] Hot reload: a key (F5) re-reads the catalog during a game for fast tuning
-- [ ] Tests: catalog loads and validates; the weapons test becomes a table driven by the
-      catalog; existing suites stay green (parity)
-- [ ] README: how to add a building (a short walk-through)
+- [x] `BuildingDef`, behaviour parameter resources, `ProjectileDef`, `Catalog` autoload
+- [x] All buildings and projectiles moved into `data/` (21 buildings incl. walls, base and
+      the ship's gun, 4 projectiles); model scenes stripped to visuals
+- [x] Upgrade patterns, combinations and the next-building / next-wall draw read the catalog;
+      the AI's target structures are catalog ids
+- [x] Recipes on building ids: any single-tile building can be part of a pattern
+- [x] Validation with readable messages (pattern size, unknown ids, clashing recipes,
+      missing model, wrong file type, missing essentials); shown in the main menu and on F5
+- [x] F5 hot reload; placed buildings take the new numbers
+- [x] Tests: `catalog_test` (validation, duplicate → edit → F5 workflow, recipe from
+      buildings); existing suites green = parity
+- [x] README walk-through "Make a new building type"
+
+**Left over from round A**
+- [ ] F5 only updates numbers of placed buildings; behaviours added to or removed from a
+      def apply to buildings placed afterwards
+- [ ] Missing model parts (`Barrel`, `ProjectileSpawn`, …) silently fall back to empty
+      helper nodes; a validation hint would help when building new models
+- [ ] CSV / table export of all buildings for a balancing overview
+- (decide) The AI's goal structures (`preferredUpgrade = cannon22c`, `supplyUpgrade =
+  supply22` in `AI.gd`) could become catalog data (e.g. an `ai_priority` field)
+- Note: Godot does not write values equal to a field's default into `.tres` files; the
+  Inspector still shows them. Changing a default in `scripts/data/` changes every file
+  that relies on it.
 
 ## Next: round B – sandbox editor v1
 
@@ -111,6 +124,8 @@ use it too, so polish follows later (see Later: sandbox polish).
 - [ ] Speed: pause, 1×, 2×, 4×, 8×; **Reset** returns to the edited layout
 - [ ] Stats panel per side: shots, hits, intercepted by flak, absorbed by shields, walls /
       guns lost, time to defeat, winner
+- [ ] Target choice per AI side: walls (today's behaviour) / guns / supply / random
+      (decided: part of round B)
 
 ## Later: round C – experiments (battle lab)
 - [ ] Headless batch runner: `--scenario=x --runs=50 --seeds=1..50` prints win rates and
@@ -129,22 +144,18 @@ use it too, so polish follows later (see Later: sandbox polish).
 - [ ] Shipped example scenarios with descriptions
 
 ## Ideas to try (test)
-- (test) Targeting rules per side: walls / guns / supply / random. Today the AI only
-  shoots at walls with many wall neighbours, which matters for "flak vs guns" experiments
 - (test) Flak with a limited number of shots per salvo, or a cooldown per shell
 - (test) Shield as a dome that absorbs a fixed amount, then breaks (today it regenerates)
 - (test) Supply as a network: buildings only get supply from depots in the same enclosed area
 - (test) More resource types (ammo, power), via the `produces` / `consumes` maps
-- (test) Upgrade recipes from built buildings, e.g. 2×2 flak → flak battery
+- (test) Upgrade recipes from built buildings (possible since round A), e.g. four
+  cannons → flak battery; multi-tile ingredients (2×2 flak → battery) still unsupported
 - (test) Shell arcs: today's arcs are very high (the original formula picks the steep
   solution); a flatter arc may be easier to read
 - (test) Win condition for normal games: base destroyed, or more enclosed area after N rounds
   (the Unity `roundsPerGame` was never used)
 
 ## Maybes (decide / spike)
-- (decide) Data format: `.tres` (recommended) vs JSON / CSV, see round A – waiting for confirmation
-- (decide) Should the AI's target choice (walls / guns / supply) be a per-side Sandbox
-  option in round B? Probably needed for flak-vs-cannon experiments
 - (decide) Hot-seat (two humans) in the Sandbox: not planned; revisit if wanted
 - (decide) Keep the Unity quirks the port preserved on purpose (AI plan geometry, the
   `(x, x)` check in `try_build_gun_in_plan`, upgrade-cluster tile checks at absolute
@@ -183,3 +194,5 @@ use it too, so polish follows later (see Later: sandbox polish).
 - [x] Supply depot buildable (pattern ambiguity with Cannon22d fixed)
 - [x] Unity project removed; the Godot project is the repository root
 - [x] Mouse wheel zoom to the cursor, middle mouse panning
+- [x] Round A: buildings and projectiles as data (`data/`, `Catalog`, F5 reload);
+      combining now uses the upgrade block up; any building can be a recipe part

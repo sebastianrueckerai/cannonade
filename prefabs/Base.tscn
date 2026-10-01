@@ -1,6 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/components/BuildingBlock.gd" id="1"]
 [ext_resource type="Material" path="res://materials/Base.tres" id="2"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_1"]
@@ -13,13 +12,6 @@ size = Vector3(1, 1, 1)
 size = Vector3(1, 1, 1)
 
 [node name="Base" type="Node3D"]
-
-[node name="BuildingBlock" type="Node" parent="."]
-script = ExtResource("1")
-connectorsUpDownLeftRight = [false, false, false, false]
-accessColFromDownLeft = [true, true, true, true, true, true, true, true, true]
-probabilityModifier = 1
-health = 10
 
 [node name="Body" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

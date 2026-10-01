@@ -36,6 +36,14 @@ func shooter():
 	return get_node(cannon)
 
 
+func _ready() -> void:
+	# the ship's gun is the catalog building "ship_cannon"
+	var gun := go.get_node_or_null("Cannon") as Node3D
+	var def := Catalog.get_def("ship_cannon")
+	if gun != null and def != null:
+		Catalog.configure(gun, def)
+
+
 func set_sail(f, m, start_tile) -> void:
 	fleet = f
 	map = m

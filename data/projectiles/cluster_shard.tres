@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ProjectileDef" format=3]
+
+[ext_resource type="PackedScene" path="res://prefabs/StraightShooter.tscn" id="1_joimg"]
+[ext_resource type="Script" path="res://scripts/data/ProjectileDef.gd" id="2_1rr5q"]
+
+[resource]
+script = ExtResource("2_1rr5q")
+kind = 2
+model = ExtResource("1_joimg")
+velocity = 5.0
+splash_range = 1
+burn_time = 3.0
+stun_time = 2.0

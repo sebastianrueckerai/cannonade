@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_nl7hb"]
+[ext_resource type="Resource" path="res://data/projectiles/shell.tres" id="2_gg0o8"]
+[ext_resource type="Script" path="res://scripts/data/CannonBehaviour.gd" id="3_o473l"]
+[ext_resource type="PackedScene" path="res://prefabs/Cannon.tscn" id="4_mja7t"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="5_atgss"]
+
+[sub_resource type="Resource" id="Resource_cpxy1"]
+script = ExtResource("3_o473l")
+projectile = ExtResource("2_gg0o8")
+
+[resource]
+script = ExtResource("5_atgss")
+display_name = "Cannon"
+description = "Basic gun. Needs to be inside closed walls."
+model = ExtResource("4_mja7t")
+draw_weight = 1.0
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()
+behaviours = Array[ExtResource("1_nl7hb")]([SubResource("Resource_cpxy1")])

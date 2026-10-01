@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_lecdu"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower1.tscn" id="2_nvkc4"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower2.tscn" id="3_vq2qx"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower3.tscn" id="4_p3wnc"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower4.tscn" id="5_kpvea"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower5.tscn" id="6_rnesx"]
+[ext_resource type="Script" path="res://scripts/data/WallBehaviour.gd" id="7_dlyc7"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper1.tscn" id="8_s4bio"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper2.tscn" id="9_1ohwp"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper3.tscn" id="10_27cjf"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper4.tscn" id="11_0mdk8"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper5.tscn" id="12_5umkq"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper6.tscn" id="13_w4ytk"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper7.tscn" id="14_s4xdr"]
+[ext_resource type="PackedScene" path="res://prefabs/BlockCross.tscn" id="15_i0631"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="16_0iga3"]
+
+[sub_resource type="Resource" id="Resource_n4vhh"]
+script = ExtResource("7_dlyc7")
+lower_models = Array[PackedScene]([ExtResource("2_nvkc4"), ExtResource("3_vq2qx"), ExtResource("4_p3wnc"), ExtResource("5_kpvea"), ExtResource("6_rnesx")])
+upper_models = Array[PackedScene]([ExtResource("8_s4bio"), ExtResource("9_1ohwp"), ExtResource("10_27cjf"), ExtResource("11_0mdk8"), ExtResource("12_5umkq"), ExtResource("13_w4ytk"), ExtResource("14_s4xdr")])
+
+[resource]
+script = ExtResource("16_0iga3")
+display_name = "Wall cross"
+category = 1
+model = ExtResource("15_i0631")
+access = Array[bool]([true, false, true, false, false, false, true, false, true])
+draw_weight = 1.0
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()
+behaviours = Array[ExtResource("1_lecdu")]([SubResource("Resource_n4vhh")])

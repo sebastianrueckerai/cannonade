@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_6yex6"]
+[ext_resource type="Resource" path="res://data/projectiles/shell.tres" id="2_ot5sq"]
+[ext_resource type="Script" path="res://scripts/data/CannonBehaviour.gd" id="3_1eiqj"]
+[ext_resource type="PackedScene" path="res://prefabs/Cannon22c.tscn" id="4_5qagj"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="5_u53c1"]
+
+[sub_resource type="Resource" id="Resource_o4rml"]
+script = ExtResource("3_1eiqj")
+projectile = ExtResource("2_ot5sq")
+
+[resource]
+script = ExtResource("5_u53c1")
+display_name = "Cannon 2x2 (diagonal)"
+model = ExtResource("4_5qagj")
+size = 2
+consumes = Dictionary[String, float]({
+"supply": 4.0
+})
+recipe_pattern = PackedStringArray("upgrade_b", "upgrade_a", "upgrade_a", "upgrade_b")
+recipe_combine = PackedStringArray()
+behaviours = Array[ExtResource("1_6yex6")]([SubResource("Resource_o4rml")])

@@ -1,20 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/components/BuildingBlock.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/components/FlyAndVanish.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/components/Wall.gd" id="3"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower1.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower2.tscn" id="5"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower3.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower4.tscn" id="7"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModellCrossLower5.tscn" id="8"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper1.tscn" id="9"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper2.tscn" id="10"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper3.tscn" id="11"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper4.tscn" id="12"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper5.tscn" id="13"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper6.tscn" id="14"]
-[ext_resource type="PackedScene" path="res://prefabs/walls/ModelCrossUpper7.tscn" id="15"]
 [ext_resource type="Material" path="res://materials/Structure.tres" id="16"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_1"]
@@ -24,22 +9,6 @@ size = Vector3(1, 1, 1)
 size = Vector3(1, 1, 1)
 
 [node name="BlockCross" type="Node3D"]
-
-[node name="BuildingBlock" type="Node" parent="."]
-script = ExtResource("1")
-connectorsUpDownLeftRight = [true, true, true, true]
-accessColFromDownLeft = [true, false, true, false, false, false, true, false, true]
-probabilityModifier = 1
-health = 10
-
-[node name="FlyAndVanish" type="Node" parent="."]
-script = ExtResource("2")
-
-[node name="Wall" type="Node" parent="."]
-script = ExtResource("3")
-lowerPrefabs = [ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8")]
-upperPrefabs = [ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12"), ExtResource("13"), ExtResource("14"), ExtResource("15")]
-placeholderModel = NodePath("../placeholder")
 
 [node name="placeholder" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

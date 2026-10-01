@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_8f1x7"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellLineLower1.tscn" id="2_5hdcc"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellLineLower2.tscn" id="3_dh04i"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellLineLower3.tscn" id="4_fmi2w"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellLineLower4.tscn" id="5_qqapn"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellLineLower5.tscn" id="6_51tbw"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModellLineLower6.tscn" id="7_3nevf"]
+[ext_resource type="Script" path="res://scripts/data/WallBehaviour.gd" id="8_8g14p"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelLineUpper1.tscn" id="9_gan2l"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelLineUpper2.tscn" id="10_tdg5h"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelLineUpper3.tscn" id="11_qwm7c"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelLineUpper4.tscn" id="12_5oqtx"]
+[ext_resource type="PackedScene" path="res://prefabs/walls/ModelLineUpper5.tscn" id="13_cqgg4"]
+[ext_resource type="PackedScene" path="res://prefabs/BlockLine.tscn" id="14_fxfr3"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="15_hfkec"]
+
+[sub_resource type="Resource" id="Resource_336rt"]
+script = ExtResource("8_8g14p")
+lower_models = Array[PackedScene]([ExtResource("2_5hdcc"), ExtResource("3_dh04i"), ExtResource("4_fmi2w"), ExtResource("5_qqapn"), ExtResource("6_51tbw"), ExtResource("7_3nevf")])
+upper_models = Array[PackedScene]([ExtResource("9_gan2l"), ExtResource("10_tdg5h"), ExtResource("11_qwm7c"), ExtResource("12_5oqtx"), ExtResource("13_cqgg4")])
+
+[resource]
+script = ExtResource("15_hfkec")
+display_name = "Wall"
+category = 1
+model = ExtResource("14_fxfr3")
+access = Array[bool]([true, false, true, true, false, true, true, false, true])
+draw_weight = 1.0
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()
+behaviours = Array[ExtResource("1_8f1x7")]([SubResource("Resource_336rt")])

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ProjectileDef" format=3]
+
+[ext_resource type="PackedScene" path="res://prefabs/Bullet.tscn" id="1_wfdxl"]
+[ext_resource type="Script" path="res://scripts/data/ProjectileDef.gd" id="2_3p18f"]
+
+[resource]
+script = ExtResource("2_3p18f")
+model = ExtResource("1_wfdxl")
+velocity = 0.0

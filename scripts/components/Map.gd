@@ -7,9 +7,6 @@ const StatesMap = preload("res://scripts/StatesMap.gd")
 @export var sizeZ := 20
 @export var tileSize := 1.0
 @export var tilePrefab: PackedScene = preload("res://prefabs/Slab.tscn")
-@export var wallPrefabs: Array = [
-	preload("res://prefabs/BlockCorner.tscn"), preload("res://prefabs/BlockCross.tscn"),
-	preload("res://prefabs/BlockLine.tscn"), preload("res://prefabs/BlockThree.tscn")]
 @export var maxEnclosedColors: Array = [Color(0.26415092, 0.26415092, 0.26415092)]
 @export var minEnclosedColors: Array = [Color(0.4339623, 0.43191528, 0.43191528)]
 @export var maxOpenColors: Array = [Color(0.41509432, 0.29819083, 0.064613745), Color(0.095318615, 0.3207547, 0.11725227)]

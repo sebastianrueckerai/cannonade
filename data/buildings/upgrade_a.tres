@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_cbdyy"]
+[ext_resource type="PackedScene" path="res://prefabs/Upgrade_a.tscn" id="2_51ui8"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="3_drf7o"]
+
+[resource]
+script = ExtResource("3_drf7o")
+display_name = "Upgrade block A"
+description = "Combine 2x2 / 3x3 blocks into bigger structures."
+model = ExtResource("2_51ui8")
+draw_weight = 1.0
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()

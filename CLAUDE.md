@@ -13,10 +13,15 @@ round, update it: tick off what is done, park unfinished work, open questions, i
   `U.comp(go, "Shooter")`, never by script type.
 - `scripts/U.gd` – autoload replacing the Unity API: game time (`U.time`), Unity-style
   random (`U.rint` excludes max), instantiate / destroy, colours, projectile registry.
+- `data/buildings/*.tres`, `data/projectiles/*.tres` – buildings and projectiles as data
+  (`scripts/data/` classes). `scripts/Catalog.gd` (autoload) loads and validates them and
+  spawns configured buildings: always create buildings with `Catalog.spawn(id)`, never by
+  instantiating a prefab. Model scenes in `prefabs/` are visuals only; the catalog adds
+  the behaviour components from the data.
 - `scripts/Main.gd` – builds a game from a mode (`single`, `versus`, `ai2`, `ai4`);
   `scripts/CameraRig.gd` – zoom / pan.
 - `prefabs/`, `materials/` – generated from the Unity prefabs (the converter is in git
-  history only); edit them by hand now.
+  history only); edit them by hand now. Building prefabs are models only.
 - Coordinates: tile `(x, z)` sits at `Map.tile_position(x, z)`; Unity's z axis is
   mirrored (`z → -z`). "Up" on the map is Godot −z.
 

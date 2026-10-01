@@ -2,13 +2,12 @@ extends RefCounted
 ## Shared test helper: walls in the 3x3 ring around a tile with wall pieces
 ## rotated to connect (through the public BuildingBlock / PlayerController API).
 
-const WALLS := [preload("res://prefabs/BlockCorner.tscn"), preload("res://prefabs/BlockCross.tscn"),
-	preload("res://prefabs/BlockLine.tscn"), preload("res://prefabs/BlockThree.tscn")]
+const WALLS := ["wall_corner", "wall_cross", "wall_line", "wall_tee"]
 
 
 static func wall_for(plan: Array) -> Node3D:
-	for scene in WALLS:
-		var w: Node3D = scene.instantiate()
+	for id in WALLS:
+		var w: Node3D = Catalog.spawn(id)
 		var bb = w.get_node("BuildingBlock")
 		var rots: int = bb.fits_plan_with_clockwise_rotations_of_input(plan)
 		if rots >= 0:

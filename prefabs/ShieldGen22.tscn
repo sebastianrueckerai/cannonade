@@ -1,8 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/components/BuildingBlock.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/components/UpgradedStructure.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/components/ShieldGenerator.gd" id="3"]
 [ext_resource type="Material" path="res://materials/Cooldown.tres" id="4"]
 [ext_resource type="Script" path="res://scripts/components/Cooldown.gd" id="5"]
 [ext_resource type="Material" path="res://materials/GunMetal.tres" id="6"]
@@ -31,26 +28,6 @@ radial_segments = 20
 rings = 10
 
 [node name="ShieldGen22" type="Node3D"]
-
-[node name="BuildingBlock" type="Node" parent="."]
-script = ExtResource("1")
-connectorsUpDownLeftRight = [false, false, false, false]
-accessColFromDownLeft = [true, true, true, true, true, true, true, true, true]
-probabilityModifier = 1
-health = 10
-
-[node name="UpgradedStructure" type="Node" parent="."]
-script = ExtResource("2")
-signature = PackedInt32Array(0, 0, 0, 1)
-defaultForSize = false
-
-[node name="ShieldGenerator" type="Node" parent="."]
-script = ExtResource("3")
-secondsToReset = 4
-maxDamageAbsorb = 31
-range = 7
-on = true
-shieldMeshRenderer = NodePath("../Shield")
 
 [node name="Progress Bar" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.572093, 0, 0, 0, 0, -0.461365, 0, 0.461365, 0, 0, 0.853, 0)

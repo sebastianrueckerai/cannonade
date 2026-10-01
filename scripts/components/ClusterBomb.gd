@@ -1,7 +1,7 @@
 extends "res://scripts/components/Projectile.gd"
 ## Port of ClusterBomb.cs: releases sub munitions on the descending part.
 
-@export var subMunitionPrefab: PackedScene
+@export var submunition: ProjectileDef
 @export var numSubmunitions := 5
 @export var clusterRange := 2
 
@@ -22,8 +22,7 @@ func release_cluster() -> void:
 		var idx := U.shuffle_index(tiles.size())
 		var n := mini(numSubmunitions, tiles.size())
 		for i in n:
-			var sub := U.instantiate_at(subMunitionPrefab, go.get_parent(), go.global_position, go.global_transform.basis.orthonormalized())
-			var flight = U.comp(sub, "ProjectileStraightFlight")
+			var flight := Catalog.spawn_projectile(submunition, go.get_parent(), go.global_position, go.global_transform.basis.orthonormalized())
 			flight.player = player
 			flight.fly_towards(tiles[idx[i]], damage)
 	U.destroy(go)

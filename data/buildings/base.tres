@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_0xlxp"]
+[ext_resource type="PackedScene" path="res://prefabs/Base.tscn" id="2_vn0pk"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="3_g6rf0"]
+
+[resource]
+script = ExtResource("3_g6rf0")
+display_name = "Base"
+description = "A player's start base."
+category = 2
+model = ExtResource("2_vn0pk")
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()

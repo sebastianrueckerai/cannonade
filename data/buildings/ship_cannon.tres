@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_7uffw"]
+[ext_resource type="Resource" path="res://data/projectiles/shell.tres" id="2_31p62"]
+[ext_resource type="Script" path="res://scripts/data/CannonBehaviour.gd" id="3_0aknm"]
+[ext_resource type="PackedScene" path="res://prefabs/Cannon.tscn" id="4_4s52l"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="5_v5h7v"]
+
+[sub_resource type="Resource" id="Resource_w1igh"]
+script = ExtResource("3_0aknm")
+projectile = ExtResource("2_31p62")
+
+[resource]
+script = ExtResource("5_v5h7v")
+display_name = "Ship cannon"
+description = "The gun on enemy ships."
+category = 3
+model = ExtResource("4_4s52l")
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()
+behaviours = Array[ExtResource("1_7uffw")]([SubResource("Resource_w1igh")])

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_8o1nm"]
+[ext_resource type="PackedScene" path="res://prefabs/Supply.tscn" id="2_y1xjj"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="3_qgaob"]
+
+[resource]
+script = ExtResource("3_qgaob")
+display_name = "Supply depot"
+description = "Gives supply to guns inside the same walls."
+model = ExtResource("2_y1xjj")
+produces = Dictionary[String, float]({
+"supply": 4.0
+})
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray("upgrade_a", "upgrade_a")

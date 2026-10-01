@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ProjectileDef" format=3]
+
+[ext_resource type="PackedScene" path="res://prefabs/ClusterBomb.tscn" id="1_0pw4d"]
+[ext_resource type="Script" path="res://scripts/data/ProjectileDef.gd" id="2_alibt"]
+[ext_resource type="Resource" path="res://data/projectiles/cluster_shard.tres" id="3_jv48d"]
+
+[resource]
+script = ExtResource("2_alibt")
+kind = 1
+model = ExtResource("1_0pw4d")
+submunition = ExtResource("3_jv48d")

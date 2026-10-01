@@ -1,6 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/components/Projectile.gd" id="1"]
 [ext_resource type="Material" path="res://materials/Dark.tres" id="2"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_1"]
@@ -24,16 +23,6 @@ size = Vector3(1, 1, 1)
 
 [node name="Bullet" type="Node3D"]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
-
-[node name="Projectile" type="Node" parent="."]
-script = ExtResource("1")
-velocity = 0
-burnTime = 0
-splashRange = 0
-tileDestroyer = false
-body = NodePath("../rotater")
-rotates = true
-ascendingPartPercent = 0
 
 [node name="rotater" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

@@ -8,7 +8,6 @@ extends Node3D
 const GameController = preload("res://scripts/components/GameController.gd")
 const MapScript = preload("res://scripts/components/Map.gd")
 const ShipFleet = preload("res://scripts/components/ShipFleet.gd")
-const UpgradeSelection = preload("res://scripts/components/UpgradeSelection.gd")
 const PlayerController = preload("res://scripts/components/PlayerController.gd")
 const AIScript = preload("res://scripts/components/AI.gd")
 const CameraRig = preload("res://scripts/CameraRig.gd")
@@ -91,14 +90,12 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	map.sizeX = cfg["size"]
 	map.sizeZ = cfg["size"]
 	map.decorate = decorate
-	var selection = _component("UpgradeSelection", UpgradeSelection)
 	var fleet = _component("FleetControll", ShipFleet)
 	game = _component("Game", GameController)
 	game.roundDuration = cfg["round"]
 	game.initialShips = cfg["ships"]
 	game.map = map
 	game.fleet = fleet
-	game.upgradeSelection = selection
 	game.roundTimer = ui.get_node("Timer")
 	var kinds: Array = cfg["players"]
 	for i in kinds.size():
@@ -263,6 +260,25 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F5:
+		Catalog.reload()
+		_toast("Building data reloaded" if Catalog.errors.is_empty()
+				else "Building data reloaded – %d problem(s):\n%s" % [Catalog.errors.size(), "\n".join(Catalog.errors)])
 	if event.is_action_pressed("ui_cancel"):
 		Engine.time_scale = 1.0
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")
+
+
+## Short message in the middle of the screen.
+func _toast(text: String) -> void:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", 18)
+	l.add_theme_color_override("font_outline_color", Color.BLACK)
+	l.add_theme_constant_override("outline_size", 6)
+	l.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	l.grow_vertical = Control.GROW_DIRECTION_BOTH
+	ui.add_child(l)
+	get_tree().create_timer(4.0 if Catalog.errors.is_empty() else 10.0).timeout.connect(l.queue_free)

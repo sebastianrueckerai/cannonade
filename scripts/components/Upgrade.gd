@@ -1,3 +1,4 @@
 extends "res://scripts/components/Component.gd"
 ## Port of Upgrade.cs
-@export var upgradeType := 0
+## id of the building (an ingredient of upgrade patterns / combinations)
+@export var upgradeType := ""

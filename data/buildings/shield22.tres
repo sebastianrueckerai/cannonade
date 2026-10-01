@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_ho4sg"]
+[ext_resource type="Script" path="res://scripts/data/ShieldBehaviour.gd" id="2_b10s4"]
+[ext_resource type="PackedScene" path="res://prefabs/ShieldGen22.tscn" id="3_i76oo"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="4_ao4lb"]
+
+[sub_resource type="Resource" id="Resource_lep6b"]
+script = ExtResource("2_b10s4")
+
+[resource]
+script = ExtResource("4_ao4lb")
+display_name = "Shield generator"
+description = "Absorbs enemy projectiles around it."
+model = ExtResource("3_i76oo")
+size = 2
+consumes = Dictionary[String, float]({
+"supply": 4.0
+})
+recipe_pattern = PackedStringArray("upgrade_a", "upgrade_a", "upgrade_a", "upgrade_b")
+recipe_combine = PackedStringArray()
+behaviours = Array[ExtResource("1_ho4sg")]([SubResource("Resource_lep6b")])

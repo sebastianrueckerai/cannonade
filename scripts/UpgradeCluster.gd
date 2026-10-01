@@ -76,8 +76,11 @@ func build_multifield_upgrade() -> void:
 	ix /= upgradedTiles.size()
 	iz /= upgradedTiles.size()
 	var upgrade_position := Vector3(ix, 0.0, iz)
-	var prefab: PackedScene = player.upgradeSelection.pick_new_structure_prefab(self)
-	var new_structure := U.instantiate(prefab)
+	var def := Catalog.pick_for_pattern(get_upgrade_signature())
+	if def == null:
+		push_warning("Catalog: no structure for the upgrade pattern %s" % [get_upgrade_signature()])
+		return
+	var new_structure := Catalog.spawn(def)
 	tile.un_build()
 	for bp in upgradedTiles:
 		bp.upgradeCluster = self

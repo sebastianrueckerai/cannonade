@@ -7,8 +7,7 @@ extends Node
 const Main = preload("res://scripts/Main.gd")
 const StatesMap = preload("res://scripts/StatesMap.gd")
 const Ring = preload("res://tests/ring.gd")
-const OTHER := [preload("res://prefabs/BlockLine.tscn"), preload("res://prefabs/BlockCorner.tscn"),
-	preload("res://prefabs/Cannon.tscn")]
+const OTHER := ["wall_line", "wall_corner", "cannon"]
 
 
 ## The original cell by cell flood fill (Unity StatesMap.Waterflow), as reference.
@@ -123,7 +122,7 @@ func _ready() -> void:
 		if U.alive(tile.structure):
 			tile.un_build()
 		elif not tile.water:
-			var w: Node3D = OTHER[randi() % OTHER.size()].instantiate()
+			var w: Node3D = Catalog.spawn(OTHER[randi() % OTHER.size()])
 			for r in randi() % 4:
 				w.get_node("BuildingBlock").rotate_clockwise()
 			player.build_building(tile, w)

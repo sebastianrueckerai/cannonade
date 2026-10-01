@@ -3,7 +3,6 @@ extends RefCounted
 ## enclose an area. Coordinates are Vector2i(x, z), plan values are
 ## [up, down, left, right] connector requirements.
 
-const UpgradeSelection = preload("res://scripts/components/UpgradeSelection.gd")
 
 var map = null
 var possible := false
@@ -57,8 +56,11 @@ func upgrade_tiles_contain(x: int, z: int) -> bool:
 
 
 ## Lays out the upgrade blocks for structure_name inside the walled-in area.
-func try_initialize_xz_upgrade_tiles(structure_name: String, selection) -> bool:
-	desiredSignature = selection.upgradeName2signature[structure_name]
+func try_initialize_xz_upgrade_tiles(structure_id: String) -> bool:
+	var target := Catalog.get_def(structure_id)
+	if target == null or target.recipe_pattern.is_empty():
+		return false
+	desiredSignature = Array(target.recipe_pattern)
 	if xzWalledInTiles.size() < desiredSignature.size():
 		return false
 	xz2UpgradeTilesType = {}
@@ -93,9 +95,8 @@ func try_initialize_xz_upgrade_tiles(structure_name: String, selection) -> bool:
 	# and still merges into the desired structure
 	var rotated = null
 	for r in [0, 2, 1, 3]:
-		var candidate: Array = UpgradeSelection.rotations(desiredSignature, side)[r]
-		if UpgradeSelection._fits(candidate, current) \
-				and selection.prefab_name(selection.pick_for_signature(candidate)) == structure_name:
+		var candidate: Array = Catalog.rotations(desiredSignature, side)[r]
+		if Catalog.fits(candidate, current) and Catalog.pick_for_pattern(candidate) == target:
 			rotated = candidate
 			break
 	if rotated == null:
@@ -105,10 +106,10 @@ func try_initialize_xz_upgrade_tiles(structure_name: String, selection) -> bool:
 	return true
 
 
-func _get_current_upgrade_type_for_tile(xz: Vector2i) -> int:
+func _get_current_upgrade_type_for_tile(xz: Vector2i) -> String:
 	var s = map.tiles[xz.x][xz.y].structure
 	if not U.alive(s) or U.comp(s, "Upgrade") == null:
-		return -1  # wildcard
+		return "*"  # wildcard
 	return U.comp(s, "Upgrade").upgradeType
 
 
@@ -143,7 +144,7 @@ static func near_int_sqrt(x: int) -> int:
 	return y
 
 
-func get_upgrade_location_for_upgrade_type(upgrade_type: int):
+func get_upgrade_location_for_upgrade_type(upgrade_type: String):
 	for xz in xz2UpgradeTilesType:
 		if xz2UpgradeTilesType[xz] == upgrade_type and player.ibr(xz.x, xz.y) and map.get_mini(xz.x, xz.y) == 0:
 			return xz

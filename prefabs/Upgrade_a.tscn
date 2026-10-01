@@ -1,10 +1,5 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/components/BuildingBlock.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/components/Upgrade.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/components/FlyAndVanish.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/components/Combinable.gd" id="4"]
-[ext_resource type="PackedScene" path="res://prefabs/Supply.tscn" id="5"]
 [ext_resource type="Material" path="res://materials/Upgrade.tres" id="6"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_1"]
@@ -17,25 +12,6 @@ size = Vector3(1, 1, 1)
 size = Vector3(1, 1, 1)
 
 [node name="Upgrade_a" type="Node3D"]
-
-[node name="BuildingBlock" type="Node" parent="."]
-script = ExtResource("1")
-connectorsUpDownLeftRight = [false, false, false, false]
-accessColFromDownLeft = [true, true, true, true, true, true, true, true, true]
-probabilityModifier = 1
-health = 10
-
-[node name="Upgrade" type="Node" parent="."]
-script = ExtResource("2")
-upgradeType = 0
-
-[node name="FlyAndVanish" type="Node" parent="."]
-script = ExtResource("3")
-
-[node name="Combinable" type="Node" parent="."]
-script = ExtResource("4")
-upgradeTypes = PackedInt32Array(0)
-CombinationPrefabs = [ExtResource("5")]
 
 [node name="Cube (1)" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.403262, 0, 0.403262, 0.285149, 0.403262, -0.285149, -0.285149, 0.403262, 0.28515, 0, 0.311, 0)

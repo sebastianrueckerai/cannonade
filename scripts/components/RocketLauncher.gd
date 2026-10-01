@@ -1,17 +1,18 @@
 extends "res://scripts/components/Component.gd"
 ## Port of RocketLauncher.cs (implements IShooter).
 
-@export var rocketPrefab: PackedScene
+@export var projectile: ProjectileDef
 @export var destroyOnFirstShot: NodePath
 @export var rocketSpawn: NodePath
-## In the Unity prefab this pointed at the progress bar prefab asset; we use the
-## "Progress Bar" child instead.
-@export var cooldown: PackedScene
+@export var damage := 0.0
 @export var minRange := 2.0
 @export var maxDesiredRange := 30.0
 @export var secondsBetweenShots := 3.0
-@export var nextBulletTime := 0.0
+## seconds after placing until the first rocket is ready
+@export var initialDelay := 3.0
 @export var supplyNeeded := 9.0
+
+var nextBulletTime := 0.0
 
 var player = null
 var stunned := false
@@ -19,8 +20,7 @@ var stunnedUntil := 0.0
 
 
 func _ready() -> void:
-	# nextBulletTime from the prefab is an initial delay
-	nextBulletTime += U.time
+	nextBulletTime = U.time + initialDelay
 
 
 func sleep() -> void:
@@ -63,8 +63,8 @@ func try_shoot(destination: Vector3, destination_tile) -> bool:
 			U.destroy(once)
 			destroyOnFirstShot = NodePath()
 		var spawn := get_node(rocketSpawn) as Node3D
-		var rocket_go := U.instantiate_at(rocketPrefab, U.world(), spawn.global_position, spawn.global_transform.basis.orthonormalized())
-		var rocket = U.comp(rocket_go, "S2SRocket")
+		var rocket := Catalog.spawn_projectile(projectile, U.world(), spawn.global_position, spawn.global_transform.basis.orthonormalized())
 		rocket.player = player
+		rocket.damage = damage
 		rocket.fly_towards(destination, destination_tile)
 	return shot

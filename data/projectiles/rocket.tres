@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ProjectileDef" format=3]
+
+[ext_resource type="PackedScene" path="res://prefabs/Rocket.tscn" id="1_wxdd5"]
+[ext_resource type="Script" path="res://scripts/data/ProjectileDef.gd" id="2_ahtol"]
+
+[resource]
+script = ExtResource("2_ahtol")
+kind = 3
+model = ExtResource("1_wxdd5")
+tile_destroyer = true
