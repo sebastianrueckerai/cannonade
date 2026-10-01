@@ -25,11 +25,23 @@ Legend: `[ ]` open · `[~]` started · `[x]` done · **(decide)** needs a decisi
 
 Behaviour must stay identical to today; the existing tests prove it.
 
-**Format (recommendation).** One Godot resource file per building in `data/buildings/*.tres`
-(a `BuildingDef` resource class). It is plain text, so it diffs well. In the Godot editor
-it is a form with typed fields, dropdowns and pickers, so no parsing code or schema is
-needed. **(decide)** The alternative is JSON / CSV, which is nicer for spreadsheets and bulk
-edits but has no editor UI. A CSV *export* for overview tables could come later.
+**Format (recommended, waiting for confirmation).** One Godot resource file per building
+in `data/buildings/*.tres` (a `BuildingDef` resource class). It is plain text, so it diffs
+well and can be edited in any text editor. In the Godot editor it is a form with typed
+fields, dropdowns and pickers, so no parsing code or schema is needed. The alternative,
+JSON / CSV, is nicer for spreadsheets but has no editor UI. A CSV *export* for overview
+tables could come later.
+
+**Workflow this must support (acceptance criteria)**
+- New type: duplicate an existing `.tres` in the FileSystem dock, rename it, change fields
+  in the Inspector, press F5 (or Play in the Sandbox): it appears in the Sandbox palette
+- Behaviours are a list in the Inspector: "Add Element" → pick a behaviour type from the
+  dropdown (Cannon, Flak, Shield, …) → fill in its numbers; remove with the trash icon
+- Models can be reused from other buildings while prototyping
+- A broken file never crashes the game; errors are listed in the Sandbox / console with
+  the file name and what is wrong
+- Only a genuinely new kind of behaviour needs code (one small script that then shows up
+  in the dropdown)
 
 **`BuildingDef` (sketch)**
 
@@ -73,7 +85,9 @@ components, with their numbers moved into data.
 
 ## Next: round B – sandbox editor v1
 
-A main menu entry **Sandbox**. Two sides, blue and red. Aims: obvious to use, no manual needed.
+A main menu entry **Sandbox**. Two sides, blue and red. Aims: obvious to use, no manual
+needed. Audience: mainly a dev tool to iterate on gun concepts and balance; players may
+use it too, so polish follows later (see Later: sandbox polish).
 
 **Editing**
 - [ ] Map size choice (default 30×30); both bases auto-placed as today, but movable
@@ -89,8 +103,11 @@ A main menu entry **Sandbox**. Two sides, blue and red. Aims: obvious to use, no
 - [ ] Save / load scenarios: `user://scenarios/*.tres`; shipped examples in `data/scenarios/`
 
 **Playing**
-- [ ] **Play** runs a *battle only* simulation: no build phase and no random pieces; both
-      sides are AI gunners; it ends when one side has no active gun, or at a time limit
+- [ ] **Play** runs a *battle only* simulation: no build phase and no random pieces; it
+      ends when one side has no active gun, or at a time limit
+- [ ] Match setup before Play: **AI vs AI** (default), **Player vs AI**, **Player vs
+      dormant AI** (the AI side never fires, to see how a build performs against a
+      stationary enemy). The player side aims and fires as in the normal game
 - [ ] Speed: pause, 1×, 2×, 4×, 8×; **Reset** returns to the edited layout
 - [ ] Stats panel per side: shots, hits, intercepted by flak, absorbed by shields, walls /
       guns lost, time to defeat, winner
@@ -106,6 +123,11 @@ A main menu entry **Sandbox**. Two sides, blue and red. Aims: obvious to use, no
 
 ---
 
+## Later: sandbox polish (for players)
+- [ ] Nicer toolbar with building icons and tooltips (name, cost, behaviour summary)
+- [ ] Short in-editor help overlay / first-run hints
+- [ ] Shipped example scenarios with descriptions
+
 ## Ideas to try (test)
 - (test) Targeting rules per side: walls / guns / supply / random. Today the AI only
   shoots at walls with many wall neighbours, which matters for "flak vs guns" experiments
@@ -120,9 +142,10 @@ A main menu entry **Sandbox**. Two sides, blue and red. Aims: obvious to use, no
   (the Unity `roundsPerGame` was never used)
 
 ## Maybes (decide / spike)
-- (decide) Data format: `.tres` (recommended) vs JSON / CSV, see round A
-- (decide) Should the sandbox allow both sides to be human-controlled (hot-seat) or only AI gunners?
-- (decide) Should Sandbox be polished for players (tutorial, nicer UI) or stay a dev tool?
+- (decide) Data format: `.tres` (recommended) vs JSON / CSV, see round A – waiting for confirmation
+- (decide) Should the AI's target choice (walls / guns / supply) be a per-side Sandbox
+  option in round B? Probably needed for flak-vs-cannon experiments
+- (decide) Hot-seat (two humans) in the Sandbox: not planned; revisit if wanted
 - (decide) Keep the Unity quirks the port preserved on purpose (AI plan geometry, the
   `(x, x)` check in `try_build_gun_in_plan`, upgrade-cluster tile checks at absolute
   index 0), or clean them up?
