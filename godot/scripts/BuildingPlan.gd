@@ -56,8 +56,9 @@ func upgrade_tiles_contain(x: int, z: int) -> bool:
 	return xz2UpgradeTilesType.has(Vector2i(x, z))
 
 
-func try_initialize_xz_upgrade_tiles(signature: Array) -> bool:
-	desiredSignature = signature
+## Lays out the upgrade blocks for structure_name inside the walled-in area.
+func try_initialize_xz_upgrade_tiles(structure_name: String, selection) -> bool:
+	desiredSignature = selection.upgradeName2signature[structure_name]
 	if xzWalledInTiles.size() < desiredSignature.size():
 		return false
 	xz2UpgradeTilesType = {}
@@ -88,7 +89,15 @@ func try_initialize_xz_upgrade_tiles(signature: Array) -> bool:
 		current.append(_get_current_upgrade_type_for_tile(xz))
 	if desiredSignature.size() != current.size():
 		return false
-	var rotated = UpgradeSelection.return_matching_rotated_signature(desiredSignature, current, side)
+	# an orientation of the desired layout that fits the blocks already placed
+	# and still merges into the desired structure
+	var rotated = null
+	for r in [0, 2, 1, 3]:
+		var candidate: Array = UpgradeSelection.rotations(desiredSignature, side)[r]
+		if UpgradeSelection._fits(candidate, current) \
+				and selection.prefab_name(selection.pick_for_signature(candidate)) == structure_name:
+			rotated = candidate
+			break
 	if rotated == null:
 		return false
 	for i in rotated.size():

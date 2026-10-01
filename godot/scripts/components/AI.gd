@@ -330,8 +330,7 @@ func try_stack_next_wall() -> bool:
 func _try_set_upgrade_plan(upgrade_name: String) -> void:
 	upgradePlan = null
 	for bp in finishedPlans + activePlans:
-		var sig: Array = upgradeSelection.upgradeName2signature[upgrade_name]
-		if bp.try_initialize_xz_upgrade_tiles(sig):
+		if bp.try_initialize_xz_upgrade_tiles(upgrade_name, upgradeSelection):
 			upgradePlan = bp
 			break
 

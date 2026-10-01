@@ -67,6 +67,10 @@ flak, shield generators or supply depots depending on their pattern.
 The port follows the original logic closely (including its quirks, e.g. the AI's plan
 geometry). A few things were changed on purpose:
 
+* Upgrade patterns match their structure as laid out first, then turned by 180°, then
+  by 90°. Unity accepted any rotation, so an adjacent pair of b blocks always became a
+  Cannon22d and the supply depot (the same pair along the other axis) could never be
+  built; the AI also only plans layouts that merge into the structure it wants.
 * Splash damage hits each tile in range (Unity damaged the target tile once per splash tile).
 * The shield generator regenerates per second (Unity added `Time.time` every frame) and
   absorbs several hits before it resets.

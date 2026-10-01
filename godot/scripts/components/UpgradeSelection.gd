@@ -26,73 +26,54 @@ func initialize() -> void:
 
 
 func pick_new_structure_prefab(cluster) -> PackedScene:
+	return pick_for_signature(cluster.get_upgrade_signature())
+
+
+## The structure built from upgrade blocks laid out as `sig` (block types in
+## x-major order, -1 = wildcard in a structure signature). A layout matching a
+## structure as is wins over a 180 degree match, which wins over a 90 / 270
+## degree one: an adjacent pair of b blocks is a supply depot along one axis
+## and a Cannon22d along the other (Unity accepted any rotation, so the depot,
+## listed after Cannon22d, could never be built).
+func pick_for_signature(sig: Array) -> PackedScene:
 	var standard: PackedScene = null
-	var n_tiles: int = cluster.upgradedTiles.size()
+	var side := int(sqrt(sig.size()))
+	for pass_rotations in [[0], [2], [1, 3]]:
+		for prefab in upgradePrefabs:
+			var compare: Array = _info[prefab][0]
+			if _info[prefab][1] or compare.size() != sig.size():
+				continue
+			var rots := rotations(compare, side)
+			for k in pass_rotations:
+				if _fits(rots[k], sig):
+					return prefab
 	for prefab in upgradePrefabs:
-		var sig: Array = _info[prefab][0]
-		var default_for_size: bool = _info[prefab][1]
-		if not default_for_size and sig.size() == n_tiles \
-				and matches_signature(cluster.get_upgrade_signature(), sig, cluster.sideLength):
-			return prefab
-		elif default_for_size and sig.size() == n_tiles:
+		if _info[prefab][1] and _info[prefab][0].size() == sig.size():
 			standard = prefab
-	if standard != null:
-		return standard
-	push_error("No matching upgrade prefab found for signature!")
-	return null
+	if standard == null:
+		push_error("No matching upgrade prefab found for signature!")
+	return standard
 
 
-static func matches_signature(desired: Array, compare: Array, side: int) -> bool:
-	var e0 := true
-	var e90 := true
-	var e180 := true
-	var e270 := true
+func prefab_name(prefab: PackedScene) -> String:
+	return prefab.resource_path.get_file().get_basename() if prefab else ""
+
+
+## A layout fits a pattern when every non-wildcard entry is equal.
+static func _fits(pattern: Array, layout: Array) -> bool:
+	for i in pattern.size():
+		if pattern[i] != -1 and layout[i] != -1 and pattern[i] != layout[i]:
+			return false
+	return true
+
+
+## sig turned by 0, 90, 180 and 270 degrees (same index maps as the Unity code).
+static func rotations(sig: Array, side: int) -> Array:
+	var out := [sig.duplicate(), sig.duplicate(), sig.duplicate(), sig.duplicate()]
 	for row in side:
 		for col in side:
 			var i000 := row * side + col
-			var i090 := (side - 1 - row) + side * col
-			var i180 := side * side - 1 - i000
-			var i270 := (side - 1 - col) * side + row
-			var wild: bool = compare[i000] == -1
-			e0 = e0 and (wild or desired[i000] == compare[i000])
-			e90 = e90 and (wild or desired[i000] == compare[i090])
-			e180 = e180 and (wild or desired[i000] == compare[i180])
-			e270 = e270 and (wild or desired[i000] == compare[i270])
-	return e0 or e90 or e180 or e270
-
-
-static func return_matching_rotated_signature(desired: Array, compare: Array, side: int):
-	var n := side * side
-	var s090: Array = []
-	var s180: Array = []
-	var s270: Array = []
-	s090.resize(n)
-	s180.resize(n)
-	s270.resize(n)
-	var e0 := true
-	var e90 := true
-	var e180 := true
-	var e270 := true
-	for row in side:
-		for col in side:
-			var i000 := row * side + col
-			var i090 := (side - 1 - row) + side * col
-			var i180 := side * side - 1 - i000
-			var i270 := (side - 1 - col) * side + row
-			var wild: bool = compare[i000] == -1
-			e0 = e0 and (wild or desired[i000] == compare[i000])
-			e90 = e90 and (wild or desired[i000] == compare[i090])
-			e180 = e180 and (wild or desired[i000] == compare[i180])
-			e270 = e270 and (wild or desired[i000] == compare[i270])
-			s090[i000] = desired[i090]
-			s180[i000] = desired[i180]
-			s270[i000] = desired[i270]
-	if e0:
-		return desired
-	elif e90:
-		return s090
-	elif e180:
-		return s180
-	elif e270:
-		return s270
-	return null
+			out[1][i000] = sig[(side - 1 - row) + side * col]
+			out[2][i000] = sig[side * side - 1 - i000]
+			out[3][i000] = sig[(side - 1 - col) * side + row]
+	return out

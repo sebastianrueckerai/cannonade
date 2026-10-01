@@ -5,6 +5,7 @@ extends Node
 ##   godot --headless --fixed-fps 30 res://tests/weapons.tscn
 
 const Main = preload("res://scripts/Main.gd")
+const BuildingPlan = preload("res://scripts/BuildingPlan.gd")
 const BLOCKS := [preload("res://prefabs/Upgrade_a.tscn"), preload("res://prefabs/Upgrade_b.tscn")]
 
 var main: Node
@@ -71,9 +72,13 @@ func _run() -> void:
 	# upgrade patterns -> structures (a = 0, b = 1); flak and shield patterns are rotated
 	var cases := [
 		[[0, 0, 0, 0], "Cannon22a"], [[1, 1, 1, 1], "Cannon22b"], [[0, 1, 1, 1], "Flak22"],
-		[[1, 0, 0, 0], "ShieldGen22"], [[1, 1, 1, 1, 1, 1, 0, 0, 0], "RocketStation"]]
-	var spots := [Vector2i(13, 10), Vector2i(24, 9), Vector2i(23, 19), Vector2i(5, 19), Vector2i(3, 8)]
-	var owners := [p1, p1, p2, p2, p1]
+		[[1, 0, 0, 0], "ShieldGen22"], [[1, 1, 1, 1, 1, 1, 0, 0, 0], "RocketStation"],
+		# an adjacent pair of b blocks: along x a supply depot, along z a Cannon22d
+		[[1, 0, 1, 0], "Supply22"], [[0, 1, 0, 1], "Supply22"],
+		[[1, 1, 0, 0], "Cannon22d"], [[0, 0, 1, 1], "Cannon22d"]]
+	var spots := [Vector2i(13, 10), Vector2i(24, 9), Vector2i(23, 19), Vector2i(5, 19), Vector2i(3, 8),
+		Vector2i(8, 13), Vector2i(20, 13), Vector2i(8, 26), Vector2i(20, 27)]
+	var owners := [p1, p1, p2, p2, p1, p1, p1, p1, p1]
 	var built := {}
 	for i in cases.size():
 		var s := build_pattern(owners[i], spots[i].x, spots[i].y, cases[i][0])
@@ -120,6 +125,23 @@ func _run() -> void:
 	gun.try_shoot(plain.go.global_position, plain)
 	await seconds(10.0)
 	check(not U.alive(plain.structure), "an unprotected structure is destroyed by the same shell")
+
+	# the AI lays out a supply depot so that it really becomes one, even when a
+	# block already placed forces a turned layout
+	var origin := Vector2i(24, 14)
+	# a b block in this corner also fits the turned (Cannon22d) layout
+	p2.build_building(map.tiles[origin.x + 1][origin.y + 1], BLOCKS[1].instantiate())
+	for dx in 2:
+		for dz in 2:
+			p2.mark_buildable_area_line_of_sight(origin.x + dx, origin.y + dz)
+	var plan := BuildingPlan.new(origin.x, origin.y, p2, 1, 1, 2, 2)
+	check(plan.try_initialize_xz_upgrade_tiles("Supply22", game.upgradeSelection), "AI finds a supply depot layout")
+	for xz in plan.xz2UpgradeTilesType:
+		if not U.alive(map.tiles[xz.x][xz.y].structure):
+			p2.build_building(map.tiles[xz.x][xz.y], BLOCKS[plan.xz2UpgradeTilesType[xz]].instantiate())
+	var depot = map.tiles[origin.x + 1][origin.y + 1].structure
+	check(U.alive(depot) and depot.scene_file_path.ends_with("Supply22.tscn"),
+			"the AI's layout merges into a supply depot (got %s)" % [depot.scene_file_path.get_file() if U.alive(depot) else "nothing"])
 
 	# ships take damage and sink
 	var water = map.tiles[0][map.sizeZ - 1]
