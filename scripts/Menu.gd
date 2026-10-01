@@ -25,6 +25,11 @@ func _ready() -> void:
 		b.custom_minimum_size = Vector2(0, 44)
 		b.pressed.connect(_start.bind(entry[0]))
 		box.add_child(b)
+	var sandbox := Button.new()
+	sandbox.text = "Sandbox (build & test battles)"
+	sandbox.custom_minimum_size = Vector2(0, 44)
+	sandbox.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/sandbox.tscn"))
+	box.add_child(sandbox)
 	var quit := Button.new()
 	quit.text = "Quit"
 	quit.custom_minimum_size = Vector2(0, 36)

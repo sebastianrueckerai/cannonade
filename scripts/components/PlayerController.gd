@@ -47,6 +47,8 @@ var availableSupply := 0.0
 var supplyNeed := 0.0
 var voidSelected := false
 var wallColor := Color.WHITE
+## battle statistics (shots, hits, intercepted, absorbed, walls_lost, guns_lost, buildings_lost)
+var stats := {}
 ## last mouse position in viewport coordinates
 var mousePosition := Vector2.ZERO
 
@@ -207,16 +209,28 @@ func _stackable_wall_fits(old_wall: Node3D, _new_wall: Node3D) -> bool:
 	return true
 
 
+func count(stat: String, n := 1) -> void:
+	stats[stat] = stats.get(stat, 0) + n
+
+
 func remove_building_from_player(bb) -> void:
 	var bgo: Node3D = bb.go
 	var key := Vector2i(bb.buildingPlace.idxX, bb.buildingPlace.idxZ)
 	if U.comp(bgo, "Wall") != null:
+		if wallTiles.has(bb.buildingPlace):
+			count("walls_lost")
 		wallTiles.erase(bb.buildingPlace)
 	elif U.shooter(bgo) != null:
+		if cannons.has(key):
+			count("guns_lost")
 		cannons.erase(key)
 	elif U.support(bgo) != null:
+		if supports.has(key):
+			count("buildings_lost")
 		supports.erase(key)
 	elif U.comp(bgo, "SupplyBuilding") != null:
+		if supplies.has(key):
+			count("buildings_lost")
 		supplies.erase(key)
 	remove_buildable_area(key.x, key.y)
 
@@ -471,3 +485,56 @@ func get_next_wall() -> void:
 	nextWall = wall
 	wallColor = U.get_color(nextWall)
 	switch_casting_shadows(nextWall, false)
+
+
+## Places a building of `def` with its lower left corner on tile (x, z), as the
+## sandbox editor does: walls count as walls, a base becomes the start base,
+## and bigger structures occupy their whole square (like a merged upgrade).
+## Returns the building, or null when a tile is not free.
+func place(def: BuildingDef, x: int, z: int, node: Node3D = null) -> Node3D:
+	if not can_place(def, x, z):
+		if node != null:
+			node.free()
+		return null
+	var go: Node3D = node if node != null else Catalog.spawn(def)
+	if def.size == 1:
+		var tile = map.tiles[x][z]
+		if def.category == BuildingDef.Category.WALL:
+			build_wall(tile, go)
+		else:
+			build_building(tile, go)
+		if def.category == BuildingDef.Category.BASE:
+			startBase = U.comp(go, "BuildingBlock")
+			U.set_color(go, mainColor)
+		return go
+	var tiles: Array = []
+	for dx in def.size:
+		for dz in def.size:
+			tiles.append(map.tiles[x + dx][z + dz])
+	var main = map.tiles[x + 1][z + 1]
+	var centre := Vector3.ZERO
+	for t in tiles:
+		centre += t.go.global_position
+		if t != main:
+			t.structure = go
+			t.player = self
+			map.set_mini(t.idxX, t.idxZ, playerID)
+			t.destroy_decorations()
+	build_building(main, go)
+	go.global_position = Vector3(centre.x / tiles.size(), 0.0, centre.z / tiles.size())
+	var cluster = UpgradeCluster.new(main, self, tiles)
+	for t in tiles:
+		t.upgradeCluster = cluster
+	return go
+
+
+## Every tile of the square is on the map, dry, free and usable.
+func can_place(def: BuildingDef, x: int, z: int) -> bool:
+	if x < 0 or z < 0 or x + def.size > map.sizeX or z + def.size > map.sizeZ:
+		return false
+	for dx in def.size:
+		for dz in def.size:
+			var t = map.tiles[x + dx][z + dz]
+			if U.alive(t.structure) or t.water or t.disabled or U.alive(t.ship):
+				return false
+	return true

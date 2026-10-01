@@ -16,7 +16,7 @@ func _ready() -> void:
 	await _frames(3)
 	var menu := get_tree().current_scene
 	var buttons := menu.find_children("*", "Button", true, false)
-	_check(buttons.size() == 5, "menu has 5 buttons")
+	_check(buttons.size() == 6, "menu has 6 buttons")
 	for b in buttons:
 		if b.text.contains("AI vs. AI"):
 			b.pressed.emit()

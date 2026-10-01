@@ -125,6 +125,8 @@ func try_shoot(destination: Vector3, destination_tile) -> bool:
 	var shot := false
 	if not stunned and try_aim(destination) and U.time >= nextBulletTime:
 		shot = true
+		if player != null:
+			player.count("shots")
 		nextBulletTime = U.time + secondsBetweenShots
 		var cd := get_node_or_null(cooldown)
 		if cd:

@@ -77,6 +77,44 @@ Behaviours look for parts by node name: `Barrel` and `ProjectileSpawn` (cannons)
 A genuinely new kind of behaviour needs a small script in `scripts/components/` plus a
 parameter resource in `scripts/data/`.
 
+## Sandbox (build & test battles)
+
+Main menu → **Sandbox**. Set up two bases, press **Play**, and watch what happens – e.g.
+how many flak guns beat how many cannons.
+
+**Editing**
+
+| input | action |
+|---|---|
+| `1` / `2` or the Blue / Red buttons | side you are building for |
+| tool buttons (bottom) | **Wall**, **Erase**, **Base**, one button per catalog building (tooltip: details) |
+| left click / drag | place with the current tool; dragging the Wall tool draws a wall line, corner / T / cross / straight pieces are chosen automatically |
+| right click / drag | erase (a whole multi-tile building at once) |
+| `R` | turn the next building (looks only; patterns are not affected) |
+| `Ctrl+Z` / `Ctrl+Y` (or `Ctrl+Shift+Z`) | undo / redo |
+| wheel / middle drag | zoom / pan, as in the game |
+| F5 | reload the building data |
+| Esc | back to the menu |
+
+Enclosed areas turn grey as in the game; guns and supply buildings that would not work
+(outside the walls, not enough supply) carry a red **X**. The ghost under the cursor
+turns red where the building does not fit. **Base** moves the side's base. **New** starts
+an empty layout with both bases walled in (map size next to it).
+
+Layouts are saved under a name (**Save**) to `user://scenarios/` and loaded from the
+**Scenarios** list; shipped examples (`data/scenarios/`, e.g. *flak_vs_cannons*) are
+in the same list. Scenarios are `ScenarioDef` resources, so they can also be edited as
+text.
+
+**Playing:** pick the match – **AI vs AI** (default), **Player vs AI** or **Player vs
+dormant AI** (red never fires; the player is blue and aims with the mouse, fires with
+Space) – what each AI aims at (walls as in the game, guns, supply or random) and a time
+limit, then **Play**. There is no build phase and no random pieces. Speed: pause, 1×, 2×,
+4×, 8×. The panel on the right shows shots, hits, shells intercepted by flak, hits
+absorbed by shields and walls / guns / buildings lost per side. The battle ends when a
+side has no working gun left, or at the time limit. **Back to editing** restores the
+layout as it was before Play.
+
 ## How the port is structured
 
 * The scenes in `prefabs/` and `materials/` were generated from the Unity prefabs by a
@@ -111,6 +149,7 @@ geometry). A few things were changed on purpose:
 * Splash damage hits each tile in range (Unity damaged the target tile once per splash tile).
 * The shield generator regenerates per second (Unity added `Time.time` every frame) and
   absorbs several hits before it resets.
+* Flak ignores a shell that another defence already destroyed (Unity would keep aiming at it).
 * Tiles hit by a tile-destroying rocket can no longer be built on (Unity only hid them).
 * Tile selection intersects the mouse ray with the ground, so the tile under a building
   can always be picked (in Unity the colliders of some buildings caught the raycast).
@@ -136,6 +175,9 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 * `tests/camera_test` – wheel zoom towards the cursor within its limits, middle mouse panning.
 * `tests/catalog_test` – shipped data is valid; data problems are reported, not crashed on;
   duplicate a building, change it, press F5: it works in the running game (incl. recipes).
+* `tests/sandbox_test` – the sandbox through real mouse / key input: drawing walls, placing,
+  erasing, undo / redo, save / load, battles in all three match setups, AI target choice,
+  stats and result, back to editing; every shipped example loads and fights.
 * `tests/sim` – full games (`--mode=single|ai2|ai4`): rounds alternate, AIs build, arm
   themselves and fight, ships sail and shoot; map invariants hold; frame times are printed.
 

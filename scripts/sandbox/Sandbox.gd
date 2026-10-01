@@ -1,0 +1,582 @@
+extends Node
+## Sandbox: set up two bases (blue and red) with walls and buildings, then
+## press Play to watch a battle (no building phase) and compare setups.
+##
+## The editor and each battle run in their own game world (a Main node built
+## from a config). The layout lives in the world; snapshot() turns it into a
+## list of items (ScenarioDef.items) for undo, saving and starting battles.
+
+const Main = preload("res://scripts/Main.gd")
+const SandboxUI = preload("res://scripts/sandbox/SandboxUI.gd")
+
+const SIDE_COLORS := ["#2a4fbf", "#b8322a"]
+const SIDE_NAMES := ["Blue", "Red"]
+const MATCHES := ["AI vs AI", "Player vs AI", "Player vs dormant AI"]
+const TARGETS := ["walls", "guns", "supply", "random"]
+const SPEEDS := [0.0, 1.0, 2.0, 4.0, 8.0]
+const USER_DIR := "user://scenarios"
+const EXAMPLE_DIR := "res://data/scenarios"
+
+enum Mode { EDIT, BATTLE, ENDED }
+
+signal battle_ended(winner: int)
+
+var world: Node = null
+var game = null
+var map = null
+var mode := Mode.EDIT
+## the layout being edited (also what Reset returns to)
+var scenario := ScenarioDef.new()
+var side := 0
+## "wall", "erase", "base" or a building id
+var tool := "wall"
+var rot := 0
+var match_index := 0
+var targets := ["walls", "walls"]
+var time_limit := 180.0
+var speed := 1.0
+var undo_stack: Array = []
+var redo_stack: Array = []
+var battle_start := 0.0
+## -1 = running, 0 / 1 = winner side, 2 = draw / time up
+var winner := -1
+var ui: SandboxUI
+
+var _hover := Vector2i(-1, -1)
+var _stroke_before = null
+var _drag_button := 0
+var _ghost: Node3D = null
+var _ghost_tool := ""
+var _footprint: MeshInstance3D = null
+var _markers := {}
+var _marker_timer := 0.0
+
+
+func _ready() -> void:
+	ui = SandboxUI.new()
+	ui.sandbox = self
+	add_child(ui)
+	new_scenario(30)
+
+
+# ------------------------------------------------------------------ worlds
+func _make_world(kinds: Array) -> void:
+	if world != null:
+		remove_child(world)
+		world.queue_free()
+	_markers = {}
+	_ghost = null
+	_ghost_tool = ""
+	_footprint = null
+	Engine.time_scale = 1.0
+	world = Main.new()
+	world.name = "World"
+	world.config = {
+		"players": kinds, "size": scenario.map_size, "round": 1e9, "pitch": 60.0, "fov": 30.0,
+		"ships": 0, "seed": scenario.seed, "decorate": true, "colors": SIDE_COLORS,
+		"hud": false, "previews": false, "start_bases": false}
+	add_child(world)
+	world.ui.visible = false  # the sandbox panels show the same information
+	game = world.game
+	map = game.map
+	game.started = false
+
+
+func player(s: int):
+	return game.players[s]
+
+
+## A fresh layout: both bases walled in at the usual places.
+func new_scenario(size: int) -> void:
+	scenario = ScenarioDef.new()
+	scenario.map_size = size
+	scenario.seed = randi() % 100000
+	var items: Array = []
+	for s in 2:
+		var bx := size / 2
+		var bz := size / 4 if s == 0 else size - size / 4 - 1
+		items.append({"side": s, "id": "base", "x": bx, "z": bz, "rot": 0})
+		for dx in [-1, 0, 1]:
+			for dz in [-1, 0, 1]:
+				if dx != 0 or dz != 0:
+					items.append({"side": s, "id": "wall", "x": bx + dx, "z": bz + dz, "rot": 0})
+	scenario.items.assign(items)
+	undo_stack = []
+	redo_stack = []
+	_enter_edit()
+
+
+func _enter_edit() -> void:
+	mode = Mode.EDIT
+	winner = -1
+	_make_world(["ai", "ai"])
+	apply_items(scenario.items)
+	ui.refresh()
+
+
+# ----------------------------------------------------------------- layout
+func snapshot() -> Array:
+	var items: Array = []
+	var seen := {}
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			var t = map.tiles[x][z]
+			var s = t.structure
+			if not U.alive(s) or seen.has(s):
+				continue
+			seen[s] = true
+			var def := Catalog.def_of(s)
+			var owner_side: int = game.players.find(t.player)
+			if def == null or owner_side < 0:
+				continue
+			var id := "wall" if def.category == BuildingDef.Category.WALL else def.id
+			items.append({"side": owner_side, "id": id, "x": x, "z": z, "rot": int(s.get_meta("rot", 0))})
+	return items
+
+
+func apply_items(items: Array) -> void:
+	var walls := [{}, {}]
+	for it in items:
+		if it["id"] == "wall":
+			walls[it["side"]][Vector2i(it["x"], it["z"])] = true
+	for it in items:
+		if it["id"] == "wall":
+			_place_wall(it["side"], Vector2i(it["x"], it["z"]), walls[it["side"]])
+		else:
+			place_building(it["side"], Catalog.get_def(it["id"]), it["x"], it["z"], it.get("rot", 0))
+
+
+func _key(it: Dictionary) -> String:
+	return "%d|%s|%d|%d|%d" % [it["side"], it["id"], it["x"], it["z"], it.get("rot", 0)]
+
+
+## Changes the world to `items` with as few edits as possible (undo / redo).
+func restore(items: Array) -> void:
+	var want := {}
+	for it in items:
+		want[_key(it)] = it
+	var have := {}
+	for it in snapshot():
+		have[_key(it)] = it
+	for k in have:
+		if not want.has(k):
+			_erase_tile(Vector2i(have[k]["x"], have[k]["z"]))
+	var walls := [{}, {}]
+	for it in items:
+		if it["id"] == "wall":
+			walls[it["side"]][Vector2i(it["x"], it["z"])] = true
+	for k in want:
+		if not have.has(k):
+			var it: Dictionary = want[k]
+			if it["id"] == "wall":
+				_place_wall(it["side"], Vector2i(it["x"], it["z"]), walls[it["side"]])
+			else:
+				place_building(it["side"], Catalog.get_def(it["id"]), it["x"], it["z"], it.get("rot", 0))
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			_reshape_wall(Vector2i(x, z))
+
+
+func _is_wall_of(xz: Vector2i, s: int, walls = null) -> bool:
+	if xz.x < 0 or xz.y < 0 or xz.x >= map.sizeX or xz.y >= map.sizeZ:
+		return false
+	if walls != null:
+		return walls.has(xz)
+	var t = map.tiles[xz.x][xz.y]
+	return U.alive(t.structure) and t.isWall and t.player == player(s)
+
+
+func _connectors(xz: Vector2i, s: int, walls = null) -> Array:
+	return [_is_wall_of(xz + Vector2i(0, 1), s, walls), _is_wall_of(xz + Vector2i(0, -1), s, walls),
+		_is_wall_of(xz + Vector2i(-1, 0), s, walls), _is_wall_of(xz + Vector2i(1, 0), s, walls)]
+
+
+func _place_wall(s: int, xz: Vector2i, walls = null) -> bool:
+	var go := Catalog.spawn_wall_for(_connectors(xz, s, walls))
+	return go != null and player(s).place(Catalog.def_of(go), xz.x, xz.y, go) != null
+
+
+## Swaps the wall piece on xz for the one matching its neighbours.
+func _reshape_wall(xz: Vector2i) -> void:
+	if xz.x < 0 or xz.y < 0 or xz.x >= map.sizeX or xz.y >= map.sizeZ:
+		return
+	var t = map.tiles[xz.x][xz.y]
+	if not U.alive(t.structure) or not t.isWall:
+		return
+	var s: int = game.players.find(t.player)
+	var want := _connectors(xz, s)
+	if want.count(true) < 2:  # end of a line or a lone wall: a straight piece
+		want = [true, true, false, false] if (want[0] or want[1]) else [false, false, true, true]
+	if U.comp(t.structure, "BuildingBlock").connects_up_down_left_right() == want:
+		return
+	t.un_build()
+	_place_wall(s, xz)
+
+
+func _reshape_around(xz: Vector2i) -> void:
+	for d in [Vector2i.ZERO, Vector2i(0, 1), Vector2i(0, -1), Vector2i(-1, 0), Vector2i(1, 0)]:
+		_reshape_wall(xz + d)
+
+
+func place_building(s: int, def: BuildingDef, x: int, z: int, r := 0) -> Node3D:
+	if def == null:
+		return null
+	if def.category == BuildingDef.Category.BASE:
+		for it in snapshot():
+			if it["side"] == s and Catalog.get_def(it["id"]) != null \
+					and Catalog.get_def(it["id"]).category == BuildingDef.Category.BASE:
+				_erase_tile(Vector2i(it["x"], it["z"]))
+	var go: Node3D = player(s).place(def, x, z)
+	if go != null and r != 0:
+		go.set_meta("rot", r)
+		go.rotate_y(-PI / 2.0 * r)
+	return go
+
+
+func _erase_tile(xz: Vector2i) -> bool:
+	var t = map.tiles[xz.x][xz.y]
+	if not U.alive(t.structure):
+		return false
+	if t.upgradeCluster != null:
+		t.upgradeCluster.un_build_upgrade()
+	else:
+		t.un_build()
+	return true
+
+
+# ------------------------------------------------------------- editing API
+## One edit = one undo step. Used by the mouse handling and the tests' tools.
+func begin_edit() -> void:
+	if _stroke_before == null:
+		_stroke_before = snapshot()
+
+
+func end_edit() -> void:
+	if _stroke_before == null:
+		return
+	if snapshot() != _stroke_before:
+		undo_stack.append(_stroke_before)
+		redo_stack = []
+	_stroke_before = null
+	ui.refresh()
+
+
+## Applies the current tool to tile xz (left mouse button).
+func use_tool(xz: Vector2i) -> void:
+	if mode != Mode.EDIT or xz.x < 0:
+		return
+	match tool:
+		"erase":
+			erase(xz)
+		"wall":
+			var t = map.tiles[xz.x][xz.y]
+			if not U.alive(t.structure) and not t.water and _place_wall(side, xz):
+				_reshape_around(xz)
+		_:
+			var def := Catalog.get_def(tool)
+			if def != null:
+				var a := anchor_for(def, xz)
+				place_building(side, def, a.x, a.y, rot)
+
+
+func erase(xz: Vector2i) -> void:
+	if mode != Mode.EDIT or xz.x < 0:
+		return
+	var was_wall: bool = map.tiles[xz.x][xz.y].isWall
+	if _erase_tile(xz) and was_wall:
+		_reshape_around(xz)
+
+
+## Lower left tile of a building of `def` centred on the cursor tile.
+func anchor_for(def: BuildingDef, xz: Vector2i) -> Vector2i:
+	var off := (def.size - 1) / 2
+	return xz - Vector2i(off, off)
+
+
+func undo() -> void:
+	if mode != Mode.EDIT or undo_stack.is_empty():
+		return
+	redo_stack.append(snapshot())
+	restore(undo_stack.pop_back())
+	ui.refresh()
+
+
+func redo() -> void:
+	if mode != Mode.EDIT or redo_stack.is_empty():
+		return
+	undo_stack.append(snapshot())
+	restore(redo_stack.pop_back())
+	ui.refresh()
+
+
+# ------------------------------------------------------------ save / load
+func save(name: String) -> String:
+	var clean := name.strip_edges().validate_filename()
+	if clean == "":
+		return ""
+	if mode == Mode.EDIT:
+		scenario.items.assign(snapshot())
+	DirAccess.make_dir_recursive_absolute(USER_DIR)
+	var path := USER_DIR.path_join(clean + ".tres")
+	ResourceSaver.save(scenario, path)
+	return path
+
+
+## Saved scenarios: user ones first, then the examples.
+func saved_scenarios() -> Array[String]:
+	var out: Array[String] = []
+	for dir in [USER_DIR, EXAMPLE_DIR]:
+		if not DirAccess.dir_exists_absolute(dir):
+			continue
+		for f in DirAccess.get_files_at(dir):
+			f = f.trim_suffix(".remap")
+			if f.ends_with(".tres"):
+				out.append(dir.path_join(f))
+	return out
+
+
+func load_scenario(path: String) -> bool:
+	var res = ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE)
+	if not res is ScenarioDef:
+		return false
+	scenario = res
+	undo_stack = []
+	redo_stack = []
+	_enter_edit()
+	return true
+
+
+# ------------------------------------------------------------------ battle
+func play() -> void:
+	if mode != Mode.EDIT:
+		return
+	end_edit()
+	scenario.items.assign(snapshot())
+	var kinds := ["ai", "ai"] if match_index == 0 else ["human", "ai"]
+	_make_world(kinds)
+	apply_items(scenario.items)
+	for s in 2:
+		var p = player(s)
+		p.stats = {}
+		if p.has_method("search_best_building_plans"):
+			p.targetMode = targets[s]
+			p.dormant = match_index == 2 and s == 1
+	game.buildingAllowed = false
+	game.shootingAllowed = true
+	game.timeLeftInRound = 1e9
+	game.started = true
+	mode = Mode.BATTLE
+	winner = -1
+	battle_start = U.time
+	set_speed(speed if speed > 0 else 1.0)
+	ui.refresh()
+
+
+func reset() -> void:
+	if mode == Mode.EDIT:
+		return
+	_enter_edit()
+
+
+func set_speed(v: float) -> void:
+	speed = v
+	Engine.time_scale = v if mode != Mode.EDIT else 1.0
+
+
+func battle_time() -> float:
+	return U.time - battle_start if mode != Mode.EDIT else 0.0
+
+
+func _check_battle_end() -> void:
+	if battle_time() < 1.0:
+		return
+	var alive := [player(0).activeCannons.size() > 0, player(1).activeCannons.size() > 0]
+	if alive[0] and alive[1] and battle_time() < time_limit:
+		return
+	if alive[0] and not alive[1]:
+		winner = 0
+	elif alive[1] and not alive[0]:
+		winner = 1
+	else:
+		winner = 2
+	mode = Mode.ENDED
+	game.started = false
+	battle_ended.emit(winner)
+	ui.refresh()
+
+
+# ------------------------------------------------------------------ input
+func tile_under(screen: Vector2) -> Vector2i:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null or map == null:
+		return Vector2i(-1, -1)
+	var o := cam.project_ray_origin(screen)
+	var d := cam.project_ray_normal(screen)
+	if absf(d.y) < 1e-5:
+		return Vector2i(-1, -1)
+	return map.tile_index_at(o + d * ((0.1 - o.y) / d.y))
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		var k: int = event.keycode
+		if mode == Mode.EDIT and event.ctrl_pressed and k == KEY_Z:
+			if event.shift_pressed:
+				redo()
+			else:
+				undo()
+		elif mode == Mode.EDIT and event.ctrl_pressed and k == KEY_Y:
+			redo()
+		elif k == KEY_R and mode == Mode.EDIT:
+			rot = (rot + 1) % 4
+		elif k == KEY_1 or k == KEY_2:
+			side = 0 if k == KEY_1 else 1
+			ui.refresh()
+	if mode != Mode.EDIT:
+		return
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_RIGHT:
+			var xz := tile_under(event.position)
+			if event.pressed:
+				_drag_button = event.button_index
+				begin_edit()
+				if _drag_button == MOUSE_BUTTON_LEFT:
+					use_tool(xz)
+				else:
+					erase(xz)
+			elif event.button_index == _drag_button:
+				_drag_button = 0
+				end_edit()
+	elif event is InputEventMouseMotion:
+		var xz := tile_under(event.position)
+		if xz != _hover:
+			_hover = xz
+			if _drag_button == MOUSE_BUTTON_LEFT and (tool == "wall" or tool == "erase"):
+				use_tool(xz)
+			elif _drag_button == MOUSE_BUTTON_RIGHT:
+				erase(xz)
+
+
+func _process(delta: float) -> void:
+	if map == null:
+		return
+	if mode == Mode.BATTLE:
+		_check_battle_end()
+	_marker_timer -= delta
+	if _marker_timer <= 0:
+		_marker_timer = 0.25
+		_update_markers()
+	_update_ghost()
+	ui.update_live()
+
+
+# ------------------------------------------------------------- visuals
+## A red X floating above a building.
+func _off_mark() -> Node3D:
+	var root := Node3D.new()
+	root.name = "OffMark"
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.albedo_color = Color(1, 0.2, 0.15)
+	m.no_depth_test = true
+	for a in [PI / 4.0, -PI / 4.0]:
+		var bar := MeshInstance3D.new()
+		var b := BoxMesh.new()
+		b.size = Vector3(0.7, 0.12, 0.12)
+		bar.mesh = b
+		bar.material_override = m
+		bar.rotation = Vector3(0, 0, a)
+		bar.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		root.add_child(bar)
+	return root
+
+
+## A red X above guns and support buildings that do not work (not enclosed or
+## not enough supply).
+func _update_markers() -> void:
+	for p in game.players:
+		if mode == Mode.EDIT:
+			p.manage_supply_and_active_buildings()
+	var off := {}
+	for p in game.players:
+		for k in p.cannons:
+			if not p.activeCannons.has(p.cannons[k]):
+				off[p.cannons[k].go] = true
+		for k in p.supports:
+			if not p.supports[k].on:
+				off[p.supports[k].go] = true
+	for go in _markers.keys():
+		if not off.has(go) or not U.alive(go):
+			if is_instance_valid(_markers[go]):
+				_markers[go].queue_free()
+			_markers.erase(go)
+	for go in off:
+		if not _markers.has(go) and U.alive(go):
+			var mark := _off_mark()
+			world.add_child(mark)
+			mark.global_position = go.global_position + Vector3(0, 1.4, 0)
+			_markers[go] = mark
+
+
+func inactive_count() -> int:
+	return _markers.size()
+
+
+func _update_ghost() -> void:
+	if mode != Mode.EDIT or _hover.x < 0 or _drag_button == MOUSE_BUTTON_RIGHT:
+		if _footprint:
+			_footprint.visible = false
+		if _ghost:
+			_ghost.visible = false
+		return
+	var def := Catalog.get_def(tool)
+	var size := def.size if def != null else 1
+	var a := anchor_for(def, _hover) if def != null else _hover
+	var ok: bool
+	if tool == "erase":
+		ok = U.alive(map.tiles[_hover.x][_hover.y].structure)
+	elif tool == "wall":
+		ok = player(side).can_place(Catalog.get_def("wall_line"), _hover.x, _hover.y)
+	else:
+		ok = def != null and player(side).can_place(def, a.x, a.y)
+	if _footprint == null:
+		_footprint = MeshInstance3D.new()
+		_footprint.mesh = BoxMesh.new()
+		var m := StandardMaterial3D.new()
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_footprint.material_override = m
+		_footprint.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		world.add_child(_footprint)
+	var p0: Vector3 = map.tile_position(clampi(a.x, 0, map.sizeX - 1), clampi(a.y, 0, map.sizeZ - 1))
+	var p1: Vector3 = map.tile_position(clampi(a.x + size - 1, 0, map.sizeX - 1), clampi(a.y + size - 1, 0, map.sizeZ - 1))
+	_footprint.visible = true
+	_footprint.global_position = (p0 + p1) / 2.0 + Vector3(0, 0.2, 0)
+	_footprint.scale = Vector3(size * 0.98, 0.06, size * 0.98)
+	var c := Color(0.3, 1.0, 0.4, 0.35) if ok else Color(1.0, 0.25, 0.2, 0.45)
+	if tool == "erase":
+		c = Color(1.0, 0.6, 0.1, 0.45) if ok else Color(1, 1, 1, 0.15)
+	(_footprint.material_override as StandardMaterial3D).albedo_color = c
+	# model preview for buildings
+	if _ghost_tool != tool:
+		if _ghost:
+			_ghost.queue_free()
+		_ghost = null
+		_ghost_tool = tool
+		if def != null and def.model != null:
+			_ghost = def.model.instantiate()
+			world.add_child(_ghost)
+			for mi in U.meshes(_ghost):
+				if mi.get_script() != null:  # reload ring and similar helpers
+					mi.set_script(null)
+					mi.visible = false
+					continue
+				var m := StandardMaterial3D.new()
+				m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				m.albedo_color = Color(1, 1, 1, 0.45)
+				mi.material_override = m
+				mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	if _ghost:
+		_ghost.visible = true
+		_ghost.global_position = (p0 + p1) / 2.0
+		_ghost.rotation = Vector3(0, -PI / 2.0 * rot, 0)

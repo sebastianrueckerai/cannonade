@@ -21,6 +21,8 @@ var fleet = null
 var timeLeftInRound := 0.0
 var roundNumber := 0
 var started := false
+## false: no start bases (the sandbox places its own)
+var startBases := true
 
 signal round_changed(round_number: int, building: bool)
 
@@ -79,7 +81,8 @@ func _initialize_players() -> void:
 		p.supplyBar = supplyBars[i] if i < supplyBars.size() else null
 		p.supplyNeededBar = supplyNeededBars[i] if i < supplyNeededBars.size() else null
 		p.setup()
-	_set_player_start_bases()
+	if startBases:
+		_set_player_start_bases()
 
 
 func _set_player_start_bases() -> void:

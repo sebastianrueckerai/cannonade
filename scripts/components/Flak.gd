@@ -45,7 +45,9 @@ func _process(delta: float) -> void:
 			g.scale = Vector3.ONE * 0.7 * (1.0 - 0.15 * sin(_recoil * PI))
 	if not on:
 		return
-	if U.alive(target) and target.go.global_position.distance_to(go.global_position) > lookRange:
+	# a projectile destroyed by someone else leaves the tree before it is freed
+	if U.alive(target) and (not target.is_inside_tree()
+			or target.go.global_position.distance_to(go.global_position) > lookRange):
 		target = null
 	if not U.alive(target):
 		target = _search(lookRange)
@@ -70,6 +72,8 @@ func _search(r: float):
 
 
 func _fire_at(projectile) -> void:
+	if player != null:
+		player.count("intercepted")
 	if _guns():
 		U.look_at(_guns(), projectile.go.global_position)
 	_recoil = 1.0  # replaces the "fireFlak" animation

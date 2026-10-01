@@ -1,21 +1,6 @@
 extends RefCounted
-## Shared test helper: walls in the 3x3 ring around a tile with wall pieces
-## rotated to connect (through the public BuildingBlock / PlayerController API).
-
-const WALLS := ["wall_corner", "wall_cross", "wall_line", "wall_tee"]
-
-
-static func wall_for(plan: Array) -> Node3D:
-	for id in WALLS:
-		var w: Node3D = Catalog.spawn(id)
-		var bb = w.get_node("BuildingBlock")
-		var rots: int = bb.fits_plan_with_clockwise_rotations_of_input(plan)
-		if rots >= 0:
-			for r in rots:
-				bb.rotate_counter_clockwise()
-			return w
-		w.free()
-	return null
+## Shared test helper: walls along the border of a rectangle, each piece
+## shaped to connect to its neighbours (Catalog.spawn_wall_for).
 
 
 ## Builds the ring around (x, z); `after_each(tile)` is called after every wall.
@@ -34,6 +19,6 @@ static func build_rect(player, map, x0: int, z0: int, x1: int, z1: int, after_ea
 			var left := x > x0 and (z == z0 or z == z1)
 			var right := x < x1 and (z == z0 or z == z1)
 			var t = map.tiles[x][z]
-			player.build_wall(t, wall_for([up, down, left, right]))
+			player.build_wall(t, Catalog.spawn_wall_for([up, down, left, right]))
 			if after_each.is_valid():
 				after_each.call(t)

@@ -10,12 +10,17 @@ var upgradedTiles = null
 var sideLength := 0
 
 
-func _init(t, p) -> void:
+## With `tiles` the cluster is made of exactly these tiles (a structure placed
+## directly, e.g. in the sandbox); otherwise it looks for complete patterns.
+func _init(t, p, tiles = null) -> void:
 	tile = t
 	map = p.map
 	player = p
-	upgradedTiles = null
-	check_for_complete_upgrades()
+	upgradedTiles = tiles
+	if tiles != null:
+		sideLength = int(sqrt(tiles.size()))
+	else:
+		check_for_complete_upgrades()
 
 
 func can_be_built() -> bool:

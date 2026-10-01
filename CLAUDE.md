@@ -18,7 +18,10 @@ round, update it: tick off what is done, park unfinished work, open questions, i
   spawns configured buildings: always create buildings with `Catalog.spawn(id)`, never by
   instantiating a prefab. Model scenes in `prefabs/` are visuals only; the catalog adds
   the behaviour components from the data.
-- `scripts/Main.gd` – builds a game from a mode (`single`, `versus`, `ai2`, `ai4`);
+- `scripts/sandbox/` – Sandbox editor + battle lab (`scenes/sandbox.tscn`). It wraps a
+  `Main` built from a `config` dictionary; layouts are `ScenarioDef` item lists
+  (`data/scenarios/` examples, `user://scenarios/` saves).
+- `scripts/Main.gd` – builds a game from a mode (`single`, `versus`, `ai2`, `ai4`) or a config;
   `scripts/CameraRig.gd` – zoom / pan.
 - `prefabs/`, `materials/` – generated from the Unity prefabs (the converter is in git
   history only); edit them by hand now. Building prefabs are models only.

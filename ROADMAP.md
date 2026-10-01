@@ -96,38 +96,47 @@ components, with their numbers moved into data.
   Inspector still shows them. Changing a default in `scripts/data/` changes every file
   that relies on it.
 
-## Next: round B – sandbox editor v1
+## Done: round B – sandbox editor v1
 
-A main menu entry **Sandbox**. Two sides, blue and red. Aims: obvious to use, no manual
-needed. Audience: mainly a dev tool to iterate on gun concepts and balance; players may
-use it too, so polish follows later (see Later: sandbox polish).
+Main menu → **Sandbox** (`scenes/sandbox.tscn`, `scripts/sandbox/`). Test:
+`tests/sandbox_test` (real mouse / key input).
 
 **Editing**
-- [ ] Map size choice (default 30×30); both bases auto-placed as today, but movable
-- [ ] Bottom toolbar: side toggle (blue / red, or keys `1` / `2`), tools **Wall**,
-      one button per catalog building, **Erase**, **Base**
-- [ ] **Wall painting with automatic shapes:** click and drag to draw a wall line, and the
-      right corner / T / cross / straight piece is chosen from its neighbours (the helper
-      exists in `tests/ring.gd`; move it to production)
-- [ ] Left click places, right click erases, `R` rotates a building, ghost preview under
-      the cursor, red tint when the spot is invalid
-- [ ] Live display of enclosed areas and active / inactive guns (supply, enclosure), same as in game
-- [ ] Undo / redo (`Ctrl+Z` / `Ctrl+Y`)
-- [ ] Save / load scenarios: `user://scenarios/*.tres`; shipped examples in `data/scenarios/`
+- [x] Map size choice (default 30×30); both bases auto-placed and walled in; **Base** tool moves them
+- [x] Bottom toolbar: side toggle (buttons or `1` / `2`), **Wall**, **Erase**, **Base**, one
+      button per catalog building (tooltips from the def)
+- [x] Wall painting with automatic shapes (`Catalog.spawn_wall_for`; `tests/ring.gd` uses it too)
+- [x] Left click places, right click erases (drag works for both), `R` rotates, ghost
+      preview with the model, red footprint where it does not fit
+- [x] Live enclosure display; a red X over guns / supply buildings that would not work
+- [x] Undo / redo (`Ctrl+Z` / `Ctrl+Y` / `Ctrl+Shift+Z`), one step per drag
+- [x] Save / load: `user://scenarios/*.tres` (`ScenarioDef`); example `data/scenarios/flak_vs_cannons.tres`
 
 **Playing**
-- [ ] **Play** runs a *battle only* simulation: no build phase and no random pieces; it
-      ends when one side has no active gun, or at a time limit
-- [ ] Match setup before Play: **AI vs AI** (default), **Player vs AI**, **Player vs
-      dormant AI** (the AI side never fires, to see how a build performs against a
-      stationary enemy). The player side aims and fires as in the normal game
-- [ ] Speed: pause, 1×, 2×, 4×, 8×; **Reset** returns to the edited layout
-- [ ] Stats panel per side: shots, hits, intercepted by flak, absorbed by shields, walls /
-      guns lost, time to defeat, winner
-- [ ] Target choice per AI side: walls (today's behaviour) / guns / supply / random
-      (decided: part of round B)
+- [x] **Play**: battle only, no build phase, no random pieces; ends when a side has no
+      working gun (after a 1 s grace) or at the time limit (default 180 s)
+- [x] Match setup: AI vs AI (default), Player vs AI, Player vs dormant AI
+- [x] Speed: pause, 1×, 2×, 4×, 8×; **Back to editing** restores the layout
+- [x] Stats per side: shots, hits, intercepted, absorbed, walls / guns / buildings lost,
+      result line with winner and time
+- [x] Target choice per AI side: walls / guns / supply / random (`AI.targetMode`)
+- [x] Found on the way: flak errored when a shell it tracked was destroyed by another
+      defence (fixed in `Flak.gd`)
 
-## Later: round C – experiments (battle lab)
+**Left over from round B**
+- [ ] Wall stacking (wall on wall) is not available in the editor; walls are one layer
+- [ ] `R` rotation is cosmetic for multi-tile buildings; rotated-pattern variants (e.g.
+      Cannon22c turned) are the same building
+- [ ] **New** and **Load** discard unsaved edits without asking
+- [ ] The human side is always blue in Player vs AI
+- [ ] "No working gun" counts cannons and rocket stations only; a side with only flak or
+      shields left loses even if it would hold out
+- [ ] Ships are not available in the sandbox
+- (decide) Battle time limit default 180 s: right for balance tests, or shorter?
+- (test) The example scenario is one-sided (blue wins in ~11 s at seed 4242); more
+  balanced examples would make better starting points
+
+## Next: round C – experiments (battle lab)
 - [ ] Headless batch runner: `--scenario=x --runs=50 --seeds=1..50` prints win rates and
       mean stats per side, e.g. "4 flak vs 6 cannons: blue wins 72%". Uses the deterministic
       fixed step, as the tests already do
@@ -141,7 +150,7 @@ use it too, so polish follows later (see Later: sandbox polish).
 ## Later: sandbox polish (for players)
 - [ ] Nicer toolbar with building icons and tooltips (name, cost, behaviour summary)
 - [ ] Short in-editor help overlay / first-run hints
-- [ ] Shipped example scenarios with descriptions
+- [ ] More shipped example scenarios, with their `description` shown in the editor
 
 ## Ideas to try (test)
 - (test) Flak with a limited number of shots per salvo, or a cooldown per shell
@@ -196,3 +205,4 @@ use it too, so polish follows later (see Later: sandbox polish).
 - [x] Mouse wheel zoom to the cursor, middle mouse panning
 - [x] Round A: buildings and projectiles as data (`data/`, `Catalog`, F5 reload);
       combining now uses the upgrade block up; any building can be a recipe part
+- [x] Round B: Sandbox editor + battle lab (menu entry, `scripts/sandbox/`)

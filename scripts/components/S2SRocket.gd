@@ -82,6 +82,7 @@ func _process(delta: float) -> void:
 		if percentFinished >= 1.0:
 			phase = -1
 			if U.alive(destinationTile):
+				count_hit()
 				destinationTile.damage_building_place(damage)
 				if tileDestroyer:
 					disable_tile(destinationTile)

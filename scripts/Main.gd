@@ -38,10 +38,19 @@ var camera: Camera3D
 var ui: CanvasLayer
 var phase_label: Label
 var quit_after := -1.0
+## Set before adding the node to build from this config instead of a mode
+## (used by the sandbox). Extra keys: "seed", "decorate", "colors" (hex per
+## player), "hud" (timer / phase / help, default true), "previews" (next piece
+## previews, default true).
+var config := {}
 
 
 func _ready() -> void:
 	U.reset()
+	if not config.is_empty():
+		seed(int(config.get("seed", 1)))
+		build(config, config.get("decorate", true))
+		return
 	var args := _parse_args()
 	args.merge(requested_args, true)
 	mode = requested_mode if requested_mode != "" else args.get("mode", "versus")
@@ -94,6 +103,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	game = _component("Game", GameController)
 	game.roundDuration = cfg["round"]
 	game.initialShips = cfg["ships"]
+	game.startBases = cfg.get("start_bases", true)
 	game.map = map
 	game.fleet = fleet
 	game.roundTimer = ui.get_node("Timer")
@@ -101,7 +111,9 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	for i in kinds.size():
 		var script: Script = AIScript if kinds[i] == "ai" else PlayerController
 		var p = _component("%s%d" % ["AI" if kinds[i] == "ai" else "HumanPlayer", i + 1], script)
-		var colors: Array = PLAYER_COLORS[i % PLAYER_COLORS.size()]
+		var colors: Array = PLAYER_COLORS[i % PLAYER_COLORS.size()].duplicate()
+		if cfg.has("colors"):
+			colors[0] = cfg["colors"][i]
 		p.mainColorHexCode = colors[0]
 		p.highlightPosColorHexCode = colors[1]
 		p.highlightNegColorHexCode = colors[2]
@@ -109,6 +121,8 @@ func build(cfg: Dictionary, decorate := true) -> void:
 		var spawns := _make_spawns(i, kinds.size())
 		game.wallSpawns.append(spawns[0])
 		game.buildingSpawns.append(spawns[1])
+		for s in spawns:
+			s.visible = cfg.get("previews", true)
 		var bars := _make_supply_bars(i, kinds[i] == "ai", Color.html(colors[0]))
 		game.supplyBars.append(bars[0])
 		game.supplyNeededBars.append(bars[1])
@@ -117,6 +131,9 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	game.start_game()
 	camera.capture_home_view(map.sizeX * map.tileSize / 2.0)
 	_on_round_changed(0, true)
+	if not cfg.get("hud", true):
+		for n in ["Timer", "Phase", "Help"]:
+			ui.get_node(n).visible = false
 
 
 func _setup_environment(cfg: Dictionary) -> void:

@@ -27,7 +27,15 @@ func shoot_down() -> void:
 	U.destroy(go)
 
 
+## Counts a hit for the shooter when the target tile belongs to someone else.
+func count_hit() -> void:
+	var owner_player = destinationTile.player if U.alive(destinationTile) else null
+	if player != null and owner_player != null and owner_player != player:
+		player.count("hits")
+
+
 func impact() -> void:
+	count_hit()
 	if U.alive(destinationTile):
 		for tile in destinationTile.get_surrounding_tiles(splashRange):
 			_effect_tile(tile)

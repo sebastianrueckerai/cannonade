@@ -28,6 +28,10 @@ var maxRight := 2
 var maxPlanRange := 3
 var inPlanRange := PackedByteArray()
 var lastHighlight = null
+## A dormant AI never acts (sandbox: test a build against a stationary enemy).
+var dormant := false
+## What the AI shoots at: "walls" (the original behaviour), "guns", "supply" or "random"
+var targetMode := "walls"
 ## Segment memo used by BuildingPlan during one plan search (null otherwise)
 var connectionMemo = null
 var searchStamp := 0
@@ -51,6 +55,8 @@ func update_point_and_tile_selected() -> void:
 
 
 func manage_player_actions() -> void:
+	if dormant:
+		return
 	if U.time > nextAction:
 		if game.shootingAllowed:
 			search_and_fire_at_targets()
@@ -186,6 +192,11 @@ func _random_shuffle(arr: Array) -> void:
 
 
 func aquire_targets(enemy, n: int) -> Array:
+	if targetMode != "walls":
+		var pool := _target_pool(enemy)
+		if not pool.is_empty():
+			_random_shuffle(pool)
+			return pool.slice(0, n)
 	var tiles: Array = []
 	for t in enemy.wallTiles:
 		if U.alive(t):
@@ -429,3 +440,25 @@ func try_build_gun_in_plan() -> bool:
 				highlight_building_place(map.tiles[xz.x][xz.y])
 				return true
 	return false
+
+
+## Tiles to shoot at for the target modes other than "walls" (empty = fall
+## back to walls).
+func _target_pool(enemy) -> Array:
+	var keys: Array = []
+	match targetMode:
+		"guns":
+			keys = enemy.cannons.keys() + enemy.supports.keys()
+		"supply":
+			keys = enemy.supplies.keys()
+		"random":
+			var out: Array = []
+			for x in map.sizeX:
+				for z in map.sizeZ:
+					if map.get_mini(x, z) == enemy.playerID:
+						out.append(map.tiles[x][z])
+			return out
+	var tiles: Array = []
+	for k in keys:
+		tiles.append(map.tiles[k.x][k.y])
+	return tiles

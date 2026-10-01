@@ -89,6 +89,8 @@ func _process(delta: float) -> void:
 			if resetting:
 				break
 			currentDamageAbsorb -= p.damage
+			if player != null:
+				player.count("absorbed")
 			p.shoot_down()
 		_reset_if_depleted()
 		if not resetting and currentDamageAbsorb < maxDamageAbsorb:

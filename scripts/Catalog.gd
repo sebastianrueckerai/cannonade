@@ -419,3 +419,22 @@ func _first_model_child(go: Node3D) -> Node3D:
 		if ch is Node3D:
 			return ch
 	return null
+
+
+## A wall piece turned so that it connects exactly towards `connectors`
+## ([up, down, left, right]). With fewer than two connectors a straight piece
+## is used (along the single connector, else left-right).
+func spawn_wall_for(connectors: Array) -> Node3D:
+	var want := connectors.duplicate()
+	var n := want.count(true)
+	if n < 2:
+		want = [true, true, false, false] if (want[0] or want[1]) else [false, false, true, true]
+	for def in of_category(BuildingDef.Category.WALL):
+		var go := spawn(def)
+		var bb := U.comp(go, "BuildingBlock")
+		for r in 4:
+			if bb.connects_up_down_left_right() == want:
+				return go
+			bb.rotate_counter_clockwise()
+		go.free()
+	return null
