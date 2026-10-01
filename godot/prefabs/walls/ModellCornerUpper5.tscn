@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/fbx/curve_upper5.fbx" id="1"]
+[ext_resource type="Script" path="res://scripts/WallModel.gd" id="2"]
+
+[node name="ModellCornerUpper5" type="Node3D"]
+script = ExtResource("2")
+
+[node name="Model" parent="." instance=ExtResource("1")]
+transform = Transform3D(-0.333333, 0, 0, 0, 0.333333, 0, 0, 0, -0.333333, 0, 0, 0)

@@ -1,0 +1,36 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/BuildingPlace.gd" id="1"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_BigLeafTree.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_Boulder.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_Bush.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_Evergreen.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_Grass.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_LeafTree.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_Mushroom.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_Stones.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://prefabs/Maker_Twiggy.tscn" id="10"]
+[ext_resource type="Script" path="res://scripts/components/LineRenderer.gd" id="11"]
+[ext_resource type="Material" path="res://materials/OpenTile.tres" id="12"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+size = Vector3(1, 1, 1)
+
+[node name="Slab" type="Node3D"]
+
+[node name="BuildingPlace" type="Node" parent="."]
+script = ExtResource("1")
+customModelMakers = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10")]
+tileModel = NodePath("../Model")
+lineRenderer = NodePath("../LineRenderer")
+
+[node name="LineRenderer" type="MeshInstance3D" parent="."]
+script = ExtResource("11")
+width = 0.1
+loop = true
+world_space = false
+
+[node name="Model" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.2, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_1")
+surface_material_override/0 = ExtResource("12")

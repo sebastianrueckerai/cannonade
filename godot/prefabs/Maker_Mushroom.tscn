@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/CustomModelMaker.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/nature/Mushroom.001.fbx" id="2"]
+[ext_resource type="PackedScene" path="res://assets/nature/Mushroom.002.fbx" id="3"]
+[ext_resource type="PackedScene" path="res://assets/nature/Mushroom.003.fbx" id="4"]
+[ext_resource type="PackedScene" path="res://assets/nature/Mushroom.004.fbx" id="5"]
+[ext_resource type="PackedScene" path="res://assets/nature/Mushroom.005.fbx" id="6"]
+
+[node name="Maker_Mushroom" type="Node3D"]
+
+[node name="CustomModelMaker" type="Node" parent="."]
+script = ExtResource("1")
+modelVariants = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")]
+fromColors = [Color(0.632075, 0.575427, 0.600821, 1), Color(0.924528, 0.84167, 0.878127, 1), Color(0.330189, 0.023362, 0.158512, 1)]
+toColors = [Color(0.658225, 0.639952, 0.688679, 1), Color(0.897013, 0.876691, 0.933962, 1), Color(0.250874, 0.065637, 0.556604, 1)]
+sizeFrom = 0.5
+sizeTo = 1.9
+rarityModifier = 1

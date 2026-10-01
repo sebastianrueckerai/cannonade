@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/ProjectileStraightFlight.gd" id="1"]
+[ext_resource type="Material" path="res://materials/GunMetal.tres" id="2"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_1"]
+radius = 0.5
+height = 1.0
+radial_segments = 20
+rings = 10
+
+[node name="StraightShooter" type="Node3D"]
+
+[node name="ProjectileStraightFlight" type="Node" parent="."]
+script = ExtResource("1")
+velocity = 5
+burnTime = 3
+stunTime = 2
+splashRange = 1
+tileDestroyer = false
+
+[node name="GameObject" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Sphere" type="MeshInstance3D" parent="GameObject"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+mesh = SubResource("SphereMesh_1")
+surface_material_override/0 = ExtResource("2")

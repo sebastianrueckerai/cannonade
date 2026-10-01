@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/CustomModelMaker.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/nature/Grass01.fbx" id="2"]
+[ext_resource type="PackedScene" path="res://assets/nature/Grass02.fbx" id="3"]
+[ext_resource type="PackedScene" path="res://assets/nature/Grass03.fbx" id="4"]
+[ext_resource type="PackedScene" path="res://assets/nature/Grass04.fbx" id="5"]
+[ext_resource type="PackedScene" path="res://assets/nature/Grass05.fbx" id="6"]
+
+[node name="Maker_Grass" type="Node3D"]
+
+[node name="CustomModelMaker" type="Node" parent="."]
+script = ExtResource("1")
+modelVariants = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")]
+fromColors = [Color(0.301961, 0.776471, 0.278431, 1)]
+toColors = [Color(0.564706, 0.956863, 0.545098, 1)]
+sizeFrom = 0.3
+sizeTo = 1.4

@@ -1,0 +1,117 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/Shooter.gd" id="1"]
+[ext_resource type="PackedScene" path="res://prefabs/ArcRenderer.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://prefabs/Bullet.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/components/BuildingBlock.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/components/UpgradedStructure.gd" id="5"]
+[ext_resource type="Material" path="res://materials/GunMetal.tres" id="6"]
+[ext_resource type="Material" path="res://materials/Cooldown.tres" id="7"]
+[ext_resource type="Script" path="res://scripts/components/Cooldown.gd" id="8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_3"]
+size = Vector2(1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5"]
+top_radius = 0.5
+bottom_radius = 0.5
+height = 2.0
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6"]
+top_radius = 0.5
+bottom_radius = 0.5
+height = 2.0
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7"]
+top_radius = 0.5
+bottom_radius = 0.5
+height = 2.0
+radial_segments = 20
+rings = 1
+
+[node name="Cannon22c" type="Node3D"]
+
+[node name="Shooter" type="Node" parent="."]
+script = ExtResource("1")
+projectileSpawn = NodePath("../Barrel/Cylinder/Nozzel/ProjectileSpawn")
+arcPrefab = ExtResource("2")
+projectilePrefab = ExtResource("3")
+barrel = NodePath("../Barrel")
+cooldown = NodePath("../Progress Bar")
+supplyNeeded = 4
+minRange = 1
+maxDesiredRange = 40
+gravity = 5
+ascendingPart = 0.6
+secondsBetweenShots = 2
+damage = 10
+turns = true
+nextBulletTime = 0
+
+[node name="BuildingBlock" type="Node" parent="."]
+script = ExtResource("4")
+connectorsUpDownLeftRight = [false, false, false, false]
+accessColFromDownLeft = [true, true, true, true, true, true, true, true, true]
+probabilityModifier = 1
+health = 10
+
+[node name="UpgradedStructure" type="Node" parent="."]
+script = ExtResource("5")
+signature = PackedInt32Array(1, 0, 0, 1)
+defaultForSize = false
+
+[node name="Ridge" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.72, 0, 0, 0, 0.885465, 0.370879, 0, -0.16226, 0.387391, 0, 0.413, 0.273)
+mesh = SubResource("BoxMesh_1")
+surface_material_override/0 = ExtResource("6")
+
+[node name="Ridge (1)" type="MeshInstance3D" parent="Ridge"]
+transform = Transform3D(1.79, 0, 0, 0, 0.62, 0, 0, 0, 0.71, 0, 0.068, 0.37)
+mesh = SubResource("BoxMesh_2")
+surface_material_override/0 = ExtResource("6")
+
+[node name="Progress Bar" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.572093, 0, 0, 0, 0, -0.461365, 0, 0.461365, 0, 0, 0.853, 0)
+mesh = SubResource("QuadMesh_3")
+surface_material_override/0 = ExtResource("7")
+visible = false
+script = ExtResource("8")
+
+[node name="Bulk" type="MeshInstance3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 0.56, 0, 0, 0, 2, 0, 0, 0)
+mesh = SubResource("BoxMesh_4")
+surface_material_override/0 = ExtResource("6")
+
+[node name="Barrel" type="Node3D" parent="."]
+transform = Transform3D(-1.5, 0, 0, 0, 1.5, 0, 0, 0, -1.66, 0, 0.283, 0.137)
+
+[node name="Cylinder" type="MeshInstance3D" parent="Barrel"]
+transform = Transform3D(-0.35, 0, 0, 0, -0.000094, 0.27, 0, 0.35, 0.000122, 0, 0, 0.233)
+mesh = SubResource("CylinderMesh_5")
+surface_material_override/0 = ExtResource("6")
+
+[node name="Cylinder (1)" type="MeshInstance3D" parent="Barrel/Cylinder"]
+transform = Transform3D(0.571429, 0, 0, 0, 0.814814, 0, 0, 0, 0.571428, 0, -0.296992, 0.71992)
+mesh = SubResource("CylinderMesh_6")
+surface_material_override/0 = ExtResource("6")
+
+[node name="Nozzel" type="MeshInstance3D" parent="Barrel/Cylinder"]
+transform = Transform3D(1.2, 0, 0, 0, -0.37037, 0, 0, 0, 1.2, 0, 1.215177, 0)
+mesh = SubResource("CylinderMesh_7")
+surface_material_override/0 = ExtResource("6")
+
+[node name="ProjectileSpawn" type="Node3D" parent="Barrel/Cylinder/Nozzel"]
+transform = Transform3D(1.970779, 0, -0.34063, 0, 1.853974, 0, 0.315759, 0, 1.826886, 0.09, -1.239999, 0.028)

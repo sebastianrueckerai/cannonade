@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/RenderArc.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/components/LineRenderer.gd" id="2"]
+
+[node name="ArcRenderer" type="Node3D"]
+
+[node name="RenderArc" type="Node" parent="."]
+script = ExtResource("1")
+lr = NodePath("../LineRenderer")
+
+[node name="LineRenderer" type="MeshInstance3D" parent="."]
+script = ExtResource("2")
+width = 0.068436
+loop = false
+world_space = true

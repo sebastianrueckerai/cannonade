@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/CustomModelMaker.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/nature/LeafTree01.fbx" id="2"]
+[ext_resource type="PackedScene" path="res://assets/nature/LeafTree02.fbx" id="3"]
+[ext_resource type="PackedScene" path="res://assets/nature/LeafTree03.fbx" id="4"]
+[ext_resource type="PackedScene" path="res://assets/nature/LeafTree04.fbx" id="5"]
+[ext_resource type="PackedScene" path="res://assets/nature/LeafTree05.fbx" id="6"]
+[ext_resource type="PackedScene" path="res://assets/nature/LeafTree06.fbx" id="7"]
+
+[node name="Maker_LeafTree" type="Node3D"]
+
+[node name="CustomModelMaker" type="Node" parent="."]
+script = ExtResource("1")
+modelVariants = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6"), ExtResource("7")]
+fromColors = [Color(0.852352, 0.896226, 0.181782, 1), Color(0.784314, 0.529412, 0.305882, 1)]
+toColors = [Color(0.590308, 0.783019, 0.025854, 1), Color(0.54902, 0.352941, 0.180392, 1)]
+sizeFrom = 0.8
+sizeTo = 1.3
+rarityModifier = 1

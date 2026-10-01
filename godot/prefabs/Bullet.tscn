@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/Projectile.gd" id="1"]
+[ext_resource type="Material" path="res://materials/Dark.tres" id="2"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1"]
+top_radius = 0.5
+bottom_radius = 0.5
+height = 2.0
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_2"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_3"]
+radius = 0.5
+height = 1.0
+radial_segments = 20
+rings = 10
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+size = Vector3(1, 1, 1)
+
+[node name="Bullet" type="Node3D"]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+
+[node name="Projectile" type="Node" parent="."]
+script = ExtResource("1")
+velocity = 0
+burnTime = 0
+splashRange = 0
+tileDestroyer = false
+body = NodePath("../rotater")
+rotates = true
+ascendingPartPercent = 0
+
+[node name="rotater" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Cylinder" type="MeshInstance3D" parent="rotater"]
+transform = Transform3D(1, 0, 0, 0, 0, -0.5125, 0, 1, 0, 0, 0, 0)
+mesh = SubResource("CylinderMesh_1")
+surface_material_override/0 = ExtResource("2")
+
+[node name="Fin2" type="MeshInstance3D" parent="rotater/Cylinder"]
+transform = Transform3D(0, 0, 0.1158, 0, 1, 0, -1.218467, 0, 0, 0, -0.484001, 0)
+mesh = SubResource("BoxMesh_2")
+surface_material_override/0 = ExtResource("2")
+
+[node name="Exhaust" type="Node3D" parent="rotater/Cylinder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.989, 0)
+
+[node name="Particle System" type="Node3D" parent="rotater/Cylinder/Exhaust"]
+transform = Transform3D(0.162501, 0, 0, 0, 0, -0.162501, 0, 0.162501, 0, 0, 0.000001, 0)
+
+[node name="Sphere" type="MeshInstance3D" parent="rotater/Cylinder"]
+transform = Transform3D(0.975, 0, 0, 0, 1.95122, 0, 0, 0, 0.975, 0, 0.98, 0)
+mesh = SubResource("SphereMesh_3")
+surface_material_override/0 = ExtResource("2")
+
+[node name="Fin1" type="MeshInstance3D" parent="rotater/Cylinder"]
+transform = Transform3D(0.115809, 0, 0, 0, 1, 0, 0, 0, 1.218456, 0, -0.484, 0)
+mesh = SubResource("BoxMesh_4")
+surface_material_override/0 = ExtResource("2")

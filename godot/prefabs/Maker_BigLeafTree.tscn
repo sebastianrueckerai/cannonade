@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/CustomModelMaker.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/nature/BigLeafTree01.fbx" id="2"]
+[ext_resource type="PackedScene" path="res://assets/nature/BigLeafTree02.fbx" id="3"]
+[ext_resource type="PackedScene" path="res://assets/nature/BigLeafTree03.fbx" id="4"]
+[ext_resource type="PackedScene" path="res://assets/nature/BigLeafTree04.fbx" id="5"]
+[ext_resource type="PackedScene" path="res://assets/nature/BigLeafTree05.fbx" id="6"]
+
+[node name="Maker_BigLeafTree" type="Node3D"]
+
+[node name="CustomModelMaker" type="Node" parent="."]
+script = ExtResource("1")
+modelVariants = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")]
+fromColors = [Color(0.156863, 0.407843, 0.12549, 1), Color(0.270588, 0.121569, 0.031373, 1)]
+toColors = [Color(0.254902, 0.721569, 0.231373, 1), Color(0.407843, 0.215686, 0.098039, 1)]
+sizeFrom = 0.8
+sizeTo = 1.5

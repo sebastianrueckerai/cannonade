@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/CustomModelMaker.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/nature/Twiggy01.fbx" id="2"]
+[ext_resource type="PackedScene" path="res://assets/nature/Twiggy02.fbx" id="3"]
+[ext_resource type="PackedScene" path="res://assets/nature/Twiggy03.fbx" id="4"]
+[ext_resource type="PackedScene" path="res://assets/nature/Twiggy04.fbx" id="5"]
+[ext_resource type="PackedScene" path="res://assets/nature/Twiggy05.fbx" id="6"]
+
+[node name="Maker_Twiggy" type="Node3D"]
+
+[node name="CustomModelMaker" type="Node" parent="."]
+script = ExtResource("1")
+modelVariants = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5"), ExtResource("6")]
+fromColors = [Color(0.662745, 0.360784, 0.090196, 1), Color(0.596078, 0.8, 0, 1)]
+toColors = [Color(0.788235, 0.52549, 0.294118, 1), Color(0.784314, 0.878431, 0.258824, 1)]
+sizeFrom = 0.5
+sizeTo = 1.2
+rarityModifier = 1

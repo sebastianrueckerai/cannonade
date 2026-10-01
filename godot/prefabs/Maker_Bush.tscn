@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/components/CustomModelMaker.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/nature/Bush01.fbx" id="2"]
+[ext_resource type="PackedScene" path="res://assets/nature/Bush02.fbx" id="3"]
+[ext_resource type="PackedScene" path="res://assets/nature/Bush03.fbx" id="4"]
+[ext_resource type="PackedScene" path="res://assets/nature/Bush04.fbx" id="5"]
+
+[node name="Maker_Bush" type="Node3D"]
+
+[node name="CustomModelMaker" type="Node" parent="."]
+script = ExtResource("1")
+modelVariants = [ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5")]
+fromColors = [Color(0.027451, 0.2, 0.07451, 1)]
+toColors = [Color(0.098039, 0.341176, 0.082353, 1)]
+sizeFrom = 0.8
+sizeTo = 1.2
