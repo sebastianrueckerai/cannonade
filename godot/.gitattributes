@@ -1,3 +1,0 @@
-# Godot port assets are stored as regular git objects (not Git LFS)
-*.png -filter -diff -merge binary
-*.fbx -filter -diff -merge binary

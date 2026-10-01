@@ -1,16 +1,17 @@
 # Grid Cannons – Godot port
 
-A port of the Unity (2018.3) game in `../Assets` to **Godot 4.7** with GDScript.
-The Unity project is left untouched; this folder is a self-contained Godot project.
+A Godot 4.7 game (GDScript), ported from the original Unity 2018.3 version. The Unity
+project was removed from the repository; it is still in the git history before the
+port (commit `e45e623`).
 
 ## Running
 
-Open `godot/project.godot` in Godot 4.7 (the first import takes a few seconds) and press
+Open this folder (`project.godot`) in Godot 4.7 (the first import takes a few seconds) and press
 Play, or from the command line:
 
 ```sh
-godot --path godot                                        # main menu
-godot --path godot res://scenes/game.tscn -- --mode=versus  # straight into a game
+godot --path .                                        # main menu
+godot --path . res://scenes/game.tscn -- --mode=versus  # straight into a game
 ```
 
 Game modes (they mirror the Unity scenes):
@@ -45,11 +46,10 @@ flak, shield generators or supply depots depending on their pattern.
 
 ## How the port is structured
 
-* `tools/unity2godot.py` converts the Unity prefabs (`Assets/Prefabs/*.prefab`) into
-  Godot scenes in `prefabs/`: primitive meshes, materials (`materials/`), nested prefabs
-  and the serialized MonoBehaviour fields. Unity is left-handed, so the z axis is mirrored
-  (`(x, y, z) → (x, y, -z)`, quaternions `(-x, -y, z, w)`). Re-run it from the repository
-  root with `python3 godot/tools/unity2godot.py` (needs PyYAML).
+* The scenes in `prefabs/` and `materials/` were generated from the Unity prefabs by a
+  converter (`tools/unity2godot.py`, removed together with the Unity project; see the git
+  history). Unity is left-handed, so the z axis is mirrored (`(x, y, z) → (x, y, -z)`,
+  quaternions `(-x, -y, z, w)`).
 * Every Unity `MonoBehaviour` became a GDScript in `scripts/components/`. A Unity
   GameObject is a `Node3D`; each of its components is a child node named after the
   script, so `GetComponent<Shooter>()` became `U.comp(go, "Shooter")`.
@@ -104,6 +104,6 @@ The runner fails on any engine or script error output and times out hung tests.
 `tools/screenshot.tscn` renders screenshots (needs a display, e.g. `xvfb-run`):
 
 ```sh
-xvfb-run godot --path godot --rendering-driver opengl3 --fixed-fps 30 \
+xvfb-run godot --path . --rendering-driver opengl3 --fixed-fps 30 \
     res://tools/screenshot.tscn -- --mode=ai2 --at=5,30 --out=/tmp/shot
 ```
