@@ -152,8 +152,16 @@ func _setup_environment(cfg: Dictionary) -> void:
 	light.light_energy = 1.0
 	add_child(light)
 	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.19, 0.30, 0.47)
+	var sky_tex := Art.sky_texture()
+	if sky_tex != null:
+		var sky_mat := PanoramaSkyMaterial.new()
+		sky_mat.panorama = sky_tex
+		env.sky = Sky.new()
+		env.sky.sky_material = sky_mat
+		env.background_mode = Environment.BG_SKY
+	else:
+		env.background_mode = Environment.BG_COLOR
+		env.background_color = Color(0.19, 0.30, 0.47)
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.55, 0.58, 0.65)
 	env.ambient_light_energy = 0.8

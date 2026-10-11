@@ -20,6 +20,11 @@ func _ready() -> void:
 	for b in buttons:
 		if b.text.contains("AI vs. AI"):
 			b.pressed.emit()
+	# the loading screen sits between the menu and the game
+	for i in 120:
+		await get_tree().process_frame
+		if get_tree().current_scene != null and get_tree().current_scene.name == "Main":
+			break
 	await _frames(5)
 	var main := get_tree().current_scene
 	_check(main.name == "Main" and main.game != null and main.game.started, "game started from the menu")

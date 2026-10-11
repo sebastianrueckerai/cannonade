@@ -3,7 +3,7 @@
 #   ./run_tests.sh            (uses `godot` from PATH, or set GODOT=/path/to/godot)
 set -u
 cd "$(dirname "$0")"
-GODOT=${GODOT:-godot}
+GODOT=${GODOT:-$(command -v godot || echo "$HOME/Applications/Godot_v4.7.1-stable_linux.x86_64")}
 "$GODOT" --headless --import >/dev/null 2>&1
 fail=0
 run() {
@@ -21,6 +21,7 @@ run() {
 	fi
 }
 run scripts      res://tests/check_scripts.tscn
+run art          res://tools/check_art.tscn
 run flood-fill   res://tests/flood_test.tscn
 run human-input  --fixed-fps 30 res://tests/human.tscn
 run weapons      --fixed-fps 30 res://tests/weapons.tscn

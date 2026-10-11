@@ -27,6 +27,7 @@ func spawn_ships(n_ships := 1) -> void:
 		var tile = spawns[i]
 		if not U.alive(tile.ship) and not U.alive(tile.commingShip):
 			var sgo := U.instantiate(shipPrefab, go)
+			Art.attach(sgo, "ship")
 			sgo.global_position = tile.go.global_position + sgo.position
 			var ship := U.comp(sgo, "Ship")
 			ship.set_sail(self, map, tile)

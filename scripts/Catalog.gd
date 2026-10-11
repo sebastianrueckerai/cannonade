@@ -255,6 +255,8 @@ func spawn(def_or_id, parent: Node = null) -> Node3D:
 		push_error("Catalog: unknown building %s" % [def_or_id])
 		return null
 	var go: Node3D = def.model.instantiate()
+	if def.category != BuildingDef.Category.WALL:
+		Art.attach(go, def.id)
 	configure(go, def)
 	if parent != null:
 		parent.add_child(go)

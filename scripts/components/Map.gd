@@ -158,6 +158,7 @@ func make_land_map() -> void:
 			var rand := U.value()
 			var y := lerpf(0.1, -0.1, rand)
 			var tgo := U.instantiate(tilePrefab, go)
+			Art.swap_mesh(tgo.get_node("Model"), "tile")
 			tgo.name = "Tile_%d_%d" % [xi, zi]
 			tgo.position = tile_position(xi, zi, y)
 			var t := U.comp(tgo, "BuildingPlace")

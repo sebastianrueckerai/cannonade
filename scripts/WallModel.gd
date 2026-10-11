@@ -1,6 +1,6 @@
 extends Node3D
-## Gives the imported wall FBX models the textures of the Unity materials
-## (the FBX files only carry material names).
+## Wall wrapper: uses the art-layer model wall_<fbx stem> when it exists, otherwise gives the
+## imported FBX the textures of the Unity materials (the FBX files only carry material names).
 
 const TEX := "res://assets/fbx/"
 static var _cache := {}
@@ -37,6 +37,15 @@ static func material_for(name: String) -> Material:
 
 
 func _ready() -> void:
+	var model := get_node("Model")
+	var art := Art.instance("wall_" + model.scene_file_path.get_file().get_basename())
+	if art != null:
+		remove_child(model)
+		model.free()
+		art.name = "Model"
+		art.position = Vector3(0, Art.SLAB_TOP, 0)
+		add_child(art)
+		return
 	for mi in find_children("*", "MeshInstance3D", true, false):
 		for i in mi.mesh.get_surface_count():
 			var src: Material = mi.mesh.surface_get_material(i)
