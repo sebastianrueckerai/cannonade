@@ -22,11 +22,12 @@ const MODES := {
 	# Assets/Scenes/4ai.unity: four AIs
 	"ai4": {"players": ["ai", "ai", "ai", "ai"], "size": 60, "round": 25.0, "pitch": 71.42, "fov": 37.44, "ships": 7},
 }
+# The team set of the art kit, game/art-direction/palette.json in the blender-ai repo (D21): main, highlight plus, highlight minus.
 const PLAYER_COLORS := [
-	["#1f1f5e", "#aaaadd", "#ad3030"],
-	["#4a1671", "#692d87", "#e01414"],
+	["#2d55c4", "#aaaadd", "#ad3030"],
+	["#7b2fa3", "#c9a0e0", "#e01414"],
 	["#197059", "#aaddab", "#ad3030"],
-	["#70631a", "#aaddab", "#ad3030"],
+	["#8c7a1f", "#e0d58a", "#ad3030"],
 ]
 
 static var requested_mode := ""
