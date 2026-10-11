@@ -16,11 +16,14 @@ func _ready() -> void:
 	bg.color = Color(0.12, 0.16, 0.22)
 	bg.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	add_child(bg)
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(PRESET_CENTER)
+	panel.grow_horizontal = GROW_DIRECTION_BOTH
+	panel.grow_vertical = GROW_DIRECTION_BOTH
+	add_child(panel)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 12)
-	box.set_anchors_preset(PRESET_CENTER)
-	box.grow_horizontal = GROW_DIRECTION_BOTH
-	box.grow_vertical = GROW_DIRECTION_BOTH
+	panel.add_child(box)
 	var label := Label.new()
 	label.text = "Loading"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -29,7 +32,6 @@ func _ready() -> void:
 	_bar.custom_minimum_size = Vector2(360, 24)
 	_bar.show_percentage = false
 	box.add_child(_bar)
-	add_child(box)
 	if next_scene.is_empty():
 		push_error("Loading: no next_scene set, use Loading.go(path)")
 		set_process(false)

@@ -6,6 +6,8 @@ class_name Art
 ##   ui/splash.png          splash screen image
 ##   ui/logo.png            title image on the menu
 ##   ui/menu_background.png
+##   ui/button.png, ui/button_hover.png, ui/button_pressed.png, ui/panel.png   9-slice styles, see theme()
+##   ui/font.ttf            default font of the menu screens
 ##   sky/world_panorama.png equirectangular sky
 ##   manifest.json          {"<id>": {"size": [x, y, z], "tolerance": 0.02}} written by the art pipeline
 ##
@@ -17,6 +19,7 @@ const DIR := "res://assets/art/"
 const SLAB_TOP := 0.1
 
 static var errors: Array[String] = []
+static var _theme: Theme
 static var _manifest := {}
 static var _manifest_loaded := false
 static var _checked := {}
@@ -41,10 +44,61 @@ static func sky_texture() -> Texture2D:
 	return load(p) if ResourceLoader.exists(p) else null
 
 
-## The theme of the menu, splash and loading screens. The in-game HUD keeps the default theme until it is styled.
+## The theme of the menu, splash and loading screens: ui/theme.tres, then image styles on top when the
+## files exist. button.png, button_hover.png, button_pressed.png and panel.png are 9-slice textures,
+## font.ttf is the default font. Slice margins default to a quarter of the image on every side,
+## manifest.json {"ui": {"button": {"margins": [l, t, r, b], "content": [l, t, r, b]}}} overrides them.
+## The in-game HUD keeps the default theme until it is styled.
 static func theme() -> Theme:
+	if _theme != null:
+		return _theme
 	var p := DIR + "ui/theme.tres"
-	return load(p) if ResourceLoader.exists(p) else null
+	_theme = load(p) if ResourceLoader.exists(p) else Theme.new()
+	var font := DIR + "ui/font.ttf"
+	if ResourceLoader.exists(font):
+		_theme.default_font = load(font)
+	var normal := _stylebox("button")
+	if normal != null:
+		var hover := _stylebox("button_hover")
+		if hover == null:
+			hover = normal.duplicate()
+			hover.modulate_color = Color(1.15, 1.15, 1.15)
+		var pressed := _stylebox("button_pressed")
+		if pressed == null:
+			pressed = normal.duplicate()
+			pressed.modulate_color = Color(0.8, 0.8, 0.8)
+		_theme.set_stylebox("normal", "Button", normal)
+		_theme.set_stylebox("hover", "Button", hover)
+		_theme.set_stylebox("pressed", "Button", pressed)
+		_theme.set_stylebox("focus", "Button", hover)
+	var panel := _stylebox("panel")
+	if panel != null:
+		_theme.set_stylebox("panel", "PanelContainer", panel)
+		_theme.set_stylebox("panel", "Panel", panel)
+	return _theme
+
+
+static func _stylebox(name: String) -> StyleBoxTexture:
+	var p := DIR + "ui/" + name + ".png"
+	if not ResourceLoader.exists(p):
+		return null
+	var tex: Texture2D = load(p)
+	_load_manifest()
+	var ui: Dictionary = _manifest.get("ui", {}).get(name, {})
+	var q := minf(tex.get_width(), tex.get_height()) / 4.0
+	var m: Array = ui.get("margins", [q, q, q, q])
+	var c: Array = ui.get("content", m)
+	var sb := StyleBoxTexture.new()
+	sb.texture = tex
+	sb.texture_margin_left = m[0]
+	sb.texture_margin_top = m[1]
+	sb.texture_margin_right = m[2]
+	sb.texture_margin_bottom = m[3]
+	sb.content_margin_left = c[0]
+	sb.content_margin_top = c[1]
+	sb.content_margin_right = c[2]
+	sb.content_margin_bottom = c[3]
+	return sb
 
 
 ## A fresh instance of the model, or null when the file does not exist.
@@ -106,6 +160,8 @@ static func swap_mesh(mi: MeshInstance3D, id: String) -> bool:
 static func validate() -> Array[String]:
 	_load_manifest()
 	for id in _manifest:
+		if id == "ui":
+			continue
 		if has_model(id):
 			instance(id).free()
 		else:

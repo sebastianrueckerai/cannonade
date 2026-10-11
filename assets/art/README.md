@@ -12,6 +12,13 @@ Drop a file here with the right name and the game uses it. Nothing else to wire.
 | `ui/logo.png` | the menu title |
 | `ui/menu_background.png` | behind the menu |
 | `ui/theme.tres` | the splash, menu and loading screens. The in-game HUD and the sandbox panel keep the default theme until they are styled, because their layout is sized by it |
+| `ui/button.png`, `ui/button_hover.png`, `ui/button_pressed.png` | 9-slice button images on top of the theme. Without hover and pressed files the normal image is lightened and darkened |
+| `ui/panel.png` | 9-slice panel image behind the menu and the loading bar |
+| `ui/font.ttf` | the default font of those screens |
+
+Slice margins default to a quarter of the image on every side. `manifest.json` overrides them per image: `{"ui": {"button": {"margins": [12, 12, 12, 12], "content": [16, 8, 16, 8]}}}`.
+
+`tools/shoot_ui.tscn` screenshots any scene at any window size: `godot --rendering-driver opengl3 res://tools/shoot_ui.tscn -- --scene=res://scenes/menu.tscn --out=/tmp/menu.png --width=390 --height=720`.
 | `sky/world_panorama.png` | equirectangular sky for the game scene |
 | `manifest.json` | `{"<id>": {"size": [x, y, z], "tolerance": 0.02}}`, metres in Godot axes |
 

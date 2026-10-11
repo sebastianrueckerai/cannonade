@@ -15,14 +15,15 @@ func _ready() -> void:
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		tr.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 		add_child(tr)
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(PRESET_CENTER)
+	panel.grow_horizontal = GROW_DIRECTION_BOTH
+	panel.grow_vertical = GROW_DIRECTION_BOTH
+	add_child(panel)
 	var box := VBoxContainer.new()
-	box.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	box.custom_minimum_size = Vector2(360, 0)
-	box.offset_left = -180
-	box.offset_right = 180
-	box.offset_top = -170
 	box.add_theme_constant_override("separation", 12)
-	add_child(box)
+	panel.add_child(box)
 	var logo := Art.texture("logo.png")
 	if logo != null:
 		var tr := TextureRect.new()
