@@ -1,6 +1,6 @@
 extends Node3D
 # Loads one .glb at the board centre under the gameplay camera and saves a screenshot.
-# godot --path <game> --rendering-driver opengl3 res://tools/preview_glb.tscn -- --glb=<abs> --out=<abs.png> [--dist=54.4] [--pitch=60] [--fov=30]
+# tools/godot_render.sh res://tools/preview_glb.tscn -- --glb=<abs> --out=<abs.png> [--dist=54.4] [--pitch=60] [--fov=30]
 
 
 func arg(name: String, default: String) -> String:

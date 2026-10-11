@@ -1,6 +1,6 @@
 extends Node
 ## Screenshots any scene at a given window size, for UI checks.
-# godot --rendering-driver opengl3 res://tools/shoot_ui.tscn -- --scene=res://scenes/menu.tscn --out=/tmp/menu.png [--width=1280 --height=720 --frames=10]
+# tools/godot_render.sh res://tools/shoot_ui.tscn -- --scene=res://scenes/menu.tscn --out=/tmp/menu.png [--width=1280 --height=720 --frames=10]
 
 
 func arg(name: String, default: String) -> String:
