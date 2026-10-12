@@ -1,6 +1,590 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://tools/gun_test.gd" id="1"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon-b-1000.glb" id="m0"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon-b-300.glb" id="m1"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon-b-3000.glb" id="m2"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon-side-1000.glb" id="m3"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon22a-b-1500.glb" id="m4"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon22a-b-4000.glb" id="m5"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon22a-b-500.glb" id="m6"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon22a-side-1500.glb" id="m7"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon33a-b-1000.glb" id="m8"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon33a-b-3000.glb" id="m9"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon33a-b-8000.glb" id="m10"]
+[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon33a-side-3000.glb" id="m11"]
+
+[sub_resource type="Environment" id="env"]
+background_mode = 1
+background_color = Color(0.4235, 0.7255, 0.9608, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.6627, 0.7843, 0.9098, 1)
+ambient_light_energy = 0.6
+
+[sub_resource type="BoxMesh" id="tile"]
+size = Vector3(0.98, 0.2, 0.98)
+
+[sub_resource type="StandardMaterial3D" id="grass"]
+albedo_color = Color(0.5608, 0.749, 0.2353, 1)
+
+[sub_resource type="StandardMaterial3D" id="grass_dark"]
+albedo_color = Color(0.516, 0.689, 0.216, 1)
+
+[sub_resource type="SphereMesh" id="dot"]
+radius = 0.06
+height = 0.12
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="red"]
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 1)
 
 [node name="GunTest" type="Node3D"]
-script = ExtResource("1")
+editor_description = "Gun bench. Columns sorted by vertex count, lowest on the left. To turn a gun, select its node 'gun' and rotate about Y. To tilt the barrel, expand 'gun', select 'barrel' and rotate about X: positive raises the muzzle. The red dot is projectile_spawn. Models come from blender-ai pipeline/barrel.py."
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.766044, -0.454519, 0.454519, 0, 0.707107, 0.707107, -0.642788, 0.541675, -0.541675, 0, 10, 0)
+light_color = Color(1, 0.9098, 0.7529, 1)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.766044, 0.642788, 0, -0.642788, 0.766044, 0, 15.9269, 23.3851)
+current = true
+fov = 40.0
+
+[node name="column_1" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 4.5, -1)
+billboard = 1
+pixel_size = 0.006
+font_size = 96
+text = "lowest"
+
+[node name="column_2" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 4.5, -1)
+billboard = 1
+pixel_size = 0.006
+font_size = 96
+text = "2"
+
+[node name="column_3" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 4.5, -1)
+billboard = 1
+pixel_size = 0.006
+font_size = 96
+text = "3"
+
+[node name="column_4" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 4.5, -1)
+billboard = 1
+pixel_size = 0.006
+font_size = 96
+text = "highest"
+
+[node name="small_1x1" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.5)
+
+[node name="cannon-b-300" type="Node3D" parent="small_1x1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="small_1x1/cannon-b-300"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="small_1x1/cannon-b-300"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon-b-300\n778 verts, 321 tris"
+
+[node name="gun" parent="small_1x1/cannon-b-300" instance=ExtResource("m1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="small_1x1/cannon-b-300/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon-b-1000" type="Node3D" parent="small_1x1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="small_1x1/cannon-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="small_1x1/cannon-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon-b-1000\n1856 verts, 1086 tris"
+
+[node name="gun" parent="small_1x1/cannon-b-1000" instance=ExtResource("m0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="small_1x1/cannon-b-1000/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon-side-1000" type="Node3D" parent="small_1x1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="small_1x1/cannon-side-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="small_1x1/cannon-side-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon-side-1000\n1932 verts, 1090 tris"
+
+[node name="gun" parent="small_1x1/cannon-side-1000" instance=ExtResource("m3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="small_1x1/cannon-side-1000/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon-b-3000" type="Node3D" parent="small_1x1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="small_1x1/cannon-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="small_1x1/cannon-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon-b-3000\n3993 verts, 3137 tris"
+
+[node name="gun" parent="small_1x1/cannon-b-3000" instance=ExtResource("m2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="small_1x1/cannon-b-3000/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="medium_2x2" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.5)
+
+[node name="cannon22a-b-500" type="Node3D" parent="medium_2x2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_0_1" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_0" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_1" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="medium_2x2/cannon22a-b-500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon22a-b-500\n826 verts, 520 tris"
+
+[node name="gun" parent="medium_2x2/cannon22a-b-500" instance=ExtResource("m6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-500/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon22a-side-1500" type="Node3D" parent="medium_2x2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="medium_2x2/cannon22a-side-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_0_1" type="MeshInstance3D" parent="medium_2x2/cannon22a-side-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_0" type="MeshInstance3D" parent="medium_2x2/cannon22a-side-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_1" type="MeshInstance3D" parent="medium_2x2/cannon22a-side-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="medium_2x2/cannon22a-side-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon22a-side-1500\n2709 verts, 1450 tris"
+
+[node name="gun" parent="medium_2x2/cannon22a-side-1500" instance=ExtResource("m7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="medium_2x2/cannon22a-side-1500/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon22a-b-1500" type="Node3D" parent="medium_2x2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_0_1" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_0" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_1" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="medium_2x2/cannon22a-b-1500"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon22a-b-1500\n2884 verts, 1585 tris"
+
+[node name="gun" parent="medium_2x2/cannon22a-b-1500" instance=ExtResource("m4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-1500/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon22a-b-4000" type="Node3D" parent="medium_2x2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-4000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_0_1" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-4000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_0" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-4000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_1" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-4000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0.5)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="medium_2x2/cannon22a-b-4000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon22a-b-4000\n5973 verts, 4175 tris"
+
+[node name="gun" parent="medium_2x2/cannon22a-b-4000" instance=ExtResource("m5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="medium_2x2/cannon22a-b-4000/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="large_3x3" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="cannon33a-b-1000" type="Node3D" parent="large_3x3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_0_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_0_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_1_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_1_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_2_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_2_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_2_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="large_3x3/cannon33a-b-1000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.7, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon33a-b-1000\n2203 verts, 1016 tris"
+
+[node name="gun" parent="large_3x3/cannon33a-b-1000" instance=ExtResource("m8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="large_3x3/cannon33a-b-1000/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon33a-b-3000" type="Node3D" parent="large_3x3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_0_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_0_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_1_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_1_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_2_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_2_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_2_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="large_3x3/cannon33a-b-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.7, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon33a-b-3000\n3637 verts, 2941 tris"
+
+[node name="gun" parent="large_3x3/cannon33a-b-3000" instance=ExtResource("m9")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="large_3x3/cannon33a-b-3000/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon33a-side-3000" type="Node3D" parent="large_3x3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_0_1" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_0_2" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_1_0" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_1" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_1_2" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_2_0" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_2_1" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_2_2" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="large_3x3/cannon33a-side-3000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.7, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon33a-side-3000\n5238 verts, 2989 tris"
+
+[node name="gun" parent="large_3x3/cannon33a-side-3000" instance=ExtResource("m11")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="large_3x3/cannon33a-side-3000/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[node name="cannon33a-b-8000" type="Node3D" parent="large_3x3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 0)
+
+[node name="tile_0_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_0_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_0_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_1_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_1_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_1_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_2_0" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="tile_2_1" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass_dark")
+
+[node name="tile_2_2" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+mesh = SubResource("tile")
+surface_material_override/0 = SubResource("grass")
+
+[node name="label" type="Label3D" parent="large_3x3/cannon33a-b-8000"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.7, 0)
+billboard = 1
+pixel_size = 0.004
+font_size = 48
+text = "cannon33a-b-8000\n9769 verts, 7094 tris"
+
+[node name="gun" parent="large_3x3/cannon33a-b-8000" instance=ExtResource("m10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="dot" type="MeshInstance3D" parent="large_3x3/cannon33a-b-8000/gun/barrel/projectile_spawn"]
+mesh = SubResource("dot")
+surface_material_override/0 = SubResource("red")
+
+[editable path="small_1x1/cannon-b-300/gun"]
+[editable path="small_1x1/cannon-b-1000/gun"]
+[editable path="small_1x1/cannon-side-1000/gun"]
+[editable path="small_1x1/cannon-b-3000/gun"]
+[editable path="medium_2x2/cannon22a-b-500/gun"]
+[editable path="medium_2x2/cannon22a-side-1500/gun"]
+[editable path="medium_2x2/cannon22a-b-1500/gun"]
+[editable path="medium_2x2/cannon22a-b-4000/gun"]
+[editable path="large_3x3/cannon33a-b-1000/gun"]
+[editable path="large_3x3/cannon33a-b-3000/gun"]
+[editable path="large_3x3/cannon33a-side-3000/gun"]
+[editable path="large_3x3/cannon33a-b-8000/gun"]
