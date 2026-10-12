@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Grid Cannons"
+config/name="Cannonade"
 config/description="Port of the Unity game Grid Cannons to Godot."
 run/main_scene="res://scenes/splash.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")

@@ -1,5 +1,7 @@
 # Grid Cannons – Godot port
 
+The game is released as **Cannonade**. Grid Cannons stays the project name, the repository name and the name in code.
+
 A Godot 4.7 game (GDScript), ported from the original Unity 2018.3 version. The Unity
 project was removed from the repository; it is still in the git history before the
 port (commit `e45e623`).

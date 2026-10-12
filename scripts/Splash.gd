@@ -32,7 +32,7 @@ func _ready() -> void:
 		mark.size_flags_horizontal = SIZE_SHRINK_CENTER
 		box.add_child(mark)
 		var title := Label.new()
-		title.text = "GRID CANNONS"
+		title.text = "CANNONADE"
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		title.add_theme_font_size_override("font_size", 44)
 		box.add_child(title)

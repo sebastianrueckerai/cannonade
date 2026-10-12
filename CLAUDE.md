@@ -1,5 +1,7 @@
 # Grid Cannons – notes for Claude
 
+The game is released as **Cannonade**: every player-facing string, the window title (`config/name`), the splash and the menu say Cannonade. Grid Cannons stays the project, repository and code name.
+
 Godot 4.7 game in GDScript (ported from Unity 2018.3). Player-facing docs: `README.md`.
 
 ## Roadmap
