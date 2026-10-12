@@ -16,4 +16,5 @@ fromColors = [Color(0.632075, 0.575427, 0.600821, 1), Color(0.924528, 0.84167, 0
 toColors = [Color(0.658225, 0.639952, 0.688679, 1), Color(0.897013, 0.876691, 0.933962, 1), Color(0.250874, 0.065637, 0.556604, 1)]
 sizeFrom = 0.5
 sizeTo = 1.9
+kind = "mushroom"
 rarityModifier = 1

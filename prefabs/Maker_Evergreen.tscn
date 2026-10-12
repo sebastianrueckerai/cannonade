@@ -16,4 +16,5 @@ fromColors = [Color(0.113725, 0.090196, 0.066667, 1), Color(0.019608, 0.14902, 0
 toColors = [Color(0.372549, 0.298039, 0.207843, 1), Color(0.05098, 0.282353, 0.160784, 1)]
 sizeFrom = 0.8
 sizeTo = 1.5
+kind = "evergreen"
 rarityModifier = 1

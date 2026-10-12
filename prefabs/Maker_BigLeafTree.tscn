@@ -16,3 +16,4 @@ fromColors = [Color(0.156863, 0.407843, 0.12549, 1), Color(0.270588, 0.121569, 0
 toColors = [Color(0.254902, 0.721569, 0.231373, 1), Color(0.407843, 0.215686, 0.098039, 1)]
 sizeFrom = 0.8
 sizeTo = 1.5
+kind = "big_leaf_tree"

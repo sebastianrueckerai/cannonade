@@ -16,3 +16,4 @@ fromColors = [Color(0.12549, 0.105882, 0.152941, 1)]
 toColors = [Color(0.25098, 0.239216, 0.266667, 1)]
 sizeFrom = 0.5
 sizeTo = 2
+kind = "boulder"

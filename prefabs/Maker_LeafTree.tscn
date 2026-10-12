@@ -17,4 +17,5 @@ fromColors = [Color(0.852352, 0.896226, 0.181782, 1), Color(0.784314, 0.529412, 
 toColors = [Color(0.590308, 0.783019, 0.025854, 1), Color(0.54902, 0.352941, 0.180392, 1)]
 sizeFrom = 0.8
 sizeTo = 1.3
+kind = "leaf_tree"
 rarityModifier = 1

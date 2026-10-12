@@ -15,3 +15,4 @@ fromColors = [Color(0.027451, 0.2, 0.07451, 1)]
 toColors = [Color(0.098039, 0.341176, 0.082353, 1)]
 sizeFrom = 0.8
 sizeTo = 1.2
+kind = "bush"
