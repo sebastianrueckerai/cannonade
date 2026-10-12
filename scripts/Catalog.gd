@@ -364,6 +364,7 @@ func _apply_params(go: Node3D, def: BuildingDef) -> void:
 ## Spawns a projectile of `pdef` under parent at pos; returns its component.
 func spawn_projectile(pdef: ProjectileDef, parent: Node, pos: Vector3, basis: Basis) -> Node:
 	var go: Node3D = pdef.model.instantiate()
+	Art.attach(go, pdef.resource_path.get_file().get_basename(), 0.0)
 	for n in PROJECTILE_COMPONENTS:
 		var old := go.get_node_or_null(NodePath(n))
 		if old != null:

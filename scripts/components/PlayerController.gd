@@ -390,11 +390,14 @@ func build_wall(tile, wall: Node3D) -> void:
 	wallTiles.append(tile)
 
 
+## The base covers the square of its size that has `tile` at its centre, or for an even size, `tile` as the
+## corner square with the highest x and z, with a ring of walls round it.
 func build_start_base(tile) -> void:
-	var n := _build(tile, Catalog.spawn(Catalog.base_def()))
-	startBase = U.comp(n, "BuildingBlock")
-	U.set_color(n, mainColor)
-	_wall_in(tile)
+	var size: int = Catalog.base_def().size
+	var x0: int = tile.idxX - size / 2
+	var z0: int = tile.idxZ - size / 2
+	place(Catalog.base_def(), x0, z0)
+	_wall_in(x0, z0, x0 + size - 1, z0 + size - 1)
 
 
 func _build_from_random_prefabs(tile, plan: Array) -> void:
@@ -412,7 +415,8 @@ func _build_from_random_prefabs(tile, plan: Array) -> void:
 		new_go.free()
 
 
-func _wall_in(tile) -> void:
+## A closed ring of walls round the square x0..x1, z0..z1.
+func _wall_in(x0: int, z0: int, x1: int, z1: int) -> void:
 	var upper_left := [false, true, false, true]
 	var upper_right := [false, true, true, false]
 	var lower_left := [true, false, false, true]
@@ -420,16 +424,16 @@ func _wall_in(tile) -> void:
 	var horizontals := [false, false, true, true]
 	var verticals := [true, true, false, false]
 	var t: Array = map.tiles
-	var x: int = tile.idxX
-	var z: int = tile.idxZ
-	_build_from_random_prefabs(t[x - 1][z + 1], upper_left)
-	_build_from_random_prefabs(t[x + 1][z + 1], upper_right)
-	_build_from_random_prefabs(t[x - 1][z - 1], lower_left)
-	_build_from_random_prefabs(t[x + 1][z - 1], lower_right)
-	_build_from_random_prefabs(t[x][z - 1], horizontals)
-	_build_from_random_prefabs(t[x][z + 1], horizontals)
-	_build_from_random_prefabs(t[x - 1][z], verticals)
-	_build_from_random_prefabs(t[x + 1][z], verticals)
+	_build_from_random_prefabs(t[x0 - 1][z1 + 1], upper_left)
+	_build_from_random_prefabs(t[x1 + 1][z1 + 1], upper_right)
+	_build_from_random_prefabs(t[x0 - 1][z0 - 1], lower_left)
+	_build_from_random_prefabs(t[x1 + 1][z0 - 1], lower_right)
+	for x in range(x0, x1 + 1):
+		_build_from_random_prefabs(t[x][z0 - 1], horizontals)
+		_build_from_random_prefabs(t[x][z1 + 1], horizontals)
+	for z in range(z0, z1 + 1):
+		_build_from_random_prefabs(t[x0 - 1][z], verticals)
+		_build_from_random_prefabs(t[x1 + 1][z], verticals)
 
 
 func _get_available_supply() -> float:
@@ -503,9 +507,7 @@ func place(def: BuildingDef, x: int, z: int, node: Node3D = null) -> Node3D:
 			build_wall(tile, go)
 		else:
 			build_building(tile, go)
-		if def.category == BuildingDef.Category.BASE:
-			startBase = U.comp(go, "BuildingBlock")
-			U.set_color(go, mainColor)
+		_mark_base(go, def)
 		return go
 	var tiles: Array = []
 	for dx in def.size:
@@ -525,7 +527,14 @@ func place(def: BuildingDef, x: int, z: int, node: Node3D = null) -> Node3D:
 	var cluster = UpgradeCluster.new(main, self, tiles)
 	for t in tiles:
 		t.upgradeCluster = cluster
+	_mark_base(go, def)
 	return go
+
+
+func _mark_base(go: Node3D, def: BuildingDef) -> void:
+	if def.category == BuildingDef.Category.BASE:
+		startBase = U.comp(go, "BuildingBlock")
+		U.set_color(go, mainColor)
 
 
 ## Every tile of the square is on the map, dry, free and usable.

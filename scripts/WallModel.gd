@@ -1,6 +1,7 @@
 extends Node3D
-## Wall wrapper: uses the art-layer model wall_<fbx stem> when it exists, otherwise gives the
-## imported FBX the textures of the Unity materials (the FBX files only carry material names).
+## Wall wrapper: uses the art-layer model of the wall's shape and level, wall_line_base for line_base1 to
+## line_base7, when it exists, otherwise gives the imported FBX the textures of the Unity materials (the FBX
+## files only carry material names).
 
 const TEX := "res://assets/fbx/"
 static var _cache := {}
@@ -38,7 +39,7 @@ static func material_for(name: String) -> Material:
 
 func _ready() -> void:
 	var model := get_node("Model")
-	var art := Art.instance("wall_" + model.scene_file_path.get_file().get_basename())
+	var art := Art.instance("wall_" + model.scene_file_path.get_file().get_basename().rstrip("0123456789"))
 	if art != null:
 		remove_child(model)
 		model.free()

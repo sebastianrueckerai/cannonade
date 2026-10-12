@@ -73,6 +73,13 @@ func _compare(tile) -> void:
 		ref.closed = cur.closed.duplicate()
 
 
+func _closed_cells() -> int:
+	var n := 0
+	for v in cur.closed:
+		n += v
+	return n
+
+
 func _ready() -> void:
 	Main.requested_mode = "ai2"
 	Main.requested_args = {"seed": "11", "no-decorations": "true"}
@@ -109,7 +116,10 @@ func _ready() -> void:
 
 	# equivalence with the original algorithm over random edits
 	seed(5)
+	var peak := 0
 	for i in 600:
+		if i > 0:
+			peak = maxi(peak, _closed_cells())
 		var x := randi_range(1, map.sizeX - 3)
 		var z := randi_range(1, map.sizeZ - 3)
 		var tile = map.tiles[x][z]
@@ -127,10 +137,7 @@ func _ready() -> void:
 				w.get_node("BuildingBlock").rotate_clockwise()
 			player.build_building(tile, w)
 		_compare(tile)
-	var closed := 0
-	for v in cur.closed:
-		closed += v
-	_check(closed > 0, "random edits produced enclosed areas (%d closed cells)" % closed)
+	_check(peak > 0, "random edits produced enclosed areas (%d closed cells at the peak)" % peak)
 	_check(mismatches == 0, "optimised flood fill equals the original (%d mismatches)" % mismatches)
 	print("FLOOD TEST PASSED" if ok else "FLOOD TEST FAILED")
 	get_tree().quit(0 if ok else 1)

@@ -126,7 +126,7 @@ func structure_id(xz: Vector2i) -> String:
 # --------------------------------------------------------------------- run
 func _run() -> void:
 	var map = sb.map
-	check(sb.snapshot().size() == 18, "a new layout has two walled-in bases")
+	check(sb.snapshot().size() == 26, "a new layout has two walled-in bases")
 
 	# drawing walls: drag around a rectangle, corners connect and enclose it
 	await drag(border(3, 3, 7, 6))
@@ -135,7 +135,7 @@ func _run() -> void:
 		for z in range(4, 6):
 			enclosed = enclosed and map.is_tile_enclosed(x, z)
 	check(enclosed, "dragging walls around a rectangle encloses it")
-	check(sb.player(0).wallTiles.size() == 8 + 14, "the walls belong to blue")
+	check(sb.player(0).wallTiles.size() == 12 + 14, "the walls belong to blue")
 
 	# buildings: a cannon inside works, one outside is marked OFF
 	await ui_click("Tool_cannon")
@@ -187,7 +187,7 @@ func _run() -> void:
 	(sb.ui.find_child("SaveName", true, false) as LineEdit).text = "sandbox_test"
 	await ui_click("Save")
 	await ui_click("New")
-	check(sb.snapshot().size() == 18, "New starts an empty layout")
+	check(sb.snapshot().size() == 26, "New starts an empty layout")
 	var opts: OptionButton = sb.ui.find_child("Scenarios", true, false)
 	for i in opts.item_count:
 		if str(opts.get_item_metadata(i)).ends_with("sandbox_test.tres"):

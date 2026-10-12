@@ -131,6 +131,12 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	game.round_changed.connect(_on_round_changed)
 	game.start_game()
 	camera.capture_home_view(map.sizeX * map.tileSize / 2.0)
+	# The fog starts at the far edge of the board and is full at 1.8 times that distance from the camera, so it
+	# never covers a tile the player builds on.
+	var far_edge := camera.global_position.distance_to(Vector3(0, 0, -map.sizeZ * map.tileSize / 2.0))
+	var env: Environment = $WorldEnvironment.environment
+	env.fog_depth_begin = far_edge
+	env.fog_depth_end = far_edge * 1.8
 	_on_round_changed(0, true)
 	if not cfg.get("hud", true):
 		for n in ["Timer", "Phase", "Help"]:
@@ -145,12 +151,19 @@ func _setup_environment(cfg: Dictionary) -> void:
 	add_child(camera)
 	camera.rotation_degrees = Vector3(-cfg["pitch"], 0, 0)
 	camera.make_current()
+	# The afternoon light of the art kit, lighting_rules.yaml in the blender-ai repo (D23): the sun 45 degrees up,
+	# 40 degrees to the right of the line from the board to the camera, warm, medium shadows. Energy 0.5 is
+	# measured: a lit top face then shows its palette colour.
 	var light := DirectionalLight3D.new()
 	light.name = "DirectionalLight"
-	# Unity rotation (0.408, -0.235, 0.109, 0.875) with the z axis mirrored
-	light.quaternion = Quaternion(-0.40821788, 0.23456968, 0.10938163, 0.8754261).normalized()
+	var elevation := deg_to_rad(45.0)
+	var azimuth := deg_to_rad(40.0)
+	var to_sun := Vector3(cos(elevation) * sin(azimuth), sin(elevation), cos(elevation) * cos(azimuth))
+	light.basis = Basis.looking_at(-to_sun, Vector3.UP)
+	light.light_color = Color("#ffe8c0")
+	light.light_energy = 0.5
 	light.shadow_enabled = true
-	light.light_energy = 1.0
+	light.shadow_opacity = 0.55
 	add_child(light)
 	var env := Environment.new()
 	var sky_tex := Art.sky_texture()
@@ -162,11 +175,16 @@ func _setup_environment(cfg: Dictionary) -> void:
 		env.background_mode = Environment.BG_SKY
 	else:
 		env.background_mode = Environment.BG_COLOR
-		env.background_color = Color(0.19, 0.30, 0.47)
+		env.background_color = Color("#6cb9f5")
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.55, 0.58, 0.65)
-	env.ambient_light_energy = 0.8
+	env.ambient_light_color = Color("#a9c8e8")
+	env.ambient_light_energy = 0.4
+	env.fog_enabled = true
+	env.fog_mode = Environment.FOG_MODE_DEPTH
+	env.fog_light_color = Color("#efe3d0")
+	env.fog_sky_affect = 0.0
 	var we := WorldEnvironment.new()
+	we.name = "WorldEnvironment"
 	we.environment = env
 	add_child(we)
 

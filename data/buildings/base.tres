@@ -9,6 +9,7 @@ script = ExtResource("3_g6rf0")
 display_name = "Base"
 description = "A player's start base."
 category = 2
+size = 2
 model = ExtResource("2_vn0pk")
 recipe_pattern = PackedStringArray()
 recipe_combine = PackedStringArray()

@@ -1,8 +1,10 @@
 class_name Art
 ## The art layer. Drop files into res://assets/art/ and the game uses them, nothing else to wire.
 ##
-##   3d/<id>.glb            a model for building id, "ship", "tile" or "wall_<fbx stem>" (wall_line_upper1)
-##                          origin at the ground centre, Y up, metres, one tile = 1 m
+##   3d/<id>.glb            a model for building id, "ship", "tile", projectile id ("shell") or wall shape and
+##                          level ("wall_line_base", "wall_curve_upper"), origin at the ground centre, Y up,
+##                          metres, one tile = 1 m. Walls keep the tile centre as origin, projectiles their centre
+##   3d/<id>.2.glb, .3.glb  more looks of the same id, one picked at random for each instance
 ##   ui/splash.png          splash screen image
 ##   ui/logo.png            title image on the menu
 ##   ui/menu_background.png
@@ -13,10 +15,13 @@ class_name Art
 ##
 ## A model part whose snake_case name maps to a prefab node in PascalCase (barrel -> Barrel,
 ## projectile_spawn -> ProjectileSpawn) is attached to that node, so pivots and spawn points keep
-## working. Every other mesh of the prefab is hidden. Sizes are checked against the manifest once.
+## working. A part named plate stays square to the grid while the building turns. Every other mesh of the
+## prefab is hidden. Sizes are checked against the manifest once.
 
 const DIR := "res://assets/art/"
 const SLAB_TOP := 0.1
+const INDICATOR_GAP := 0.15
+const PLATE := preload("res://scripts/ArtPlate.gd")
 
 static var errors: Array[String] = []
 static var _theme: Theme
@@ -24,6 +29,9 @@ static var _manifest := {}
 static var _manifest_loaded := false
 static var _checked := {}
 static var _mesh_cache := {}
+static var _variants := {}
+## Its own generator, so the art never moves the game's random sequence.
+static var _rng := RandomNumberGenerator.new()
 
 
 static func model_path(id: String) -> String:
@@ -101,19 +109,34 @@ static func _stylebox(name: String) -> StyleBoxTexture:
 	return sb
 
 
-## A fresh instance of the model, or null when the file does not exist.
+## The looks of `id`: <id>.glb, then <id>.2.glb, <id>.3.glb and on until a number is missing.
+static func variants(id: String) -> Array:
+	if not _variants.has(id):
+		var ids := []
+		if has_model(id):
+			ids.append(id)
+			while has_model("%s.%d" % [id, ids.size() + 1]):
+				ids.append("%s.%d" % [id, ids.size() + 1])
+		_variants[id] = ids
+	return _variants[id]
+
+
+## A fresh instance of one look of the model, or null when the file does not exist.
 static func instance(id: String) -> Node3D:
-	if not has_model(id):
+	var ids := variants(id)
+	if ids.is_empty():
 		return null
-	var node := (load(model_path(id)) as PackedScene).instantiate() as Node3D
+	var pick: String = ids[_rng.randi_range(0, ids.size() - 1)]
+	var node := (load(model_path(pick)) as PackedScene).instantiate() as Node3D
 	node.name = "Art"
-	_check(id, node)
+	_check(pick, node)
 	return node
 
 
-## Attaches the model `id` to the prefab root `go`. Returns false and leaves the prefab alone when
-## there is no file. Call before the prefab enters the tree and before components look for anchors.
-static func attach(go: Node3D, id: String) -> bool:
+## Attaches the model `id` to the prefab root `go`, `lift` metres up (the slab top for anything standing on a
+## tile). Returns false and leaves the prefab alone when there is no file. Call before the prefab enters the
+## tree and before components look for anchors.
+static func attach(go: Node3D, id: String, lift := SLAB_TOP) -> bool:
 	var art := instance(id)
 	if art == null:
 		return false
@@ -122,8 +145,22 @@ static func attach(go: Node3D, id: String) -> bool:
 			mi.visible = false
 	go.add_child(art)
 	art.scale = Vector3(1.0 / go.scale.x, 1.0 / go.scale.y, 1.0 / go.scale.z)
-	art.position = Vector3(0, SLAB_TOP, 0)
+	art.position = Vector3(0, lift, 0)
+	# Indicators such as the cooldown ring float above the model and above the reach of a raised barrel.
+	var top := bounds(art).end.y
+	var barrel := art.find_child("barrel", true, false) as Node3D
+	if barrel != null:
+		var b := bounds(barrel)
+		for i in 8:
+			top = maxf(top, _rel(barrel, art).origin.y + b.get_endpoint(i).length())
+	top = lift + top * art.scale.y + INDICATOR_GAP
+	for mi in go.get_children():
+		if mi is MeshInstance3D and mi.get_script() != null:
+			mi.position.y = top
 	for part in art.find_children("*", "Node3D", true, false):
+		if part.name == "plate":
+			part.set_script(PLATE)
+			continue
 		var target := go.find_child(part.name.to_pascal_case(), true, false)
 		if target == null or not target is Node3D or art.is_ancestor_of(target):
 			continue
@@ -134,6 +171,7 @@ static func attach(go: Node3D, id: String) -> bool:
 		target.transform = parent_rel.affine_inverse() * target_rel
 		if _has_mesh(part):
 			part.get_parent().remove_child(part)
+			part.owner = null
 			target.add_child(part)
 			part.transform = target_rel.affine_inverse() * part_rel
 	return true

@@ -101,14 +101,15 @@ func new_scenario(size: int) -> void:
 	scenario.map_size = size
 	scenario.seed = randi() % 100000
 	var items: Array = []
+	var n: int = Catalog.base_def().size
 	for s in 2:
-		var bx := size / 2
-		var bz := size / 4 if s == 0 else size - size / 4 - 1
-		items.append({"side": s, "id": "base", "x": bx, "z": bz, "rot": 0})
-		for dx in [-1, 0, 1]:
-			for dz in [-1, 0, 1]:
-				if dx != 0 or dz != 0:
-					items.append({"side": s, "id": "wall", "x": bx + dx, "z": bz + dz, "rot": 0})
+		var x0 := size / 2 - n / 2
+		var z0 := (size / 4 if s == 0 else size - size / 4 - 1) - n / 2
+		items.append({"side": s, "id": "base", "x": x0, "z": z0, "rot": 0})
+		for x in range(x0 - 1, x0 + n + 1):
+			for z in range(z0 - 1, z0 + n + 1):
+				if x == x0 - 1 or x == x0 + n or z == z0 - 1 or z == z0 + n:
+					items.append({"side": s, "id": "wall", "x": x, "z": z, "rot": 0})
 	scenario.items.assign(items)
 	undo_stack = []
 	redo_stack = []

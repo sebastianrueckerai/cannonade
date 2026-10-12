@@ -131,19 +131,17 @@ func _run() -> void:
 	await seconds(3.3)
 	check(not U.alive(dropped) and U.alive(human.nextWall), "click outside the map discards the wall")
 
-	# stacking: click an own wall with a fitting piece (rotate / redraw until it fits)
+	# stacking: click an own wall with a piece of the same shape, rotated until it fits. The wall on `free` is
+	# the corner of the rotation check, a random draw would make the result depend on the random sequence.
 	var target = map.tiles[free.x][free.y]
+	U.destroy(human.nextWall)
+	human.nextWall = Catalog.spawn("wall_corner", human.wallSpawn)
 	await point_at_tile(free)
-	for attempt in 12:
+	for attempt in 4:
 		await press("build_wall")
 		if U.alive(target.wallStacked):
 			break
-		if attempt % 4 == 3:
-			human.drop(human.nextWall, true)
-			await seconds(3.2)
-			await point_at_tile(free)
-		else:
-			await press("rotate_cw")
+		await press("rotate_cw")
 	check(U.alive(target.wallStacked), "a fitting wall stacks on an own wall")
 
 	# right click places the next building

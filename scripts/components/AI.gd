@@ -218,7 +218,7 @@ func _get_plans_for_spot(x: int, z: int, m_up: int, m_down: int, m_left: int, m_
 	m_down = z if z - m_down < 0 else m_down
 	# Cheap pre-check shared by all plan sizes (see BuildingPlan.construct_building_place)
 	if x <= 0 or z <= 0 or x >= max_ix or z >= max_iz or map.get_mini(x, z) != 0 \
-			or not map.statesMap.is_open(x, z):
+			or not map.statesMap.is_open(x * 3 + 1, z * 3 + 1):
 		return out
 	for mu in range(1, m_up + 1):
 		for md in range(1, m_down + 1):

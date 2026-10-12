@@ -312,8 +312,7 @@ func construct_building_place() -> void:
 	var within_bounds: bool = originX > 0 and originZ > 0 and originX < map.sizeX - 1 and originZ < map.sizeZ - 1
 	if not within_bounds:
 		return
-	# (sic) the original reads the fine grid with tile coordinates
-	var currently_open: bool = map.statesMap.is_open(originX, originZ)
+	var currently_open: bool = map.statesMap.is_open(originX * 3 + 1, originZ * 3 + 1)
 	if map.get_mini(originX, originZ) == 0 and currently_open:
 		var off_x_pos: int = mini(originX + radiusLeft, map.sizeX - 1) - originX
 		var off_z_pos: int = mini(originZ + radiusRight, map.sizeZ - 1) - originZ

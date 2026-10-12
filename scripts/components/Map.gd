@@ -7,13 +7,16 @@ const StatesMap = preload("res://scripts/StatesMap.gd")
 @export var sizeZ := 20
 @export var tileSize := 1.0
 @export var tilePrefab: PackedScene = preload("res://prefabs/Slab.tscn")
-@export var maxEnclosedColors: Array = [Color(0.26415092, 0.26415092, 0.26415092)]
-@export var minEnclosedColors: Array = [Color(0.4339623, 0.43191528, 0.43191528)]
-@export var maxOpenColors: Array = [Color(0.41509432, 0.29819083, 0.064613745), Color(0.095318615, 0.3207547, 0.11725227)]
-@export var minOpenColors: Array = [Color(0.5849056, 0.46994776, 0.24003203), Color(0.2763439, 0.509434, 0.30045664)]
-@export var waterColorMin := Color(0.0729797, 0.3115482, 0.3773585)
-@export var waterColorMax := Color(0.22160912, 0.5287073, 0.5660378)
-@export var wallColor := Color(0.1509434, 0.1502314, 0.1502314)
+# The ground colours of the art kit, palette.json in the blender-ai repo (D21): open ground is sand or grass for
+# the whole map, enclosed ground and the ground under a wall are stone paving a shade darker than the walls, water
+# is the sea. Each tile lerps from the lighter min colour (a high tile) to the darker max colour (a low tile).
+@export var maxEnclosedColors: Array = [Color("#e8d6b0").darkened(0.16)]
+@export var minEnclosedColors: Array = [Color("#e8d6b0").darkened(0.04)]
+@export var maxOpenColors: Array = [Color("#f0c975").darkened(0.08), Color("#8fbf3c").darkened(0.08)]
+@export var minOpenColors: Array = [Color("#f0c975").lightened(0.06), Color("#8fbf3c").lightened(0.06)]
+@export var waterColorMin := Color("#2f9fc9").lightened(0.04)
+@export var waterColorMax := Color("#2f9fc9").darkened(0.06)
+@export var wallColor := Color("#e8d6b0").darkened(0.1)
 @export var customModelMakerPrefabs: Array = [
 	preload("res://prefabs/Maker_BigLeafTree.tscn"), preload("res://prefabs/Maker_Boulder.tscn"),
 	preload("res://prefabs/Maker_Bush.tscn"), preload("res://prefabs/Maker_Evergreen.tscn"),
