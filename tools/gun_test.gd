@@ -18,7 +18,7 @@ var pitch := 0.0
 var sweep := false
 var t := 0.0
 var cam: Camera3D
-var orbit := Vector3(-30, 35, 22)  # yaw deg, pitch deg, distance m
+var orbit := Vector3(0, 40, 24)  # yaw deg, pitch deg, distance m
 var target := Vector3(0, 0.5, 5)
 var hud: Label
 
@@ -45,50 +45,35 @@ func _ready() -> void:
 	sun.shadow_enabled = true
 	add_child(sun)
 
-	var files := []
+	# Rows by size, the small guns in front. Columns by vertex count, the lowest on the left.
+	var by_size := {1: [], 2: [], 3: []}
 	for f in DirAccess.get_files_at(MODELS):
-		if f.ends_with(".glb"):
-			files.append(f)
-	files.sort()
-	var col := {1: 0, 2: 0, 3: 0}
-	var row_z := {1: 0.0, 2: 4.0, 3: 9.5}
-	for f in files:
-		var size := 3 if f.begins_with("cannon33") else 2 if f.begins_with("cannon22") else 1
-		var at := Vector3(-7.5 + col[size] * 5.0, 0, row_z[size])
-		col[size] += 1
-		_tiles(at, size)
+		if not f.ends_with(".glb"):
+			continue
 		var gun := _load(MODELS + f)
 		if gun == null:
 			continue
-		gun.position = at + Vector3(0, 0.1, 0)
-		add_child(gun)
-		var barrel := gun.find_child("barrel", true, false) as Node3D
-		if barrel == null:
+		if gun.find_child("barrel", true, false) == null:
 			push_error("%s has no barrel node" % f)
 			continue
-		guns.append(gun)
-		barrels.append(barrel)
-		var tris := _tris(gun)
-		var spawn := gun.find_child("projectile_spawn", true, false) as Node3D
-		if spawn != null:
-			var dot := MeshInstance3D.new()
-			var s := SphereMesh.new()
-			s.radius = 0.06
-			s.height = 0.12
-			dot.mesh = s
-			var m := StandardMaterial3D.new()
-			m.albedo_color = Color.RED
-			m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-			dot.material_override = m
-			spawn.add_child(dot)
-			spawns.append(dot)
-		var label := Label3D.new()
-		label.text = "%s\n%d tris" % [f.get_basename(), tris]
-		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		label.font_size = 48
-		label.pixel_size = 0.004
-		label.position = at + Vector3(0, size * 0.9 + 1.0, 0)
-		add_child(label)
+		var size := 3 if f.begins_with("cannon33") else 2 if f.begins_with("cannon22") else 1
+		by_size[size].append({"name": f.get_basename(), "gun": gun, "count": _counts(gun)})
+	var row_z := {1: 9.5, 2: 5.5, 3: 0.0}
+	var columns := 0
+	for size in by_size:
+		var row: Array = by_size[size]
+		row.sort_custom(func(a, b): return a.count.x < b.count.x)
+		columns = maxi(columns, row.size())
+		for i in row.size():
+			_place(row[i], Vector3(-7.5 + i * 5.0, 0, row_z[size]), size)
+	for i in columns:
+		var head := Label3D.new()
+		head.text = "lowest" if i == 0 else "highest" if i == columns - 1 else "%d" % (i + 1)
+		head.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		head.font_size = 96
+		head.pixel_size = 0.006
+		head.position = Vector3(-7.5 + i * 5.0, 4.5, row_z[3] - 1.0)
+		add_child(head)
 
 	cam = Camera3D.new()
 	cam.far = 500
@@ -113,6 +98,35 @@ func _ready() -> void:
 		get_tree().quit()
 
 
+func _place(entry: Dictionary, at: Vector3, size: int) -> void:
+	_tiles(at, size)
+	var gun: Node3D = entry.gun
+	gun.position = at + Vector3(0, 0.1, 0)
+	add_child(gun)
+	guns.append(gun)
+	barrels.append(gun.find_child("barrel", true, false) as Node3D)
+	var spawn := gun.find_child("projectile_spawn", true, false) as Node3D
+	if spawn != null:
+		var dot := MeshInstance3D.new()
+		var s := SphereMesh.new()
+		s.radius = 0.06
+		s.height = 0.12
+		dot.mesh = s
+		var m := StandardMaterial3D.new()
+		m.albedo_color = Color.RED
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		dot.material_override = m
+		spawn.add_child(dot)
+		spawns.append(dot)
+	var label := Label3D.new()
+	label.text = "%s\n%d verts, %d tris" % [entry.name, entry.count.x, entry.count.y]
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.font_size = 48
+	label.pixel_size = 0.004
+	label.position = at + Vector3(0, size * 0.9 + 1.0, 0)
+	add_child(label)
+
+
 func _load(path: String) -> Node3D:
 	var doc := GLTFDocument.new()
 	var state := GLTFState.new()
@@ -122,15 +136,17 @@ func _load(path: String) -> Node3D:
 	return doc.generate_scene(state) as Node3D
 
 
-func _tris(root: Node) -> int:
-	var n := 0
+func _counts(root: Node) -> Vector2i:  # vertices as the GPU gets them, split at seams and sharp edges; triangles
+	var v := 0
+	var t := 0
 	for mi in root.find_children("*", "MeshInstance3D", true, false):
 		var mesh: Mesh = mi.mesh
 		for s in mesh.get_surface_count():
 			var arrays := mesh.surface_get_arrays(s)
 			var idx = arrays[Mesh.ARRAY_INDEX]
-			n += (idx.size() if idx != null else arrays[Mesh.ARRAY_VERTEX].size()) / 3
-	return n
+			v += arrays[Mesh.ARRAY_VERTEX].size()
+			t += (idx.size() if idx != null else arrays[Mesh.ARRAY_VERTEX].size()) / 3
+	return Vector2i(v, t)
 
 
 func _tiles(at: Vector3, size: int) -> void:
@@ -157,7 +173,7 @@ func _view(name: String) -> void:
 			orbit = Vector3(0, 60, 7)
 		_:
 			cam.fov = 40
-			orbit = Vector3(-30, 35, 22)
+			orbit = Vector3(0, 40, 24)
 	_place_camera()
 
 
