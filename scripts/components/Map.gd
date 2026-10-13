@@ -17,12 +17,11 @@ const StatesMap = preload("res://scripts/StatesMap.gd")
 @export var waterColorMin := Color("#2f9fc9").lightened(0.04)
 @export var waterColorMax := Color("#2f9fc9").darkened(0.06)
 @export var wallColor := Color("#e8d6b0").darkened(0.1)
+# The approved painted kinds only (D50); the other six kinds wait on blender-ai C5 and
+# stay out of the draw so no old FBX prop appears in a first game.
 @export var customModelMakerPrefabs: Array = [
-	preload("res://prefabs/Maker_BigLeafTree.tscn"), preload("res://prefabs/Maker_Boulder.tscn"),
-	preload("res://prefabs/Maker_Bush.tscn"), preload("res://prefabs/Maker_Evergreen.tscn"),
-	preload("res://prefabs/Maker_Grass.tscn"), preload("res://prefabs/Maker_LeafTree.tscn"),
-	preload("res://prefabs/Maker_Mushroom.tscn"), preload("res://prefabs/Maker_Stones.tscn"),
-	preload("res://prefabs/Maker_Twiggy.tscn")]
+	preload("res://prefabs/Maker_Boulder.tscn"), preload("res://prefabs/Maker_Bush.tscn"),
+	preload("res://prefabs/Maker_LeafTree.tscn")]
 @export var buildingRange := 2
 @export var maxModelTypes := 4
 ## Set to false to skip decorations (faster headless simulations).
