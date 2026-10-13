@@ -95,6 +95,141 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-13T09:52:46+02:00"
   },
+  "nature_boulder": {
+    "size": [
+      0.8777,
+      0.6953,
+      0.8049
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_boulder"
+    ],
+    "tris": 80,
+    "source_sha": "c0b02822e0e8",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
+  "nature_boulder.2": {
+    "size": [
+      0.8293,
+      0.7096,
+      0.9152
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_boulder.2"
+    ],
+    "tris": 80,
+    "source_sha": "c36d728a25f1",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
+  "nature_boulder.3": {
+    "size": [
+      0.8804,
+      0.8,
+      0.8671
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_boulder.3"
+    ],
+    "tris": 80,
+    "source_sha": "7c5f43746310",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
+  "nature_bush": {
+    "size": [
+      0.7416,
+      0.4202,
+      0.751
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_bush"
+    ],
+    "tris": 80,
+    "source_sha": "4e75f5163555",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
+  "nature_bush.2": {
+    "size": [
+      0.7151,
+      0.4795,
+      0.7325
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_bush.2"
+    ],
+    "tris": 80,
+    "source_sha": "233d47068a4b",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
+  "nature_bush.3": {
+    "size": [
+      0.5172,
+      0.366,
+      0.7802
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_bush.3"
+    ],
+    "tris": 80,
+    "source_sha": "5454331fc07f",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
+  "nature_leaf_tree": {
+    "size": [
+      0.9162,
+      1.7523,
+      1.0187
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_leaf_tree"
+    ],
+    "tris": 118,
+    "source_sha": "5bdb7fa717c8",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
+  "nature_leaf_tree.2": {
+    "size": [
+      0.6111,
+      1.2299,
+      0.9925
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_leaf_tree.2"
+    ],
+    "tris": 118,
+    "source_sha": "594925b2e3b1",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
+  "nature_leaf_tree.3": {
+    "size": [
+      0.5534,
+      0.9016,
+      1.0003
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "nature_leaf_tree.3"
+    ],
+    "tris": 118,
+    "source_sha": "0c04eec4dae8",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-13T21:20:29+02:00"
+  },
   "shell": {
     "size": [
       0.28,
