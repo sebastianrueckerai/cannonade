@@ -12,7 +12,7 @@
     "tris": 582,
     "source_sha": "264f69683eb1",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "base.2": {
     "size": [
@@ -27,7 +27,7 @@
     "tris": 561,
     "source_sha": "dd90fc71e396",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T17:08:33+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "base.3": {
     "size": [
@@ -42,7 +42,7 @@
     "tris": 550,
     "source_sha": "9f0ad2d6eccc",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "cannon": {
     "size": [
@@ -59,7 +59,7 @@
     "tris": 1106,
     "source_sha": "a4244dd58525",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "cannon22a": {
     "size": [
@@ -76,7 +76,7 @@
     "tris": 1470,
     "source_sha": "1a571adec674",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "cannon33a": {
     "size": [
@@ -93,7 +93,7 @@
     "tris": 2961,
     "source_sha": "626c3b88362e",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "shell": {
     "size": [
@@ -108,7 +108,23 @@
     "tris": 288,
     "source_sha": "47a7a27c9253",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
+  },
+  "ship": {
+    "size": [
+      0.4712,
+      0.974,
+      1.192
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "ship",
+      "ship_cannon"
+    ],
+    "tris": 1408,
+    "source_sha": "cfe4e1759a4d",
+    "approved_by": null,
+    "synced": "2026-10-13T14:06:34+02:00"
   },
   "supply": {
     "size": [
@@ -123,7 +139,7 @@
     "tris": 544,
     "source_sha": "0b60e1788c69",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "supply.2": {
     "size": [
@@ -138,7 +154,7 @@
     "tris": 268,
     "source_sha": "3032bae39d1f",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "supply.3": {
     "size": [
@@ -153,7 +169,7 @@
     "tris": 517,
     "source_sha": "6fe55fd2ec8f",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "supply.4": {
     "size": [
@@ -168,7 +184,7 @@
     "tris": 547,
     "source_sha": "0fecc1ca7546",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "tile": {
     "size": [
@@ -183,7 +199,7 @@
     "tris": 20,
     "source_sha": "0306ebfa5880",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "upgrade_a": {
     "size": [
@@ -198,7 +214,7 @@
     "tris": 572,
     "source_sha": "50cc7abad8d2",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "upgrade_b": {
     "size": [
@@ -213,7 +229,7 @@
     "tris": 490,
     "source_sha": "e45a9ea12c4c",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "wall_cross_base": {
     "size": [
@@ -228,7 +244,7 @@
     "tris": 200,
     "source_sha": "f454cfd78ba7",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "wall_cross_upper": {
     "size": [
@@ -243,7 +259,7 @@
     "tris": 200,
     "source_sha": "baaa527c95b3",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "wall_curve_base": {
     "size": [
@@ -258,7 +274,7 @@
     "tris": 108,
     "source_sha": "1d72f3460004",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "wall_curve_upper": {
     "size": [
@@ -273,7 +289,7 @@
     "tris": 112,
     "source_sha": "bfed48641528",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "wall_line_base": {
     "size": [
@@ -288,7 +304,7 @@
     "tris": 124,
     "source_sha": "089859d5c22e",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "wall_line_upper": {
     "size": [
@@ -303,7 +319,7 @@
     "tris": 124,
     "source_sha": "8d7f99d29db3",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "wall_tri_base": {
     "size": [
@@ -318,7 +334,7 @@
     "tris": 136,
     "source_sha": "298f2b16c6ce",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   },
   "wall_tri_upper": {
     "size": [
@@ -333,6 +349,6 @@
     "tris": 136,
     "source_sha": "6f5daf7f1f8e",
     "approved_by": "Sebastian",
-    "synced": "2026-10-12T15:45:54+02:00"
+    "synced": "2026-10-13T09:52:46+02:00"
   }
 }
