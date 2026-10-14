@@ -1,13 +1,15 @@
 extends Node
-## A sandbox battle between two walled forts that hold every building of the art kit's first batch: the three
-## guns, the base, four supply depots (enough supply for both big guns) and the two blocks. Saves screenshots at
-## the given battle times (needs a display, run it through tools/godot_render.sh).
+## A sandbox battle between two walled forts that hold every building of the art kit: the five guns (small, heavy,
+## mortar, flak, siege), the base, the depots of every size (enough supply for every big gun) and the two blocks.
+## Saves screenshots at the given battle times (needs a display, run it through tools/godot_render.sh).
 ##   tools/godot_render.sh res://tools/shoot_battle.tscn -- --at=4,6 --out=/tmp/battle
 ##   --look=x,z   camera close to that tile, as in tools/screenshot.gd
 ##   --stack      a second storey on the front walls of both forts
 ##   --top=H      with --look: the camera straight down from H metres, to check what sits on the ground
 ##   --reload=K   every gun reloads K times slower, so a screenshot catches a reload in progress
 ##   --seed=N     the map seed, default 1, which draws grass for the open ground
+##   --align      at the first shot, print each gun's mount centre minus its plate centre in metres, the placed
+##                gate of assets-3d.md: under 0.02 on both axes
 
 const SandboxScene = preload("res://scenes/sandbox.tscn")
 const SIZE := 30
@@ -15,6 +17,7 @@ const SIZE := 30
 var sb: Node
 var shots: Array = []
 var out := "user://battle"
+var align := false
 
 
 func _ready() -> void:
@@ -26,6 +29,7 @@ func _ready() -> void:
 	for s in str(args.get("at", "5")).split(","):
 		shots.append(float(s))
 	out = args.get("out", out)
+	align = args.has("align")
 	if args.has("artseed"):
 		Art._rng.seed = int(args["artseed"])
 	if args.has("reload"):  # stretch every gun's reload at spawn, so a mid-reload frame exists to shoot
@@ -56,16 +60,17 @@ func _ready() -> void:
 		cam.look_at(target)
 
 
-## Walls round x 6..23 and z z0..z0+7, the buildings inside, side 1 mirrored so its guns face side 0.
+## Walls round x 2..27 and z z0..z0+7, the buildings inside, side 1 mirrored so its guns face side 0.
 func _fort(side: int, z0: int) -> Array:
 	var items: Array = []
-	for x in range(6, 24):
+	for x in range(2, 28):
 		for z in range(z0, z0 + 8):
-			if x == 6 or x == 23 or z == z0 or z == z0 + 7:
+			if x == 2 or x == 27 or z == z0 or z == z0 + 7:
 				items.append({"side": side, "id": "wall", "x": x, "z": z, "rot": 0})
 	var inside := [["cannon33a", 8, 2], ["cannon22a", 12, 2], ["cannon", 15, 3], ["base", 17, 2],
 		["supply", 21, 2], ["supply", 22, 2], ["supply", 21, 4], ["supply", 22, 4],
-		["upgrade_a", 15, 5], ["upgrade_b", 13, 5]]
+		["upgrade_a", 15, 5], ["upgrade_b", 13, 5],
+		["supply33", 3, 2], ["cannon22b", 23, 2], ["flak22", 25, 2], ["supply22", 23, 4]]
 	for b in inside:
 		var size: int = Catalog.get_def(b[0]).size
 		var dz: int = b[2] if side == 1 else 6 - b[2] - size + 1
@@ -74,7 +79,7 @@ func _fort(side: int, z0: int) -> Array:
 
 
 func _stack_row(side: int, z: int) -> void:
-	for x in range(6, 24):
+	for x in range(2, 28):
 		var t = sb.map.tiles[x][z]
 		if not U.alive(t.structure) or not t.isWall:
 			continue
@@ -87,7 +92,21 @@ func _process(_delta: float) -> void:
 	if shots.is_empty() or sb.battle_time() < shots[0]:
 		return
 	var t: float = shots.pop_front()
+	if align:
+		align = false
+		_print_align()
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png("%s_%03d.png" % [out, int(t * 10)])
 	if shots.is_empty():
 		get_tree().quit()
+
+
+func _print_align() -> void:
+	for go in get_tree().get_nodes_in_group("structures"):
+		var plate := go.find_child("plate", true, false) as Node3D
+		var mount := go.find_child("mount", true, false) as Node3D
+		if plate == null or mount == null:
+			continue
+		var d: Vector3 = mount.global_transform * Art.bounds(mount).get_center() - plate.global_transform * Art.bounds(plate).get_center()
+		var s = U.comp(go, "Structure")
+		print("ALIGN %s at %s: mount minus plate x %.3f z %.3f" % [s.def.id if s else go.name, go.global_position, d.x, d.z])

@@ -87,7 +87,9 @@ func _place() -> void:
 		r = maxf(mw.size.x, mw.size.z) * 0.5 + 0.06
 		centre = mw.get_center()
 	if plate != null:
-		top = (plate.global_transform * plate.get_aabb()).end.y
+		var pw := plate.global_transform * plate.get_aabb()
+		top = pw.end.y
+		r = minf(r, pw.size.x * 0.5)  # the ring stays on the plate, inside the gun's square
 	top_level = true
 	global_transform = Transform3D(Basis.IDENTITY.scaled(Vector3(r * 2.0, r * 2.0, 1.0)).rotated(Vector3.RIGHT, -PI / 2),
 		Vector3(centre.x, top + 0.02, centre.z))

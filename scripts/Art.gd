@@ -15,13 +15,18 @@ class_name Art
 ##
 ## A model part whose snake_case name maps to a prefab node in PascalCase (barrel -> Barrel,
 ## projectile_spawn -> ProjectileSpawn) is attached to that node, so pivots and spawn points keep
-## working. A part named plate stays square to the grid while the building turns. Every other mesh of the
+## working. The flak's guns -> Guns, which the game aims by its whole orientation, gives the anchor its rest
+## pose. A part named plate stays square to the grid while the building turns. Every other mesh of the
 ## prefab is hidden. Sizes are checked against the manifest once.
 
 const DIR := "res://assets/art/"
 const SLAB_TOP := 0.1
 const INDICATOR_GAP := 0.15
 const PLATE := preload("res://scripts/ArtPlate.gd")
+## Parts the game turns: an indicator floats above their reach.
+const MOVING := ["barrel", "guns"]
+## Parts the game aims by replacing the anchor's whole basis (Flak.gd): the anchor takes the part's rest orientation.
+const AIMED := ["guns"]
 
 static var errors: Array[String] = []
 static var _theme: Theme
@@ -146,13 +151,15 @@ static func attach(go: Node3D, id: String, lift := SLAB_TOP) -> bool:
 	go.add_child(art)
 	art.scale = Vector3(1.0 / go.scale.x, 1.0 / go.scale.y, 1.0 / go.scale.z)
 	art.position = Vector3(0, lift, 0)
-	# Indicators such as the cooldown ring float above the model and above the reach of a raised barrel.
+	# Indicators such as the cooldown ring float above the model and above the reach of a moving part.
 	var top := bounds(art).end.y
-	var barrel := art.find_child("barrel", true, false) as Node3D
-	if barrel != null:
-		var b := bounds(barrel)
+	for name in MOVING:
+		var moving := art.find_child(name, true, false) as Node3D
+		if moving == null:
+			continue
+		var b := bounds(moving)
 		for i in 8:
-			top = maxf(top, _rel(barrel, art).origin.y + b.get_endpoint(i).length())
+			top = maxf(top, _rel(moving, art).origin.y + b.get_endpoint(i).length())
 	top = lift + top * art.scale.y + INDICATOR_GAP
 	for mi in go.get_children():
 		if mi is MeshInstance3D and mi.get_script() != null:
@@ -168,8 +175,14 @@ static func attach(go: Node3D, id: String, lift := SLAB_TOP) -> bool:
 		var parent_rel := _rel(target.get_parent(), go)
 		var target_rel := _rel(target, go)
 		target_rel.origin = part_rel.origin
+		if part.name in AIMED:
+			target_rel.basis = Basis(part_rel.basis.get_rotation_quaternion()).scaled(target_rel.basis.get_scale())
 		target.transform = parent_rel.affine_inverse() * target_rel
 		if _has_mesh(part):
+			# A placeholder mesh as the anchor was hidden above, and would hide the art under it.
+			if target is MeshInstance3D and target.get_script() == null:
+				target.mesh = null
+				target.visible = true
 			part.get_parent().remove_child(part)
 			part.owner = null
 			target.add_child(part)

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="PackedScene" path="res://prefabs/Supply22.tscn" id="1_model"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="2_def"]
+
+[resource]
+script = ExtResource("2_def")
+display_name = "Supply depot 3x3"
+model = ExtResource("1_model")
+size = 3
+produces = Dictionary[String, float]({
+"supply": 16.0
+})
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()
