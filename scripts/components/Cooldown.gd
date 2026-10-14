@@ -112,7 +112,9 @@ func _base() -> void:
 		top = (plate.global_transform * plate.get_aabb()).end.y
 	var quad := r * 2.0  # a 1x1 quad: the shader's outer radius 0.5 lands on r at scale 2r
 	top_level = true
-	global_transform = Transform3D(Basis.IDENTITY.rotated(Vector3.RIGHT, -PI / 2).scaled(Vector3(quad, quad, 1.0)),
+	# scale in the quad's own plane FIRST, then lay it flat: scaling after the rotation
+	# stretched world X and world Y (height) and left world Z at 1 m, which drew an ellipse
+	global_transform = Transform3D(Basis.IDENTITY.scaled(Vector3(quad, quad, 1.0)).rotated(Vector3.RIGHT, -PI / 2),
 		Vector3(centre.x, top + 0.02, centre.z))
 	if _mat:
 		_mat.set_shader_parameter("color", Color(Indicators.base_red, 0.95))
