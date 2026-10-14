@@ -57,9 +57,9 @@
       "plate"
     ],
     "tris": 1106,
-    "source_sha": "a4244dd58525",
+    "source_sha": "4d9eb60f9076",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "cannon22a": {
     "size": [
@@ -74,9 +74,9 @@
       "plate"
     ],
     "tris": 1470,
-    "source_sha": "1a571adec674",
+    "source_sha": "fb5272643a3c",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "cannon33a": {
     "size": [
@@ -91,9 +91,9 @@
       "plate"
     ],
     "tris": 2961,
-    "source_sha": "626c3b88362e",
+    "source_sha": "9da098594a45",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "nature_boulder": {
     "size": [
@@ -196,9 +196,9 @@
       "nature_leaf_tree"
     ],
     "tris": 118,
-    "source_sha": "5bdb7fa717c8",
+    "source_sha": "66e479bea47a",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T21:20:29+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "nature_leaf_tree.2": {
     "size": [
@@ -211,9 +211,9 @@
       "nature_leaf_tree.2"
     ],
     "tris": 118,
-    "source_sha": "594925b2e3b1",
+    "source_sha": "afa6bff7ad53",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T21:20:29+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "nature_leaf_tree.3": {
     "size": [
@@ -226,9 +226,9 @@
       "nature_leaf_tree.3"
     ],
     "tris": 118,
-    "source_sha": "0c04eec4dae8",
+    "source_sha": "489ac27ed913",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T21:20:29+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "shell": {
     "size": [
@@ -241,9 +241,9 @@
       "shell"
     ],
     "tris": 288,
-    "source_sha": "47a7a27c9253",
+    "source_sha": "d62288dbb604",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "ship": {
     "size": [
@@ -332,9 +332,9 @@
       "tile"
     ],
     "tris": 20,
-    "source_sha": "0306ebfa5880",
+    "source_sha": "667e752527a9",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "upgrade_a": {
     "size": [
@@ -377,9 +377,9 @@
       "wall"
     ],
     "tris": 200,
-    "source_sha": "f454cfd78ba7",
+    "source_sha": "f0f3beace3e8",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "wall_cross_upper": {
     "size": [
@@ -392,9 +392,9 @@
       "wall"
     ],
     "tris": 200,
-    "source_sha": "baaa527c95b3",
+    "source_sha": "283c1f38f6cd",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "wall_curve_base": {
     "size": [
@@ -407,9 +407,9 @@
       "wall"
     ],
     "tris": 108,
-    "source_sha": "1d72f3460004",
+    "source_sha": "2b025543887f",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "wall_curve_upper": {
     "size": [
@@ -422,9 +422,9 @@
       "wall"
     ],
     "tris": 112,
-    "source_sha": "bfed48641528",
+    "source_sha": "901318f7cef1",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "wall_line_base": {
     "size": [
@@ -437,9 +437,9 @@
       "wall"
     ],
     "tris": 124,
-    "source_sha": "089859d5c22e",
+    "source_sha": "d5b4b732b104",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "wall_line_upper": {
     "size": [
@@ -452,9 +452,9 @@
       "wall"
     ],
     "tris": 124,
-    "source_sha": "8d7f99d29db3",
+    "source_sha": "00e4f7d2efdf",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "wall_tri_base": {
     "size": [
@@ -467,9 +467,9 @@
       "wall"
     ],
     "tris": 136,
-    "source_sha": "298f2b16c6ce",
+    "source_sha": "672220433c60",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   },
   "wall_tri_upper": {
     "size": [
@@ -482,8 +482,8 @@
       "wall"
     ],
     "tris": 136,
-    "source_sha": "6f5daf7f1f8e",
+    "source_sha": "5502515f4d1d",
     "approved_by": "Sebastian",
-    "synced": "2026-10-13T09:52:46+02:00"
+    "synced": "2026-10-14T17:25:45+02:00"
   }
 }
