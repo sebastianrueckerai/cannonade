@@ -7,7 +7,7 @@ extends MeshInstance3D
 var enabled := false:
 	set(v):
 		enabled = v
-		visible = v and Indicators.reload_style in ["ring", "ground"]
+		visible = v and Indicators.reload_style in ["ring", "ground", "base"]
 var alphaCutoff := 0.0:
 	set(v):
 		alphaCutoff = v
@@ -15,11 +15,13 @@ var alphaCutoff := 0.0:
 			_mat.set_shader_parameter("progress", clampf(v, 0.0, 1.0))
 		_apply_style(clampf(v, 0.0, 1.0))
 
+const PULSE_S := 0.45
+
 var _mat: ShaderMaterial
 var _start := 0.0
 var _duration := 0.0
 var _grounded := false
-var _placed := false
+var _pulse_until := 0.0
 
 
 func _ready() -> void:
@@ -37,6 +39,13 @@ func _ready() -> void:
 func run(seconds: float) -> void:
 	if Indicators.reload_style == "ground" and not _grounded:
 		_ground()
+	if Indicators.reload_style == "base" and not _grounded:
+		_base()
+	if _pulse_until > 0.0:  # a new shot cuts a running pulse: the plate goes back to iron now
+		var plate := _plate()
+		if plate != null:
+			U._unique_material(plate, 0).albedo_color = Color.WHITE
+	_pulse_until = 0.0
 	enabled = true
 	alphaCutoff = 0.0
 	_start = U.time
@@ -46,11 +55,24 @@ func run(seconds: float) -> void:
 
 func _process(_delta: float) -> void:
 	var waited := U.time - _start
+	if _pulse_until > 0.0:
+		# base style: the plate flashes red once at the ready moment, then settles back to iron
+		var k := clampf((_pulse_until - U.time) / PULSE_S, 0.0, 1.0)
+		var plate := _plate()
+		if plate != null:
+			U._unique_material(plate, 0).albedo_color = Color.WHITE.lerp(Indicators.base_red, k * k)
+		if k <= 0.0:
+			_pulse_until = 0.0
+			set_process(false)
+		return
 	alphaCutoff = waited / _duration
 	if waited > _duration:
 		enabled = false
 		alphaCutoff = 1.0
-		set_process(false)
+		if Indicators.reload_style == "base":
+			_pulse_until = U.time + PULSE_S
+		else:
+			set_process(false)
 
 
 ## The ring flat on the ground round the plate: it sits at the plate's size and height.
@@ -65,6 +87,24 @@ func _ground() -> void:
 		get_parent().global_position + Vector3(0, 0.115, 0))
 	if _mat:
 		_mat.set_shader_parameter("color", Color(1, 1, 1, 0.55))
+
+
+## base (round 27, Sebastian's candidate): a red ring flat on the plate, hugging the gun's base,
+## that shrinks in toward the gun as the reload runs and is gone at ready; then the plate
+## pulses red once. The ring's outer edge starts at the plate's edge, its inner edge at the mount.
+func _base() -> void:
+	_grounded = true
+	var plate := _plate()
+	var side := 1.0
+	if plate != null:
+		side = plate.get_aabb().size.x * plate.scale.x
+	top_level = true
+	global_transform = Transform3D(Basis.IDENTITY.rotated(Vector3.RIGHT, -PI / 2).scaled(Vector3(side * 0.98, side * 0.98, 1.0)),
+		get_parent().global_position + Vector3(0, 0.115, 0))
+	if _mat:
+		_mat.set_shader_parameter("color", Color(Indicators.base_red, 0.85))
+		_mat.set_shader_parameter("shrink", 1.0)
+		_mat.set_shader_parameter("inner", 0.30)
 
 
 func _plate() -> MeshInstance3D:

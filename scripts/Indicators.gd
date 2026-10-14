@@ -8,6 +8,8 @@ class_name Indicators
 ##          plate     the plate under the gun fills from a warm tint toward its iron grey
 ##          ground    the ring laid flat round the plate, only while reloading
 ##          slump     the barrel rests low after a shot and rises to its firing angle
+##          base      a red ring on the plate round the gun's base shrinks in as it reloads, then
+##                    the plate pulses red once at ready (Sebastian's round 27 candidate)
 ##          none      nothing
 ## arc:     wire      every aiming gun keeps its team-colour wire (shipped)
 ##          taper     own guns only, thin, fading toward the landing, gone when the shell flies
@@ -23,3 +25,4 @@ static var own_player = null
 static var heat_colour := Color("#ff8a3c")
 static var plate_warm := Color("#b8734a")
 static var plate_iron := Color("#544d52")
+static var base_red := Color("#c8322d")  # the kit's ui_accent, the one red the bible allows
