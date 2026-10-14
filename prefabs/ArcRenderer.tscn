@@ -11,6 +11,7 @@ lr = NodePath("../LineRenderer")
 
 [node name="LineRenderer" type="MeshInstance3D" parent="."]
 script = ExtResource("2")
-width = 0.068436
+width = 0.045
+taper = true
 loop = false
 world_space = true

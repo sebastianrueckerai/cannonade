@@ -1,36 +1,19 @@
 class_name Indicators
-## The battle readability candidates of blender-ai round 27: how a gun shows its reload and its
-## aim. One static style per concern, set by tools/shoot_battle.gd --ind=<reload>,<arc> before
-## the battle starts. The default is the shipped look, so the game plays as before.
+## How a gun shows its reload and its aim (blender-ai round 27, picked by Sebastian).
 ##
-## reload:  ring      the white ring above the gun (shipped)
-##          heat      the barrel glows warm after a shot and cools to iron as it reloads
-##          plate     the plate under the gun fills from a warm tint toward its iron grey
-##          ground    the ring laid flat round the plate, only while reloading
-##          slump     the barrel rests low after a shot and rises to its firing angle
-##          base      a red ring on the plate round the gun's base shrinks in as it reloads, then
-##                    the plate pulses red once at ready (Sebastian's round 27 candidate)
-##          none      nothing
-## arc:     wire      every aiming gun keeps its team-colour wire (shipped)
-##          taper     own guns only, thin, fading toward the landing, gone when the shell flies
-##          band      a flat stripe on the ground from muzzle to landing, gone when the shell flies
-##          marker    no line, a ring on the target tile while aiming, gone when the shell flies
-##          puffs     round smoke dots along the path, gone when the shell flies
-##          none      nothing
+## Reload: a ring flat on the gun's plate, round the gun's foot, in the gun's iron shifted a
+## little toward the owner's team colour. Its band thins outward to nothing over the reload,
+## then the plate pulses red once at ready (scripts/components/Cooldown.gd).
+## Aim: a thin arc fading toward the landing, own guns only (Shooter, RenderArc). It clears when
+## the shell flies; the next aim draws it again.
 
-static var reload_style := "ring"
-static var arc_style := "wire"
-## Only this player's guns draw arcs under the own-guns styles; null draws every side.
+## Only this player's guns draw aim arcs. Main sets it to the human player at the start of every
+## game; null (no human, as in AI against AI) lets every side draw.
 static var own_player = null
-static var heat_colour := Color("#ff8a3c")
-static var plate_warm := Color("#b8734a")
-static var plate_iron := Color("#544d52")
-static var pulse_red := Color("#c8322d")  # the ready pulse on the plate: the kit's ui_accent
-## The reload ring round the gun foot is the plate's iron shifted this far toward the owner's
-## team colour: clearly visible, but not loud enough to break the cozy look (Sebastian, round
-## 27). 0.55 is the middle of the three strengths shot for the pick.
-static var ring_shift := 0.55
+## How far the ring's iron shifts toward the team colour: visible, and the cozy look holds.
+static var ring_shift := 0.35
+static var plate_iron := Color("#544d52")  # the plate colour of D39
+static var pulse_red := Color("#c8322d")   # the ready pulse on the plate: the kit's ui_accent
 ## Tool-side only: multiplies every gun's reload at spawn, so a screenshot run has a mid-reload
-## window to catch. Must be set before the battle spawns its guns (the first volley fires inside
-## play(), so a stretch applied afterwards misses it). 1.0 in the game.
+## window to catch. It must be set before the battle spawns its guns. 1.0 in the game.
 static var reload_scale := 1.0

@@ -109,9 +109,12 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	game.fleet = fleet
 	game.roundTimer = ui.get_node("Timer")
 	var kinds: Array = cfg["players"]
+	Indicators.own_player = null  # static: reset every game, then the human owns the aim arcs
 	for i in kinds.size():
 		var script: Script = AIScript if kinds[i] == "ai" else PlayerController
 		var p = _component("%s%d" % ["AI" if kinds[i] == "ai" else "HumanPlayer", i + 1], script)
+		if kinds[i] != "ai":
+			Indicators.own_player = p
 		var colors: Array = PLAYER_COLORS[i % PLAYER_COLORS.size()].duplicate()
 		if cfg.has("colors"):
 			colors[0] = cfg["colors"][i]

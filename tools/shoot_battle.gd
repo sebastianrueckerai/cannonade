@@ -5,6 +5,8 @@ extends Node
 ##   tools/godot_render.sh res://tools/shoot_battle.tscn -- --at=4,6 --out=/tmp/battle
 ##   --look=x,z   camera close to that tile, as in tools/screenshot.gd
 ##   --stack      a second storey on the front walls of both forts
+##   --top=H      with --look: the camera straight down from H metres, to check what sits on the ground
+##   --reload=K   every gun reloads K times slower, so a screenshot catches a reload in progress
 ##   --seed=N     the map seed, default 1, which draws grass for the open ground
 
 const SandboxScene = preload("res://scenes/sandbox.tscn")
@@ -26,14 +28,8 @@ func _ready() -> void:
 	out = args.get("out", out)
 	if args.has("artseed"):
 		Art._rng.seed = int(args["artseed"])
-	if args.has("ind"):  # round 27: --ind=<reload>,<arc>, see scripts/Indicators.gd
-		var q: PackedStringArray = str(args["ind"]).split(",")
-		Indicators.reload_style = q[0]
-		Indicators.arc_style = q[1] if q.size() > 1 else "wire"
-	if args.has("reload"):  # round 27: stretch every gun's reload at spawn, before the first volley
+	if args.has("reload"):  # stretch every gun's reload at spawn, so a mid-reload frame exists to shoot
 		Indicators.reload_scale = float(args["reload"])
-	if args.has("ringshift"):  # round 27: how far the reload ring's iron shifts toward the team colour
-		Indicators.ring_shift = float(args["ringshift"])
 	sb = SandboxScene.instantiate()
 	add_child(sb)
 	sb.ui.visible = false
@@ -42,8 +38,7 @@ func _ready() -> void:
 	sb.scenario.items.assign(_fort(0, 2) + _fort(1, SIZE - 10))
 	sb._enter_edit()
 	sb.play()
-	if args.has("ind"):
-		Indicators.own_player = sb.player(0)
+	Indicators.own_player = sb.player(0)  # both sandbox sides are AI: draw side 0's arcs as a human's
 	if args.has("style"):
 		var looks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://tools/looks.json"))
 		preload("res://tools/looks.gd").apply(sb.world, looks[args["style"]])

@@ -79,13 +79,9 @@ func sleep() -> void:
 	_set_barrel_x(-10.0)
 
 
-## Round 27 candidates: under the own-guns arc styles only the own player's guns draw.
+## Only the human's guns draw aim arcs; with no human (AI against AI) every side draws.
 func _draws_arc() -> bool:
-	if Indicators.arc_style == "none":
-		return false
-	if Indicators.arc_style == "wire" or Indicators.own_player == null:
-		return true
-	return player == Indicators.own_player
+	return Indicators.own_player == null or player == Indicators.own_player
 
 
 func try_aim(destination: Vector3) -> bool:
@@ -108,12 +104,7 @@ func try_aim(destination: Vector3) -> bool:
 			var s := go.scale
 			go.rotation = Vector3(0.0, go.rotation.y, 0.0)
 			go.scale = s
-		if Indicators.reload_style == "slump" and U.time < nextBulletTime:
-			# the barrel rests low after a shot and rises to the firing angle as the reload completes
-			var k := 1.0 - (nextBulletTime - U.time) / maxf(secondsBetweenShots, 0.0001)
-			_set_barrel_x(lerpf(-10.0, angleDegrees, clampf(k, 0.0, 1.0)))
-		else:
-			_set_barrel_x(angleDegrees)
+		_set_barrel_x(angleDegrees)
 		if _draws_arc():
 			renderArc.draw_arc(10, _spawn().global_position, destination, distance, angleRads, ascendingPart)
 		else:
@@ -148,8 +139,7 @@ func try_shoot(destination: Vector3, destination_tile) -> bool:
 		var cd := get_node_or_null(cooldown)
 		if cd:
 			cd.run(secondsBetweenShots)
-		if Indicators.arc_style != "wire":  # the preview arc goes when the shell is the line
-			_arc().switch_on_or_off(false)
+		_arc().switch_on_or_off(false)  # the shell is the line now; the next aim draws the arc again
 		var rot := Basis(Vector3.UP, go.global_rotation.y)
 		var shell := Catalog.spawn_projectile(projectile, U.world(), _spawn().global_position, rot)
 		shell.player = player
