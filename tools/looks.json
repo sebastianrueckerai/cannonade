@@ -561,5 +561,30 @@
 			"contrast": 1.05,
 			"glow": 0.25
 		}
+	},
+	"soft_honey": {
+		"sky": "world_panorama",
+		"sun": [
+			"#ffd29d",
+			0.65
+		],
+		"shadow": 0.56,
+		"sun_angle": 38,
+		"ambient": [
+			"#bec3c4",
+			0.46
+		],
+		"fog": {
+			"colour": "#f4e6cd",
+			"sky": 0.2
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.07,
+			"contrast": 1.05,
+			"exposure": 0.97,
+			"white": 6.25,
+			"glow": 0.26
+		}
 	}
 }
