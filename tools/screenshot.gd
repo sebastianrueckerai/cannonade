@@ -19,12 +19,17 @@ func _ready() -> void:
 	for s in str(args.get("at", "3")).split(","):
 		shots.append(float(s))
 	out = args.get("out", out)
+	if args.has("artseed"):
+		Art._rng.seed = int(args["artseed"])
 	Main.requested_args = args
 	Main.requested_mode = args.get("mode", "ai2")
 	main = Main.new()
 	get_tree().root.add_child.call_deferred(main)
 	await get_tree().process_frame
 	get_tree().current_scene = main
+	if args.has("style"):
+		var looks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://tools/looks.json"))
+		preload("res://tools/looks.gd").apply(main, looks[args["style"]])
 	if args.has("zoom"):  # wheel notches towards the screen centre
 		var ev := InputEventMouseButton.new()
 		ev.button_index = MOUSE_BUTTON_WHEEL_UP

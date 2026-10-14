@@ -1,0 +1,494 @@
+{
+	"base_current": {},
+	"flat_blue": {
+		"bg": "#6cb9f5"
+	},
+	"warm_gold": {
+		"sun": [
+			"#ffd9a2",
+			0.62
+		],
+		"shadow": 0.5,
+		"ambient": [
+			"#cec6b6",
+			0.5
+		],
+		"fog": {
+			"colour": "#f2e3cc",
+			"sky": 0.25
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.06,
+			"brightness": 1.02
+		}
+	},
+	"bright_air": {
+		"sun": [
+			"#fff3dd",
+			0.58
+		],
+		"shadow": 0.42,
+		"ambient": [
+			"#c2d2ec",
+			0.5
+		],
+		"post": {
+			"tonemap": "filmic",
+			"brightness": 1.04,
+			"saturation": 1.03
+		}
+	},
+	"pastel_haze": {
+		"sun": [
+			"#ffe9d4",
+			0.42
+		],
+		"shadow": 0.36,
+		"ambient": [
+			"#d6dee8",
+			0.56
+		],
+		"fog": {
+			"colour": "#f0e8dc",
+			"sky": 0.45,
+			"range": 0.85
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 0.97,
+			"brightness": 1.02
+		}
+	},
+	"golden_glow": {
+		"sun": [
+			"#ffcf9a",
+			0.66
+		],
+		"shadow": 0.5,
+		"ambient": [
+			"#ccbfac",
+			0.5
+		],
+		"fog": {
+			"colour": "#f6e2c2",
+			"sky": 0.3
+		},
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.08,
+			"glow": 0.5
+		}
+	},
+	"crisp_day": {
+		"sun": [
+			"#fff6e8",
+			0.5
+		],
+		"ambient": [
+			"#b4ccec",
+			0.4
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.0,
+			"contrast": 1.02
+		}
+	},
+	"cozy_overcast": {
+		"sun": [
+			"#ffe6c8",
+			0.34
+		],
+		"shadow": 0.3,
+		"ambient": [
+			"#dae0e6",
+			0.62
+		],
+		"fog": {
+			"colour": "#efe9df",
+			"sky": 0.5
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 0.98
+		}
+	},
+	"deep_warm": {
+		"sun": [
+			"#ffdcae",
+			0.58
+		],
+		"ambient": [
+			"#b6c6da",
+			0.42
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.1,
+			"contrast": 1.03,
+			"glow": 0.35
+		}
+	},
+	"airy_blue": {
+		"bg": "#8ec8f0",
+		"sun": [
+			"#fff0d8",
+			0.5
+		],
+		"fog": {
+			"sky": 0.2
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.04
+		}
+	},
+	"honey_fog": {
+		"sun": [
+			"#ffd9a4",
+			0.55
+		],
+		"ambient": [
+			"#cabfa8",
+			0.5
+		],
+		"fog": {
+			"colour": "#f5dfbd",
+			"sky": 0.55,
+			"range": 0.9
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.05
+		}
+	},
+	"storybook_pop": {
+		"sun": [
+			"#fff0d2",
+			0.6
+		],
+		"shadow": 0.45,
+		"ambient": [
+			"#bfcfe8",
+			0.45
+		],
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.12,
+			"contrast": 1.05,
+			"white": 8.0
+		}
+	},
+	"dw_base": {
+		"sun": [
+			"#ffdcae",
+			0.58
+		],
+		"ambient": [
+			"#b6c6da",
+			0.42
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.1,
+			"contrast": 1.03,
+			"glow": 0.35
+		}
+	},
+	"dw_warm": {
+		"sky": "panorama_warm",
+		"sun": [
+			"#ffdcae",
+			0.58
+		],
+		"ambient": [
+			"#b6c6da",
+			0.42
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.1,
+			"contrast": 1.03,
+			"glow": 0.35
+		}
+	},
+	"dw_soft": {
+		"sky": "panorama_soft",
+		"sun": [
+			"#ffdcae",
+			0.58
+		],
+		"ambient": [
+			"#b6c6da",
+			0.42
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.1,
+			"contrast": 1.03,
+			"glow": 0.35
+		}
+	},
+	"dw_clear": {
+		"sky": "panorama_clear",
+		"sun": [
+			"#ffdcae",
+			0.58
+		],
+		"ambient": [
+			"#b6c6da",
+			0.42
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.1,
+			"contrast": 1.03,
+			"glow": 0.35
+		}
+	},
+	"dw_cool": {
+		"sky": "panorama_warm",
+		"sun": [
+			"#ffd9a2",
+			0.6
+		],
+		"shadow": 0.6,
+		"ambient": [
+			"#a8bcd8",
+			0.44
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.08,
+			"contrast": 1.03,
+			"glow": 0.3
+		}
+	},
+	"dw_lowsun": {
+		"sky": "panorama_warm",
+		"sun": [
+			"#ffd39a",
+			0.62
+		],
+		"shadow": 0.6,
+		"sun_angle": 36,
+		"ambient": [
+			"#a8bcd8",
+			0.44
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.08,
+			"contrast": 1.03,
+			"glow": 0.3
+		}
+	},
+	"gg_fix": {
+		"sky": "panorama_warm",
+		"sun": [
+			"#ffcf9a",
+			0.66
+		],
+		"shadow": 0.5,
+		"ambient": [
+			"#ccbfac",
+			0.5
+		],
+		"fog": {
+			"colour": "#f6e2c2",
+			"sky": 0.3
+		},
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.08,
+			"glow": 0.3,
+			"exposure": 0.97
+		}
+	},
+	"gg_soft": {
+		"sky": "panorama_soft",
+		"sun": [
+			"#ffcf9a",
+			0.66
+		],
+		"shadow": 0.5,
+		"ambient": [
+			"#ccbfac",
+			0.5
+		],
+		"fog": {
+			"colour": "#f4e6cd",
+			"sky": 0.25
+		},
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.06,
+			"glow": 0.3,
+			"exposure": 0.97
+		}
+	},
+	"gg_lowcloud": {
+		"sky": "panorama_lowcloud",
+		"sun": [
+			"#ffcf9a",
+			0.66
+		],
+		"shadow": 0.5,
+		"ambient": [
+			"#ccbfac",
+			0.5
+		],
+		"fog": {
+			"colour": "#f6e2c2",
+			"sky": 0.2
+		},
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.08,
+			"glow": 0.3,
+			"exposure": 0.97
+		}
+	},
+	"sp_fix": {
+		"sky": "panorama_clear",
+		"sun": [
+			"#fff0d2",
+			0.6
+		],
+		"shadow": 0.45,
+		"ambient": [
+			"#bfcfe8",
+			0.45
+		],
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.06,
+			"contrast": 1.04,
+			"white": 8.0
+		}
+	},
+	"sp_warm": {
+		"sky": "panorama_warm",
+		"sun": [
+			"#fff0d2",
+			0.6
+		],
+		"shadow": 0.45,
+		"ambient": [
+			"#bfcfe8",
+			0.45
+		],
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.06,
+			"contrast": 1.04,
+			"white": 8.0
+		}
+	},
+	"bridge": {
+		"sky": "panorama_soft",
+		"sun": [
+			"#ffd9a2",
+			0.6
+		],
+		"shadow": 0.48,
+		"ambient": [
+			"#bec8dc",
+			0.46
+		],
+		"fog": {
+			"colour": "#f2e6d2",
+			"sky": 0.15
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.07,
+			"contrast": 1.02,
+			"glow": 0.3
+		}
+	},
+	"gg_soft_pop": {
+		"sky": "panorama_soft",
+		"sun": [
+			"#ffcf9a",
+			0.66
+		],
+		"shadow": 0.5,
+		"ambient": [
+			"#ccbfac",
+			0.5
+		],
+		"fog": {
+			"colour": "#f4e6cd",
+			"sky": 0.25
+		},
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.07,
+			"glow": 0.25,
+			"exposure": 0.94,
+			"contrast": 1.05,
+			"white": 6.5
+		}
+	},
+	"bridge_v2": {
+		"sky": "panorama_soft",
+		"sun": [
+			"#ffd9a2",
+			0.6
+		],
+		"shadow": 0.48,
+		"ambient": [
+			"#bec8dc",
+			0.46
+		],
+		"fog": {
+			"colour": "#f2e6d2",
+			"sky": 0.15
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.04,
+			"contrast": 1.03,
+			"glow": 0.3
+		}
+	},
+	"sp_goldilocks": {
+		"sky": "panorama_clear",
+		"sun": [
+			"#ffe8c4",
+			0.6
+		],
+		"shadow": 0.45,
+		"ambient": [
+			"#c4cfe4",
+			0.45
+		],
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.05,
+			"contrast": 1.04,
+			"white": 8.0
+		}
+	},
+	"lowsun_ivory": {
+		"sky": "panorama_soft",
+		"sun": [
+			"#ffd39a",
+			0.62
+		],
+		"shadow": 0.6,
+		"sun_angle": 36,
+		"ambient": [
+			"#b6c6da",
+			0.44
+		],
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.07,
+			"contrast": 1.03,
+			"glow": 0.3
+		}
+	}
+}

@@ -24,6 +24,8 @@ func _ready() -> void:
 	for s in str(args.get("at", "5")).split(","):
 		shots.append(float(s))
 	out = args.get("out", out)
+	if args.has("artseed"):
+		Art._rng.seed = int(args["artseed"])
 	sb = SandboxScene.instantiate()
 	add_child(sb)
 	sb.ui.visible = false
@@ -32,6 +34,9 @@ func _ready() -> void:
 	sb.scenario.items.assign(_fort(0, 2) + _fort(1, SIZE - 10))
 	sb._enter_edit()
 	sb.play()
+	if args.has("style"):
+		var looks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://tools/looks.json"))
+		preload("res://tools/looks.gd").apply(sb.world, looks[args["style"]])
 	if args.has("stack"):
 		for s in 2:
 			_stack_row(s, 2 if s == 0 else SIZE - 3)
