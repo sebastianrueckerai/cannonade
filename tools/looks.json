@@ -490,5 +490,76 @@
 			"contrast": 1.03,
 			"glow": 0.3
 		}
+	},
+	"cozy_grid": {
+		"sky": "panorama_soft",
+		"sun": [
+			"#ffcf9a",
+			0.66
+		],
+		"shadow": 0.56,
+		"sun_angle": 40,
+		"ambient": [
+			"#c6c4b4",
+			0.46
+		],
+		"fog": {
+			"colour": "#f4e6cd",
+			"sky": 0.2
+		},
+		"post": {
+			"tonemap": "aces",
+			"saturation": 1.07,
+			"glow": 0.25,
+			"exposure": 0.95,
+			"contrast": 1.07,
+			"white": 6.5
+		}
+	},
+	"honey_grid": {
+		"sky": "panorama_warm",
+		"sun": [
+			"#ffd4a0",
+			0.64
+		],
+		"shadow": 0.56,
+		"sun_angle": 36,
+		"ambient": [
+			"#b6c2d4",
+			0.46
+		],
+		"fog": {
+			"colour": "#f4e6cd",
+			"sky": 0.2
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.08,
+			"contrast": 1.03,
+			"glow": 0.28
+		}
+	},
+	"bridge_grid": {
+		"sky": "panorama_soft",
+		"sun": [
+			"#ffd9a2",
+			0.62
+		],
+		"shadow": 0.54,
+		"sun_angle": 40,
+		"ambient": [
+			"#bec8dc",
+			0.46
+		],
+		"fog": {
+			"colour": "#f4e6cd",
+			"sky": 0.25
+		},
+		"post": {
+			"tonemap": "filmic",
+			"saturation": 1.07,
+			"contrast": 1.05,
+			"glow": 0.25
+		}
 	}
 }
