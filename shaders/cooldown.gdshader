@@ -13,11 +13,11 @@ uniform float inner : hint_range(0.0, 0.5) = 0.32;
 void fragment() {
 	vec2 p = UV - vec2(0.5);
 	float r = length(p);
-	// shrink mode: the band keeps its full width and the whole ring scales down toward the
-	// centre over the reload, fading out over the last tenth
-	float s = mix(1.0, 0.25, shrink * progress);
-	float ro = 0.5 * s;
-	float ri = inner * s;
+	// shrink mode: the band's OUTER edge stays fixed just past the gun's foot, and its INNER
+	// edge closes outward toward it over the reload, so the band thins to nothing at ready.
+	// Shrinking the whole ring inward buried it under the gun mount by mid reload (round 27).
+	float ro = 0.5;
+	float ri = mix(inner, 0.5, shrink * progress);
 	if (r > ro || r < ri) {
 		discard;
 	}
@@ -28,7 +28,7 @@ void fragment() {
 			discard;
 		}
 	} else {
-		fade = 1.0 - smoothstep(0.9, 1.0, progress);
+		fade = 1.0 - smoothstep(0.92, 1.0, progress);
 	}
 	ALBEDO = color.rgb;
 	ALPHA = color.a * fade;

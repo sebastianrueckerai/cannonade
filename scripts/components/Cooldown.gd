@@ -15,7 +15,7 @@ var alphaCutoff := 0.0:
 			_mat.set_shader_parameter("progress", clampf(v, 0.0, 1.0))
 		_apply_style(clampf(v, 0.0, 1.0))
 
-const PULSE_S := 0.45
+const PULSE_S := 0.7
 const BAND := 0.36  # inner radius of the ring band in quad units: a 0.14 m band on the small gun
 
 var _mat: ShaderMaterial

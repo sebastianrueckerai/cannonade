@@ -26,3 +26,7 @@ static var heat_colour := Color("#ff8a3c")
 static var plate_warm := Color("#b8734a")
 static var plate_iron := Color("#544d52")
 static var base_red := Color("#c8322d")  # the kit's ui_accent, the one red the bible allows
+## Tool-side only: multiplies every gun's reload at spawn, so a screenshot run has a mid-reload
+## window to catch. Must be set before the battle spawns its guns (the first volley fires inside
+## play(), so a stretch applied afterwards misses it). 1.0 in the game.
+static var reload_scale := 1.0

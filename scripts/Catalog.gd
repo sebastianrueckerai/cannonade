@@ -316,7 +316,7 @@ func _apply_params(go: Node3D, def: BuildingDef) -> void:
 			s.damage = b.damage
 			s.minRange = b.min_range
 			s.maxDesiredRange = b.max_range
-			s.secondsBetweenShots = b.reload
+			s.secondsBetweenShots = b.reload * Indicators.reload_scale
 			s.gravity = b.gravity
 			s.ascendingPart = b.ascending_part
 			s.turns = b.turns
