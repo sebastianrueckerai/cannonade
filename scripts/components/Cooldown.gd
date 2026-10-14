@@ -1,19 +1,25 @@
 extends MeshInstance3D
-## Cooldown ring above a gun (Unity: SpriteMask whose alphaCutoff grows from 0 to 1).
+## Cooldown indicator of a gun (Unity: SpriteMask whose alphaCutoff grows from 0 to 1). The
+## shipped look is the white ring above the gun. Indicators.reload_style (round 27 candidates) picks
+## another: a warm barrel cooling to iron, the plate filling toward its grey, or the ring laid
+## flat round the plate. The ring quad is hidden under every style but "ring" and "ground".
 
 var enabled := false:
 	set(v):
 		enabled = v
-		visible = v
+		visible = v and Indicators.reload_style in ["ring", "ground"]
 var alphaCutoff := 0.0:
 	set(v):
 		alphaCutoff = v
 		if _mat:
 			_mat.set_shader_parameter("progress", clampf(v, 0.0, 1.0))
+		_apply_style(clampf(v, 0.0, 1.0))
 
 var _mat: ShaderMaterial
 var _start := 0.0
 var _duration := 0.0
+var _grounded := false
+var _placed := false
 
 
 func _ready() -> void:
@@ -24,10 +30,13 @@ func _ready() -> void:
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	visible = false
 	set_process(false)
+	call_deferred("_apply_style", 1.0)  # a gun starts ready: cool iron, clean plate
 
 
 ## Equivalent of the _Cooldown coroutine of Shooter / RocketLauncher.
 func run(seconds: float) -> void:
+	if Indicators.reload_style == "ground" and not _grounded:
+		_ground()
 	enabled = true
 	alphaCutoff = 0.0
 	_start = U.time
@@ -40,4 +49,43 @@ func _process(_delta: float) -> void:
 	alphaCutoff = waited / _duration
 	if waited > _duration:
 		enabled = false
+		alphaCutoff = 1.0
 		set_process(false)
+
+
+## The ring flat on the ground round the plate: it sits at the plate's size and height.
+func _ground() -> void:
+	_grounded = true
+	var plate := _plate()
+	var side := 1.0
+	if plate != null:
+		side = plate.get_aabb().size.x * plate.scale.x
+	top_level = true
+	global_transform = Transform3D(Basis.IDENTITY.rotated(Vector3.RIGHT, -PI / 2).scaled(Vector3(side * 1.25, side * 1.25, 1.0)),
+		get_parent().global_position + Vector3(0, 0.115, 0))
+	if _mat:
+		_mat.set_shader_parameter("color", Color(1, 1, 1, 0.55))
+
+
+func _plate() -> MeshInstance3D:
+	return get_parent().find_child("plate", true, false) as MeshInstance3D
+
+
+func _barrel_meshes() -> Array:
+	var b := get_parent().find_child("Barrel", true, false)
+	return U.meshes(b) if b != null else []
+
+
+## heat: the barrel's albedo goes from a warm glow at the shot to its own texture at ready.
+## plate: the plate's albedo from a warm tint at the shot to its own texture at ready.
+func _apply_style(k: float) -> void:
+	match Indicators.reload_style:
+		"heat":
+			var c := Indicators.heat_colour.lerp(Color.WHITE, k)
+			var ms := _barrel_meshes()
+			for mi in ms:
+				U._unique_material(mi, 0).albedo_color = c
+		"plate":
+			var plate := _plate()
+			if plate != null:
+				U._unique_material(plate, 0).albedo_color = Indicators.plate_warm.lerp(Color.WHITE, k)

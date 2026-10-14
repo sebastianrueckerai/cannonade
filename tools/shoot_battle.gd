@@ -26,6 +26,10 @@ func _ready() -> void:
 	out = args.get("out", out)
 	if args.has("artseed"):
 		Art._rng.seed = int(args["artseed"])
+	if args.has("ind"):  # round 27: --ind=<reload>,<arc>, see scripts/Indicators.gd
+		var q: PackedStringArray = str(args["ind"]).split(",")
+		Indicators.reload_style = q[0]
+		Indicators.arc_style = q[1] if q.size() > 1 else "wire"
 	sb = SandboxScene.instantiate()
 	add_child(sb)
 	sb.ui.visible = false
@@ -34,6 +38,13 @@ func _ready() -> void:
 	sb.scenario.items.assign(_fort(0, 2) + _fort(1, SIZE - 10))
 	sb._enter_edit()
 	sb.play()
+	if args.has("ind"):
+		Indicators.own_player = sb.player(0)
+	if args.has("reload"):  # round 27: stretch every gun's reload so a mid-reload frame exists to shoot
+		for s in get_tree().get_nodes_in_group("structures"):
+			var sh = U.comp(s, "Shooter")
+			if sh != null:
+				sh.secondsBetweenShots *= float(args["reload"])
 	if args.has("style"):
 		var looks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://tools/looks.json"))
 		preload("res://tools/looks.gd").apply(sb.world, looks[args["style"]])
