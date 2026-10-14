@@ -13,9 +13,12 @@ uniform float inner : hint_range(0.0, 0.5) = 0.32;
 void fragment() {
 	vec2 p = UV - vec2(0.5);
 	float r = length(p);
-	// shrink mode keeps a readable band (at least 0.06 of the quad) until the end, then fades
-	float outer = mix(0.5, inner + 0.06, shrink * progress);
-	if (r > outer || r < inner) {
+	// shrink mode: the band keeps its full width and the whole ring scales down toward the
+	// centre over the reload, fading out over the last tenth
+	float s = mix(1.0, 0.25, shrink * progress);
+	float ro = 0.5 * s;
+	float ri = inner * s;
+	if (r > ro || r < ri) {
 		discard;
 	}
 	float fade = 1.0;
@@ -25,7 +28,7 @@ void fragment() {
 			discard;
 		}
 	} else {
-		fade = 1.0 - smoothstep(0.85, 1.0, progress);
+		fade = 1.0 - smoothstep(0.9, 1.0, progress);
 	}
 	ALBEDO = color.rgb;
 	ALPHA = color.a * fade;

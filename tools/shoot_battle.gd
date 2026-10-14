@@ -55,7 +55,10 @@ func _ready() -> void:
 		var q: PackedStringArray = str(args["look"]).split(",")
 		var target: Vector3 = sb.map.tile_position(int(q[0]), int(q[1]))
 		var cam := get_viewport().get_camera_3d()
-		cam.global_position = target + Vector3(0, 9, 6)
+		if args.has("top"):  # straight down, for checking what sits on the ground round a gun
+			cam.global_position = target + Vector3(0, float(args["top"]) if args["top"] != "true" else 9.0, 0.001)
+		else:
+			cam.global_position = target + Vector3(0, 9, 6)
 		cam.look_at(target)
 
 

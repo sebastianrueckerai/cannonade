@@ -16,6 +16,7 @@ var alphaCutoff := 0.0:
 		_apply_style(clampf(v, 0.0, 1.0))
 
 const PULSE_S := 0.45
+const BAND := 0.36  # inner radius of the ring band in quad units: a 0.14 m band on the small gun
 
 var _mat: ShaderMaterial
 var _start := 0.0
@@ -94,17 +95,29 @@ func _ground() -> void:
 ## pulses red once. The ring's outer edge starts at the plate's edge, its inner edge at the mount.
 func _base() -> void:
 	_grounded = true
+	# The ring sits on the mount's real footprint, not the plate's: the mount is centred ahead
+	# of the plate centre (0.05 / 0.14 / 0.24 m on the three guns, measured), so a ring drawn at
+	# the plate centre misses the gun foot. Outer radius just past the mount, a band 0.14 m
+	# wide, lifted 2 cm above the plate top so it never z-fights the painted plate.
+	var mount := get_parent().find_child("mount", true, false) as MeshInstance3D
 	var plate := _plate()
-	var side := 1.0
+	var r := 0.5
+	var centre: Vector3 = get_parent().global_position
+	var top := 0.1
+	if mount != null:
+		var mw := mount.global_transform * mount.get_aabb()
+		r = maxf(mw.size.x, mw.size.z) * 0.5 + 0.06
+		centre = Vector3(mw.get_center().x, 0.0, mw.get_center().z)
 	if plate != null:
-		side = plate.get_aabb().size.x * plate.scale.x
+		top = (plate.global_transform * plate.get_aabb()).end.y
+	var quad := r * 2.0  # a 1x1 quad: the shader's outer radius 0.5 lands on r at scale 2r
 	top_level = true
-	global_transform = Transform3D(Basis.IDENTITY.rotated(Vector3.RIGHT, -PI / 2).scaled(Vector3(side * 0.98, side * 0.98, 1.0)),
-		get_parent().global_position + Vector3(0, 0.115, 0))
+	global_transform = Transform3D(Basis.IDENTITY.rotated(Vector3.RIGHT, -PI / 2).scaled(Vector3(quad, quad, 1.0)),
+		Vector3(centre.x, top + 0.02, centre.z))
 	if _mat:
-		_mat.set_shader_parameter("color", Color(Indicators.base_red, 0.85))
+		_mat.set_shader_parameter("color", Color(Indicators.base_red, 0.95))
 		_mat.set_shader_parameter("shrink", 1.0)
-		_mat.set_shader_parameter("inner", 0.30)
+		_mat.set_shader_parameter("inner", BAND)
 
 
 func _plate() -> MeshInstance3D:
