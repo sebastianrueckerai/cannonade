@@ -33,7 +33,6 @@ func _ready() -> void:
 	cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	visible = false
 	set_process(false)
-	call_deferred("_apply_style", 1.0)  # a gun starts ready: cool iron, clean plate
 
 
 ## Equivalent of the _Cooldown coroutine of Shooter / RocketLauncher.
@@ -61,7 +60,7 @@ func _process(_delta: float) -> void:
 		var k := clampf((_pulse_until - U.time) / PULSE_S, 0.0, 1.0)
 		var plate := _plate()
 		if plate != null:
-			U._unique_material(plate, 0).albedo_color = Color.WHITE.lerp(Indicators.base_red, k * k)
+			U._unique_material(plate, 0).albedo_color = Color.WHITE.lerp(Indicators.pulse_red, k * k)
 		if k <= 0.0:
 			_pulse_until = 0.0
 			set_process(false)
@@ -117,7 +116,10 @@ func _base() -> void:
 	global_transform = Transform3D(Basis.IDENTITY.scaled(Vector3(quad, quad, 1.0)).rotated(Vector3.RIGHT, -PI / 2),
 		Vector3(centre.x, top + 0.02, centre.z))
 	if _mat:
-		_mat.set_shader_parameter("color", Color(Indicators.base_red, 0.95))
+		# the gun's own iron, shifted toward the owner's team colour (Sebastian, round 27)
+		var sh = U.comp(get_parent(), "Shooter")
+		var team: Color = sh.player.mainColor if sh != null and sh.player != null else Color.GRAY
+		_mat.set_shader_parameter("color", Color(Indicators.plate_iron.lerp(team, Indicators.ring_shift), 0.95))
 		_mat.set_shader_parameter("shrink", 1.0)
 		_mat.set_shader_parameter("inner", BAND)
 

@@ -25,7 +25,11 @@ static var own_player = null
 static var heat_colour := Color("#ff8a3c")
 static var plate_warm := Color("#b8734a")
 static var plate_iron := Color("#544d52")
-static var base_red := Color("#c8322d")  # the kit's ui_accent, the one red the bible allows
+static var pulse_red := Color("#c8322d")  # the ready pulse on the plate: the kit's ui_accent
+## The reload ring round the gun foot is the plate's iron shifted this far toward the owner's
+## team colour: clearly visible, but not loud enough to break the cozy look (Sebastian, round
+## 27). 0.55 is the middle of the three strengths shot for the pick.
+static var ring_shift := 0.55
 ## Tool-side only: multiplies every gun's reload at spawn, so a screenshot run has a mid-reload
 ## window to catch. Must be set before the battle spawns its guns (the first volley fires inside
 ## play(), so a stretch applied afterwards misses it). 1.0 in the game.

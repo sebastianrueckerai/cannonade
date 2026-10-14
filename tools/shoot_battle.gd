@@ -32,6 +32,8 @@ func _ready() -> void:
 		Indicators.arc_style = q[1] if q.size() > 1 else "wire"
 	if args.has("reload"):  # round 27: stretch every gun's reload at spawn, before the first volley
 		Indicators.reload_scale = float(args["reload"])
+	if args.has("ringshift"):  # round 27: how far the reload ring's iron shifts toward the team colour
+		Indicators.ring_shift = float(args["ringshift"])
 	sb = SandboxScene.instantiate()
 	add_child(sb)
 	sb.ui.visible = false
