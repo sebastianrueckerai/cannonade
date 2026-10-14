@@ -48,7 +48,7 @@
     "size": [
       0.9,
       1.0988,
-      1.0
+      1.0008
     ],
     "tolerance": 0.02,
     "parts": [
@@ -57,15 +57,15 @@
       "plate"
     ],
     "tris": 1106,
-    "source_sha": "4d9eb60f9076",
+    "source_sha": "53ceff347385",
     "approved_by": "Sebastian",
-    "synced": "2026-10-14T17:25:45+02:00"
+    "synced": "2026-10-14T21:09:13+02:00"
   },
   "cannon22a": {
     "size": [
       1.9,
       1.3992,
-      2.0
+      2.0891
     ],
     "tolerance": 0.02,
     "parts": [
@@ -74,15 +74,15 @@
       "plate"
     ],
     "tris": 1470,
-    "source_sha": "fb5272643a3c",
+    "source_sha": "55eff0a2dec5",
     "approved_by": "Sebastian",
-    "synced": "2026-10-14T17:25:45+02:00"
+    "synced": "2026-10-14T21:09:13+02:00"
   },
   "cannon33a": {
     "size": [
       2.9,
       2.0289,
-      3.0
+      3.188
     ],
     "tolerance": 0.02,
     "parts": [
@@ -91,9 +91,9 @@
       "plate"
     ],
     "tris": 2961,
-    "source_sha": "9da098594a45",
+    "source_sha": "46a1cb73391a",
     "approved_by": "Sebastian",
-    "synced": "2026-10-14T17:25:45+02:00"
+    "synced": "2026-10-14T21:09:13+02:00"
   },
   "nature_boulder": {
     "size": [
