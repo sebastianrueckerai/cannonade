@@ -1,0 +1,30 @@
+{
+  "tool": "mask.py paste",
+  "argv": [
+    "pipeline/mask.py",
+    "paste",
+    "--out",
+    "game/art-direction/rounds/29-loading-art/18c-four-kingdoms-fixed.png",
+    "--base",
+    "game/art-direction/rounds/29-loading-art/18b-four-kingdoms-fixed.png",
+    "--top",
+    "game/art-direction/rounds/29-loading-art/18c-no-stray-guns-edit--nanobanana.png",
+    "--mask",
+    "game/art-direction/rounds/29-loading-art/masks/18-stray-guns.png",
+    "--feather",
+    "6"
+  ],
+  "inputs": [
+    "game/art-direction/rounds/29-loading-art/18b-four-kingdoms-fixed.png",
+    "game/art-direction/rounds/29-loading-art/18c-no-stray-guns-edit--nanobanana.png",
+    "game/art-direction/rounds/29-loading-art/masks/18-stray-guns.png"
+  ],
+  "params": {
+    "feather": 6.0
+  },
+  "est_cost_usd": 0.0,
+  "created": "2026-10-15T13:01:38",
+  "outputs": [
+    "18c-four-kingdoms-fixed.png"
+  ]
+}

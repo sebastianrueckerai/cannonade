@@ -1,0 +1,30 @@
+{
+  "tool": "mask.py paste",
+  "argv": [
+    "pipeline/mask.py",
+    "paste",
+    "--out",
+    "game/art-direction/rounds/29-loading-art/17c-mortar-strike-fixed.png",
+    "--base",
+    "game/art-direction/rounds/29-loading-art/17b-mortar-strike-main--nanobanana.png",
+    "--top",
+    "game/art-direction/rounds/29-loading-art/17c-five-fires-edit--nanobanana.png",
+    "--mask",
+    "game/art-direction/rounds/29-loading-art/masks/17-three-fires.png",
+    "--feather",
+    "8"
+  ],
+  "inputs": [
+    "game/art-direction/rounds/29-loading-art/17b-mortar-strike-main--nanobanana.png",
+    "game/art-direction/rounds/29-loading-art/17c-five-fires-edit--nanobanana.png",
+    "game/art-direction/rounds/29-loading-art/masks/17-three-fires.png"
+  ],
+  "params": {
+    "feather": 8.0
+  },
+  "est_cost_usd": 0.0,
+  "created": "2026-10-15T12:50:20",
+  "outputs": [
+    "17c-mortar-strike-fixed.png"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "tool": "mask.py paste",
+  "argv": [
+    "pipeline/mask.py",
+    "paste",
+    "--out",
+    "game/art-direction/rounds/29-loading-art/18b-four-kingdoms-fixed.png",
+    "--base",
+    "game/art-direction/rounds/29-loading-art/18-four-kingdoms-main--nanobanana.png",
+    "--top",
+    "game/art-direction/rounds/29-loading-art/18b-flag-teal-edit--nanobanana.png",
+    "--mask",
+    "game/art-direction/rounds/29-loading-art/masks/18-flag.png",
+    "--feather",
+    "4"
+  ],
+  "inputs": [
+    "game/art-direction/rounds/29-loading-art/18-four-kingdoms-main--nanobanana.png",
+    "game/art-direction/rounds/29-loading-art/18b-flag-teal-edit--nanobanana.png",
+    "game/art-direction/rounds/29-loading-art/masks/18-flag.png"
+  ],
+  "params": {
+    "feather": 4.0
+  },
+  "est_cost_usd": 0.0,
+  "created": "2026-10-15T12:41:50",
+  "outputs": [
+    "18b-four-kingdoms-fixed.png"
+  ]
+}

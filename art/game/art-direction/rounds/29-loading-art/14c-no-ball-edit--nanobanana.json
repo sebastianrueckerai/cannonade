@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Remove the dark cannonball lying on the grass outside the wall and its white trail. Where they were, paint the green grass with the tile grid lines and the plain wall face. Keep the impact on the wall, the bursting stone blocks, the chips and the dust cloud exactly as they are, and keep everything else in the picture exactly as it is. No text.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/14b-wall-impact-main--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "14c-no-ball-edit",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T12:49:05",
+  "outputs": [
+    "14c-no-ball-edit--nanobanana.png"
+  ]
+}

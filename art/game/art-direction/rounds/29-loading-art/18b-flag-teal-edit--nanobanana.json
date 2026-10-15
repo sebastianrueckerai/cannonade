@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Change only the small flag on top of the tall tower of the castle in the lower right corner of the picture: make that flag teal, the same blue-green teal as the roof of that tower. Keep everything else in the picture exactly as it is, the same composition, the same painting, every other flag in its own colour. No text.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/18-four-kingdoms-main--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "18b-flag-teal-edit",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T12:41:48",
+  "outputs": [
+    "18b-flag-teal-edit--nanobanana.png"
+  ]
+}

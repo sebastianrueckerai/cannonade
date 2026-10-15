@@ -1,0 +1,124 @@
+{
+ "cols": 4,
+ "cell": 480,
+ "parallel": 4,
+ "models": {
+  "nanobanana": {
+   "id": "google/nano-banana-2.1/edit",
+   "est": 0.25,
+   "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+   }
+  }
+ },
+ "style": "Rules for the whole picture: the land carries the painted tile grid in the same perspective as the buildings, its lines parallel to the castle walls. Castle walls are straight cream stone walls along the grid, with square or round corner towers, never curved walls. Keep the bottom right corner of the picture calm: it shows only grass, trees, ground or water. Not too busy, nothing too small, and the land is not bare. No people. No text, no letters, no numbers, no title, no watermark. Soft colours, not oversaturated, not a 3D render.",
+ "frames": {
+  "main": "{scene} {look}{cannons}{style}"
+ },
+ "directions": [
+  {
+   "slug": "02b-heavy-gun",
+   "title": "The heavy gun fires",
+   "scene": "Seen from high above at a three-quarter angle: a castle on a rocky green hilltop above a wide valley with a winding road. Inside one square ring of cream stone walls with round corner towers, a square keep with an orange roof stands at the back, and in the middle of the open stone courtyard stands the heavy gun: a long iron gun in an iron-fitted wooden cradle on an open iron ring with a riveted side plate. Its barrel points steeply up at 45 degrees over the front wall toward a far castle with a blue flag on the next hill.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the first attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the first image. The second attached image shows only the design of one gun: paint that gun in the picture's own painterly style. ",
+   "cannons": "Only the heavy gun fires: a bright yellow flash and one big round white smoke cloud right at its muzzle, one dark cannonball a short way out on the line of its raised barrel, with a faint trail back to the muzzle. No other gun fires. ",
+   "refs": [
+    "refs/cover.png",
+    "refs/heavy-gun.png"
+   ]
+  },
+  {
+   "slug": "03b-mortar",
+   "title": "The mortar lobs a shell",
+   "scene": "Seen from high above at a three-quarter angle: a castle on the shore of a calm blue lake with reeds and a small wooden jetty. In the middle of its open stone courtyard stands the mortar: a fat iron pot mortar between riveted iron cheek plates on an open iron ring. Its round open mouth points straight up at the sky. Its shell flies in a high steep arc over the lake toward a far castle with a blue flag on the opposite shore.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the first attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the first image. The second attached image shows only the design of one gun: paint that gun in the picture's own painterly style. ",
+   "cannons": "Only the mortar fires: the yellow flash and one round white smoke cloud burst straight up out of its open mouth, the dark shell high above on its steep arc with a faint trail down to the mouth. No other gun fires. ",
+   "refs": [
+    "refs/cover.png",
+    "refs/mortar.png"
+   ]
+  },
+  {
+   "slug": "04b-flak",
+   "title": "Flak bursts a shot",
+   "scene": "Seen from high above at a three-quarter angle: a castle on a rocky sea coast, waves on a sandy beach below its walls. In the middle of its open stone courtyard, large in the picture, stands the flak gun: twin iron barrels in a boxy riveted cradle on an iron ball on a short pedestal, aiming steeply up. High in the sky above the castle an incoming cannonball bursts into a small puff of grey smoke and iron fragments where the flak's two thin tracer lines meet it.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the first attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the first image. The second attached image shows only the design of one gun: paint that gun in the picture's own painterly style. ",
+   "cannons": "Only the flak fires: two small flashes at its twin muzzles and two thin tracer lines up to the burst. No cannon fires. ",
+   "refs": [
+    "refs/cover.png",
+    "refs/flak.png"
+   ]
+  },
+  {
+   "slug": "07b-castle-dusk",
+   "title": "The castle at dusk",
+   "scene": "The castle at sunset, seen from high above at a three-quarter angle: the sun sits low on the horizon in an orange and pink sky, warm orange light on one side of every wall and tower and long blue shadows across the grid on the other, the river glowing gold, the windows lit. Only this one castle stands in the land, no ruins and no other walls.",
+   "look": "Paint the near castle of the attached image, the one in the lower left with the square keep, the timber lookout under an orange pyramid roof and the red flag, as the only castle of a new picture, in the same soft painterly 2D look and colours. Keep its keep, roofs, walls and towers as they are in the attached image. ",
+   "cannons": "Every cannon is a complete bronze barrel on one wooden carriage with two wheels, standing on the stone courtyard floor inside the walls, never on a wall, a wall walk, a tower, a roof or a house, its barrel raised to about 45 degrees. No cannon fires, no smoke from any gun. ",
+   "refs": [
+    "refs/cover.png"
+   ]
+  },
+  {
+   "slug": "14b-wall-impact",
+   "title": "A wall is hit",
+   "scene": "A close view, seen from above at a three-quarter angle, of one long straight stretch of cream castle wall with battlements at the moment a cannonball strikes its outer face: stone blocks burst outward from the impact point, chips and a round cloud of dust fly, the rest of the wall stands. Behind the wall the orange roofs of houses and a square keep with a red flag rise from the courtyard. In front of the wall green grass with the tile grid.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the attached image. ",
+   "cannons": "The shooter is far away, out of the picture. One cannonball at the point of impact, no other ball. No cannon and no gun anywhere in the picture, no smoke from a gun. ",
+   "refs": [
+    "refs/cover.png"
+   ]
+  },
+  {
+   "slug": "15b-wall-breach",
+   "title": "The breach",
+   "scene": "Seen from high above at a three-quarter angle: a castle on a green hill above a long blue lake, a road winding up to its gate. Its straight front wall has a gap three blocks wide after a hit, cream stone blocks scattered down the grassy slope in front of it, dust settling, and through the gap the courtyard with its two cannons. A distant castle with a blue flag on the far shore of the lake.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the attached image. ",
+   "cannons": "Every cannon is a complete bronze barrel on one wooden carriage with two wheels, standing on the stone courtyard floor inside the walls, never on a wall, a wall walk, a tower, a roof or a house, its barrel raised to about 45 degrees. No cannon fires, no smoke from any gun. ",
+   "refs": [
+    "refs/cover.png"
+   ]
+  },
+  {
+   "slug": "16b-double-wall",
+   "title": "The upper storey falls",
+   "scene": "A close view, seen from above at a three-quarter angle, of one straight castle wall built in two storeys: a plain lower wall, and on top of it a second, slightly narrower upper wall with its own battlements, a clear ledge between the two storeys. A hit has knocked the upper storey off along a short stretch in the middle: its blocks tumble down onto the grass, while the lower storey beneath stays whole and flat-topped. Orange roofs behind the wall, grass with the tile grid in front.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the attached image. ",
+   "cannons": "No cannon and no gun anywhere in the picture, no smoke from a gun. ",
+   "refs": [
+    "refs/cover.png"
+   ]
+  },
+  {
+   "slug": "17b-mortar-strike",
+   "title": "Burning tiles",
+   "scene": "Seen from high above at a three-quarter angle: a straight castle wall runs across a golden wheat field. Just in front of the wall, on five separate square tiles of the grid, five small fires burn where the shards of a mortar shell came down, each tile scorched dark around its flames, with small curls of smoke. The wall itself stands unharmed. Behind the wall rise orange roofs and a square keep with a red flag. Hedges, a cart track and a few trees around.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the attached image. ",
+   "cannons": "No cannon and no gun anywhere in the picture, no smoke from a gun. ",
+   "refs": [
+    "refs/cover.png"
+   ]
+  },
+  {
+   "slug": "19b-first-fort",
+   "title": "The first fort",
+   "scene": "Seen from high above at a three-quarter angle: a small first fort on a wide green coastal plain by the sea, a square keep with an orange roof and a red flag inside one square ring of low cream walls. The tile grid runs across the empty land in every direction, down to a sandy beach and the blue sea on one side, with a few trees and rocks. Most of the land is open, waiting to be built on. Morning light.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the attached image. ",
+   "cannons": "No cannon fires, no smoke from any gun. ",
+   "refs": [
+    "refs/cover.png"
+   ]
+  },
+  {
+   "slug": "20b-ball-in-flight",
+   "title": "A ball in flight",
+   "scene": "Seen from high above: a single dark cannonball in flight high in the upper middle of the picture with a faint white trail behind it, over a wide valley of forests and small lakes with the tile grid on the open land. Far below, a small castle in the lower left whose one cannon has just fired, with its white smoke cloud, and a small castle with a blue flag on a hill in the upper right, the target.",
+   "look": "Take only the soft painterly 2D look, the colours and the light of the attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the attached image. ",
+   "cannons": "Every cannon is a complete bronze barrel on one wooden carriage with two wheels, standing on the stone courtyard floor inside the walls, never on a wall, a wall walk, a tower, a roof or a house, its barrel raised to about 45 degrees. Exactly one cannon fires: the one cannon of the castle in the lower left has fired, the ball is the one in flight, with a bright yellow flash and one big round white smoke cloud right at its muzzle and one dark cannonball a short way out beyond the muzzle on the line of its barrel, with a faint trail back to the muzzle. No other cannon fires, no other smoke, no other ball. ",
+   "refs": [
+    "refs/cover.png"
+   ]
+  }
+ ]
+}

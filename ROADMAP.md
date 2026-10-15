@@ -63,6 +63,7 @@ Sections A to H cover the art and the process that makes it, sections I to K the
 - [x] D3 **must** Menu background and splash image. Session 05: from the store set, in the game at commit `7042fb2`.
 - [ ] D4 **must** Readability check: the real menu at 1280 by 720 and at 390 wide, critic, Sebastian approves.
 - [x] D5 **must** Loading screen art: one piece of concept art at random behind the bar, never the key art of the splash (D65). Five anchors at 1920 by 1080 from [storeset.py](art/pipeline/storeset.py) `loading`, in the game as `assets/art/ui/loading.png` and its numbered looks. Sebastian picks the final set.
+- [ ] D6 **must** Concept art painted for the loading screen in the cover art's style: 20 ideas, pictures, critics, fixes, Sebastian's picks. Planned as [session 12b](art/docs/sessions/12b-loading-art.md), round 29. Session 12b: twenty pictures pass, on the [picks page](art/game/art-direction/rounds/29-loading-art/PICKS.md), waiting on Sebastian's picks. The loading bar moved to the bottom right corner.
 
 ## E. Marketing
 

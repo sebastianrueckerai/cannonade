@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Seen from high above at a three-quarter angle: a castle courtyard with the mortar in its middle, a fat iron pot mortar between riveted iron cheek plates on an open iron ring, its short barrel pointing steeply up. Its shell flies in a high steep arc over the wall toward a far castle with a blue flag across a river. Take only the soft painterly 2D look, the colours and the light of the first attached image, and make a new picture. The second attached image shows only the design of one gun: paint that gun in the picture's own painterly style, at the size of a building in the courtyard. Only the mortar fires: a yellow flash and one round white smoke cloud at its mouth, one dark shell high above on its steep arc with a faint trail. No other gun fires. Rules for the whole picture: the land carries the painted tile grid in the same perspective as the buildings, its lines parallel to the castle walls. Castle walls are straight cream stone walls along the grid, with square or round corner towers, never curved walls. Keep every important subject above the lowest sixth of the picture: the bottom middle shows only grass, ground or water. Not too busy, nothing too small, and the land is not bare. No people. No text, no letters, no numbers, no title, no watermark. Soft colours, not oversaturated, not a 3D render.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/refs/cover.png",
+    "game/art-direction/rounds/29-loading-art/refs/mortar.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "03-mortar-main--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T12:11:40",
+  "outputs": [
+    "03-mortar-main--nanobanana.png"
+  ]
+}

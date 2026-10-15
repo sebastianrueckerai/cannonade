@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Seen from high above at a three-quarter angle: a castle on the shore of a calm blue lake with reeds and a small wooden jetty. In the middle of its open stone courtyard stands the mortar: a fat iron pot mortar between riveted iron cheek plates on an open iron ring. Its round open mouth points straight up at the sky. Its shell flies in a high steep arc over the lake toward a far castle with a blue flag on the opposite shore. Take only the soft painterly 2D look, the colours and the light of the first attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the first image. The second attached image shows only the design of one gun: paint that gun in the picture's own painterly style. Only the mortar fires: the yellow flash and one round white smoke cloud burst straight up out of its open mouth, the dark shell high above on its steep arc with a faint trail down to the mouth. No other gun fires. Rules for the whole picture: the land carries the painted tile grid in the same perspective as the buildings, its lines parallel to the castle walls. Castle walls are straight cream stone walls along the grid, with square or round corner towers, never curved walls. Keep the bottom right corner of the picture calm: it shows only grass, trees, ground or water. Not too busy, nothing too small, and the land is not bare. No people. No text, no letters, no numbers, no title, no watermark. Soft colours, not oversaturated, not a 3D render.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/refs/cover.png",
+    "game/art-direction/rounds/29-loading-art/refs/mortar.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "03b-mortar-main--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T12:46:36",
+  "outputs": [
+    "03b-mortar-main--nanobanana.png"
+  ]
+}

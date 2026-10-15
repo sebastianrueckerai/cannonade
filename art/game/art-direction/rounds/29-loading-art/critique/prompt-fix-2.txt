@@ -1,0 +1,25 @@
+You are an independent critic for a cosy low-poly browser strategy game in the spirit of Rampart: castles on a tile grid shoot at each other with cannons. These 5 images are painted concept art for its loading screen, in the style of the game's painted cover art. A loading bar panel covers the bottom right corner of each image. Your job is faults, not taste.
+
+The owner's checklist, every line must pass. A line about guns does not apply to an image without guns:
+1. Painterly 2D in the cover art's soft colours, not oversaturated, not the game's render look
+2. No text, letters, numbers or watermark
+3. No people
+4. At most one gun fires, with its flash and smoke at the muzzle and its ball on the barrel's line. The flak's burst counts as its one shot
+5. Every cannon is complete, one barrel on one carriage, not floating, not pasted, not buried in a wall
+6. Every gun stands on the courtyard floor inside the walls, never on a wall, a wall walk, a tower, a roof or a house
+7. Cannon barrels raised to about 45 degrees. The mortar points steeply up, the flak aims up
+8. Castle walls straight and along the grid. Round corner towers are allowed
+9. Where land shows, the tile grid is painted in the castles' perspective
+10. Not too busy, nothing too small, not barren
+11. The bottom right corner is calm where the loading bar sits, the lowest sixth across the right third: no important subject there
+12. No siege gun, nothing bigger than the 2x2 heavy gun
+13. Ideas 5 to 13: recognisably the cover's near castle, a square keep with a timber lookout under an orange pyramid roof and a red flag
+
+What each image is meant to show (line 13 applies to "The castle at dusk" only):
+Image 1 (The upper storey falls): A close view, seen from above at a three-quarter angle, of one straight castle wall built in two storeys: a plain lower wall, and on top of it a second, slightly narrower upper wall with its own battlements, a clear ledge between the two storeys. A hit has knocked the upper storey off along a short stretch in the middle: its blocks tumble down onto the grass, while the lower storey beneath stays whole and flat-topped. Orange roofs behind the wall, grass with the tile grid in front.
+Image 2 (Burning tiles): Seen from high above at a three-quarter angle: a straight castle wall runs across a golden wheat field. Just in front of the wall, on five separate square tiles of the grid, five small fires burn where the shards of a mortar shell came down, each tile scorched dark around its flames, with small curls of smoke. The wall itself stands unharmed. Behind the wall rise orange roofs and a square keep with a red flag. Hedges, a cart track and a few trees around.
+Image 3 (Four kingdoms): A wide land map seen from very high above: four different castles stand in the four corners, each flying its own flag colour, blue in the lower left, purple in the upper left, teal in the lower right and olive in the upper right. Rivers, forests, fields and the tile grid between them.
+Image 4 (The first fort): Seen from high above at a three-quarter angle: a small first fort on a wide green coastal plain by the sea, a square keep with an orange roof and a red flag inside one square ring of low cream walls. The tile grid runs across the empty land in every direction, down to a sandy beach and the blue sea on one side, with a few trees and rocks. Most of the land is open, waiting to be built on. Morning light.
+Image 5 (A ball in flight): Seen from high above: a single dark cannonball in flight high in the upper middle of the picture with a faint white trail behind it, over a wide valley of forests and small lakes with the tile grid on the open land. Far below, a small castle in the lower left whose one cannon has just fired, with its white smoke cloud, and a small castle with a blue flag on a hill in the upper right, the target.
+
+For each image 1 to 5, list only the checklist lines that FAIL, each with its number and one short reason naming where in the image. Also name anything that contradicts what the image is meant to show. If an image passes everything, write PASS. End with one line that starts with FAILS: followed by the numbers of the images with at least one failing line, or NONE.

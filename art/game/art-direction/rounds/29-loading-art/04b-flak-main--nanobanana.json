@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Seen from high above at a three-quarter angle: a castle on a rocky sea coast, waves on a sandy beach below its walls. In the middle of its open stone courtyard, large in the picture, stands the flak gun: twin iron barrels in a boxy riveted cradle on an iron ball on a short pedestal, aiming steeply up. High in the sky above the castle an incoming cannonball bursts into a small puff of grey smoke and iron fragments where the flak's two thin tracer lines meet it. Take only the soft painterly 2D look, the colours and the light of the first attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the first image. The second attached image shows only the design of one gun: paint that gun in the picture's own painterly style. Only the flak fires: two small flashes at its twin muzzles and two thin tracer lines up to the burst. No cannon fires. Rules for the whole picture: the land carries the painted tile grid in the same perspective as the buildings, its lines parallel to the castle walls. Castle walls are straight cream stone walls along the grid, with square or round corner towers, never curved walls. Keep the bottom right corner of the picture calm: it shows only grass, trees, ground or water. Not too busy, nothing too small, and the land is not bare. No people. No text, no letters, no numbers, no title, no watermark. Soft colours, not oversaturated, not a 3D render.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/refs/cover.png",
+    "game/art-direction/rounds/29-loading-art/refs/flak.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "04b-flak-main--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T12:41:22",
+  "outputs": [
+    "04b-flak-main--nanobanana.png"
+  ]
+}

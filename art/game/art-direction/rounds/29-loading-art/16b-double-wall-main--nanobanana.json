@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A close view, seen from above at a three-quarter angle, of one straight castle wall built in two storeys: a plain lower wall, and on top of it a second, slightly narrower upper wall with its own battlements, a clear ledge between the two storeys. A hit has knocked the upper storey off along a short stretch in the middle: its blocks tumble down onto the grass, while the lower storey beneath stays whole and flat-topped. Orange roofs behind the wall, grass with the tile grid in front. Take only the soft painterly 2D look, the colours and the light of the attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the attached image. No cannon and no gun anywhere in the picture, no smoke from a gun. Rules for the whole picture: the land carries the painted tile grid in the same perspective as the buildings, its lines parallel to the castle walls. Castle walls are straight cream stone walls along the grid, with square or round corner towers, never curved walls. Keep the bottom right corner of the picture calm: it shows only grass, trees, ground or water. Not too busy, nothing too small, and the land is not bare. No people. No text, no letters, no numbers, no title, no watermark. Soft colours, not oversaturated, not a 3D render.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/refs/cover.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "16b-double-wall-main--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T12:42:11",
+  "outputs": [
+    "16b-double-wall-main--nanobanana.png"
+  ]
+}

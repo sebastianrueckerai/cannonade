@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Remove the small cannons, the logs and the barrels that lie on the grass and the paths outside the castle gates of the purple castle in the upper left and of the olive castle in the upper right. Where they were, paint the plain path and grass with the tile grid lines. Keep every cannon inside the castle walls and everything else in the picture exactly as it is. No text.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/18b-four-kingdoms-fixed.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "18c-no-stray-guns-edit",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T13:01:36",
+  "outputs": [
+    "18c-no-stray-guns-edit--nanobanana.png"
+  ]
+}

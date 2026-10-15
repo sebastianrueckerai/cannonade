@@ -31,11 +31,11 @@ func _ready() -> void:
 		tr.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		screen.add_child(tr)
 	var panel := PanelContainer.new()
-	panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM if art != null else Control.PRESET_CENTER)
-	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT if art != null else Control.PRESET_CENTER)
+	panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN if art != null else Control.GROW_DIRECTION_BOTH
 	panel.grow_vertical = Control.GROW_DIRECTION_BEGIN if art != null else Control.GROW_DIRECTION_BOTH
 	if art != null:
-		panel.position.y -= 48
+		panel.position -= Vector2(24, 16)
 	screen.add_child(panel)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 12)

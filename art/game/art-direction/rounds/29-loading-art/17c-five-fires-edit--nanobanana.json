@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Remove three of the fires: the fire on the leftmost tile in the lower left, and the two fires at the far right end of the row along the wall. Where they were, paint the plain wheat field and the strip of green grass at the foot of the wall, with the tile grid lines, and the plain cream stone wall where their smoke rose. Keep the other five fires, their scorched tiles and their smoke exactly as they are, and keep everything else in the picture exactly as it is. No text.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/17b-mortar-strike-main--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "17c-five-fires-edit",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T12:49:15",
+  "outputs": [
+    "17c-five-fires-edit--nanobanana.png"
+  ]
+}

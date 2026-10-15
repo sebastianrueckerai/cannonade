@@ -1,0 +1,25 @@
+You are an independent critic for a cosy low-poly browser strategy game in the spirit of Rampart: castles on a tile grid shoot at each other with cannons. These 5 images are painted concept art for its loading screen, in the style of the game's painted cover art. A loading bar panel covers the bottom right corner of each image. Your job is faults, not taste.
+
+The owner's checklist, every line must pass:
+1. Painterly 2D in the cover art's soft colours, not oversaturated, not the game's render look
+2. No text, letters, numbers or watermark
+3. No people
+4. At most one gun fires, with its flash and smoke at the muzzle and its ball on the barrel's line. The flak's burst counts as its one shot
+5. Every cannon is complete, one barrel on one carriage, not floating, not pasted, not buried in a wall
+6. Every gun stands on the courtyard floor inside the walls, never on a wall, a wall walk, a tower, a roof or a house
+7. Cannon barrels raised to about 45 degrees. The mortar points steeply up, the flak aims up
+8. Castle walls straight and along the grid. Round corner towers are allowed
+9. Where land shows, the tile grid is painted in the castles' perspective
+10. Not too busy, nothing too small, not barren
+11. The bottom right corner is calm where the loading bar sits, the lowest sixth across the right third: no important subject there
+12. No siege gun, nothing bigger than the 2x2 heavy gun
+13. Ideas 5 to 13: recognisably the cover's near castle, a square keep with a timber lookout under an orange pyramid roof and a red flag
+
+What each image is meant to show:
+Image 1 (idea 6, The castle at dawn): The castle at dawn, seen from high above at a three-quarter angle: soft pink and gold first light on the keep and the roofs, low mist over the river and the fields, long cool shadows, dew on the grass.
+Image 2 (idea 7, The castle at dusk): The castle in the golden evening, seen from high above at a three-quarter angle: warm low sun from the side, long shadows across the grid, the first windows lit, swallows over the river.
+Image 3 (idea 8, The castle in autumn): The castle in autumn, seen from high above at a three-quarter angle: the trees around it orange, red and gold, fallen leaves on the grass and the paths, apple trees by the river, a soft hazy sky.
+Image 4 (idea 9, The castle in winter): The castle in winter, seen from high above at a three-quarter angle: soft snow on the roofs, the battlements and the land, the tile grid still showing through the snow, the river half frozen, smoke from the chimneys, pale blue sky.
+Image 5 (idea 10, The castle being built): The castle while it is being built, seen from high above at a three-quarter angle: the keep stands, the ring of walls is half done, one straight wall piece hangs from a wooden crane over a gap in the ring, timber scaffolds along an unfinished tower, wooden crates of timber and stacks of iron bars on the grid tiles beside it.
+
+For each image 1 to 5, list only the checklist lines that FAIL, each with its number and one short reason naming where in the image. Also name anything that contradicts what the image is meant to show. If an image passes everything, write PASS. A line you cannot check counts as a FAIL. End with one line that starts with FAILS: followed by the numbers of the images with at least one failing line, or NONE.

@@ -1,0 +1,30 @@
+{
+  "tool": "mask.py paste",
+  "argv": [
+    "pipeline/mask.py",
+    "paste",
+    "--out",
+    "game/art-direction/rounds/29-loading-art/14c-wall-impact-fixed.png",
+    "--base",
+    "game/art-direction/rounds/29-loading-art/14b-wall-impact-main--nanobanana.png",
+    "--top",
+    "game/art-direction/rounds/29-loading-art/14c-no-ball-edit--nanobanana.png",
+    "--mask",
+    "game/art-direction/rounds/29-loading-art/masks/14-ball.png",
+    "--feather",
+    "6"
+  ],
+  "inputs": [
+    "game/art-direction/rounds/29-loading-art/14b-wall-impact-main--nanobanana.png",
+    "game/art-direction/rounds/29-loading-art/14c-no-ball-edit--nanobanana.png",
+    "game/art-direction/rounds/29-loading-art/masks/14-ball.png"
+  ],
+  "params": {
+    "feather": 6.0
+  },
+  "est_cost_usd": 0.0,
+  "created": "2026-10-15T12:49:36",
+  "outputs": [
+    "14c-wall-impact-fixed.png"
+  ]
+}

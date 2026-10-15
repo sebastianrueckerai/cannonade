@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Seen from high above: a single dark cannonball in flight high in the upper middle of the picture with a faint white trail behind it, over a wide valley of forests and small lakes with the tile grid on the open land. Far below, a small castle in the lower left whose one cannon has just fired, with its white smoke cloud, and a small castle with a blue flag on a hill in the upper right, the target. Take only the soft painterly 2D look, the colours and the light of the attached image, and paint a new picture with its own composition and its own landscape, not the river and fields of the attached image. Every cannon is a complete bronze barrel on one wooden carriage with two wheels, standing on the stone courtyard floor inside the walls, never on a wall, a wall walk, a tower, a roof or a house, its barrel raised to about 45 degrees. Exactly one cannon fires: the one cannon of the castle in the lower left has fired, the ball is the one in flight, with a bright yellow flash and one big round white smoke cloud right at its muzzle and one dark cannonball a short way out beyond the muzzle on the line of its barrel, with a faint trail back to the muzzle. No other cannon fires, no other smoke, no other ball. Rules for the whole picture: the land carries the painted tile grid in the same perspective as the buildings, its lines parallel to the castle walls. Castle walls are straight cream stone walls along the grid, with square or round corner towers, never curved walls. Keep the bottom right corner of the picture calm: it shows only grass, trees, ground or water. Not too busy, nothing too small, and the land is not bare. No people. No text, no letters, no numbers, no title, no watermark. Soft colours, not oversaturated, not a 3D render.",
+  "refs": [
+    "game/art-direction/rounds/29-loading-art/refs/cover.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "20b-ball-in-flight-main--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-15T12:42:51",
+  "outputs": [
+    "20b-ball-in-flight-main--nanobanana.png"
+  ]
+}
