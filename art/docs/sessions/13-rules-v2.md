@@ -1,6 +1,6 @@
 # Session 13: rules v2 in the game
 
-Start prompt for the session: "Run session 13 from docs/sessions/13-rules-v2.md. Go."
+Start prompt for the session, in the game repo: "Run session 13 from art/docs/sessions/13-rules-v2.md. Go."
 
 Roadmap item: B18, the upgrade tree v1. It is ticked when the game plays the recipes of [rules.md](../../game/design/rules.md) section 7. The crater tile look rides along.
 
