@@ -1,8 +1,10 @@
-extends Control
-## Loading screen. Loading.go(path) from anywhere: shows a bar while the scene loads in the background.
+extends CanvasLayer
+## Loading screen. Loading.go(path) from anywhere: loads the scene in the background, adds it underneath and, when
+## the scene builds in steps (Main: `staged`, `progress`, `built`), shows its progress until it is built.
 
 static var next_scene := ""
 var _bar: ProgressBar
+var _scene: Node = null
 
 
 static func go(path: String) -> void:
@@ -11,16 +13,19 @@ static func go(path: String) -> void:
 
 
 func _ready() -> void:
-	theme = Art.theme()
+	var screen := Control.new()
+	screen.theme = Art.theme()
+	screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(screen)
 	var bg := ColorRect.new()
 	bg.color = Color(0.12, 0.16, 0.22)
-	bg.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-	add_child(bg)
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	screen.add_child(bg)
 	var panel := PanelContainer.new()
-	panel.set_anchors_preset(PRESET_CENTER)
-	panel.grow_horizontal = GROW_DIRECTION_BOTH
-	panel.grow_vertical = GROW_DIRECTION_BOTH
-	add_child(panel)
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	screen.add_child(panel)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 12)
 	panel.add_child(box)
@@ -39,15 +44,26 @@ func _ready() -> void:
 	ResourceLoader.load_threaded_request(next_scene)
 
 
+## Nothing reaches the scene being built underneath.
+func _input(_event: InputEvent) -> void:
+	get_viewport().set_input_as_handled()
+
+
 func _process(_delta: float) -> void:
-	var progress := []
-	var status := ResourceLoader.load_threaded_get_status(next_scene, progress)
-	if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-		_bar.value = progress[0] * 100.0
-	elif status == ResourceLoader.THREAD_LOAD_LOADED:
-		_bar.value = 100.0
-		set_process(false)
-		get_tree().change_scene_to_packed(ResourceLoader.load_threaded_get(next_scene))
-	else:
+	if _scene != null:
+		_bar.value = _scene.progress * 100.0
+		return
+	var status := ResourceLoader.load_threaded_get_status(next_scene)
+	if status == ResourceLoader.THREAD_LOAD_LOADED:
+		_scene = (ResourceLoader.load_threaded_get(next_scene) as PackedScene).instantiate()
+		var staged := "staged" in _scene
+		if staged:
+			_scene.staged = true
+			_scene.built.connect(queue_free)
+		get_tree().root.add_child(_scene)
+		get_tree().current_scene = _scene
+		if not staged:
+			queue_free()
+	elif status != ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		push_error("Loading: %s failed with status %d" % [next_scene, status])
 		set_process(false)

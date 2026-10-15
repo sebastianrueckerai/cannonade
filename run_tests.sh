@@ -26,6 +26,7 @@ run flood-fill   res://tests/flood_test.tscn
 run human-input  --fixed-fps 30 res://tests/human.tscn
 run weapons      --fixed-fps 30 res://tests/weapons.tscn
 run menu         --fixed-fps 30 res://tests/menu_test.tscn
+run practice     --fixed-fps 30 res://tests/practice_test.tscn
 run camera       --fixed-fps 30 res://tests/camera_test.tscn
 run catalog      --fixed-fps 30 res://tests/catalog_test.tscn
 run sandbox      --fixed-fps 30 res://tests/sandbox_test.tscn

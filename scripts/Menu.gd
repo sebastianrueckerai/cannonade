@@ -39,7 +39,7 @@ func _ready() -> void:
 		title.add_theme_font_size_override("font_size", 44)
 		box.add_child(title)
 	for entry in [["single", "Single player (vs. ships)"], ["versus", "Player vs. AI"],
-			["ai2", "Watch: AI vs. AI"], ["ai4", "Watch: 4 AIs"]]:
+			["ai2", "Watch: AI vs. AI"], ["ai4", "Watch: 4 AIs"], ["practice", "Practice (a fort that never fires back)"]]:
 		var b := Button.new()
 		b.text = entry[1]
 		b.custom_minimum_size = Vector2(0, 44)

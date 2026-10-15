@@ -2,7 +2,7 @@ extends Node3D
 ## Builds a game from one of the original Unity scenes' configurations
 ## (singlePlayer, multiPlayer, 4ai) and wires up camera, light and UI.
 ##
-## Command line (after "--"): --mode=single|versus|ai2|ai4 --seed=N
+## Command line (after "--"): --mode=single|versus|ai2|ai4|practice --seed=N
 ##   --round=SECONDS --size=TILES --timescale=F --quit-after=SECONDS --no-decorations
 
 const GameController = preload("res://scripts/components/GameController.gd")
@@ -21,7 +21,14 @@ const MODES := {
 	"ai2": {"players": ["ai", "ai"], "size": 30, "round": 30.0, "pitch": 60.0, "fov": 30.0, "ships": 7},
 	# Assets/Scenes/4ai.unity: four AIs
 	"ai4": {"players": ["ai", "ai", "ai", "ai"], "size": 60, "round": 25.0, "pitch": 71.42, "fov": 37.44, "ships": 7},
+	# target practice: you vs. a fort that never fires, never grows and is rebuilt for every battle; Enter switches
+	# between build and battle, there is no timer
+	"practice": {"players": ["human", "ai"], "size": 30, "round": 1e9, "pitch": 60.0, "fov": 30.0, "ships": 0,
+		"practice": true},
 }
+## The practice fort inside one ring of walls: [building id, x, z] from the lower left of its 8 x 4 inside.
+const TARGET := [["base", 3, 1], ["supply22", 0, 2], ["supply", 2, 3], ["cannon22a", 6, 2],
+	["cannon", 0, 0], ["cannon", 2, 0], ["cannon", 5, 0], ["cannon", 7, 0]]
 # The team set of the art kit, game/art-direction/palette.json in the blender-ai repo (D21): main, highlight plus, highlight minus.
 const PLAYER_COLORS := [
 	["#2d55c4", "#aaaadd", "#ad3030"],
@@ -39,11 +46,20 @@ var camera: Camera3D
 var ui: CanvasLayer
 var phase_label: Label
 var quit_after := -1.0
+var practice := false
 ## Set before adding the node to build from this config instead of a mode
 ## (used by the sandbox). Extra keys: "seed", "decorate", "colors" (hex per
 ## player), "hud" (timer / phase / help, default true), "previews" (next piece
 ## previews, default true).
 var config := {}
+## Set by the loading screen before the node enters the tree: the map is then built over many frames, `progress`
+## says how far (0..1) and `built` follows once the game runs.
+var staged := false
+var progress: float:
+	get:
+		return game.map.progress if game != null and game.map != null else 0.0
+
+signal built
 
 
 func _ready() -> void:
@@ -94,12 +110,14 @@ func _component(node_name: String, script: Script, parent: Node = self) -> Node:
 
 
 func build(cfg: Dictionary, decorate := true) -> void:
+	practice = cfg.get("practice", false)
 	_setup_environment(cfg)
 	_setup_ui()
 	var map = _component("Map", MapScript)
 	map.sizeX = cfg["size"]
 	map.sizeZ = cfg["size"]
 	map.decorate = decorate
+	map.staged = staged
 	var fleet = _component("FleetControll", ShipFleet)
 	game = _component("Game", GameController)
 	game.roundDuration = cfg["round"]
@@ -132,7 +150,12 @@ func build(cfg: Dictionary, decorate := true) -> void:
 		game.supplyNeededBars.append(bars[1])
 	fleet.enemyPlayers = game.players.duplicate()
 	game.round_changed.connect(_on_round_changed)
-	game.start_game()
+	await game.start_game()
+	if practice:
+		game.players[1].dormant = true
+		for n in [game.wallSpawns[1], game.buildingSpawns[1], ui.get_node("Supply2"), ui.get_node("Timer")]:
+			n.visible = false
+		_build_target()
 	camera.capture_home_view(map.sizeX * map.tileSize / 2.0)
 	# The fog starts at the far edge of the board and is full at 1.8 times that distance from the camera, so it
 	# never covers a tile the player builds on.
@@ -144,6 +167,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	if not cfg.get("hud", true):
 		for n in ["Timer", "Phase", "Help"]:
 			ui.get_node(n).visible = false
+	built.emit()
 
 
 func _setup_environment(cfg: Dictionary) -> void:
@@ -307,7 +331,38 @@ func _make_supply_bars(i: int, is_ai: bool, color: Color) -> Array:
 func _on_round_changed(_n: int, building: bool) -> void:
 	if phase_label:
 		phase_label.text = "BUILD PHASE" if building else "BATTLE PHASE"
+		if practice:
+			phase_label.text += "   Enter: " + ("battle" if building else "build")
 		phase_label.modulate = Color.GREEN if building else Color.RED
+	if practice and not building:
+		_build_target()
+
+
+## Practice: the second player's fort, cleared and built anew.
+func _build_target() -> void:
+	var target = game.players[1]
+	var map = game.map
+	map.statesMap.begin_batch()
+	for column in map.tiles:
+		for t in column:
+			if t.player == target and U.alive(t.structure):
+				if t.upgradeCluster != null:
+					t.upgradeCluster.un_build_upgrade()
+				else:
+					t.un_build()
+	var x0: int = map.sizeX / 2 - 4
+	var z0: int = map.sizeZ - map.sizeZ / 4 - 2
+	for b in TARGET:
+		target.place(Catalog.get_def(b[0]), x0 + b[1], z0 + b[2])
+	for x in range(x0 - 1, x0 + 9):
+		for z in range(z0 - 1, z0 + 5):
+			var side_x := x == x0 - 1 or x == x0 + 8
+			var side_z := z == z0 - 1 or z == z0 + 4
+			if side_x or side_z:
+				var wall := Catalog.spawn_wall_for([side_x and z < z0 + 4, side_x and z > z0 - 1,
+						side_z and x > x0 - 1, side_z and x < x0 + 8])
+				target.place(Catalog.def_of(wall), x, z, wall)
+	map.statesMap.end_batch()
 
 
 func _process(_delta: float) -> void:
@@ -321,6 +376,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		Catalog.reload()
 		_toast("Building data reloaded" if Catalog.errors.is_empty()
 				else "Building data reloaded – %d problem(s):\n%s" % [Catalog.errors.size(), "\n".join(Catalog.errors)])
+	if practice and event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ENTER:
+		game.next_phase()
 	if event.is_action_pressed("ui_cancel"):
 		Engine.time_scale = 1.0
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")

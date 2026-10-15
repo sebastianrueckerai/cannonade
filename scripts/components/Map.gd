@@ -26,6 +26,11 @@ const StatesMap = preload("res://scripts/StatesMap.gd")
 @export var maxModelTypes := 4
 ## Set to false to skip decorations (faster headless simulations).
 @export var decorate := true
+## Set while a loading screen is up: make_map then gives the screen a frame every 50 ms.
+var staged := false
+## Share of make_map done, 0..1
+var progress := 0.0
+var _frame_start := 0
 
 var game = null
 var enclosedColorMin: Color
@@ -124,10 +129,11 @@ func add_water(along_x: bool, from_index: int, margin_up := 2, margin_down := 2,
 
 
 func make_map(players: Array) -> void:
-	make_land_map()
+	_frame_start = Time.get_ticks_msec()
+	await make_land_map()
 	_set_water_areas(players.size())
 	if decorate:
-		_add_decorations()
+		await _add_decorations()
 	statesMap.reset(self)
 	statesMap.update_open_closed_spaces()
 
@@ -150,7 +156,8 @@ func tile_index_at(p: Vector3) -> Vector2i:
 
 func make_land_map() -> void:
 	_randomize_colors()
-	_randomize_model_makers()
+	if decorate:
+		_randomize_model_makers()
 	tiles = []
 	miniMap = PackedByteArray()
 	miniMap.resize(sizeX * sizeZ)
@@ -173,6 +180,7 @@ func make_land_map() -> void:
 			t.customModelMakers = customModelMakers
 			col.append(t)
 		tiles.append(col)
+		await _step((0.2 if decorate else 1.0) * (xi + 1) / sizeX)
 	_smooth_colors()
 	statesMap.reset(self)
 
@@ -182,6 +190,15 @@ func _add_decorations() -> void:
 		for zi in sizeZ:
 			if not tiles[xi][zi].water:
 				tiles[xi][zi].place_decorations()
+		await _step(0.2 + 0.8 * (xi + 1) / sizeX)
+
+
+## Records the share of the map done; while `staged`, lets a frame through every 50 ms.
+func _step(done: float) -> void:
+	progress = done
+	if staged and Time.get_ticks_msec() - _frame_start > 50:
+		await get_tree().process_frame
+		_frame_start = Time.get_ticks_msec()
 
 
 func _smooth_colors() -> void:

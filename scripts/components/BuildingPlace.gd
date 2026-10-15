@@ -4,6 +4,8 @@ extends "res://scripts/components/Component.gd"
 @export var customModelMakers: Array = []
 @export var tileModel: NodePath
 @export var lineRenderer: NodePath
+## Gap in metres between a decoration and the edge of its tile
+const DECO_BORDER := 0.05
 
 ## GameObject (Node3D) of the building / wall built here
 var structure: Node3D = null
@@ -237,33 +239,52 @@ func place_decorations() -> void:
 	var n_place_here := 0 if U.value() < 0.35 else U.rint(1, max_deco)
 	var max_batch := U.rint(0, n_place_here)
 	var maker = customModelMakers[rand_indices[n_batch]]
+	var deco: Node3D = null
+	var reach := 0.0
 	while n_tries < max_tries and n_placed < n_place_here:
 		n_tries += 1
 		if n_batch == max_batch:
 			n_batch = 0
 			maker = customModelMakers[rand_indices[n_batch]]
 			max_batch = U.rint(0, n_place_here - n_placed)
+		if deco == null:
+			deco = maker.get_randomized_model(go)
+			reach = _fit_reach(deco)
 		var next_try: Vector3
 		if n_batch == 0 or decorations.is_empty():
-			next_try = Vector3(U.rfloat(-0.5 + min_dist / 2.0, 0.5 - min_dist / 2.0), 0.1,
-					U.rfloat(-0.5 + min_dist / 2.0, 0.5 - min_dist / 2.0))
+			var room := 0.5 - DECO_BORDER - reach
+			next_try = Vector3(U.rfloat(-room, room), 0.1, U.rfloat(-room, room))
 		else:
 			var last_pos: Vector3 = decorations[-1].position
 			var dir := Vector3(U.rfloat(-1.0, 1.0), 0.1, U.rfloat(-1.0, 1.0))
 			dir = dir.normalized() * U.rfloat(min_dist, max_step_dist)
 			next_try = last_pos + dir
 			next_try.y = 0.1
-		if _can_deco_be_placed(next_try):
-			var deco: Node3D = maker.get_randomized_model(go)
+		if _can_deco_be_placed(next_try, reach):
 			deco.position = next_try
 			U.set_shadows(deco, false)
 			decorations.append(deco)
+			deco = null
 			n_placed += 1
 			n_batch += 1
+	if deco != null:
+		deco.free()
 
 
-func _can_deco_be_placed(p: Vector3, border := 0.05, min_dist := 0.1) -> bool:
-	if p.x > 0.5 - border or p.z > 0.5 - border or p.x < -0.5 + border or p.z < -0.5 + border:
+## How far a fresh decoration reaches from its origin on the ground, the model taken as round (it turns at
+## random). A model too big for the tile is shrunk until it fits, so no decoration reaches into a neighbouring
+## tile and its building.
+func _fit_reach(deco: Node3D) -> float:
+	var b := Art.bounds(deco)
+	var reach := maxf(maxf(-b.position.x, b.end.x), maxf(-b.position.z, b.end.z)) * deco.scale.x
+	var k := minf(1.0, (0.5 - DECO_BORDER) / reach)
+	deco.scale *= k
+	return reach * k
+
+
+func _can_deco_be_placed(p: Vector3, reach: float, min_dist := 0.1) -> bool:
+	var room := 0.5 - DECO_BORDER - reach
+	if absf(p.x) > room or absf(p.z) > room:
 		return false
 	for d in decorations:
 		if d.position.distance_to(p) < min_dist:

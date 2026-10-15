@@ -34,7 +34,7 @@ func start_game() -> void:
 	shootingAllowed = not buildingAllowed
 	timeLeftInRound = roundDuration
 	map.game = self
-	map.make_map(players)
+	await map.make_map(players)
 	fleet.game = self
 	fleet.initilize_spawns()
 	fleet.spawn_ships(initialShips)
@@ -114,14 +114,19 @@ func _set_player_start_bases() -> void:
 func _update_round_time(delta: float) -> void:
 	timeLeftInRound -= delta
 	if timeLeftInRound < -1:
-		roundNumber += 1
-		timeLeftInRound = roundDuration
-		buildingAllowed = not buildingAllowed
-		shootingAllowed = not shootingAllowed
-		round_changed.emit(roundNumber, buildingAllowed)
+		next_phase()
 	if roundTimer:
 		roundTimer.modulate = Color.RED if shootingAllowed else Color.GREEN
 		roundTimer.text = "%d" % int(ceilf(timeLeftInRound))
+
+
+## Ends the current phase: build turns into battle and back.
+func next_phase() -> void:
+	roundNumber += 1
+	timeLeftInRound = roundDuration
+	buildingAllowed = not buildingAllowed
+	shootingAllowed = not shootingAllowed
+	round_changed.emit(roundNumber, buildingAllowed)
 
 
 func _process(delta: float) -> void:

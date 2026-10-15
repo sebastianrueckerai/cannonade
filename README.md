@@ -24,6 +24,11 @@ Game modes (they mirror the Unity scenes):
 | `versus` | `multiPlayer.unity` | you vs. one AI, 30×30 map                     |
 | `ai2`    | –                   | watch two AIs, 30×30 map, 30 s rounds          |
 | `ai4`    | `4ai.unity`         | watch four AIs, 60×60 map, 25 s rounds         |
+| `practice` | –                 | you vs. a fort that never fires and never grows, 30×30 map, no timer |
+
+In `practice`, Enter switches between the build and the battle phase. The fort (base, four
+cannons, a 2×2 cannon, two supply depots, one ring of walls) is cleared and built again at
+the start of every battle, so damage stays visible while you build.
 
 Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 `--timescale=F`, `--quit-after=SECONDS`, `--no-decorations`.
@@ -39,14 +44,16 @@ Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 | mouse wheel       | zoom in / out (towards the cursor; fully out shows the whole map) |
 | middle mouse drag | pan the view while zoomed in                              |
 | Space             | fire (battle phase)                                       |
+| Enter             | switch between build and battle (`practice` only)        |
 | click outside map | discard the current wall / building                       |
 | Esc               | back to the menu                                          |
 
 Rounds alternate between a **build phase** (green timer) and a **battle phase** (red timer).
 Areas fully enclosed by walls turn grey; only guns inside enclosed areas can fire, and
 guns that need supply only work with enough supply buildings inside your walls.
-Upgrade blocks placed in 2×2 / 3×3 squares merge into bigger guns, rocket stations,
-flak, shield generators or supply depots depending on their pattern.
+Upgrade blocks placed in 2×2 squares merge into bigger guns, flak, shield generators or
+supply depots depending on their pattern. A 3×3 square with the rocket station pattern
+becomes a rocket station. Any other 3×3 square merges one of its 2×2 squares.
 
 ## Buildings are data
 
@@ -171,7 +178,9 @@ can be repeated and compared.
 * Mouse picking intersects the camera ray with the ground plane instead of raycasting
   colliders; MEC coroutines became small time based state machines.
 * Wall models are the original FBX files in `assets/` (textures re-applied by
-  `scripts/WallModel.gd`); the decorations use the original nature FBX models.
+  `scripts/WallModel.gd`); the decorations use the boulders, bushes and leaf trees of the
+  art layer (`assets/art/3d/nature_*.glb`). Each one stays inside its tile and is shrunk
+  until it fits, so it never reaches into a neighbouring building.
 * `scripts/Main.gd` builds a game from a mode (camera, light, UI, players).
 
 ### Behaviour changes compared to the Unity code
@@ -186,6 +195,9 @@ geometry). A few things were changed on purpose:
 * Combining an upgrade block into a building uses the block up (Unity kept it, so it
   could be combined again and again).
 * Any single-tile building can be part of an upgrade pattern, not only upgrade blocks.
+* There are no 3×3 cannons for now. A 3×3 square merges only when a building has its
+  pattern. Otherwise one of its 2×2 squares merges. Unity made a 3×3 cannon of any 3×3
+  square.
 * The start base is walled in with all four wall shapes (Unity only used three).
 * Splash damage hits each tile in range (Unity damaged the target tile once per splash tile).
 * The shield generator regenerates per second (Unity added `Time.time` every frame) and
@@ -212,7 +224,10 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
   discarding and stacking walls, buildings, combining, and firing from an enclosed gun.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
   cluster bombs, rockets, shield, flak and ships behave as in the game.
-* `tests/menu_test` – menu → chosen game mode → Esc → menu.
+* `tests/menu_test` – menu → chosen game mode → Esc → menu. The loading screen stays up,
+  with a moving bar, until the game is built, and keeps input away from the game meanwhile.
+* `tests/practice_test` – practice mode: Enter switches the phase, the fort never fires and
+  never grows, and every battle starts with the whole fort again.
 * `tests/camera_test` – wheel zoom towards the cursor within its limits, middle mouse panning.
 * `tests/catalog_test` – shipped data is valid; data problems are reported, not crashed on;
   duplicate a building, change it, press F5: it works in the running game (incl. recipes).

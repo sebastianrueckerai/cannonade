@@ -8,6 +8,8 @@ var player = null
 ## BuildingPlace components
 var upgradedTiles = null
 var sideLength := 0
+## The structure the square merges into
+var def: BuildingDef = null
 
 
 ## With `tiles` the cluster is made of exactly these tiles (a structure placed
@@ -27,8 +29,8 @@ func can_be_built() -> bool:
 	return upgradedTiles != null
 
 
-func get_upgrade_signature() -> Array:
-	var sorted: Array = upgradedTiles.duplicate()
+static func _signature(tiles: Array) -> Array:
+	var sorted: Array = tiles.duplicate()
 	sorted.sort_custom(func(a, b): return a.idxX < b.idxX or (a.idxX == b.idxX and a.idxZ < b.idxZ))
 	var sig: Array = []
 	for t in sorted:
@@ -68,6 +70,9 @@ func _check_tile_for_upgrade(x: int, z: int, up := 1, down := 1, left := 1, righ
 				if not ok:
 					return null
 				parts.append(t)
+	def = Catalog.pick_for_pattern(_signature(parts))
+	if def == null:
+		return null
 	sideLength = ex - sx + 1
 	return parts
 
@@ -81,10 +86,6 @@ func build_multifield_upgrade() -> void:
 	ix /= upgradedTiles.size()
 	iz /= upgradedTiles.size()
 	var upgrade_position := Vector3(ix, 0.0, iz)
-	var def := Catalog.pick_for_pattern(get_upgrade_signature())
-	if def == null:
-		push_warning("Catalog: no structure for the upgrade pattern %s" % [get_upgrade_signature()])
-		return
 	var new_structure := Catalog.spawn(def)
 	tile.un_build()
 	for bp in upgradedTiles:

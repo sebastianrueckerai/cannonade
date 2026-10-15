@@ -4,6 +4,9 @@ extends Node
 ## CSV rows are complete, bad input fails with a message.
 ##   godot --headless res://tests/lab_test.tscn
 
+const MapScript = preload("res://scripts/components/Map.gd")
+const GameController = preload("res://scripts/components/GameController.gd")
+
 var failures: Array = []
 
 
@@ -47,7 +50,31 @@ func mean(rows: Array, key: String) -> float:
 	return rows.reduce(func(a, r): return a + float(r[key]), 0.0) / rows.size()
 
 
+## The game's next random number after building an undecorated map whose decorations would come from `makers`.
+func draw_after_map(makers: Array) -> int:
+	seed(5)
+	var go := Node3D.new()
+	add_child(go)
+	var game := Node.new()
+	game.set_script(GameController)
+	go.add_child(game)
+	var map := Node.new()
+	map.set_script(MapScript)
+	go.add_child(map)
+	map.decorate = false
+	map.customModelMakerPrefabs = makers
+	map.game = game
+	map.make_map([])
+	var r := randi()
+	go.free()
+	return r
+
+
 func _run() -> void:
+	# battles are played without decorations: a change to the decoration set must not change them
+	var boulder := preload("res://prefabs/Maker_Boulder.tscn")
+	check(draw_after_map([boulder]) == draw_after_map([boulder, preload("res://prefabs/Maker_Bush.tscn"),
+			preload("res://prefabs/Maker_LeafTree.tscn")]), "an undecorated map leaves the random numbers alone")
 	var dir := OS.get_user_data_dir()
 	var sweep_csv := dir.path_join("lab_test_sweep.csv")
 	var r := lab(["--scenario=flak_vs_cannons", "--runs=2", "--sweep=flak22.salvo_interval=0.25,3",

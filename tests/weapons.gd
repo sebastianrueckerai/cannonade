@@ -69,16 +69,17 @@ func _run() -> void:
 	game.shootingAllowed = true
 	game.timeLeftInRound = 1e6
 
-	# upgrade patterns -> structures (a = 0, b = 1); flak and shield patterns are rotated
+	# upgrade patterns -> structures (a = 0, b = 1); flak and shield patterns are rotated.
+	# A 3x3 square without a 3x3 recipe merges one of its 2x2 corners instead.
 	var cases := [
-		[[0, 0, 0, 0], "cannon22a"], [[1, 1, 1, 1], "cannon22b"], [[0, 1, 1, 1], "flak22"],
+		[[1, 1, 1, 1, 1, 1, 1, 1, 1], "cannon22b"], [[0, 0, 0, 0], "cannon22a"], [[1, 1, 1, 1], "cannon22b"], [[0, 1, 1, 1], "flak22"],
 		[[1, 0, 0, 0], "shield22"], [[1, 1, 1, 1, 1, 1, 0, 0, 0], "rocket_station"],
 		# an adjacent pair of b blocks: along x a supply depot, along z a cannon22d
 		[[1, 0, 1, 0], "supply22"], [[0, 1, 0, 1], "supply22"],
 		[[1, 1, 0, 0], "cannon22d"], [[0, 0, 1, 1], "cannon22d"]]
-	var spots := [Vector2i(13, 10), Vector2i(24, 9), Vector2i(23, 19), Vector2i(5, 19), Vector2i(3, 8),
+	var spots := [Vector2i(25, 24), Vector2i(13, 10), Vector2i(24, 9), Vector2i(23, 19), Vector2i(5, 19), Vector2i(3, 8),
 		Vector2i(8, 13), Vector2i(20, 13), Vector2i(8, 26), Vector2i(20, 27)]
-	var owners := [p1, p1, p2, p2, p1, p1, p1, p1, p1]
+	var owners := [p2, p1, p1, p2, p2, p1, p1, p1, p1, p1]
 	var built := {}
 	for i in cases.size():
 		var s := build_pattern(owners[i], spots[i].x, spots[i].y, cases[i][0])

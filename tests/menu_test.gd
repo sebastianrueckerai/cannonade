@@ -16,28 +16,43 @@ func _ready() -> void:
 	await _frames(3)
 	var menu := get_tree().current_scene
 	var buttons := menu.find_children("*", "Button", true, false)
-	_check(buttons.size() == 6, "menu has 6 buttons")
+	_check(buttons.size() == 7, "menu has 7 buttons")
 	for b in buttons:
 		if b.text.contains("AI vs. AI"):
 			b.pressed.emit()
-	# the loading screen sits between the menu and the game
-	for i in 120:
+	# the loading screen stays up while the game is built underneath; an Esc meanwhile does not reach the game
+	var main: Node = null
+	var bar_values := {}
+	for i in 900:
 		await get_tree().process_frame
-		if get_tree().current_scene != null and get_tree().current_scene.name == "Main":
+		var scene := get_tree().current_scene
+		if scene != null and scene.name == "Main":
+			main = scene
+		var loading := get_tree().root.get_node_or_null("Loading")
+		if main != null and loading != null:
+			bar_values[loading.find_children("*", "ProgressBar", true, false)[0].value] = true
+			if bar_values.size() == 2:
+				_esc()
+		if is_instance_valid(main) and main.game != null and main.game.started:
 			break
-	await _frames(5)
-	var main := get_tree().current_scene
-	_check(main.name == "Main" and main.game != null and main.game.started, "game started from the menu")
+	_check(bar_values.size() >= 3, "the loading bar moves while the game is built (%d steps)" % bar_values.size())
+	_check(is_instance_valid(main) and main.game.started and get_tree().current_scene == main,
+			"game started from the menu, Esc while loading changed nothing")
+	_check(get_tree().root.get_node_or_null("Loading") == null, "the loading screen is gone once the game runs")
 	_check(main.mode == "ai2", "selected mode is used")
 	await _frames(30)
-	var ev := InputEventAction.new()
-	ev.action = "ui_cancel"
-	ev.pressed = true
-	Input.parse_input_event(ev)
+	_esc()
 	await _frames(5)
 	_check(get_tree().current_scene.name == "Menu", "Esc returns to the menu")
 	print("MENU TEST PASSED" if ok else "MENU TEST FAILED")
 	get_tree().quit(0 if ok else 1)
+
+
+func _esc() -> void:
+	var ev := InputEventAction.new()
+	ev.action = "ui_cancel"
+	ev.pressed = true
+	Input.parse_input_event(ev)
 
 
 func _frames(n: int) -> void:
