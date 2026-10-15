@@ -5,9 +5,12 @@ The game is released as **Cannonade**: every player-facing string, the window ti
 Godot 4.7 game in GDScript (ported from Unity 2018.3). Player-facing docs: `README.md`.
 
 ## Roadmap
-`ROADMAP.md` is the plan. Read it at the start of a round of work. At the end of the
-round, update it: tick off what is done, park unfinished work, open questions, ideas and
-"maybes" in the matching section. Do not keep separate TODO lists.
+[ROADMAP.md](ROADMAP.md) is the one backlog for the game, the art and the process: sections A to H
+art and process, I to K game code. Read it at the start of a round of work. A session pulls items
+by ID into its plan in [art/docs/sessions/](art/docs/sessions) and ticks them in the same commit
+that ships them. New work, leftovers, open questions and ideas go in as new items at the end of
+their section, with a tag. Never delete an item: strike it through with the reason. Keep no other
+TODO lists.
 
 ## Art, design and plans
 [art/](art) holds Cannonade's art kit, copied from blender-ai on 2026-10-15 and laid out the same way: the
@@ -15,7 +18,6 @@ art direction, the sources of every model, the pipeline that makes art, rules v2
 ([art/game/design/rules.md](art/game/design/rules.md)), the decisions and the session plans. Read
 [art/CLAUDE.md](art/CLAUDE.md) before any art, design or planning work. The current plan is the
 highest-numbered file in [art/docs/sessions/](art/docs/sessions), and it can name game work too.
-[art/ROADMAP.md](art/ROADMAP.md) holds the art and design items, this ROADMAP.md the game code's rounds.
 [.mcp.json](.mcp.json) registers the Blender MCP server. Godot skips the folder through `art/.gdignore`.
 
 ## Layout
@@ -34,8 +36,10 @@ highest-numbered file in [art/docs/sessions/](art/docs/sessions), and it can nam
   (`data/scenarios/` examples, `user://scenarios/` saves). `BattleLab.gd` (`tools/lab.tscn`)
   plays a scenario many times headless; the Sandbox's Run button starts it as a subprocess.
   Use it to check balance claims instead of guessing.
-- `scripts/Main.gd` – builds a game from a mode (`single`, `versus`, `ai2`, `ai4`) or a config;
-  `scripts/CameraRig.gd` – zoom / pan.
+- `scripts/Main.gd` – builds a game from a mode (`single`, `versus`, `ai2`, `ai4`, `practice`)
+  or a config; `scripts/CameraRig.gd` – zoom / pan. `scripts/Loading.gd` – the loading screen:
+  it sets `Main.staged`, and the map is then built over many frames while the bar shows
+  `Main.progress`.
 - `prefabs/`, `materials/` – generated from the Unity prefabs (the converter is in git
   history only); edit them by hand now. Building prefabs are models only.
 - Coordinates: tile `(x, z)` sits at `Map.tile_position(x, z)`; Unity's z axis is
@@ -56,3 +60,10 @@ highest-numbered file in [art/docs/sessions/](art/docs/sessions), and it can nam
 - A parse error in a test scene makes Godot hang instead of failing; the runner has a timeout.
 - Headless windows are 64×64; set `get_tree().root.size` when a test depends on the view.
 - Images and models are plain git files, not Git LFS (LFS pushes are blocked here).
+- `Main.build`, `GameController.start_game` and `Map.make_map` contain `await`. They run straight
+  through unless `Main.staged` is set, so the sandbox, tests and tools get a built game at once.
+  Never add an `await` there that always waits a frame.
+- Battles share the game's random numbers with the map build: anything the build draws changes
+  every lab battle and seeded test. Draw look-only randomness from `Art._rng`, or only when
+  decorating.
+- The battle lab replays a seed exactly only with `--fixed-fps 30`.

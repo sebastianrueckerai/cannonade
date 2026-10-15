@@ -34,7 +34,7 @@ When the session ends, Sebastian has:
 
 ## Done when
 
-Items ticked in [ROADMAP.md](../../ROADMAP.md), both repos committed and pushed, the sheet page linked in the closing message, PICKS.md open for Sebastian.
+Items ticked in [ROADMAP.md](../../../ROADMAP.md), both repos committed and pushed, the sheet page linked in the closing message, PICKS.md open for Sebastian.
 
 ## Log
 

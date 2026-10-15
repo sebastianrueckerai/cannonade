@@ -4,7 +4,7 @@ One entry per decision, newest last. Never reverse one silently. Propose a chang
 
 ## D1. Work from a roadmap in sessions (2026-10-11, Sebastian)
 
-[ROADMAP.md](../ROADMAP.md) holds everything we want or might want, including ideas and spikes. A session pulls items by ID into a plan in `docs/sessions/NN-slug.md`, refines them, ships them, ticks them.
+[ROADMAP.md](../../ROADMAP.md) holds everything we want or might want, including ideas and spikes. A session pulls items by ID into a plan in `docs/sessions/NN-slug.md`, refines them, ships them, ticks them.
 
 ## D2. Process and game content are separated (2026-10-11, Sebastian)
 
@@ -388,3 +388,7 @@ This amends D39 and session 11b, which let a barrel overhang its plate. The gun 
 ## D62. Cannonade is steered from the game repo, blender-ai keeps a copy (2026-10-15, Sebastian)
 
 Amends D2. Sebastian: "I want to steer the project from the project folder for grid-cannons now", "The repo here should only have the template for the art generation in 2d and 3d", "Move everything the project needs there, including a copy of your env.tool keys. Also the skills or docs documenting how to make art and ressocurces. But keep a copy here as well", and "Make it so it also has all the plans there, like our musing about gun combos". The whole of blender-ai, laid out the same way, is copied to this folder, [art/](/home/womb/repos/grid-cannons/art) in the game repo: the process and its docs, the pipeline, the art direction, every model's sources, rules v2, the decisions, the roadmap and the session plans. The game repo takes no Git LFS, so it commits the anchors, the inspirations, each model's final, source.blend, source run and input views, about 200 MB. The round images and render previews are on disk here, ignored, and stay versioned in [blender-ai](/home/womb/repos/blender-ai) with Git LFS. The keys are copied to the ignored `art/.env.tools`. From this date this copy is the live one. blender-ai keeps its copy as the template and its worked example.
+
+## D63. One roadmap for the game, the art and the process (2026-10-15, Sebastian)
+
+Amends D1. Sebastian: "It now has two roadmaps. Merge them, the newer one takes precedence." The art kit's roadmap and the game's roadmap are one file, [ROADMAP.md](../../ROADMAP.md) at the repository root. The art kit's items keep their IDs A1 to H6 and its rules: a session pulls items by ID into its plan, ticks them in the same commit, and strikes an item through with the reason instead of deleting it. The game's rounds A to D, their leftovers, ideas, maybes and known issues became sections I, J and K. Where the two disagreed, the newer side won: the art roadmap's rules, and rules v2 ([rules.md](../game/design/rules.md)) over the older game ideas, which are struck through with the section that decides them. The tag game-repo became game, as there is one repository.

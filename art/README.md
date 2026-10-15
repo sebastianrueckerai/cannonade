@@ -9,7 +9,7 @@ The process is the product. The charts in [docs/process/](docs/process/) are kep
 | path | holds | game-specific |
 |---|---|---|
 | [goal.md](goal.md) | the brief | no |
-| [ROADMAP.md](ROADMAP.md) | the backlog, pulled into sessions | partly |
+| [ROADMAP.md](../ROADMAP.md) | the backlog, pulled into sessions, at the game repository root | partly |
 | [CLAUDE.md](CLAUDE.md) | the agent's read-map and rules | no |
 | [docs/process/](docs/process/) | the master chart and one page per stage | no |
 | [docs/decisions.md](docs/decisions.md) | decisions, newest last | partly |
@@ -29,7 +29,7 @@ Game assets are separate from the process. [game/](game) is the only folder a ne
 
 ## Start a new game from this repo
 
-1. Copy the repo. Delete [game/](game), [docs/sessions/](docs/sessions), [docs/grid-cannons.md](docs/grid-cannons.md) and the ticks in [ROADMAP.md](ROADMAP.md).
+1. Copy the repo. Delete [game/](game), [docs/sessions/](docs/sessions), [docs/grid-cannons.md](docs/grid-cannons.md) and the ticks in [ROADMAP.md](../ROADMAP.md).
 2. Write [goal.md](goal.md) and [game/art-direction/brief.md](game/art-direction/brief.md).
 3. Measure the gameplay contract in the new game and write [game/art-direction/gameplay_contract.yaml](game/art-direction/gameplay_contract.yaml).
 4. Write the new game's integration page in place of [docs/grid-cannons.md](docs/grid-cannons.md).
@@ -37,7 +37,7 @@ Game assets are separate from the process. [game/](game) is the only folder a ne
 
 ## Run a session
 
-1. Pick items from [ROADMAP.md](ROADMAP.md) and refine them into `docs/sessions/NN-slug.md` with a goal, a spending cap and limits.
+1. Pick items from [ROADMAP.md](../ROADMAP.md) and refine them into `docs/sessions/NN-slug.md` with a goal, a spending cap and limits.
 2. Work the plan. Every artefact gets its sidecar. The critic judges before Sebastian picks.
 3. Tick the items, log process changes, commit, push. Game changes are committed in the game repo.
 

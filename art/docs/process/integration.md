@@ -8,7 +8,7 @@ flowchart LR
     SYNC --> PREV["Preview scene in the game: gameplay camera, grid, one or many assets. For the buildings: tools/shoot_battle.tscn, a sandbox battle of two forts [C]"]
     PREV --> SHOT["Screenshots at 1280x720 [R]"]
     SHOT --> CRIT["Critic: legibility at real size, consistency across assets, UI and world together"]
-    CRIT -->|pass| DONE["Tick the asset in ROADMAP.md, commit in both repos"]
+    CRIT -->|pass| DONE["Tick the asset in ROADMAP.md, commit"]
     CRIT -. asset .-> A["assets-3d.md"]
     CRIT -. domain .-> R["geometry_rules.yaml and rebuild"]
     CRIT -. global .-> K["art-direction.md"]

@@ -9,7 +9,7 @@ Blender 5.2.2 at `~/Applications/blender-5.2.2-linux-x64/blender`, MCP add-on on
 - **The brief:** [goal.md](goal.md).
 - **The game's rules v2, the recipes and the parked ideas:** [game/design/rules.md](game/design/rules.md).
 - **The process, the master chart:** [docs/process/overview.md](docs/process/overview.md). Read before producing any art. Stage pages: [art-direction](docs/process/art-direction.md), [assets-3d](docs/process/assets-3d.md), [assets-2d](docs/process/assets-2d.md), [marketing](docs/process/marketing.md), [integration](docs/process/integration.md).
-- **What to do:** [ROADMAP.md](ROADMAP.md). The current plan is the highest-numbered file in [docs/sessions/](docs/sessions/).
+- **What to do:** [ROADMAP.md](../ROADMAP.md) at the repository root, one roadmap for the game, the art and the process. The current plan is the highest-numbered file in [docs/sessions/](docs/sessions/).
 - **Decisions and why:** [docs/decisions.md](docs/decisions.md). Read before changing the look, the rules or the process.
 - **Blender recipes, token costs, gotchas:** [docs/blender.md](docs/blender.md). Read before writing bpy.
 - **Keys, models, prices:** [docs/providers.md](docs/providers.md). Read before calling a provider.
