@@ -1,0 +1,16 @@
+asset_id: cluster_bomb
+route: procedural
+class: prop
+dimensions:            # metres, Blender axes, Z up. 0.3 m, rounder and banded against the 0.28 m shell
+  max_x: 0.30
+  max_y: 0.30
+  max_z: 0.30
+budget:
+  max_tris: 100
+  max_materials: 1
+parts:
+  - cluster_bomb
+pivots:
+  origin: centre       # the projectile flies about its centre, so the build's origin stays
+paint:
+  cluster_bomb: {kind: iron, seed: 82}

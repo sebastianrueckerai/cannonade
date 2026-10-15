@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Redraw the attached world as a main menu background from a hero angle: the camera low and close, just above the water on the harbour side, looking slightly up at the fortress, the tower with its red flag and the crenellated walls rising over the pier and one ship with striped sails, the island filling the lower two thirds of the frame. The upper third is open sky in the same clear saturated blue as the sea, with a thin cream fog band only at the horizon line, left empty for a title. Keep the painted toy fortress world of the attached image exactly: its palette, its flat-shaded low-poly blocks with chamfered edges, its orange roofs, cream walls, green grass, yellow sand, blue sea, its red flags, its afternoon sun from the front right with medium shadows. Nothing new on the island. Flat colours, no textures, no people, no text, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "4-menu-hero-v2--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T22:49:37",
+  "outputs": [
+    "4-menu-hero-v2--nanobanana.png"
+  ]
+}

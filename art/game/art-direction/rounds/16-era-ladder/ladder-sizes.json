@@ -1,0 +1,77 @@
+{
+ "made_by": "game/art-direction/rounds/16-era-ladder/resize.py",
+ "inputs": [
+  "19-four-blocks--nanobanana.png",
+  "8-from-5-fix--nanobanana.png"
+ ],
+ "ops": [
+  {
+   "src": "19",
+   "scale": [
+    0.86,
+    0.86
+   ],
+   "from": [
+    293.0,
+    643.5
+   ],
+   "to": [
+    293.0,
+    643.5
+   ]
+  },
+  {
+   "src": "19",
+   "scale": [
+    0.86,
+    0.86
+   ],
+   "from": [
+    871.0,
+    591.5
+   ],
+   "to": [
+    871.0,
+    591.5
+   ]
+  },
+  {
+   "src": "19",
+   "scale": [
+    1.16,
+    1.16
+   ],
+   "from": [
+    2713.0,
+    153.0
+   ],
+   "to": [
+    2713.0,
+    153.0
+   ]
+  },
+  {
+   "src": "8",
+   "scale": [
+    1.17,
+    0.92
+   ],
+   "from": [
+    1382.5,
+    1316.0
+   ],
+   "to": [
+    1780.0,
+    1286.0
+   ]
+  }
+ ],
+ "width_px_before": {
+  "gun1": 303,
+  "gun2": 724,
+  "gun3": 1008
+ },
+ "uncovered_px": 145994,
+ "uncovered_without_clean_source_px": 23838,
+ "est_cost_usd": 0.0
+}

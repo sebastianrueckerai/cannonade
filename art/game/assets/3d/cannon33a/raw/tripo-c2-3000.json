@@ -1,0 +1,29 @@
+{
+  "provider": "tripo",
+  "task_id": "71522269-90f0-4549-b815-bb0f97bc4d4f",
+  "inputs": [
+    "game/assets/3d/cannon33a/refs/c-front.png",
+    "-",
+    "game/assets/3d/cannon33a/refs/c-back.png",
+    "-"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "multiview_to_model",
+    "files": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 3000,
+    "file": "uploaded"
+  },
+  "label": "cannon33a tripo-c2-3000",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 407,
+  "created": "2026-10-12T10:00:06",
+  "outputs": {
+    "model": "tripo-c2-3000.glb",
+    "rendered_image": "tripo-c2-3000-preview.webp"
+  }
+}

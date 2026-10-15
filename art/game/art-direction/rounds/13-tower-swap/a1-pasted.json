@@ -1,0 +1,19 @@
+{
+  "tool": "mask.py paste",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": [
+    "game/art-direction/rounds/13-tower-swap/a-pasted.png",
+    "game/art-direction/rounds/13-tower-swap/a1-broken--nanobanana.png",
+    "game/art-direction/rounds/13-tower-swap/masks/front-wall.png"
+  ],
+  "params": {
+    "feather": 6
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "a1-pasted.png"
+  ],
+  "note": "Inputs recovered from PICKS.md and confirmed by re-running mask.py paste, which gives a pixel-identical output."
+}

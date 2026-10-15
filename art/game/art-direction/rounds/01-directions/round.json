@@ -1,0 +1,71 @@
+{
+  "cols": 3,
+  "cell": 512,
+  "parallel": 5,
+  "models": {
+    "nanobanana": {"id": "google/nano-banana-2.1", "params": {"aspect_ratio": "16:9", "resolution": "1K"}, "frames": ["world", "cannon"]},
+    "ideogram": {"id": "ideogram/v4", "params": {"image_size": "landscape_16_9", "rendering_speed": "BALANCED"}, "frames": ["menu"]}
+  },
+  "frames": {
+    "world": "Game screenshot of a low-poly strategy game, camera high above and pitched 60 degrees down over a square tile grid. A coastal fortress: stone walls enclose a courtyard with three cannons on wooden carriages, a stone keep, a small harbour, two sailing ships offshore, calm sea around the island. {palette}. {shapes}. {light}. {mood}. Flat shaded low poly, every object made of a few clean facets, no textures, no text, no UI.",
+    "cannon": "One siege cannon on a wooden wheeled carriage standing on a single square stone tile, three-quarter view from slightly above, isolated on a plain uniform background, nothing else in frame. {palette}. {shapes}. {light}. Flat shaded low poly game asset, a few clean facets, no textures, no text.",
+    "menu": "Main menu screen of a strategy game, 16:9. A wide background illustration of a coastal fortress with cannons {time}, {palette}, {mood}. The title GRID CANNONS large at the top {type}. Four menu buttons stacked on the left, in this order: Single, Versus, Sandbox, Quit. Clean game UI, legible text, flat shaded low poly world in the background, no other text."
+  },
+  "directions": [
+    {
+      "slug": "toy-harbour",
+      "name": "Painted wooden toy",
+      "idea": "The fortress is a set of painted wooden toy pieces on a table. Friendly, chunky, bright.",
+      "palette": "Warm saturated toy colours: cream stone, terracotta roofs, bright teal sea, sunny yellow sand, cherry red accents",
+      "shapes": "Chunky rounded blocks with fat bevels, like painted wooden toy pieces, slightly oversized cannons",
+      "light": "Bright noon sun, soft shadows, no haze",
+      "mood": "Cheerful and inviting, a toy harbour on a table",
+      "type": "in rounded chunky letters like carved painted wood",
+      "time": "at bright midday"
+    },
+    {
+      "slug": "ink-chart",
+      "name": "Ink and parchment chart",
+      "idea": "The world is drawn on an old naval chart. Flat parchment tones, ink outlines, a strategist's map table.",
+      "palette": "Parchment cream, sepia ink outlines, dusty ochre, faded naval blue, one red wax-seal accent",
+      "shapes": "Angular flat forms with dark ink outlines, like pieces drawn on an old naval chart",
+      "light": "Flat even light, no cast shadows, soft paper grain in the sky",
+      "mood": "Quiet and studious, a strategist's map table",
+      "type": "in engraved serif capitals like an old chart title",
+      "time": "drawn as an old chart with a compass rose in one corner"
+    },
+    {
+      "slug": "lantern-dusk",
+      "name": "Lantern dusk",
+      "idea": "The calm before the bombardment. Cool dusk, warm lanterns, long shadows, tall silhouettes.",
+      "palette": "Deep blue-violet dusk, slate stone, warm orange lantern and muzzle-flash accents, a pale moon",
+      "shapes": "Tall slender towers and thin walls, pointed roofs, long silhouettes",
+      "light": "Low golden sun just set, rim light on edges, long cool shadows, lanterns glowing",
+      "mood": "Moody and tense, the calm before the bombardment",
+      "type": "in tall condensed letters with a warm glow",
+      "time": "at dusk with lanterns lit"
+    },
+    {
+      "slug": "signal-flags",
+      "name": "Signal flag geometry",
+      "idea": "A board game come alive. Hard facets, bold flat primaries, team colours as loud as signal flags.",
+      "palette": "Bold flat primaries: navy, white, signal red, mustard yellow, with four distinct team colours deep blue, purple, teal green and olive",
+      "shapes": "Hard faceted geometry, no bevels, every object reduced to its simplest solid, like a board game piece",
+      "light": "Hard clean light, crisp shadows, no gradients",
+      "mood": "Bold and graphic, a board game come alive",
+      "type": "in heavy geometric sans-serif letters built from flag shapes",
+      "time": "under a flat bright sky"
+    },
+    {
+      "slug": "weathered-stone",
+      "name": "Weathered stone and sea",
+      "idea": "A fort that has seen sieges. Desaturated, misty, serious, with facet colour variation instead of texture.",
+      "palette": "Desaturated greys, wet slate, moss green, cold teal sea, mist white, one rust accent on the cannons",
+      "shapes": "Heavy squat masses, chipped corners, uneven stone courses suggested by facet colour variation",
+      "light": "Cool overcast with soft mist, no hard shadows",
+      "mood": "Serious and weathered, a fort that has seen sieges",
+      "type": "in worn stone-cut capitals",
+      "time": "on a misty grey morning"
+    }
+  ]
+}

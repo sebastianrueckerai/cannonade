@@ -1,0 +1,41 @@
+{
+  "cols": 2,
+  "cell": 768,
+  "parallel": 3,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      },
+      "refs": ["1-noon--nanobanana.png"]
+    }
+  },
+  "style": "Keep every object, every colour of the palette, the camera, the composition and the tile grid of the attached image exactly as it is. Change only the direction and the colour of the light, the shadows, the sky, the fog and the surface of the water. Flat colours, no textures, no new objects, no people, no text, no watermark.",
+  "frames": {
+    "world": "Relight the attached frame: {light} {style}"
+  },
+  "directions": [
+    {
+      "slug": "2-morning",
+      "light": "early morning, the sun low on the left at about 25 degrees above the horizon, long soft shadows falling to the right, cool pale light, a light haze at the horizon, the sea calm with a faint sparkle."
+    },
+    {
+      "slug": "3-afternoon",
+      "light": "afternoon, the sun from the front right at about 45 degrees above the horizon, medium shadows falling to the back left, warm golden light on every lit face, a cream fog band at the horizon, the sea flat blue with a thin white foam line along the shore."
+    },
+    {
+      "slug": "4-fogged",
+      "light": "noon with depth fog: the sun high, short shadows, the near tiles clear, the far tiles and the sea fading into a cream fog that thickens toward the far edge of the frame, the horizon lost in it."
+    },
+    {
+      "slug": "5-overcast",
+      "light": "overcast, no sun, flat even ambient light from the whole sky, no cast shadows at all, a pale grey-blue sky, the sea a flat matte blue."
+    },
+    {
+      "slug": "6-evening",
+      "light": "evening, the sun low on the right at about 15 degrees, long warm shadows falling to the left, orange light on the lit faces, an orange and pink sky, the sea reflecting the sky in long streaks."
+    }
+  ]
+}

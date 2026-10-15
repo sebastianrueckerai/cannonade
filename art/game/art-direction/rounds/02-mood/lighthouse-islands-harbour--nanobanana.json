@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The harbour of a scatter of small fogged islands in a teal sea that fades to cream at the horizon, a lighthouse fort on the largest, ships that appear out of the haze, seen closer and from a lower angle than the game camera, at dawn with the lighthouse lit. Piers, boats, the quay buildings, crates and barrels, no people. Dawn: the fog glows pink and cream, the lighthouse beam is on, the sea is pale teal, everything soft and bright. Repeating motifs: the lighthouse, fog banks, gulls, rope, lanterns, pale wooden piers, pine trees, rock shelves at the waterline, the checker grid on the land. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/monsters-expedition-mockups.jpg",
+    "game/art-direction/inspirations/monsters-expedition-biome01.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "lighthouse-islands-harbour--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:07:20",
+  "outputs": [
+    "lighthouse-islands-harbour--nanobanana.png"
+  ]
+}

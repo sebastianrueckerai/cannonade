@@ -1,0 +1,41 @@
+{
+  "asset_id": "upgrade_a",
+  "parts": {
+    "upgrade_a": {
+      "verts": 1194,
+      "tris": 572,
+      "non_manifold_edges": 1194,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 1194,
+  "tris": 572,
+  "non_manifold_edges": 1194,
+  "materials": [
+    "Material_0"
+  ],
+  "dims_m": [
+    0.8,
+    0.8,
+    0.6
+  ],
+  "bbox_min": [
+    -0.4,
+    -0.4,
+    0.0
+  ],
+  "bbox_max": [
+    0.4,
+    0.4,
+    0.6
+  ],
+  "limits_ok": true,
+  "limit_failures": []
+}

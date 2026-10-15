@@ -1,0 +1,42 @@
+{
+  "asset_id": "supply33",
+  "parts": {
+    "supply33": {
+      "verts": 907,
+      "tris": 469,
+      "non_manifold_edges": 889,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 907,
+  "tris": 469,
+  "non_manifold_edges": 889,
+  "materials": [
+    "Material_0"
+  ],
+  "dims_m": [
+    2.9,
+    2.2382,
+    2.1596
+  ],
+  "bbox_min": [
+    -1.45,
+    -1.1191,
+    0.0
+  ],
+  "bbox_max": [
+    1.45,
+    1.1191,
+    2.1596
+  ],
+  "solidity": 0.285,
+  "limits_ok": true,
+  "limit_failures": []
+}

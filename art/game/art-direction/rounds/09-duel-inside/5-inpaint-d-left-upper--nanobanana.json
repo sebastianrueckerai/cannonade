@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The flat grey and brown shapes inside the castle courtyard on the left are a rough sketch of a bronze cannon on a wooden carriage with two wheels, its barrel raised steeply at 45 degrees and pointing up and to the right over the crenellated wall. Repaint only that sketch as a finished cannon in the style of the rest of the painting, the same size as the cannon below it, standing on the stone courtyard floor, and repaint the stone wall walk and battlements around it. Change nothing else in the image. No text changes, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/09-duel-inside/paint/5-left-upper.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "5-inpaint-d-left-upper",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T00:31:17",
+  "outputs": [
+    "5-inpaint-d-left-upper--nanobanana.png"
+  ]
+}

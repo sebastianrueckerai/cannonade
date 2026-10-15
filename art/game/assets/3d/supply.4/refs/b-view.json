@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint the building on the grass tile as a clean reference picture for a 3D modeller. Keep exactly the same design, the same parts, the same proportions and the same colours, and leave out the grass tile it stands on: a two-storey timber store with a thick hoist beam sticking out over its upper loading door, a wooden crate hanging from the beam on a rope, and wooden barrels standing beside the open lower storey. Change only the roof: it is orange clay tiles instead of wooden boards.\n\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 70 percent of the picture. Plain flat light grey background. No grass tile, no ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture. Only this one building, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/supply.4/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "supply.4 three-quarter view",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T11:54:38",
+  "outputs": [
+    "b-view.png"
+  ]
+}

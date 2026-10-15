@@ -1,0 +1,13 @@
+{
+  "tool": "crop",
+  "source": "game/art-direction/rounds/19-first-batch/base.png",
+  "box_px": [
+    1397,
+    303,
+    2030,
+    1266
+  ],
+  "pad_to_square": 963,
+  "est_cost_usd": 0,
+  "created": "2026-10-12T11:53:58"
+}

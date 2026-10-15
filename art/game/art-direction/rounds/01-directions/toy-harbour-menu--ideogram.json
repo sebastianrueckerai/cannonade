@@ -1,0 +1,17 @@
+{
+  "model": "ideogram/v4",
+  "prompt": "Main menu screen of a strategy game, 16:9. A wide background illustration of a coastal fortress with cannons at bright midday, Warm saturated toy colours: cream stone, terracotta roofs, bright teal sea, sunny yellow sand, cherry red accents, Cheerful and inviting, a toy harbour on a table. The title GRID CANNONS large at the top in rounded chunky letters like carved painted wood. Four menu buttons stacked on the left, in this order: Single, Versus, Sandbox, Quit. Clean game UI, legible text, flat shaded low poly world in the background, no other text.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_16_9",
+    "rendering_speed": "BALANCED"
+  },
+  "seed": 804639817,
+  "description": null,
+  "label": "toy-harbour-menu--ideogram",
+  "est_cost_usd": 0.09,
+  "created": "2026-10-11T15:40:14",
+  "outputs": [
+    "toy-harbour-menu--ideogram.png"
+  ]
+}

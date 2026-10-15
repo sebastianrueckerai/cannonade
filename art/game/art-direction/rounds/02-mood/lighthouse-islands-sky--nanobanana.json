@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The sky of a scatter of small fogged islands in a teal sea that fades to cream at the horizon, a lighthouse fort on the largest, ships that appear out of the haze, a wide panoramic view over the sea to the horizon, only a thin strip of island at the bottom edge. A cream and pale blue sky, fog on the horizon, the teal sea fading into the fog, gulls, soft and bright, no sun disc. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/monsters-expedition-mockups.jpg",
+    "game/art-direction/inspirations/monsters-expedition-biome01.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "lighthouse-islands-sky--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:07:41",
+  "outputs": [
+    "lighthouse-islands-sky--nanobanana.png"
+  ]
+}

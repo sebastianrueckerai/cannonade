@@ -1,0 +1,13 @@
+{
+  "critic": "glm-5v-turbo",
+  "images": [
+    "game/art-direction/anchors/world_style.png",
+    "game/art-direction/rounds/06-surfaces/contact-sheet.jpg",
+    "game/art-direction/rounds/06-surfaces/title-small.png"
+  ],
+  "prompt": "critique-prompt.txt, max_side 1536, max_tokens 4000",
+  "answer": "",
+  "note": "empty answer: the reasoning tokens used the whole budget, see notes.md",
+  "est_cost_usd": 0.03,
+  "created": "2026-10-11T23:08:00"
+}

@@ -1,0 +1,57 @@
+# Measured in /home/womb/repos/grid-cannons on 2026-10-11 (roadmap B1). Pixel sizes are computed from the
+# camera code and confirmed with tools/preview_glb.tscn on wall_straight (26 by 13 px at the default view).
+engine: Godot 4.7
+game_repo: /home/womb/repos/grid-cannons
+renderer: gl_compatibility
+window: {width: 1280, height: 720}
+tile_size_m: 1.0                       # scripts/components/Map.gd:8
+grid_tiles: {single: 20, versus: 30, ai2: 30, ai4: 60}   # scripts/Main.gd:17-23, versus is the default mode
+tile_height_jitter_m: 0.1              # Map.gd:159, each tile sits between -0.1 and +0.1
+slab: {size_m: [1.0, 0.2, 1.0], top_above_origin_m: 0.1}   # prefabs/Slab.tscn
+model_origin: tile centre at slab mid height, +Y up, forward -Z, rotations about Y in 90 degree steps
+wrapper_lift_m: 0.1                    # our assets have the origin at the ground centre, the wrapper lifts them to the slab top
+camera:                                # versus and ai2, the default mode. Main.gd:140-146, GameController.gd:49-64
+  projection: perspective
+  pitch_deg: 60
+  fov_deg: 30                          # vertical
+  distance_m: 54.4                     # to the board centre, position (0, 46.67, 29.0)
+  zoom_min_m: 7                        # CameraRig.gd:7
+camera_single:                         # single and ai4
+  projection: perspective
+  pitch_deg: 71.42
+  fov_deg: 37.44
+  distance_m: 30.5                     # position (0, 28.79, 10.93)
+on_screen_px_at_1280x720:              # computed: px per metre = 720 / (2 * distance * tan(fov / 2))
+  versus_default: {tile_width: 24.7, tile_depth: 21.4, vertical_1m: 12.3, measured_wall_1m: [26, 13]}
+  single_default: {tile_width: 34.8, tile_depth: 33.0, vertical_1m: 11.1}
+  versus_zoomed_in: {tile_width: 192, vertical_1m: 96, measured_wall_1m: [221, 157]}
+existing_models:
+  walls: 46 FBX in assets/fbx at 1/3 scale, lower wall about 1 m tall, 180 degree turn about Y in the wrappers
+  cannon: primitives, bulk 0.88 x 0.56 x 0.60 m, barrel 0.70 m long
+budget_tris:                           # set from the on-screen sizes: a 12 px wall cannot show more than its silhouette
+  wall: 200
+  building: 600
+  nature: 300
+  terrain: 50
+  prop: 300
+current_material_colours:              # materials/*.tres albedo, RGBA floats
+  Base: [0.080, 0.221, 0.287, 1]
+  Dark: [0.088, 0.088, 0.088, 1]
+  Default: [0.8, 0.8, 0.8, 1]
+  ForceShield: [0.25, 0.6, 1, 0.25]
+  GunMetal: [0.140, 0.140, 0.140, 1]
+  HouseWall: [0.906, 0.874, 0.713, 1]
+  OpenTile: [0.890, 0.678, 0.455, 1]
+  Projectile: [1, 1, 1, 1]
+  Red: [0.278, 0.045, 0.045, 1]
+  ShipWood: [0.396, 0.136, 0.035, 1]
+  Structure: [0.603, 0.603, 0.603, 1]
+  Upgrade: [0.449, 0.391, 0.557, 1]
+  Upgrade2: [0.219, 0.004, 0.840, 1]
+team_colours:                          # Main.gd:25-30, main / highlight plus / highlight minus
+  - ["#1f1f5e", "#aaaadd", "#ad3030"]
+  - ["#4a1671", "#692d87", "#e01414"]
+  - ["#197059", "#aaddab", "#ad3030"]
+  - ["#70631a", "#aaddab", "#ad3030"]
+scene_colours: {background: [0.19, 0.30, 0.47], ambient: [0.55, 0.58, 0.65]}   # Main.gd:156,158
+screenshot_tool: tools/screenshot.tscn, args --mode --at --out --zoom --fov --look=x,z --aim=x,z, needs a display

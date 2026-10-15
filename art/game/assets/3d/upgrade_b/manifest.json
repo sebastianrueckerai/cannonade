@@ -1,0 +1,32 @@
+{
+  "asset_id": "upgrade_b",
+  "route": "generative",
+  "inputs": {
+    "asset_yaml_sha": "ef10283db08b"
+  },
+  "steps": [
+    {
+      "name": "import",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.2
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-12",
+  "cost_usd": 0.75,
+  "created": "2026-10-12T15:45:40+02:00"
+}

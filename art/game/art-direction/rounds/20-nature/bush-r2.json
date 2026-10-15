@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Painted sketch sheet edit. Keep the sheet exactly as it is: same painting style, same warm cream paper, same grass tiles, same soft shadows and light. Make only these changes: remove all painted handwriting, words and letters from the image completely, leaving plain paper. Remove the fourth bush at the far right together with its tile, so exactly three bushes remain, one per tile: the smooth mound on the left, the bush with red berries in the middle, and the low bush with cream flowers on the right, evenly spaced like the trees on a matching sheet. Everything else stays identical.",
+  "refs": [
+    "game/art-direction/rounds/20-nature/bush.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 20 bush r2",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T18:11:18",
+  "outputs": [
+    "bush-r2.png"
+  ]
+}

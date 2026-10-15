@@ -1,0 +1,58 @@
+{
+  "cols": 3,
+  "cell": 1024,
+  "parallel": 4,
+  "style": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint it as a concept artist's painted sketch sheet for a cozy, bright strategy game: loose hand-painted brushwork with visible strokes, soft painted light from a warm sunny afternoon, cheerful bright colours, a warm light cream paper background with a soft painted shadow under each object. It is a painting, not a 3D render, not low poly, not a game screenshot. Cozy and friendly like a storybook toy, never grim. No people, no text, no labels, no numbers, no letters, no watermark.",
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {"aspect_ratio": "16:9", "resolution": "2K"},
+      "est": 0.25,
+      "frames": ["guns"],
+      "only": ["1-shipwright", "2-fortress", "3-chunky", "4-shields", "5-industry"],
+      "refs": ["../../anchors/marketing_style.png", "../../inspirations/monsters-expedition-keyart2.jpg", "../../inspirations/capsule-my-time-at-portia.jpg"]
+    },
+    "nanobanana-b": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {"aspect_ratio": "16:9", "resolution": "2K"},
+      "est": 0.25,
+      "frames": ["blocks"],
+      "only": ["6-blocks-row", "7-blocks-stacked"],
+      "refs": ["../../anchors/marketing_style.png", "../../inspirations/monsters-expedition-keyart2.jpg", "../../inspirations/capsule-my-time-at-portia.jpg"]
+    }
+  },
+  "frames": {
+    "guns": "{style} The sheet shows three cannons side by side from left to right, growing from small to large, in a three-quarter view from slightly above. Each cannon is a classic artillery cannon with exactly one barrel. Each sits on a round turning mount so it can swivel, with no wheels anywhere and no platform or base slab under it. Dark iron grey is the main colour of every cannon. Each cannon is visibly better and more advanced than the one before it, with a different design, never the same gun scaled up. {designs}",
+    "blocks": "{style} {layout}"
+  },
+  "directions": [
+    {
+      "slug": "1-shipwright",
+      "designs": "Left, small: a short stubby iron cannon resting in a simple wooden cradle on a round wooden swivel block. Middle, medium: a longer iron cannon in a sturdy oak cradle bound with iron bands, turning on an iron ring. Right, large: a big long iron cannon on a riveted iron turntable, with a curved iron shield in front, all iron and no wood."
+    },
+    {
+      "slug": "2-fortress",
+      "designs": "Left, small: an iron swivel gun on a thick wooden post that turns. Middle, medium: a long iron fortress cannon on a wooden slide carriage that pivots on a round iron mount. Right, large: a heavy iron coastal gun with a thick reinforced breech, on a round riveted iron turntable with a low round shield, all iron and no wood."
+    },
+    {
+      "slug": "3-chunky",
+      "designs": "Chunky, rounded, toy-like proportions. Left, small: a chubby iron cannon in a wooden cradle with a coil of rope beside it, on a round wooden swivel base. Middle, medium: a bigger iron cannon with thick iron bands in a wooden cradle reinforced with iron plates, on a round iron swivel base. Right, large: a fat heavy iron cannon with a big riveted iron housing and a small sighting telescope, on a round riveted iron turntable, all iron and no wood."
+    },
+    {
+      "slug": "4-shields",
+      "designs": "Left, small: a short iron cannon in a wooden cradle on a round wooden swivel block. Middle, medium: a long iron cannon in a wooden cradle, with a small curved half shield of riveted iron in front of the cradle, half the height of the gun, with one narrow visor slit, on an iron ring. Right, large: a large iron cannon with one big round riveted iron shield, the barrel passing through its centre, on a riveted iron turntable, all iron and no wood."
+    },
+    {
+      "slug": "5-industry",
+      "designs": "The guns climb from the age of sail to early industry. Left, small: a plain cast iron cannon of the age of sail in a wooden cradle on a round wooden swivel block. Middle, medium: a longer iron cannon with a banded breech in an iron-fitted wooden cradle on an iron pivot ring. Right, large: a heavy rifled iron breech-loading cannon from the early industrial age, with a smooth long barrel and a big breech block, on a riveted iron turntable with a small shield, all iron and no wood."
+    },
+    {
+      "slug": "6-blocks-row",
+      "layout": "The sheet shows four resource blocks side by side, each a chunky box of exactly the same size and shape, a squat cube a little wider than tall, so they read as blocks that stack. From left to right: a wooden crate with round log ends at its four corners; cream stone blocks stacked into a neat box; dark iron ingots, a bottom layer of three ingots side by side and a second layer of three ingots lying across them, turned 90 degrees, together forming a solid box, with a small stepped pyramid of ingots on top, and no wooden box; an open wooden crate with one big iron cog inside."
+    },
+    {
+      "slug": "7-blocks-stacked",
+      "layout": "The sheet shows four kinds of resource block on a painted board of square grass tiles, each block a chunky box of exactly the same size that fills most of one tile. Some blocks stand alone in their square, and next to them two of the same block are stacked on top of each other, to show they stack. The four kinds: a wooden crate with round log ends at its corners; cream stone blocks stacked into a neat box; dark iron ingots in a bottom layer of three and a second layer of three turned 90 degrees across them, forming a box with a small stepped pyramid of ingots on top, and no wooden box; an open wooden crate with one big iron cog inside."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted sketch sheet and change only the small cannon on the far left: remove the two small wooden wheels from the side of its wooden cradle, so the side of the cradle is plain wooden planks resting flat on the round wooden swivel base. No wheels anywhere. Everything else stays exactly as it is: the other two cannons, the painting style, the paper background, the shadows. No text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/17-painted-sketches/4-shields-guns--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "8-shields-nowheels",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T03:21:50",
+  "outputs": [
+    "8-shields-nowheels--nanobanana.png"
+  ]
+}

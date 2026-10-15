@@ -1,0 +1,14 @@
+asset_id: supply.3
+route: generative     # Meshy, then the cleanup by hand: cleanup.json, cleanup.py
+class: building
+dimensions:
+  max_x: 1.0
+  max_y: 1.0
+  max_z: 1.5
+budget:
+  max_tris: 600
+  max_materials: 1
+parts:
+  - supply
+pivots:
+  origin: ground_centre

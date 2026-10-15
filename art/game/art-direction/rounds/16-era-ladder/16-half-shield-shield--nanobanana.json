@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this model sheet and change only the second cannon from the left: keep its wooden cradle and add a small low half shield of riveted dark iron in front of the cradle, about half the height of the gun, curved, with one narrow horizontal visor slit across its upper part; the long barrel reaches over the half shield. The gun keeps its dark iron grey barrel, its round riveted iron turning mount, its size and its place, and has no wheels. Everything else stays exactly as it is: the other three cannons, the five resource boxes, the green tile grid, the camera, the light. No text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/16-era-ladder/ladder-final.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "16-half-shield-shield--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T02:29:00",
+  "outputs": [
+    "16-half-shield-shield--nanobanana.png"
+  ]
+}

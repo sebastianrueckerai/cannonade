@@ -1,0 +1,19 @@
+{
+  "model": "fal-ai/flux-pro/v1/fill",
+  "prompt": "the flat top of a cream stone castle tower with square battlements, empty, nothing on it, soft painted illustration matching the surroundings",
+  "refs": [
+    "game/art-direction/rounds/09-duel-inside/3-two-islands-scene--nanobanana.png",
+    "game/art-direction/rounds/09-duel-inside/masks/3-left-tower.png"
+  ],
+  "params": {
+    "output_format": "png"
+  },
+  "seed": 683162696,
+  "description": null,
+  "label": "3-inpaint-a-left-tower",
+  "est_cost_usd": 0.1,
+  "created": "2026-10-12T00:27:24",
+  "outputs": [
+    "3-inpaint-a-left-tower--fill.png"
+  ]
+}

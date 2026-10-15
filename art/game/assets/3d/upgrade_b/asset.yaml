@@ -1,0 +1,14 @@
+asset_id: upgrade_b
+route: generative     # Meshy, then the cleanup by hand: cleanup.json, cleanup.py
+class: building
+dimensions:           # D29
+  max_x: 0.8
+  max_y: 0.8
+  max_z: 0.6
+budget:
+  max_tris: 600
+  max_materials: 1
+parts:
+  - upgrade_b
+pivots:
+  origin: ground_centre

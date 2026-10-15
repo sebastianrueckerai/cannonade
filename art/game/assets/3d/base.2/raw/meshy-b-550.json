@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a12f8b-ae2c-72b2-91e0-cb8bf6ba2239",
+  "inputs": [
+    "game/assets/3d/base.2/refs/b-view.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 550
+  },
+  "label": "base.2 meshy-b-550",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 48,
+  "created": "2026-10-12T11:58:13",
+  "outputs": {
+    "model": "meshy-b-550.glb",
+    "rendered_image": "meshy-b-550-preview.png"
+  }
+}

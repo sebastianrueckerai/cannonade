@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted sketch sheet and change only the stack of dark iron bars, the third block from the left. Rebuild it with fewer and bigger iron bars, stacked like bricks in a crossed pattern: a bottom layer of three bars lying side by side, a second layer of three bars lying across them at a right angle, a third layer of two bars at a right angle again, and one bar on top at a right angle again. Every layer turns 90 degrees against the layer below, so the stack direction alternates. The block keeps the same overall size as the other three blocks, a squat box shape. Everything else stays exactly as it is: the wooden crate, the stone block, the open crate with the cog, the paper background, the painting style. No text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/17-painted-sketches/6-blocks-row-cropped.png"
+  ],
+  "params": {
+    "aspect_ratio": "21:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "11-iron-crossed",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T07:41:12",
+  "outputs": [
+    "11-iron-crossed--nanobanana.png"
+  ]
+}

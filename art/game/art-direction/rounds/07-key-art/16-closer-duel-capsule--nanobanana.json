@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint a Steam capsule key-art illustration from above and a little closer: two toy fortress corners face each other across a narrow channel of blue sea, the left one with a red flag, the right one with a blue flag, the walls big, cream with square battlements, orange roofs behind them. One bronze cannon on the left wall fires a huge white smoke plume and a visible cannonball in a shallow arc across the channel at the right wall. The upper third of the frame is open sky fading into one flat colour with soft painterly clouds, where the title goes, touching no wall. The first attached image sets the painterly look: its soft brushwork, its clouds, its colours, its painted toy fortress with cream walls, square battlements and orange roofs. The second attached image sets the title lettering only. Take nothing else from them. The title Grid Cannons is large and clear, in the lettering of the second attached image, placed where the painting is quietest, and it covers no building, no cannon and no flag. Every shot is physically right: the cannon's barrel points at its target, the smoke plume leaves the muzzle along the barrel, and the cannonball flies on from the muzzle in a shallow arc toward the target. Painted 2D illustration, not a 3D render. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/07-key-art/6-above-cannons--nanobanana.png",
+    "game/art-direction/rounds/07-key-art/4-painted-refs--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "16-closer-duel-capsule--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T23:39:07",
+  "outputs": [
+    "16-closer-duel-capsule--nanobanana.png"
+  ]
+}

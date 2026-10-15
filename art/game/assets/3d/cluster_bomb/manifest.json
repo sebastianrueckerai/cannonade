@@ -1,0 +1,48 @@
+{
+  "asset_id": "cluster_bomb",
+  "route": "procedural",
+  "inputs": {
+    "asset_yaml_sha": "7351fcf8f756",
+    "build_py_sha": "8e3cc3f1c1b8"
+  },
+  "steps": [
+    {
+      "name": "build",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "normalise",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "materials",
+      "ok": true,
+      "elapsed_s": 0.63
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.56
+    },
+    {
+      "name": "export",
+      "ok": true,
+      "elapsed_s": 0.01
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-14",
+  "cost_usd": 0,
+  "created": "2026-10-14T23:15:13+02:00"
+}

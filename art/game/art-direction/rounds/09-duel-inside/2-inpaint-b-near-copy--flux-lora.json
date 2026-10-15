@@ -1,0 +1,24 @@
+{
+  "model": "fal-ai/flux-lora/inpainting",
+  "prompt": "a soft painted storybook illustration of a castle courtyard: a bronze cannon on a wooden carriage with two wheels standing on the stone courtyard floor in front of the cream stone gatehouse with its arched gate, the barrel raised and pointing up and to the right, the gatehouse wall and the stone floor behind and around the cannon",
+  "refs": [
+    "game/art-direction/rounds/09-duel-inside/paint/2-near-copy.png",
+    "game/art-direction/rounds/09-duel-inside/masks/2-near-copy.png"
+  ],
+  "params": {
+    "strength": 0.45,
+    "image_size": {
+      "width": 1376,
+      "height": 768
+    },
+    "output_format": "png"
+  },
+  "seed": 2321828017176601084,
+  "description": null,
+  "label": "2-inpaint-b-near-copy",
+  "est_cost_usd": 0.07,
+  "created": "2026-10-12T00:35:38",
+  "outputs": [
+    "2-inpaint-b-near-copy--flux-lora.png"
+  ]
+}

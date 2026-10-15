@@ -1,0 +1,42 @@
+{
+  "asset_id": "nature_leaf_tree.2",
+  "parts": {
+    "nature_leaf_tree.2": {
+      "verts": 61,
+      "tris": 118,
+      "non_manifold_edges": 0,
+      "materials": [
+        "nature_leaf_tree.2"
+      ],
+      "origin": [
+        0.0016,
+        -0.0004,
+        0.951
+      ]
+    }
+  },
+  "verts": 61,
+  "tris": 118,
+  "non_manifold_edges": 0,
+  "materials": [
+    "nature_leaf_tree.2"
+  ],
+  "dims_m": [
+    0.6111,
+    0.9925,
+    1.2299
+  ],
+  "bbox_min": [
+    -0.3055,
+    -0.4962,
+    0.0
+  ],
+  "bbox_max": [
+    0.3055,
+    0.4962,
+    1.2299
+  ],
+  "solidity": 0.643,
+  "limits_ok": true,
+  "limit_failures": []
+}

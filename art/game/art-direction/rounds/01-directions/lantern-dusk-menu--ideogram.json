@@ -1,0 +1,17 @@
+{
+  "model": "ideogram/v4",
+  "prompt": "Main menu screen of a strategy game, 16:9. A wide background illustration of a coastal fortress with cannons at dusk with lanterns lit, Deep blue-violet dusk, slate stone, warm orange lantern and muzzle-flash accents, a pale moon, Moody and tense, the calm before the bombardment. The title GRID CANNONS large at the top in tall condensed letters with a warm glow. Four menu buttons stacked on the left, in this order: Single, Versus, Sandbox, Quit. Clean game UI, legible text, flat shaded low poly world in the background, no other text.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_16_9",
+    "rendering_speed": "BALANCED"
+  },
+  "seed": 594702870,
+  "description": null,
+  "label": "lantern-dusk-menu--ideogram",
+  "est_cost_usd": 0.09,
+  "created": "2026-10-11T15:40:21",
+  "outputs": [
+    "lantern-dusk-menu--ideogram.png"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this model sheet. Keep the four cannons' designs, their dark iron colour and their order, and keep the five resource boxes exactly as they are. Make the third and the fourth cannon much bigger together with their round mounts, each mount as wide as three tiles, and the second cannon with its mount as wide as two tiles; move the cannons apart along the row so that no two overlap, the board may extend to the right. The first cannon stays the size of one tile. No wheels anywhere. Remove the loose round pot standing beside the fourth cannon's boiler. Keep the low-poly painted toy look, the green tile grid, the camera and the light. No people, no text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/16-era-ladder/6-from-3-fix--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "10-grown-grow--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T02:21:32",
+  "outputs": [
+    "10-grown-grow--nanobanana.png"
+  ]
+}

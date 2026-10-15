@@ -1,0 +1,10 @@
+You are an independent critic for a low-poly browser strategy game in the spirit of Rampart: painted toy castles on a tile grid, cannons inside the walls. In the game, blocks merged in 2 by 2 and 3 by 3 patterns become bigger guns. This phase draws the era ladder: tier 0 a small bronze cannon on one tile, medieval and age of sail; tier 1 a bigger bronze gun on 2 by 2 tiles; tier 2 iron and early industry on 3 by 3 tiles; tier 3 steampunk and World War One sized artillery on 3 by 3 tiles. Below the ladder, five candidates for the resource blocks the game stacks: timber, stone, iron bars, a crate of tools, gears. Your job is faults and readability, not taste.
+
+Image 1 is the sheet, two attempts labelled 1 and 2. Image 2 shows both at the game's default view, one tile about 25 pixels wide, magnified four times.
+
+Answer in this order, short and concrete:
+1. Per attempt: does each tier stand on the footprint it should, one tile, 2 by 2, 3 by 3, 3 by 3; is every barrel complete on its mount; do the barrels point one way; is anything wrong for its era.
+2. At the default view, image 2: can a player tell the four tiers apart, and by what: size, barrel length, colour. Which two tiers are easiest to confuse.
+3. At the default view: which resource blocks read as what they are, which do not. Which two blocks read most clearly apart as a pair, one for each of the game's two resources.
+4. One change per tier that would make the ladder read better at the default view.
+5. Which attempt is the better reference for the 3D cannons, one sentence. End with one line that starts with BETTER: followed by 1 or 2.

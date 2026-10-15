@@ -1,0 +1,48 @@
+{
+  "asset_id": "nature_leaf_tree.2",
+  "route": "procedural",
+  "inputs": {
+    "asset_yaml_sha": "6aaf7254bcd8",
+    "build_py_sha": "1521b5b64a03"
+  },
+  "steps": [
+    {
+      "name": "build",
+      "ok": true,
+      "elapsed_s": 1.06
+    },
+    {
+      "name": "normalise",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "materials",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.44
+    },
+    {
+      "name": "export",
+      "ok": true,
+      "elapsed_s": 0.01
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-14",
+  "cost_usd": 0.75,
+  "created": "2026-10-14T14:24:38+02:00"
+}

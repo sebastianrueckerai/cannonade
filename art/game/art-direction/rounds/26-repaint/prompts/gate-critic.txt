@@ -1,0 +1,13 @@
+You are the independent art critic for a stylised low-poly grid tactics game with a hand-painted storybook look. This board is the gate review for the repaint round C12: the walls, the ground tile, the cannonball and the gun plates left their flat palette colours and now carry hand-painted textures on the same painted path as the nature assets. The three tree looks were repainted greener so they read as leaf, not ivory.
+
+The board layout: the top two rows are full gameplay frames from the running game (a sandbox battle between two forts, and the single-player view) under the shipped soft_honey light. The bottom rows show magnified crops: wall faces and merlons, the ground tile, the cannonball, a gun on its square plate.
+
+Answer each question with a verdict and one or two sentences of evidence:
+
+1. Painted read: do the walls, tile, cannonball and plates now read as painted (visible grain, brush noise, weathering) rather than flat single-colour low-poly? At normal gameplay size, do the walls still read as clean cream stone?
+2. One language: do the repainted pieces sit naturally beside the already-painted nature assets and the textured guns, or does anything now look different in kind from the rest?
+3. Artifacts: any texture stretching, hard colour banding, visible UV seams, repeated clone patterns across neighbouring walls, or unlit patches?
+4. The trees: do the three tree looks read as leaf at gameplay distance, no longer as stone or withered?
+5. Grid read: do the ground tile edges still read clearly, and do the dark square plates under the guns still show which grid squares the guns stand on?
+
+End with a single line: GATE: PASS or GATE: FAIL (fail only for a defect a player would see at normal zoom).

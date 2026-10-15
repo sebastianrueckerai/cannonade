@@ -1,0 +1,42 @@
+{
+  "asset_id": "wall_line_base",
+  "parts": {
+    "wall": {
+      "verts": 64,
+      "tris": 124,
+      "non_manifold_edges": 0,
+      "materials": [
+        "wall_stone"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 64,
+  "tris": 124,
+  "non_manifold_edges": 0,
+  "materials": [
+    "wall_stone"
+  ],
+  "dims_m": [
+    1.0,
+    0.38,
+    1.0
+  ],
+  "bbox_min": [
+    -0.5,
+    -0.19,
+    0.0
+  ],
+  "bbox_max": [
+    0.5,
+    0.19,
+    1.0
+  ],
+  "solidity": 0.813,
+  "limits_ok": true,
+  "limit_failures": []
+}

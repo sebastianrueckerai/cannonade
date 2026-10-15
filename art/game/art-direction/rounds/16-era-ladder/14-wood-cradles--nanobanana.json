@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this model sheet and change only the first two cannons from the left: make their cradles, the blocks that hold each barrel, out of dark brown wood with visible planks instead of iron. The barrels stay dark iron grey, the round riveted iron turning mounts stay, no wheels. Everything else stays exactly as it is: the shapes and sizes of the first two guns, the third and the fourth cannons, the five resource boxes, the green tile grid, the camera, the light. No text, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/16-era-ladder/13-open-cradle-tier1--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "14-wood-cradles",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T02:25:40",
+  "outputs": [
+    "14-wood-cradles--nanobanana.png"
+  ]
+}

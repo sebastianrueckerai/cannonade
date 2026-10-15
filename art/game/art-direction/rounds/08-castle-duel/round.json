@@ -1,0 +1,45 @@
+{
+  "cols": 3,
+  "cell": 768,
+  "parallel": 3,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      }
+    }
+  },
+  "style": "The two castles are the same painted style and not mirror images: the left castle has a tall square keep with the lookout tower and the red flag, a gatehouse and three small houses; the right castle has a lower keep, a round corner tower with the blue flag, a long barn and two houses; their walls differ in length. Cannons: each castle has exactly two bronze cannons, each a complete barrel on a wooden carriage with two wheels, standing on the flat stone top of a corner tower on the side that faces the other castle, so the barrel looks out over the battlements straight at the other castle; the cannons stand on stone, never on a roof, never over a house, never in a wall. No cannon fires yet, no smoke, no cannonball. The tile grid is painted in the same perspective as the castles: its lines run parallel to the castle walls and its squares foreshorten exactly like the courtyards. The title Grid Cannons in the same white hand-lettered script as the attached image, large, on the sky at the top, covering nothing. Soft painterly 2D illustration, soft colours, not oversaturated, a cream sky fade at the top. No people, no other words, no watermark.",
+  "frames": {
+    "scene": "{scene} {style}"
+  },
+  "directions": [
+    {
+      "slug": "1-side-by-side",
+      "refs": ["../07-key-art/25-land-side-capsule--nanobanana.png"],
+      "scene": "Paint this scene anew: a green land map seen from high above at a three-quarter angle, two toy castles side by side, the left one and the right one each about a third of the frame wide, a river running between them from the top of the frame to the bottom, round trees and rocks."
+    },
+    {
+      "slug": "2-land-diagonal",
+      "refs": ["../07-key-art/12-land-map-capsule--nanobanana.png"],
+      "scene": "Paint this scene anew: a green land map seen from high above at a three-quarter angle, the left castle near, bottom left and larger, the right castle farther, upper right and smaller but still clearly a castle, a river and a sand path between them, round trees and rocks."
+    },
+    {
+      "slug": "3-two-islands",
+      "refs": ["../07-key-art/11-two-islands-capsule--nanobanana.png"],
+      "scene": "Paint this scene anew: two toy castle islands seen from high above at a three-quarter angle, the left island and the right island each about a third of the frame wide, a strait of blue sea between them, yellow sand at the shores, round trees."
+    },
+    {
+      "slug": "4-side-closer",
+      "refs": ["../07-key-art/25-land-side-capsule--nanobanana.png"],
+      "scene": "Paint this scene anew, closer: a green land map seen from high above at a three-quarter angle, two toy castles side by side filling the lower two thirds of the frame, the river between them narrow, the castles large so every cannon is big and clear."
+    },
+    {
+      "slug": "5-land-top-down",
+      "refs": ["../07-key-art/12-land-map-capsule--nanobanana.png"],
+      "scene": "Paint this scene anew from higher above, a steeper view like the game's own camera, so the courtyards and the tile grid show plainly: a green land map, the left castle lower left, the right castle upper right, a river between them, round trees and rocks."
+    }
+  ]
+}

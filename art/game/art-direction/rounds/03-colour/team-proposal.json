@@ -1,0 +1,44 @@
+{
+  "_status": "team colour correction proposal, round 03",
+  "name": "Market warmth",
+  "idea": "The market town's warmth on the toy world: orange tile roofs, greener grass, a bluer sea, warm stone. Nova Roma light.",
+  "team": {
+    "blue": {
+      "main": "#2d55c4",
+      "highlight_plus": "#aaaadd",
+      "highlight_minus": "#ad3030"
+    },
+    "purple": {
+      "main": "#7b2fa3",
+      "highlight_plus": "#c9a0e0",
+      "highlight_minus": "#e01414"
+    },
+    "teal": {
+      "main": "#197059",
+      "highlight_plus": "#aaddab",
+      "highlight_minus": "#ad3030"
+    },
+    "olive": {
+      "main": "#8c7a1f",
+      "highlight_plus": "#e0d58a",
+      "highlight_minus": "#ad3030"
+    }
+  },
+  "world": {
+    "sea": "#2f9fc9",
+    "sand": "#f0c975",
+    "grass": "#8fbf3c",
+    "leaf": "#3d7f34",
+    "stone": "#e8d6b0",
+    "wood": "#7a4a2e",
+    "iron": "#33302e",
+    "roofs": "#d8632f",
+    "sky": "#6cb9f5",
+    "fog": "#efe3d0"
+  },
+  "ui": {
+    "ui_accent": "#c8322d",
+    "ui_light": "#fbefd9",
+    "ui_dark": "#3a2e28"
+  }
+}

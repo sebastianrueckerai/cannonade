@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a12eee-56a0-75af-b773-f9d6695488c0",
+  "inputs": [
+    "game/assets/3d/cannon22a/refs/mount.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 1500
+  },
+  "label": "cannon22a meshy-mount",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 47,
+  "created": "2026-10-12T09:06:18",
+  "outputs": {
+    "model": "meshy-mount.glb",
+    "rendered_image": "meshy-mount-preview.png"
+  }
+}

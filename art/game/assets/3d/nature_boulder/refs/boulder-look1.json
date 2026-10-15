@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Reference view for a 3D model, painted in the same style as the attached sketch sheet. Take only the left pile from the sheet: two big chunky smooth rounded boulders leaning together, one slightly behind the other, warm grey with cream highlights, with soft green moss patches on their tops. Show this one pile alone as a clean three-quarter view from slightly above, on a plain light grey studio background with no shadow, no ground line, no tile. The pile fills 70 to 90 percent of the frame, centred. Keep the painted colours exactly: warm grey-cream stone, muted green moss. No text, no labels, no other objects, no Cannon, no other piles.",
+  "refs": [
+    "game/art-direction/rounds/20-nature/boulder-r2.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 20 boulder look1 ref view",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T18:25:12",
+  "outputs": [
+    "boulder-look1.png"
+  ]
+}

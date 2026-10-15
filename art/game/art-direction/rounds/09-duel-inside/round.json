@@ -1,0 +1,45 @@
+{
+  "cols": 3,
+  "cell": 768,
+  "parallel": 3,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      }
+    }
+  },
+  "style": "Cannons: each castle has exactly two bronze cannons of the same size, standing on the courtyard floor inside the walls, each a complete barrel on a wooden carriage with two wheels, the barrel raised to about 45 degrees so it points up over the wall toward the other castle; no cannon stands on a tower, on a wall, on a roof or on a house. No cannon fires yet, no smoke, no cannonball. The two castles are the same painted style and not mirror images: the left castle has a tall square keep with the lookout tower and the red flag, a gatehouse and three small houses; the right castle has a lower keep, a round corner tower with the blue flag, a long barn and two houses; their walls differ in length. The tile grid is painted in the same perspective as the castles: one set of lines parallel to the front walls, the other set parallel to the side walls, the squares foreshortened like the courtyards. The title Grid Cannons stays as in the attached image, large, on the sky at the top, covering nothing. Soft painterly 2D illustration, soft colours, not oversaturated, a cream sky fade at the top. No people, no other words, no watermark.",
+  "frames": {
+    "scene": "{scene} {style}"
+  },
+  "directions": [
+    {
+      "slug": "1-side-grid-fixed",
+      "refs": ["../08-castle-duel/1-side-by-side-scene--nanobanana.png"],
+      "scene": "Edit this painting and change three things only: redraw the painted tile grid over the land so that its lines run parallel to the castle walls; raise the barrel of every cannon to about 45 degrees, pointing up over the wall toward the other castle; make all cannons the same size. The castles, the river, the trees, the colours and the title stay as they are."
+    },
+    {
+      "slug": "2-land-diagonal",
+      "refs": ["../08-castle-duel/2-land-diagonal-scene--nanobanana.png"],
+      "scene": "Paint this scene anew with the cannons moved inside: a green land map seen from high above at a three-quarter angle, the left castle near, bottom left and larger, the right castle farther, upper right and smaller but still clearly a castle, a river and a sand path between them, round trees and rocks."
+    },
+    {
+      "slug": "3-two-islands",
+      "refs": ["../08-castle-duel/3-two-islands-scene--nanobanana.png"],
+      "scene": "Paint this scene anew with the cannons moved inside: two toy castle islands seen from high above at a three-quarter angle, the left island and the right island each about a third of the frame wide, a strait of blue sea between them, yellow sand at the shores, round trees."
+    },
+    {
+      "slug": "4-side-by-side",
+      "refs": ["../08-castle-duel/1-side-by-side-scene--nanobanana.png"],
+      "scene": "Paint this scene anew: a green land map seen from high above at a three-quarter angle, two toy castles side by side, the left one and the right one each about a third of the frame wide, a river running between them from the top of the frame to the bottom, round trees and rocks, the castles turned so that their front walls run along the same diagonal as the tile grid."
+    },
+    {
+      "slug": "5-side-closer",
+      "refs": ["../08-castle-duel/1-side-by-side-scene--nanobanana.png"],
+      "scene": "Paint this scene anew and closer: the camera nearer the two castles so that each is almost half the frame wide and every cannon is big and clear, the river between them narrow, the land map seen from high above at a three-quarter angle, the castles turned so that their front walls run along the same diagonal as the tile grid."
+    }
+  ]
+}

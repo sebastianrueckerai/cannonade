@@ -1,0 +1,13 @@
+{
+  "tool": "crop",
+  "source": "game/art-direction/rounds/19-first-batch/depot.png",
+  "box_px": [
+    716,
+    316,
+    1390,
+    1060
+  ],
+  "pad_to_square": 744,
+  "est_cost_usd": 0,
+  "created": "2026-10-12T11:53:58"
+}

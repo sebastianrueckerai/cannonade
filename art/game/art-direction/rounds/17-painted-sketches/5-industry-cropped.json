@@ -1,0 +1,19 @@
+{
+ "tool": "croptop.py",
+ "argv": [
+  "game/art-direction/rounds/17-painted-sketches/croptop.py",
+  "game/art-direction/rounds/17-painted-sketches/5-industry-guns--nanobanana.png",
+  "game/art-direction/rounds/17-painted-sketches/5-industry-cropped.png",
+  "0.26"
+ ],
+ "inputs": [
+  "5-industry-guns--nanobanana.png"
+ ],
+ "box_px": [
+  0,
+  399,
+  2752,
+  1536
+ ],
+ "est_cost_usd": 0.0
+}

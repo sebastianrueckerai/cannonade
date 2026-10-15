@@ -1,0 +1,29 @@
+{
+  "provider": "tripo",
+  "task_id": "9ea7421c-1b2e-45c8-81f4-c56666dcb59b",
+  "inputs": [
+    "game/assets/3d/cannon/refs/c-front.png",
+    "game/assets/3d/cannon/refs/c-left.png",
+    "game/assets/3d/cannon/refs/c-back.png",
+    "game/assets/3d/cannon/refs/c-right.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "multiview_to_model",
+    "files": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 1000,
+    "file": "uploaded"
+  },
+  "label": "cannon tripo-c4-1000",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 263,
+  "created": "2026-10-12T09:05:50",
+  "outputs": {
+    "model": "tripo-c4-1000.glb",
+    "rendered_image": "tripo-c4-1000-preview.webp"
+  }
+}

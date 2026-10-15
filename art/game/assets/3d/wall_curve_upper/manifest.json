@@ -1,0 +1,48 @@
+{
+  "asset_id": "wall_curve_upper",
+  "route": "procedural",
+  "inputs": {
+    "asset_yaml_sha": "fbe115de68c6",
+    "build_py_sha": "4557603a047f"
+  },
+  "steps": [
+    {
+      "name": "build",
+      "ok": true,
+      "elapsed_s": 0.06
+    },
+    {
+      "name": "normalise",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "materials",
+      "ok": true,
+      "elapsed_s": 0.98
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.43
+    },
+    {
+      "name": "export",
+      "ok": true,
+      "elapsed_s": 0.01
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-14",
+  "cost_usd": 0,
+  "created": "2026-10-14T14:24:22+02:00"
+}

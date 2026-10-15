@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Redraw the attached world as a dramatic key-art still for a store page: a battle moment in the evening, the sun low on the right, long warm shadows falling to the left, an orange and pink sky, the camera low and close on a diagonal from the sea corner so the fortress tower and the walls stand big in the frame, two ships with striped sails close in on the sea firing at the fortress, round white smoke puffs at the mouths of the cannons on the walls, two cannonballs in the air, one white splash in the water near the pier, a toy shooting gallery, no fire, no wreckage. Keep the island, its buildings and the painted toy fortress world of the attached image: its palette, its flat-shaded low-poly blocks with chamfered edges, its orange roofs, cream walls, green grass, yellow sand. Flat colours, no textures, no people, no text, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "6-store-drama--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T22:47:36",
+  "outputs": [
+    "6-store-drama--nanobanana.png"
+  ]
+}

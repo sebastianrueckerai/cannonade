@@ -1,0 +1,26 @@
+{
+  "provider": "tripo",
+  "task_id": "76fd8e56-7f99-453f-87a1-388eef90e7f1",
+  "inputs": [
+    "game/assets/3d/cannon33a/refs/b-clean.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "image_to_model",
+    "file": "uploaded",
+    "texture": false,
+    "pbr": false,
+    "generate_parts": true,
+    "face_limit": 3000,
+    "files": "uploaded"
+  },
+  "label": "cannon33a tripo-b-parts",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 108,
+  "created": "2026-10-12T09:45:29",
+  "outputs": {
+    "model": "tripo-b-parts.glb",
+    "rendered_image": "tripo-b-parts-preview.webp"
+  }
+}

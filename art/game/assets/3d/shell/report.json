@@ -1,0 +1,42 @@
+{
+  "asset_id": "shell",
+  "parts": {
+    "shell": {
+      "verts": 146,
+      "tris": 288,
+      "non_manifold_edges": 0,
+      "materials": [
+        "shell_iron"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 146,
+  "tris": 288,
+  "non_manifold_edges": 0,
+  "materials": [
+    "shell_iron"
+  ],
+  "dims_m": [
+    0.28,
+    0.28,
+    0.28
+  ],
+  "bbox_min": [
+    -0.14,
+    -0.14,
+    -0.14
+  ],
+  "bbox_max": [
+    0.14,
+    0.14,
+    0.14
+  ],
+  "solidity": 1.0,
+  "limits_ok": true,
+  "limit_failures": []
+}

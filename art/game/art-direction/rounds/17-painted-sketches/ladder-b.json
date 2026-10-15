@@ -1,0 +1,34 @@
+{
+ "tool": "ladder.py",
+ "inputs": [
+  "9-fortress-long--nanobanana.png",
+  "8-shields-nowheels--nanobanana.png",
+  "10-large-noshield--nanobanana.png"
+ ],
+ "boxes": [
+  [
+   0.02,
+   0.33,
+   0.25,
+   0.8
+  ],
+  [
+   0.25,
+   0.27,
+   0.575,
+   0.8
+  ],
+  [
+   0.58,
+   0.1,
+   0.98,
+   0.9
+  ]
+ ],
+ "relative_widths": [
+  1.0,
+  1.6,
+  2.3
+ ],
+ "est_cost_usd": 0.0
+}

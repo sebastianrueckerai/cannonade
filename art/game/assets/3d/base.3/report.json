@@ -1,0 +1,43 @@
+{
+  "asset_id": "base.3",
+  "parts": {
+    "base": {
+      "verts": 824,
+      "tris": 550,
+      "non_manifold_edges": 800,
+      "materials": [
+        "team",
+        "Material_0"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 824,
+  "tris": 550,
+  "non_manifold_edges": 800,
+  "materials": [
+    "Material_0",
+    "team"
+  ],
+  "dims_m": [
+    1.9,
+    1.8226,
+    4.7827
+  ],
+  "bbox_min": [
+    -0.95,
+    -0.9113,
+    0.0
+  ],
+  "bbox_max": [
+    0.95,
+    0.9113,
+    4.7827
+  ],
+  "limits_ok": true,
+  "limit_failures": []
+}

@@ -1,0 +1,12 @@
+You are an independent art critic for a low-poly browser strategy game in the spirit of Rampart. The attached contact sheet shows five art directions, one row each, three frames per row: world (the fortress from the gameplay camera, pitched 60 degrees down), cannon (one cannon on one tile), menu (the main menu). Tiles are labelled <direction>-<frame>--<model>.
+
+The brief: low poly, flat colours by default, readable at a tiny on-screen size (a one metre wall is 13 pixels tall at the default view), four team colours must stay distinguishable (deep blue, purple, teal green, olive), one identity across world, UI and store art, nothing photoreal, nothing gritty, no pixel-art copy of the original.
+
+For each direction give:
+- Identity: in one sentence, what makes this direction its own thing and not generic asset-store low poly.
+- Readability at distance: will walls, cannons and ownership read when a wall is 13 pixels tall. Judge from the world frame.
+- Consistency: do the three frames belong to one game.
+- Risk: the one thing most likely to go wrong when 60 assets are built in this style.
+- One recommended edit that keeps the direction but fixes its biggest fault.
+
+Then rank the five directions from best to worst for this game with one sentence per rank. Do not pick a direction only because it is the prettiest single image. Pick for the whole game. End with one line that starts with RANKING: followed by the direction slugs in order.

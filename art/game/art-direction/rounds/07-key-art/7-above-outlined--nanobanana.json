@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint a Steam capsule key-art illustration for the game shown in the last attached image. The first attached image is a style reference only: take its gouache painting look with soft painted outlines around every shape and its warm paper feel, and none of its composition: this painting fills the whole frame, edge to edge, no vignette, no empty paper. The second attached image is a style reference for the bright colours and the white title in the sky. Repaint the world of the last image as a 2D painting, not a 3D render. The view is from high above at a three-quarter angle, like a board game seen from the player's chair, the island fortress filling the frame: cream stone walls with square battlements and orange tile roofs, a keep with a red flag, four bronze cannons on the walls, two of them firing with round white smoke puffs, a sailing ship with red and white striped sails on the blue sea, a faint painted tile grid on the grass. Warm afternoon light, clear colours, soft but not washed out. The game title Grid Cannons in large clear white hand-lettered script with a soft dark shadow, across the sky at the top, part of the painting. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/07-key-art/3-storybook--ideogram.png",
+    "game/art-direction/inspirations/header (10).jpg",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "7-above-outlined--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T23:23:40",
+  "outputs": [
+    "7-above-outlined--nanobanana.png"
+  ]
+}

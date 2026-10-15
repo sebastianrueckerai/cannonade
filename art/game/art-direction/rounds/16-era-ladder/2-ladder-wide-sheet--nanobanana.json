@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A model sheet seen from the game's camera: four cannon emplacements in one row from left to right, growing from one era to the next, each standing on its own square of grass tiles with empty tiles between them, every barrel complete on its mount and pointing to the upper right: on one tile, a small bronze cannon on a wooden two-wheel carriage on a low cream stone slab; on two by two tiles, a heavy bronze cannon on a wooden turning carriage inside a low round cream stone parapet; on three by three tiles, a large dark iron cannon on a turntable behind a riveted iron shield plate, on a square cream stone base with a small powder store under an orange roof; on three by three tiles, a huge dark iron World War One sized gun with a very long barrel, recoil cylinders, a riveted steel platform, a small boiler with a chimney, brass bands and copper-green plates. In the front row, five resource blocks on single tiles: a stack of logs, cut cream stone blocks, dark iron bars, a crate of tools, a pair of iron cogwheels. Style: exactly the flat-shaded low-poly painted toy look of the attached images: the same palette, cream stone, dark brown wood, dark iron, orange roofs, green grass tiles with visible grid lines, every block edge with a small chamfer, the afternoon sun from the front right with medium shadows. A clean model sheet on a flat board of green grass tiles, seen from the game's camera, high above at a three-quarter angle, every object standing on its tiles, generous empty grass between the objects. No people, no text, no labels, no numbers, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/world_style.png",
+    "game/art-direction/anchors/shape_corner.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "2-ladder-wide-sheet--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T02:10:53",
+  "outputs": [
+    "2-ladder-wide-sheet--nanobanana.png"
+  ]
+}

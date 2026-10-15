@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a12f91-d4ab-749c-bc7a-5db03ef3ff35",
+  "inputs": [
+    "game/assets/3d/supply/refs/d-view-gridroof.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 550
+  },
+  "label": "supply meshy-d-550",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 42,
+  "created": "2026-10-12T12:04:49",
+  "outputs": {
+    "model": "meshy-d-550.glb",
+    "rendered_image": "meshy-d-550-preview.png"
+  }
+}

@@ -1,0 +1,11 @@
+You are an independent critic for the Steam store art of a cosy browser strategy game, Cannonade: painted toy castles on a tile grid shooting at each other with cannons. The painting is decided. This round decides the title lettering, which is laid over the painting, and checks the full store set. Your job is faults and readability, not taste.
+
+Steam's rules: the title must be easy to read against the background on every capsule; the small capsule is shown by Steam at 462x174, 184x69 and 120x45 pixels and its logo should nearly fill it; no text other than the title; the library hero carries no text; the library logo is the title alone on a transparent background.
+
+Image 1 compares three letterings of the same title on the same painting: a, white letters with a soft shadow; b, white letters with a dark brown outline; c, cream letters with a dark brown outline and an orange-red drop shadow. Each row shows the main capsule, the small capsule at 462 pixels, and the small capsule at Steam's 184x69 and 120x45 sizes magnified twice.
+Image 2 is the full store set with lettering b, every asset at its exact size, labelled with its name and size.
+
+Answer in this order, short and concrete:
+1. Per lettering a, b, c: is every letter of CANNONADE correct and well formed; does it read at 120x45; where does it lose contrast against the painting. Name the letter and the place.
+2. Per asset of image 2: anything wrong for its Steam slot: the title too small or cropped, a castle or the shot cut off, text where none is allowed, a composition that does not work at that size.
+3. Rank the three letterings, readability at 120x45 first, fit to a cosy painted game second, one sentence each. End with one line that starts with RANKING: followed by the three letters in order.

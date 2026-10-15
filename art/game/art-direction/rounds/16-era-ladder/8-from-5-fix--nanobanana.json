@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit the first attached image. Remove every wheel: the wooden cradle of the second cannon sits flat on its round iron mount. Give the fourth cannon one single very long barrel with two recoil cylinders along it instead of two barrels. Replace the bottom row with the five resource boxes of the second attached image: a wooden crate with log ends, a block of cream stone bricks, a stack of dark iron ingots, a tool chest with a hammer on the lid, a crate of gears. Rules for every cannon: dark iron grey, no wheels anywhere, no platform; each sits on a round dark iron turning mount, and the mount fills its square of tiles from edge to edge: the first cannon one tile, the second exactly two by two tiles, the third and the fourth exactly three by three tiles each; the cannon grows with its mount, so each gun is as big as its square allows. Rules for the five resource boxes: all exactly the same size and shape, each a box filling most of one tile, standing in one row. Keep the low-poly painted toy look, the green tile grid, the camera and the light. No people, no text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/16-era-ladder/5-iron-ladder-top-sheet--nanobanana.png",
+    "game/art-direction/rounds/16-era-ladder/4-iron-ladder-sheet--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "8-from-5-fix--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T02:19:33",
+  "outputs": [
+    "8-from-5-fix--nanobanana.png"
+  ]
+}

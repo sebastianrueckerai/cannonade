@@ -1,0 +1,22 @@
+{
+  "provider": "tripo-fal",
+  "task_id": "01a1343c-1070-7773-9e7a-691b1d744fe8",
+  "inputs": [
+    "game/assets/3d/nature_bush.2/refs/bush-look2-mass.png"
+  ],
+  "params": {
+    "endpoint": "tripo3d/tripo/v2.5/image-to-3d",
+    "texture": "standard",
+    "pbr": false,
+    "face_limit": 1000
+  },
+  "label": null,
+  "credits": 0.3,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 65,
+  "created": "2026-10-13T09:49:36",
+  "outputs": {
+    "model_mesh": "tripo-look2-mass-1000.glb",
+    "rendered_image": "tripo-look2-mass-1000-preview.webp"
+  }
+}

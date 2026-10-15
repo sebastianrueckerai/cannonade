@@ -1,0 +1,32 @@
+{
+  "asset_id": "supply22.2",
+  "route": "generative",
+  "inputs": {
+    "asset_yaml_sha": "e927f8315596"
+  },
+  "steps": [
+    {
+      "name": "import",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.48
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-14",
+  "cost_usd": 0.6,
+  "created": "2026-10-14T23:12:42+02:00"
+}

@@ -1,0 +1,24 @@
+{
+  "model": "fal-ai/flux-lora/inpainting",
+  "prompt": "a soft painted storybook illustration of a castle courtyard: a small bronze cannon on a wooden carriage with two wheels standing on the stone courtyard floor in front of the gatehouse, its barrel raised steeply at about 45 degrees and pointing up and to the right, the same size as the cannon beside it",
+  "refs": [
+    "game/art-direction/rounds/09-duel-inside/paint/2-near-second.png",
+    "game/art-direction/rounds/09-duel-inside/masks/2-near-second.png"
+  ],
+  "params": {
+    "strength": 0.6,
+    "image_size": {
+      "width": 1376,
+      "height": 768
+    },
+    "output_format": "png"
+  },
+  "seed": 16073810660768768902,
+  "description": null,
+  "label": "2-inpaint-a-near-second",
+  "est_cost_usd": 0.07,
+  "created": "2026-10-12T00:33:39",
+  "outputs": [
+    "2-inpaint-a-near-second--flux-lora.png"
+  ]
+}

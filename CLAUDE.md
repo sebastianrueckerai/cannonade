@@ -9,6 +9,15 @@ Godot 4.7 game in GDScript (ported from Unity 2018.3). Player-facing docs: `READ
 round, update it: tick off what is done, park unfinished work, open questions, ideas and
 "maybes" in the matching section. Do not keep separate TODO lists.
 
+## Art, design and plans
+[art/](art) holds Cannonade's art kit, copied from blender-ai on 2026-10-15 and laid out the same way: the
+art direction, the sources of every model, the pipeline that makes art, rules v2 with the recipes
+([art/game/design/rules.md](art/game/design/rules.md)), the decisions and the session plans. Read
+[art/CLAUDE.md](art/CLAUDE.md) before any art, design or planning work. The current plan is the
+highest-numbered file in [art/docs/sessions/](art/docs/sessions), and it can name game work too.
+[art/ROADMAP.md](art/ROADMAP.md) holds the art and design items, this ROADMAP.md the game code's rounds.
+[.mcp.json](.mcp.json) registers the Blender MCP server. Godot skips the folder through `art/.gdignore`.
+
 ## Layout
 - `scripts/components/` – one script per original Unity MonoBehaviour. A "GameObject"
   is a `Node3D`; its components are child nodes named after the script. Look them up with

@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The harbour of a painted wooden toy fortress island on a sunlit table, a sheet of teal sea around it, toy ships with striped sails, seen closer and from a lower angle than the game camera, in the late afternoon. Piers, boats, the quay buildings, crates and barrels, no people. Late afternoon: the cream stone turns gold, the sea a deeper teal, long soft shadows, the paint colours stay saturated. Repeating motifs: striped sails, crenellations like teeth, barrels and crates, a flag on every tower, pebble beaches, round trees, fat bevels on every block. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/ss_0b86a43dd3cd35b7cf1e6e03a0bc420861f9d96e.1920x1080.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "toy-harbour-harbour--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:06:08",
+  "outputs": [
+    "toy-harbour-harbour--nanobanana.png"
+  ]
+}

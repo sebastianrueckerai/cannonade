@@ -1,0 +1,24 @@
+{
+  "model": "fal-ai/flux-lora/inpainting",
+  "prompt": "a soft painted storybook illustration: the empty crenellated top of a round cream stone corner tower and the plain stone courtyard floor behind it, nothing standing on them",
+  "refs": [
+    "game/art-direction/rounds/10-duel-checked/masks/A-tower-paint.png",
+    "game/art-direction/rounds/10-duel-checked/masks/A-tower.png"
+  ],
+  "params": {
+    "strength": 0.8,
+    "image_size": {
+      "width": 1376,
+      "height": 768
+    },
+    "output_format": "png"
+  },
+  "seed": 13618285777920110851,
+  "description": null,
+  "label": "A-remove-tower-cannon",
+  "est_cost_usd": 0.07,
+  "created": "2026-10-12T00:50:26",
+  "outputs": [
+    "A-remove--flux-lora.png"
+  ]
+}

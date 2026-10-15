@@ -1,0 +1,34 @@
+{
+  "tool": "storeset.py compose",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": [
+    "game/art-direction/rounds/14-store-set/art-4x--aurasr.png",
+    "game/art-direction/rounds/14-store-set/portrait-a--nanobanana.png",
+    "game/art-direction/rounds/14-store-set/hero-wide--nanobanana.png",
+    "game/art-direction/rounds/15-cannonade/logo-c-cream.png"
+  ],
+  "params": {
+    "assets": "the ASSETS table of storeset.py, inputs in the order wide, tall, hero, logo"
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "icon.ico",
+    "icon_512.png",
+    "itch_cover.png",
+    "sheet.jpg",
+    "splash_1920x1080.png",
+    "steam_community_icon.png",
+    "steam_header_capsule.png",
+    "steam_library_capsule.png",
+    "steam_library_header.png",
+    "steam_library_hero.png",
+    "steam_library_logo.png",
+    "steam_main_capsule.png",
+    "steam_page_background.png",
+    "steam_small_capsule.png",
+    "steam_vertical_capsule.png"
+  ],
+  "note": "Inputs recovered from PICKS.md of rounds 14 and 15 and confirmed by re-running storeset.py compose, which gives pixel-identical PNGs. icon.ico and sheet.jpg were not compared."
+}

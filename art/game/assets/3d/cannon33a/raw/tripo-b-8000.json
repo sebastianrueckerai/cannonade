@@ -1,0 +1,26 @@
+{
+  "provider": "tripo",
+  "task_id": "de72e28b-fbec-4e1b-abd1-0874935abc78",
+  "inputs": [
+    "game/assets/3d/cannon33a/refs/b-clean.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "image_to_model",
+    "file": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 8000,
+    "files": "uploaded"
+  },
+  "label": "cannon33a tripo-b-8000",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 454,
+  "created": "2026-10-12T10:00:53",
+  "outputs": {
+    "model": "tripo-b-8000.glb",
+    "rendered_image": "tripo-b-8000-preview.webp"
+  }
+}

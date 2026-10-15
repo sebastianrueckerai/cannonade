@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A new frame in exactly the style, palette, lighting and camera of the attached image: the same painted toy fortress with cream walls, orange roofs and black cannons on a tile grid, but on a pure land map: green grass tiles with a few patches of yellow sand tiles and a few grey rock tiles, round trees, bushes and boulders, reaching every edge of the frame. No water at all, no sea, no river, no island, no coastline, the tile grid runs to every edge of the frame. Flat colours, no people, no text, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/colour_frame.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "map-land--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:56:07",
+  "outputs": [
+    "map-land--nanobanana.png"
+  ]
+}

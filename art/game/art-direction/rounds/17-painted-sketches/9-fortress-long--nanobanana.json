@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted sketch sheet and change only the large cannon on the right: give it a long, slender classic iron barrel, about twice as long as now, a standard coastal artillery cannon pointing nearly level to the left and slightly toward the viewer, not short and wide like a mortar. Keep its riveted iron housing, its round iron turntable, its place and size, and the painting style. The barrel must not touch the middle cannon. Everything else stays exactly as it is: the other two cannons, the paper background, the shadows. No text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/17-painted-sketches/2-fortress-guns--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "9-fortress-long",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T03:21:53",
+  "outputs": [
+    "9-fortress-long--nanobanana.png"
+  ]
+}

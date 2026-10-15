@@ -1,0 +1,13 @@
+{
+  "critic": "google/gemini-2.5-pro",
+  "images": [
+    "game/art-direction/rounds/08-castle-duel/picks-sheet.jpg",
+    "game/art-direction/rounds/08-castle-duel/shots.png",
+    "game/art-direction/rounds/08-castle-duel/capsule-small.png"
+  ],
+  "prompt": "critique-prompt.txt, max_side 2048, max_tokens 12000",
+  "answer": "",
+  "note": "empty answer, rerun at max_side 1536 and 16000 tokens as gemini.json",
+  "est_cost_usd": 0.03,
+  "created": "2026-10-12T01:05:00"
+}

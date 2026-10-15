@@ -1,0 +1,18 @@
+{
+  "model": "fal-ai/aura-sr",
+  "prompt": "",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png"
+  ],
+  "params": {
+    "upscale_factor": 4
+  },
+  "seed": null,
+  "description": null,
+  "label": "art-4x",
+  "est_cost_usd": 0.05,
+  "created": "2026-10-12T01:42:05",
+  "outputs": [
+    "art-4x--aurasr.png"
+  ]
+}

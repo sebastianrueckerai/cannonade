@@ -1,0 +1,19 @@
+{
+  "tool": "mask.py box",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": [
+    "game/art-direction/rounds/16-era-ladder/13-open-cradle-tier1--nanobanana.png"
+  ],
+  "params": {
+    "boxes": [
+      "0.04,0.10,0.48,0.60"
+    ]
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "masks-cradles.png"
+  ],
+  "note": "Made before mask.py box excluded its end coordinates. A re-run now gives the same mask minus one row and one column (1980 px differ, rows 154 to 922, columns 110 to 1321; the original has the extra row 922 and column 1321)."
+}

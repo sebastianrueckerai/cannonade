@@ -1,0 +1,24 @@
+{
+  "model": "fal-ai/flux-lora/inpainting",
+  "prompt": "a soft painted storybook illustration of a castle courtyard: a bronze cannon on a wooden carriage with two wheels standing on the stone courtyard floor inside the castle wall, its barrel raised steeply at 45 degrees and pointing up and to the right over the crenellated wall, the cream stone wall walk and battlements behind it",
+  "refs": [
+    "game/art-direction/rounds/09-duel-inside/paint/5-left-upper.png",
+    "game/art-direction/rounds/09-duel-inside/masks/5-left-upper-b.png"
+  ],
+  "params": {
+    "strength": 0.8,
+    "image_size": {
+      "width": 1376,
+      "height": 768
+    },
+    "output_format": "png"
+  },
+  "seed": 18296386562321294920,
+  "description": null,
+  "label": "5-inpaint-b-left-upper",
+  "est_cost_usd": 0.07,
+  "created": "2026-10-12T00:30:28",
+  "outputs": [
+    "5-inpaint-b-left-upper--flux-lora.png"
+  ]
+}

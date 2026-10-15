@@ -1,0 +1,10 @@
+{
+  "critic": "google/gemini-2.5-pro",
+  "images": [
+    "game/art-direction/rounds/21-ship/ship.png"
+  ],
+  "prompt": "You are the fault finder of a game-art round, not a taste judge. The image is a painted sheet of three toy warship designs for a cozy, bright toy-fortress strategy game. Check it against the requirements and list every fault you can see, each as \"N. [blocking|minor] fault\". If a requirement is met, do not mention it. If nothing is wrong, answer exactly PASS.\n\nRequirements: a hand-painted concept-sketch look with visible brushwork, never a 3D render, never low poly, never a game screenshot. Three ships side by side, each floating on its own square water tile about one metre wide, three-quarter view from slightly above. Chunky stylized toy proportions: fat warm brown wooden hulls with cream trim, high rounded bows and sterns. One dark iron cannon visible on each ship's deck. Warm cream canvas sails. Each ship about one tile long at the waterline and never wider than its tile. A small dark iron cannon on a low square plate floats on its own tile in front of the middle ship as the size reference, and every ship must read clearly bigger than it. Left ship a single-masted caravel with a red pennant, middle a longship with round shields along the side, right a two-masted brig with a gold lantern at the stern. No people, no text, no letters, no numbers, no watermark anywhere.\n",
+  "answer": "**Fault Analysis Complete**\n\nMy review of the provided image against the technical and artistic requirements is now complete. The following list details every identified fault, formatted as requested.\n\n1. [minor] fault: The longship's sail is not a solid warm cream color; it has red stripes.\n2. [minor] fault: There are letters on the shields of the middle longship. The prompt states \"no text, no letters, no numbers\".",
+  "est_cost_usd": 0.03,
+  "created": "2026-10-13T12:46:01"
+}

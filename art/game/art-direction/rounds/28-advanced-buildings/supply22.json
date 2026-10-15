@@ -1,0 +1,23 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint it as a concept artist's painted sketch sheet for a cozy, bright strategy game: loose hand-painted brushwork with visible strokes, soft painted light from a warm sunny afternoon coming from the front right, cheerful bright colours, a warm light cream paper background with a soft painted shadow under each object. It is a painting, not a 3D render, not low poly, not a game screenshot. Cozy and friendly like a storybook toy, never grim. No people, no text, no labels, no numbers, no letters, no watermark.\n\nThe fourth attached image shows the four small supply depots this game already has, each on its own one-tile square of grass. The fifth attached image shows the game's timber block, the wooden crate with log ends on the left. The new building is a bigger cousin of those depots, built from timber: the same painting style, the same warm brown timber, the same orange clay roof tiles. Never copy those depots.\n\nThe sheet shows three different designs for one new building, side by side from left to right, each standing on its own square of bright green grass and filling most of it, each in a three-quarter view from slightly above, with empty cream paper between them. The building is a timber yard, the bigger supply depot of a toy fortress: stacks of round logs under a roof, built of warm brown timber, wider and lower than the small depots. Every roof is made of perfectly flat smooth planes with straight edges, the orange clay tiles painted on them as a flat pattern, never raised tiles. Chunky simple shapes with flat faces and few big parts, friendly and toy-like. No people. Left: an open timber yard, a long orange tile roof on four thick timber posts over neat stacks of round logs with their light log ends facing out. Middle: a timber store with a closed plank room and a wide double door on one half, and a lean-to roof over stacked logs on the other half. Right: a square open shed under a pyramid roof of orange tiles, with stacked logs and two crates inside and a big sawhorse beside it.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/inspirations/monsters-expedition-keyart2.jpg",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg",
+    "game/art-direction/rounds/19-first-batch/depot.png",
+    "game/art-direction/anchors/resource_blocks.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 28 supply22",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-14T22:53:35",
+  "outputs": [
+    "supply22.png"
+  ]
+}

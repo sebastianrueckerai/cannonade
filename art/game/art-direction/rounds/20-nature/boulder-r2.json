@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Painted sketch sheet edit. Keep the sheet exactly as it is: same painting style, same warm cream paper, same three grass tiles with the boulder piles, same cannon, same moss and crack details, same soft shadows and light. Make only one change: remove all painted handwriting, words and letters from the image completely, including the lines under the piles, leaving plain paper. Everything else stays identical.",
+  "refs": [
+    "game/art-direction/rounds/20-nature/boulder.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 20 boulder r2",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T18:10:44",
+  "outputs": [
+    "boulder-r2.png"
+  ]
+}

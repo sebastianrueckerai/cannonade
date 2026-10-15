@@ -1,0 +1,44 @@
+{
+  "_status": "candidate fogged-teal, round 03",
+  "name": "Fogged teal",
+  "idea": "The lighthouse islands' air on the toy world: bone white stone, pale sand, softer grass, teal sea, a cream sky and fog. Red roofs.",
+  "team": {
+    "blue": {
+      "main": "#1f1f5e",
+      "highlight_plus": "#aaaadd",
+      "highlight_minus": "#ad3030"
+    },
+    "purple": {
+      "main": "#4a1671",
+      "highlight_plus": "#692d87",
+      "highlight_minus": "#e01414"
+    },
+    "teal": {
+      "main": "#197059",
+      "highlight_plus": "#aaddab",
+      "highlight_minus": "#ad3030"
+    },
+    "olive": {
+      "main": "#70631a",
+      "highlight_plus": "#aaddab",
+      "highlight_minus": "#ad3030"
+    }
+  },
+  "world": {
+    "sea": "#3dbdb0",
+    "sand": "#f3e3a8",
+    "grass": "#a3c95c",
+    "leaf": "#4f8f5a",
+    "stone": "#f7f1e4",
+    "wood": "#9c7a57",
+    "iron": "#4a4742",
+    "roofs": "#c5564a",
+    "sky": "#bfe6f0",
+    "fog": "#f1ece0"
+  },
+  "ui": {
+    "ui_accent": "#e8653c",
+    "ui_light": "#fdf8ee",
+    "ui_dark": "#2f4a4a"
+  }
+}

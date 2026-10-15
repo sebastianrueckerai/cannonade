@@ -1,0 +1,19 @@
+{
+  "model": "ideogram/v4",
+  "prompt": "Steam capsule key art for a cheerful build-and-battle strategy game, a bright painterly 2D illustration with bold simple shapes, clean painted edges and saturated warm colours, not a 3D render. A toy-like island fortress with cream walls, square battlements and orange roofs, a bronze cannon on the wall firing a round white smoke puff with a cannonball in the air, a sailing ship with red and white striped sails big on the right on a blue sea, a yellow sand beach, round green trees, a warm sky. The game title \"GRID CANNONS\" in big chunky friendly rounded capitals, white with a thin warm orange outline and a soft shadow, a slight bounce to the letters, in the upper third on the sky, part of the painting, clear to read. Bright, friendly, bold. No people, no other text, no watermark.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_16_9",
+    "rendering_speed": "BALANCED",
+    "expansion_model": "None",
+    "output_format": "png"
+  },
+  "seed": 712495368,
+  "description": null,
+  "label": "2-chunky--ideogram",
+  "est_cost_usd": 0.09,
+  "created": "2026-10-11T23:10:18",
+  "outputs": [
+    "2-chunky--ideogram.png"
+  ]
+}

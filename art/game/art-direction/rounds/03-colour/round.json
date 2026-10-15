@@ -1,0 +1,83 @@
+{
+  "cols": 1,
+  "cell": 768,
+  "parallel": 3,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      }
+    }
+  },
+  "style": "Flat colours, no textures, no new objects, no text, no watermark. The first attached image is the frame to recolour, the second is the palette with the colour per surface. Keep every object, shape, shadow and the composition of the first image exactly as it is and change only the colours.",
+  "frames": {
+    "world": "Recolour the first image to the palette in the second image: the sea to {sea}, the sand and beaches to {sand}, the grass tiles to {grass}, the tree leaves and bushes to {leaf}, the stone walls, towers and keep to {stone}, the wood of piers, carriages and ships to {wood}, the cannon barrels to {iron}, the roofs to {roofs}, the sails stay white with stripes in {ui_accent}. {style}"
+  },
+  "directions": [
+    {
+      "slug": "painted-toy",
+      "name": "Painted toy",
+      "sea": "#31b6ba",
+      "sand": "#f7d78a",
+      "grass": "#b9c440",
+      "leaf": "#3f8a3a",
+      "stone": "#f5e9c8",
+      "wood": "#8a5a3a",
+      "iron": "#3a322c",
+      "roofs": "#c9653f",
+      "sky": "#5cc0fb",
+      "fog": "#dff2f2",
+      "ui_accent": "#e0453a",
+      "ui_light": "#fff4d6",
+      "ui_dark": "#2b3a4a",
+      "refs": [
+        "../01-directions/toy-harbour-world--nanobanana.png",
+        "swatches-painted-toy.png"
+      ]
+    },
+    {
+      "slug": "market-warmth",
+      "name": "Market warmth",
+      "sea": "#2f9fc9",
+      "sand": "#f0c975",
+      "grass": "#8fbf3c",
+      "leaf": "#3d7f34",
+      "stone": "#e8d6b0",
+      "wood": "#7a4a2e",
+      "iron": "#33302e",
+      "roofs": "#d8632f",
+      "sky": "#6cb9f5",
+      "fog": "#efe3d0",
+      "ui_accent": "#c8322d",
+      "ui_light": "#fbefd9",
+      "ui_dark": "#3a2e28",
+      "refs": [
+        "../01-directions/toy-harbour-world--nanobanana.png",
+        "swatches-market-warmth.png"
+      ]
+    },
+    {
+      "slug": "fogged-teal",
+      "name": "Fogged teal",
+      "sea": "#3dbdb0",
+      "sand": "#f3e3a8",
+      "grass": "#a3c95c",
+      "leaf": "#4f8f5a",
+      "stone": "#f7f1e4",
+      "wood": "#9c7a57",
+      "iron": "#4a4742",
+      "roofs": "#c5564a",
+      "sky": "#bfe6f0",
+      "fog": "#f1ece0",
+      "ui_accent": "#e8653c",
+      "ui_light": "#fdf8ee",
+      "ui_dark": "#2f4a4a",
+      "refs": [
+        "../01-directions/toy-harbour-world--nanobanana.png",
+        "swatches-fogged-teal.png"
+      ]
+    }
+  ]
+}

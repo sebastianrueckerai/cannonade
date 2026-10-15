@@ -1,0 +1,69 @@
+{
+  "asset_id": "flak22",
+  "parts": {
+    "guns": {
+      "verts": 1174,
+      "tris": 604,
+      "non_manifold_edges": 1204,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.001,
+        0.0017,
+        0.6984
+      ]
+    },
+    "mount": {
+      "verts": 608,
+      "tris": 379,
+      "non_manifold_edges": 603,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "plate": {
+      "verts": 40,
+      "tris": 20,
+      "non_manifold_edges": 40,
+      "materials": [
+        "plate_plate"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 1822,
+  "tris": 1003,
+  "non_manifold_edges": 1847,
+  "materials": [
+    "Material_0",
+    "plate_plate"
+  ],
+  "dims_m": [
+    1.9,
+    1.9,
+    1.6642
+  ],
+  "bbox_min": [
+    -0.95,
+    -0.95,
+    0.0
+  ],
+  "bbox_max": [
+    0.95,
+    0.95,
+    1.6642
+  ],
+  "solidity": 0.855,
+  "limits_ok": true,
+  "limit_failures": []
+}

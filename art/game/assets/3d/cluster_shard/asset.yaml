@@ -1,0 +1,16 @@
+asset_id: cluster_shard
+route: procedural
+class: prop
+dimensions:            # metres, Blender axes, Z up. A 0.12 m chunk of iron
+  max_x: 0.12
+  max_y: 0.12
+  max_z: 0.12
+budget:
+  max_tris: 100
+  max_materials: 1
+parts:
+  - cluster_shard
+pivots:
+  origin: centre       # the projectile flies about its centre, so the build's origin stays
+paint:
+  cluster_shard: {kind: iron, seed: 83}

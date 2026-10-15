@@ -1,0 +1,10 @@
+{
+  "critic": "google/gemini-2.5-pro",
+  "images": [
+    "game/assets/3d/ship/previews/sheet.png"
+  ],
+  "prompt": "You are judging a built 3D game asset, a toy warship for a grid artillery game. The image is a render sheet: front view, wireframe front, back view, right side view, textured three-quarter view.\n\nThe requirements, in the asset's own words: a chunky toy warship, caravel, fat warm brown wooden hull with cream trim, high rounded bow and stern, one tall mast with one big warm cream square sail, a small red pennant at the mast top, a clean empty wooden deck. The ship carries one very large dark iron cannon, far too big for the little boat: a fat iron gun on a low wooden carriage that fills the middle of the deck, its thick barrel pointing forward over the bow, rising well above the railing. The gun must look congruous with a small toy iron cannon scaled up to dominate the boat. Budgets: whole model under 1.12 m long, 1.2 m tall, 1500 triangles, hull one closed solid, gun solid iron and wood geometry.\n\nName only faults you can point to in the panels: floating or detached pieces, holes through the hull, a sail made of criss-crossing flat cards, the gun intersecting the mast or sailing through the sail fabric, the barrel clipping deep into the deck or the bow, a carriage floating above the deck, missing barrel or carriage, doubled guns, the bow and stern confused with each other, textures smeared across wrong parts. For each fault name the panel and where in it. If a panel looks correct, do not invent faults. End with VERDICT: PASS or VERDICT: FAIL.\n",
+  "answer": "2_right: The forward stay (rope from the mast top to the bow) clips through the upper port corner of the sail.\n4_three_quarter: The forward stay is visibly intersecting and passing through the fabric of the sail.\n6_texture: The dark line of the forward stay can be seen incorrectly cutting across the top-left corner of the sail.\n\nVERDICT: FAIL",
+  "est_cost_usd": 0.03,
+  "created": "2026-10-13T13:22:03"
+}

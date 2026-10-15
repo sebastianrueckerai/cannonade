@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The attached image shows the game title Grid Cannons in white hand-lettered script with a soft shadow across its upper third. Make a new image with only that title: the words Grid Cannons, capital G and capital C, in exactly the same lettering, the same letter shapes, the same proportions and the same slight bounce, white letters with a thin dark brown outline, hex 3a2e28, and a soft dark shadow below them, large, on one line, centred, filling about four fifths of the width. The background is a completely flat pure green, hex 00FF00, one colour from edge to edge: no painting, no castle, no sky, no clouds, no texture, no gradient, no frame, nothing else.",
+  "refs": [
+    "game/art-direction/rounds/07-key-art/4-painted-refs--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "b-outline-title--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T01:43:07",
+  "outputs": [
+    "b-outline-title--nanobanana.png"
+  ]
+}

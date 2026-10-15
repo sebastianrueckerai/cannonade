@@ -1,0 +1,48 @@
+{
+  "asset_id": "shell",
+  "route": "procedural",
+  "inputs": {
+    "asset_yaml_sha": "a50615601940",
+    "build_py_sha": "3b6f1bd949ef"
+  },
+  "steps": [
+    {
+      "name": "build",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "normalise",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "materials",
+      "ok": true,
+      "elapsed_s": 0.59
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.44
+    },
+    {
+      "name": "export",
+      "ok": true,
+      "elapsed_s": 0.01
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-14",
+  "cost_usd": 0,
+  "created": "2026-10-14T14:24:35+02:00"
+}

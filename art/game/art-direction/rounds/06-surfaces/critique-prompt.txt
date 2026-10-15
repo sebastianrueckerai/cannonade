@@ -1,0 +1,12 @@
+You are an independent critic for a low-poly browser strategy game in the spirit of Rampart. The world, the palette, the shapes and the light are decided: a painted toy fortress on a tile grid, cheerful, chunky, sunlit, cream stone, orange roofs, green grass, yellow sand, blue sea, an afternoon sun from the front right, a cream fog band at the horizon. This phase decides what stays the same across the game, the menu, the splash and the store, and the direction of the title lettering. Your job is faults and readability, not taste.
+
+Image 1 is the world anchor: the game's look, the reference every frame below was edited from.
+Image 2 is the contact sheet, eight images labelled: 1 carved wood, 2 painted sign, 3 naval brass, the three title studies of the words GRID CANNONS; 4a and 4b, two attempts at the main menu background from a hero angle with the upper third left open for the title; 5a and 5b, two attempts at the splash screen as a quiet mood painting; 6, a store key-art still with evening light and a battle moment.
+Image 3 is the title size test: each of the three studies cropped to its letters and scaled to 460, 231 and 120 pixels wide, the Steam header capsule, the small capsule and about half of that, magnified twice without smoothing.
+
+Answer in this order, short and concrete:
+1. The titles, 1 to 3: which still reads as GRID CANNONS at 231 px and at 120 px, and which letter or word breaks first. Which belongs to the world of image 1 by material and colour, and which looks like it came from another game. Name any letter that is malformed.
+2. The frames, 4a to 6: for each, what drifted from image 1 that the prompt did not ask for: palette colours (the sky, the sea, the grass, the stone), shapes, detail, the flag colour, new objects. Say which of 4a and 4b, and which of 5a and 5b, keeps closer to the palette of image 1 and why.
+3. The menu: does 4a or 4b leave a usable title zone in the upper third, and would a centred button panel 390 px wide at 1280 by 720 cover the fortress gate. The splash: does 5a or 5b hold the island as the one focal point. The store: does 6 read as the same game as image 1 at a glance, and what in it would you remove.
+4. Three rules for the cross-domain table: one thing that must never change between the game and the store, one thing the store may change, one thing the UI must do to belong to this world.
+5. Rank the three titles, readability at the small capsule first, fit to the world second, one sentence each. End with one line that starts with RANKING: followed by the three numbers in order.

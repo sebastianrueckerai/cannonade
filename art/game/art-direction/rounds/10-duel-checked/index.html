@@ -1,0 +1,73 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>10-duel-checked</title>
+<style>
+body{font:15px/1.5 system-ui,sans-serif;margin:0;padding:24px;background:#f4f4f2;color:#111}
+h1{margin:0 0 4px} .meta{color:#666;margin-bottom:24px}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:24px}
+section{background:#fff;padding:16px;border-radius:6px} h2{margin:0 0 12px;font-size:18px}
+.imgs{display:flex;gap:8px;align-items:flex-start} .imgs a{flex:1} .imgs img{width:100%;display:block;border:1px solid #ddd}
+pre{white-space:pre-wrap;font-size:12px;background:#f7f7f7;padding:8px} details{margin-top:8px}
+.notes,.crit{background:#fff;padding:16px;margin-bottom:24px;border-radius:6px}
+</style>
+<h1>10-duel-checked</h1><div class="meta">5 images · ~$0.70</div>
+<div class="notes"><pre># Round 10 notes
+
+Sebastian on round 09: fix the issues he raises, point by point, and never show an image with an unfixed issue. F still had the misaligned grid and the only text. No cannon fired in any image. C had one intact and one broken cannon. A and B still had cannons on the walls and towers of the smaller castle. Later: the castles and their keeps were near copies of each other, the same tower with the same building on the same side.
+
+Why the faults got through: the far castles were checked at a size where a wall walk and a courtyard floor look alike, the firing step of round 08 was dropped when round 09 split the scene from the shot, and F was put on the sheet as a comparison although it had known faults. The fix is the [checklist](checklist.md), every line checked in a crop, the far castle at 4x, and only passing images on the sheet.
+
+## What was done
+
+1. A and B of round 09, one edit each through nano-banana, [round.json](round.json): the far castle&#x27;s wall and tower cannons moved to the courtyard floor, the near castle&#x27;s front cannon fired. Both shots passed in the crop. Both far castles still kept the near castle&#x27;s design.
+2. The far castle replaced by a clearly different one through nano-banana, [round-far.json](round-far.json): a tall round crenellated keep, round corner towers, a long hall, the gate at the right. Checked at 4x, [far-AB.png](far-AB.png): B passed, its two cannons on the floor behind the front battlements. A failed, one cannon on the round corner tower.
+3. A&#x27;s tower cannon removed with `fal-ai/flux-lora/inpainting` at strength 0.8 on a paint-over through a mask, [far-A-final.png](far-A-final.png): a clean removal.
+4. The grid against the walls, [grid-AB.png](grid-AB.png): B&#x27;s walls run with the grid lines. A&#x27;s near castle front wall runs at about 27 degrees and the grid beside it at about 13. A fails line 10 and is not shown.
+
+## Not shown, and why
+
+| image | failing lines |
+|---|---|
+| A, round 10 | 10: the grid not parallel to the near castle; 8: the far castle has one cannon after the removal |
+| round 09 C | 5 and 6: a cannon on the wall, a barrel on two carriages; 3: no shot |
+| round 09 D | 3, 9: one near cannon, no shot |
+| round 09 E | 3, 9: one near cannon, no shot |
+| round 09 F | 10: the grid; 13: text; 3: no shot |
+
+## Lessons
+
+- The far castle decides the checks: it is a quarter of the size of the near one and hides every wall-mounted cannon at 2x. 4x is the floor.
+- A rule from an earlier round has to be in every later prompt; the shot was lost between rounds 08 and 09 because the split into two steps was not carried.
+- Replacing a whole building through a mask works where moving one small object does not: the redesigned far castle came out right in one of two, the removal of one cannon was clean.
+</pre></div>
+<main><section><h2>A-far--nanobanana</h2><div class="imgs"><a href="A-far--nanobanana.png"><img loading="lazy" src="A-far--nanobanana.png" alt=""></a></div><details><summary>google/nano-banana-2.1/edit · ~$0.15</summary><pre>Edit this painting and change only the far castle in the upper right; replace it with a clearly different castle in the same soft painted style, at the same place and the same size on the grid, its walls running along the same grid lines: a tall round stone keep with a crenellated top and a blue flag, no timber lookout and no pointed roof on it; round corner towers instead of square ones; a long hall with an orange tiled roof along its left wall and one small house at the back right; a gate in the right part of its front wall. Inside, two bronze cannons, each on a wooden carriage with two wheels, stand on the open courtyard floor between the keep and the front wall, partly hidden behind the front battlements, their barrels raised to about 45 degrees and pointing toward the near castle in the lower left, both the same size. No cannon on a wall or a tower. Everything else in the painting stays exactly as it is: the near castle, its cannons, the shot with its smoke and its cannonball, the land, the river, the grid, the colours. No text, no letters, no watermark.</pre></details></section><section><h2>A-fix--nanobanana</h2><div class="imgs"><a href="A-fix--nanobanana.png"><img loading="lazy" src="A-fix--nanobanana.png" alt=""></a></div><details><summary>google/nano-banana-2.1/edit · ~$0.15</summary><pre>Edit this painting and change only two things. First, the far castle in the upper right: remove the two cannons that stand on its front wall and on its corner tower and rebuild the battlements and the tower top there as plain stone; then place two bronze cannons, each on a wooden carriage with two wheels, standing on the open courtyard floor inside that castle between the keep and the front wall, partly hidden behind the front battlements, their barrels raised to about 45 degrees and pointing toward the near castle in the lower left, both the same size, as big as the near castle&#x27;s cannons would look at that distance. Second, the near castle&#x27;s front cannon, the one nearer the bottom right of its pair fires at the far castle: a bright yellow flash and one round white smoke cloud right at its muzzle, and one dark cannonball a short way out beyond the muzzle exactly on the line of the barrel, with a faint trail back to the muzzle. Everything else stays exactly as it is: the near castle, its other cannon, the land, the river, the path, the tile grid, the trees, the colours, the light. No text, no letters, no watermark.</pre></details></section><section><h2>A-remove-tower-cannon</h2><div class="imgs"><a href="A-remove--flux-lora.png"><img loading="lazy" src="A-remove--flux-lora.png" alt=""></a></div><details><summary>fal-ai/flux-lora/inpainting · ~$0.04</summary><pre>a soft painted storybook illustration: the empty crenellated top of a round cream stone corner tower and the plain stone courtyard floor behind it, nothing standing on them</pre></details></section><section><h2>B-far--nanobanana</h2><div class="imgs"><a href="B-far--nanobanana.png"><img loading="lazy" src="B-far--nanobanana.png" alt=""></a></div><details><summary>google/nano-banana-2.1/edit · ~$0.15</summary><pre>Edit this painting and change only the far castle in the upper right; replace it with a clearly different castle in the same soft painted style, at the same place and the same size on the grid, its walls running along the same grid lines: a tall round stone keep with a crenellated top and a blue flag, no timber lookout and no pointed roof on it; round corner towers instead of square ones; a long hall with an orange tiled roof along its left wall and one small house at the back right; a gate in the right part of its front wall. Inside, two bronze cannons, each on a wooden carriage with two wheels, stand on the open courtyard floor between the keep and the front wall, partly hidden behind the front battlements, their barrels raised to about 45 degrees and pointing toward the near castle in the lower left, both the same size. No cannon on a wall or a tower. Everything else in the painting stays exactly as it is: the near castle, its cannons, the shot with its smoke and its cannonball, the land, the river, the grid, the colours. No text, no letters, no watermark.</pre></details></section><section><h2>B-fix--nanobanana</h2><div class="imgs"><a href="B-fix--nanobanana.png"><img loading="lazy" src="B-fix--nanobanana.png" alt=""></a></div><details><summary>google/nano-banana-2.1/edit · ~$0.15</summary><pre>Edit this painting and change only two things. First, the far castle in the upper right: remove the two cannons that stand on its front wall and on its corner tower and rebuild the battlements and the tower top there as plain stone; then place two bronze cannons, each on a wooden carriage with two wheels, standing on the open courtyard floor inside that castle between the keep and the front wall, partly hidden behind the front battlements, their barrels raised to about 45 degrees and pointing toward the near castle in the lower left, both the same size, as big as the near castle&#x27;s cannons would look at that distance. Second, the near castle&#x27;s front cannon, the right one of its pair fires at the far castle: a bright yellow flash and one round white smoke cloud right at its muzzle, and one dark cannonball a short way out beyond the muzzle exactly on the line of the barrel, with a faint trail back to the muzzle. Everything else stays exactly as it is: the near castle, its other cannon, the land, the river, the path, the tile grid, the trees, the colours, the light. No text, no letters, no watermark.</pre></details></section></main>
+<h2>Critiques</h2><div class="crit"><details><summary>gemini-B (google/gemini-2.5-pro)</summary><pre>1. PASS: The image shows a castle firing at another castle; no ships are depicted.
+2. PASS: The scene is presented from an elevated, top-down perspective common in strategy games.
+3. PASS: Exactly one cannon is shown firing, with a prominent smoke plume and a visible cannonball in mid-air.
+4. PASS: The cannonball&#x27;s trajectory perfectly aligns with the angle and direction of the firing barrel.
+5. PASS: All visible cannons are correctly placed on the courtyard ground inside the castle walls.
+6. PASS: All cannons are depicted as complete objects with a barrel, carriage, and wheels, and are properly grounded.
+7. PASS: The cannon barrels are raised at a high angle, appropriate for firing in an arc over the walls.
+8. PASS: The cannons appear to be a consistent model, with size variation correctly accounted for by perspective and distance.
+9. PASS: The two castles have different layouts and are not simple copies or mirror images of each other.
+9b. PASS: The castles have clearly different keeps, building arrangements, and wall structures.
+10. PASS: The ground&#x27;s tile grid is correctly aligned with the walls of both castles.
+11. PASS: The composition is clear and uncluttered, with all elements easily discernible.
+12. PASS: The artwork has a distinct painterly style with soft, desaturated colors, avoiding a 3D render appearance.
+13. PASS: There is no text, title, or watermark anywhere in the image.
+
+VERDICT: PASS</pre></details><details><summary>glm-B (glm-5v-turbo)</summary><pre>1. **PASS**: Two castles engage each other; no ships appear.
+2. **PASS**: Scene uses an isometric/top-down perspective.
+3. **PASS** (from Image 2): Only the right cannon of the near castle fires, showing a large white smoke plume and a distinct black ball in flight.
+4. **PASS** (from Image 2): The ball travels on the exact axis of the raised barrel; muzzle flash and smoke originate at the barrel’s mouth.
+5. **PASS** (from Image 2): Both cannons rest on the courtyard ground inside the perimeter walls, not on walls, towers, or roofs.
+6. **PASS** (from Image 2): Each cannon consists of a single metal barrel mounted on a complete wooden carriage with wheels, sitting firmly on the ground.
+7. **PASS** (from Image 2): The firing barrel is elevated to approximately 45°, clearly aimed to clear the front wall toward the distant castle.
+8. **PASS** (from Image 2): The cannons on both castles are identical in design; the far castle’s cannons are smaller only due to perspective distance (consistent with the 4× vs. 2× crop scale).
+9. **PASS**: Each castle possesses cannons, and their architectures are distinct, not mirrored.
+9b. **PASS**: Keeps differ (square with pyramidal roof vs. round tower with crenellations and flag); wall layouts, tower placements, and auxiliary buildings are all different.
+10. **PASS**: The green tile grid lines run parallel to the castle walls and share the same isometric perspective.
+11. **PASS**: Composition is uncluttered; all elements (trees, rocks, buildings) are large enough to be clearly readable.
+12. **PASS**: Art style is painterly with soft, naturalistic colours and brushwork; it lacks the hard edges or shading typical of 3D renders.
+13. **PASS**: The illustration contains no text, titles, or UI elements.
+
+VERDICT: PASS</pre></details></div>

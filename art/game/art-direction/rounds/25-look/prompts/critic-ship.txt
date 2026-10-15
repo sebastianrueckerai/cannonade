@@ -1,0 +1,8 @@
+You are the art critic of a cozy painted strategy game. Image 1 and 2 are the style references (storybook toy world, warm sunny afternoon, friendly, never grim). Image 3 is the designer's cozy reference: a soft warm ivory-golden look he loves. Image 4 is his readability reference: a low-sun honey look whose longer shadows make the individual ground tiles pop, so players can read the grid. Image 5 is the SHIPPED look, wide gameplay view: the deliberate midpoint of the two references. Image 6 is the same shipped look close up. Only sky, lighting, colour grading and post differ between images 3, 4 and 5; the 3D scene is identical.
+
+The designer's brief: keep the soft cozy mood of image 3, but make the ground tiles read as clearly as in image 4.
+
+Answer:
+1. Does image 5 sit between the two references as intended: about as cozy as image 3, grid about as readable as image 4? Judge the wide view from afar, squinting.
+2. Any fault in image 5 that survives afar and close (blown highlights, washed-out warmth, muddy greens, shadows too dark, sky band too dark or grey, backdrop clash)?
+3. One clear verdict line: ship as is, or one specific knob to change first?

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Relight the attached frame: evening, the sun low on the right at about 15 degrees, long warm shadows falling to the left, orange light on the lit faces, an orange and pink sky, the sea reflecting the sky in long streaks. Keep every object, every colour of the palette, the camera, the composition and the tile grid of the attached image exactly as it is. Change only the direction and the colour of the light, the shadows, the sky, the fog and the surface of the water. Flat colours, no textures, no new objects, no people, no text, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/05-light/1-noon--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "6-evening-world--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T22:11:58",
+  "outputs": [
+    "6-evening-world--nanobanana.png"
+  ]
+}

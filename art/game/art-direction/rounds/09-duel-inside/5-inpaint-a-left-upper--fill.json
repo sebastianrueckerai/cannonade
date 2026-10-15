@@ -1,0 +1,19 @@
+{
+  "model": "fal-ai/flux-pro/v1/fill",
+  "prompt": "a bronze cannon on a wooden carriage with two wheels standing on the stone courtyard floor, its barrel raised steeply at 45 degrees pointing up and to the right, the same size as the other cannon, soft painted illustration matching the surroundings",
+  "refs": [
+    "game/art-direction/rounds/09-duel-inside/5-side-closer-scene--nanobanana.png",
+    "game/art-direction/rounds/09-duel-inside/masks/5-left-upper.png"
+  ],
+  "params": {
+    "output_format": "png"
+  },
+  "seed": 1534568018,
+  "description": null,
+  "label": "5-inpaint-a-left-upper",
+  "est_cost_usd": 0.1,
+  "created": "2026-10-12T00:27:43",
+  "outputs": [
+    "5-inpaint-a-left-upper--fill.png"
+  ]
+}

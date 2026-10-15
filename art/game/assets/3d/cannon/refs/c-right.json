@@ -1,0 +1,13 @@
+{
+  "tool": "crop",
+  "source": "game/assets/3d/cannon/refs/c-turnaround.png",
+  "box_px": [
+    1074,
+    1134,
+    1967,
+    1966
+  ],
+  "est_cost_usd": 0,
+  "note": "cut at the empty gap between views, centred, one shared scale per gun, the largest view fills 80 percent, 1024 px",
+  "created": "2026-10-12T09:00:04"
+}

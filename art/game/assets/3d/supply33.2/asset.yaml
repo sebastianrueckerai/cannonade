@@ -1,0 +1,14 @@
+asset_id: supply33.2
+route: generative     # Meshy, then the cleanup by hand: cleanup.json, cleanup.py
+class: building
+dimensions:           # metres, Blender axes, Z up. The footprint is 3.0 m square
+  max_x: 3.0
+  max_y: 3.0
+  max_z: 3.5          # under the base keep, 4.3 m and up (D40)
+budget:
+  max_tris: 600       # D37
+  max_materials: 1
+parts:
+  - supply33
+pivots:
+  origin: ground_centre

@@ -1,0 +1,10 @@
+{
+  "source": "meshy-b-550",
+  "part": "supply33",
+  "turn": 90,
+  "fit": 2.9,
+  "why": {
+    "fit": "the footprint less 5 cm per side, like the 1x1 depots and the base",
+    "turn": "the ramp and the door under the hoist face the camera, as in the picked sketch; at turn 0 they faced the left side"
+  }
+}

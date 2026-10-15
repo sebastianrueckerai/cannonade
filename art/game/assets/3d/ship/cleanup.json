@@ -1,0 +1,9 @@
+{
+  "source": "tripo-hull",
+  "part": "ship",
+  "turn": 0,
+  "fit": 1.0,
+  "texture_px": 512,
+  "max_tris": 1200,
+  "why": "Hull with empty deck from the picked caravel side view (D47), face_limit 1500 at Tripo. Fit 1 m: the hull is one water tile long. Turn 0: the sternpost sits at -Y, so the bow is already at +Y, which exports to glTF -Z, Godot forward (barrel.py convention). Gun built by hand in gun.py after this."
+}

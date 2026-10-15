@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Relight the attached frame: early morning, the sun low on the left at about 25 degrees above the horizon, long soft shadows falling to the right, cool pale light, a light haze at the horizon, the sea calm with a faint sparkle. Keep every object, every colour of the palette, the camera, the composition and the tile grid of the attached image exactly as it is. Change only the direction and the colour of the light, the shadows, the sky, the fog and the surface of the water. Flat colours, no textures, no new objects, no people, no text, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/05-light/1-noon--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "2-morning-world--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T22:11:40",
+  "outputs": [
+    "2-morning-world--nanobanana.png"
+  ]
+}

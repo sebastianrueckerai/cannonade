@@ -1,0 +1,22 @@
+{
+  "provider": "tripo-fal",
+  "task_id": "01a134e7-0454-7651-a5d1-5a181f10fa8e",
+  "inputs": [
+    "game/art-direction/rounds/21-ship/ship-hull.png"
+  ],
+  "params": {
+    "endpoint": "tripo3d/tripo/v2.5/image-to-3d",
+    "texture": "standard",
+    "pbr": false,
+    "face_limit": 1500
+  },
+  "label": "round 21 ship hull, empty deck",
+  "credits": 0.3,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 67,
+  "created": "2026-10-13T12:56:20",
+  "outputs": {
+    "model_mesh": "tripo-hull.glb",
+    "rendered_image": "tripo-hull-preview.webp"
+  }
+}

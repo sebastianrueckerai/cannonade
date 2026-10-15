@@ -1,0 +1,17 @@
+You are an independent critic for a low-poly browser strategy game in the spirit of Rampart. The world and the palette are decided: a painted toy fortress on a tile grid, cheerful, chunky, sunlit, cream stone, orange roofs, green grass, yellow sand, blue sea. This is the shape phase. Your job is faults and readability, not taste.
+
+Image 1 is the picks sheet: the same fortress corner redrawn six times from one anchor crop, numbered 1 to 6. Rows are detail levels: 1 and 2 the least detail (one block and a roof per house, plain wall slabs), 3 and 4 the middle (a door, two windows, a chimney, a few crates), 5 and 6 the most (timber framing, tile ridges, shutters, props, a well, a cart). Columns are shape languages: odd numbers rounded and chunky (fat bevels, rounded corners, thick slabs), even numbers faceted and sharp (hard edges, crisp corners, flat facets).
+
+Image 2 is the 13 pixel test: the anchor crop and the six edits scaled so one tile is 25 pixels wide and a one metre wall 12 pixels tall, the game's default view, then magnified four times without smoothing. The game must read at this size: walls against grass, sand and sea, the gate, the towers, the cannons inside, the roofs. Detail only has to read zoomed in, at 96 pixels per metre.
+
+Image 3 is a sheet of eight yard structures in the toy style: crane, slipway, scaffold, tower, forge, stacked timber, stone and iron. They come from a reference the director wants to steal into this world.
+
+Image 4 shows three maps in the style: the anchor island, a river map and a pure land map. The game builds all three from one tileset, so the look must hold without the sea.
+
+Answer in this order, short and concrete:
+1. For each of the six corner edits: what drifted from the anchor that the prompt did not ask for (colour, camera, objects added or lost), and what reads worse at 13 pixels than the anchor does. Name the number.
+2. At 13 pixels: which language keeps the wall edge, the battlements and the gate readable against the grass and the sand, which loses them. Which detail level adds nothing visible at 13 pixels. Say what a wall must show at 13 pixels for this game, in one sentence.
+3. The yard structures: which of the eight would not read at the default view as what it is, and which carry more detail than the fortress walls next to them. Which one would you drop.
+4. The maps: does the look hold on the river map and the land map without the sea, and what is the first thing that breaks.
+5. Three rules for the geometry file, as numbers where you can: bevel width as a fraction of a one metre tile, parts per building for the middle level, what the wall shows at 13 pixels and what only at 96.
+6. Rank the six for readability at the game's default view, one sentence each. End with one line that starts with RANKING: followed by the six numbers in order.

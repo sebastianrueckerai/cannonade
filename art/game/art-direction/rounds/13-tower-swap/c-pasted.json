@@ -1,0 +1,19 @@
+{
+  "tool": "mask.py paste",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": [
+    "game/art-direction/rounds/11-duel-more/1-final.png",
+    "game/art-direction/rounds/13-tower-swap/c-swap--nanobanana.png",
+    "game/art-direction/rounds/13-tower-swap/masks/far.png"
+  ],
+  "params": {
+    "feather": 8
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "c-pasted.png"
+  ],
+  "note": "Inputs recovered from PICKS.md and confirmed by re-running mask.py paste, which gives a pixel-identical output."
+}

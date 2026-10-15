@@ -1,0 +1,19 @@
+{
+ "tool": "croptop.py",
+ "argv": [
+  "game/art-direction/rounds/17-painted-sketches/croptop.py",
+  "game/art-direction/rounds/17-painted-sketches/6-blocks-row-blocks--nanobanana-b.png",
+  "game/art-direction/rounds/17-painted-sketches/6-blocks-row-cropped.png",
+  "0.24"
+ ],
+ "inputs": [
+  "6-blocks-row-blocks--nanobanana-b.png"
+ ],
+ "box_px": [
+  0,
+  369,
+  2752,
+  1536
+ ],
+ "est_cost_usd": 0.0
+}

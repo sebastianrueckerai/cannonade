@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painting and change only the white smoke trail between the smoke cloud of the firing cannon in the near castle and the flying cannonball: replace the curling, looping trail with one faint thin straight white streak that runs in a straight line from the smoke cloud to the cannonball. Keep the cannonball, the smoke cloud, the river, the sand path, the grass and everything else exactly as it is. No text, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/11-duel-more/1-fixed-fix--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "1-straight-trail",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T01:04:43",
+  "outputs": [
+    "1-straight-trail--nanobanana.png"
+  ]
+}

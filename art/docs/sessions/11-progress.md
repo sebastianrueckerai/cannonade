@@ -1,0 +1,25 @@
+# Session 11 progress
+
+- Budget: 14 USD cap from 2026-10-14T13:34. Spent: 0 so far (all-procedural round so far; the gate critic adds ~0.03).
+- Worktree: `.claude/worktrees/session11-repaint` (branch `worktree-session11-repaint`); `.env.tools`/`.env.session` linked to the main checkout. Blender runs headless (`--background --command blender_mcp`), socket on 9876.
+- Plan: [11-repaint.md](11-repaint.md). C12: the nine wall pieces, tile, shell, gun plates leave the flat `materials.py` path onto the D49 painted path; plus the D52 ivory-tree readability fix.
+- Key mechanics found while reading:
+  - The game multiplies the tile colour onto the mesh material (`U.set_color` sets `albedo_color`), so the tile texture must stay near-white grain.
+  - Walls are chamfered box unions with no UVs; the shell is a uv_sphere with natural UVs; plates are boxes built in `make_plate` (blender/barrel.py) from `split.json` `plate.colour` (#544d52), and `ArtPlate.gd` does not recolour, so a painted plate ships as-is.
+  - Bible conflict to close at the end: chapter 3/7 "no texture drawn on a wall face" was the flat-era rule; C12 amends it by Sebastian's ask. Needs a decision entry + bible edit in the close step.
+- Step 1 (wall paint candidates): new `pipeline/blender/paint.py` (seeded painters: stone, iron, plate, grain; world-metre cube projection, u periodic so wall runs continue the grain), `materials.py` runs it when asset.yaml has a `paint:` block. Candidates render under the D52 light/grade like the C11 rig.
+- Round 26 boards: [candidates-board.png](../game/art-direction/rounds/26-repaint/candidates-board.png) (4 stone candidates: subtle / weathered / patchy / pale), [ivory-board.png](../game/art-direction/rounds/26-repaint/ivory-board.png) (3 looks current vs deep/rich repaints), [pieces-board.png](../game/art-direction/rounds/26-repaint/pieces-board.png) (tile grain in green and sand at default x4 — edges read; shell iron).
+- Findings so far:
+  - The Blender process caches modules across blx calls: driver.py now reloads paint; ad-hoc round scripts must `importlib.reload` it too (two silent stale-module bugs hit before this was learned).
+  - The shell's uv_sphere is flat-shaded by its own build; the faceting is pre-existing, not paint. The iron paint's warm cast under soft_honey matches the flat iron — it is the D52 light, not the paint.
+  - `pnoise` on a circle multiplies u frequency by 2π; su must be sv/(2π) for isotropic grain (the "wood plank" read).
+  - All three leaf-tree looks wash pale at the lit crown tops under soft_honey (the D52 critique's "ivory"); the deep repaints (more saturated crown stops, same paint structure, same seeds) read leaf again.
+- Waiting on Sebastian: the wall paint pick (4 candidates) and the ivory repaint scope. Tile grain and shell iron proceed without a pick; both are judged at the gate.
+- PICKED (2026-10-14): wall paint = **1 subtle** (seed 41 + the subtle over), ivory trees = **deep repaint, all three looks**. Both to be recorded as decisions at the close.
+- Applied to: nine wall yamls (paint block), tile (grain, seed 71), shell (iron, seed 81), nature_build.py crown stops (deep), the three guns' split.json plates (plate painter, seeds 51/52/53), blender/barrel.py make_plate paint branch, pipeline/barrel.py preamble sys.path.
+- Rebuild faults found and fixed on the way: soft_honey's `sky:` was prose, not a hex — asset.py's preview light can never have run against the picked variant; now `#f7e3c0` with the panorama named in the comment. wall_straight's session-01 build.py read `materials` directly; guarded. cannon22a's raw `meshy-v1-left-1500.glb` was an unfetched LFS pointer in the fresh worktree; `git lfs pull` fetched it.
+- Gate outcome: Gemini PASS, Sebastian **ship, but the plate must stay on the grid while only the gun rotates**. Fault confirmed in crops: ArtPlate's per-frame correction lagged one frame behind every re-aim (probe: −108° on the aim frame, corrected the frame after). Fix: the plate goes `top_level` in ArtPlate.gd (game repo) — world transform set once, no lag frame; probe yaw +0.0 same-frame, re-shot battle square on all five guns. An in-notification write hung Godot — the top_level fix replaced that attempt.
+- Re-critique on the fixed board: Gemini returned empty three times, GLM **GATE: PASS** (critique/gate-board.json).
+- Shipped: 17 assets approved, 16 synced to the game repo (wall_straight is not a game id and stays repo-only), manifest stamped; run_tests.sh the final gate.
+- Spend: ~0.15 USD (six critic calls: one Gemini pass, three Gemini empties, one GLM pass, plus the first gate critique). Everything else procedural.
+- Lab test: `run_tests.sh` fails one balance assertion ("blue's four cannons beat red's slow flak") on this tree — and identically on a pre-session HEAD checkout with a proper import pass, so the failure **predates session 11** and is not caused by the art or the ArtPlate fix. Flagged to Sebastian for a game-balance look; everything else in the suite passed, including check_art.

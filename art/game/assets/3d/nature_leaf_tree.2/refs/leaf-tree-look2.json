@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Reference view for a 3D model, painted in the same style as the attached sketch sheet. Take only the middle tree from the sheet: a round-crowned leaf tree with a fat short brown trunk that splits into two stubby branches carrying a crown of three round leaf clusters, about as wide as it is tall. Show this one tree alone as a clean three-quarter view from slightly above, on a plain light grey studio background with no shadow, no ground line, no tile. The tree fills 70 to 90 percent of the frame, centred. Keep the painted colours exactly: warm brown trunk, cheerful greens for the leaves. No text, no labels, no other objects, no cannon, no other trees.",
+  "refs": [
+    "game/art-direction/rounds/20-nature/leaf-tree-r2.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 20 leaf tree look2 ref view",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T18:36:12",
+  "outputs": [
+    "leaf-tree-look2.png"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint this scene anew with the cannons moved inside: two toy castle islands seen from high above at a three-quarter angle, the left island and the right island each about a third of the frame wide, a strait of blue sea between them, yellow sand at the shores, round trees. Cannons: each castle has exactly two bronze cannons of the same size, standing on the courtyard floor inside the walls, each a complete barrel on a wooden carriage with two wheels, the barrel raised to about 45 degrees so it points up over the wall toward the other castle; no cannon stands on a tower, on a wall, on a roof or on a house. No cannon fires yet, no smoke, no cannonball. The two castles are the same painted style and not mirror images: the left castle has a tall square keep with the lookout tower and the red flag, a gatehouse and three small houses; the right castle has a lower keep, a round corner tower with the blue flag, a long barn and two houses; their walls differ in length. The tile grid is painted in the same perspective as the castles: one set of lines parallel to the front walls, the other set parallel to the side walls, the squares foreshortened like the courtyards. The title Grid Cannons stays as in the attached image, large, on the sky at the top, covering nothing. Soft painterly 2D illustration, soft colours, not oversaturated, a cream sky fade at the top. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/08-castle-duel/3-two-islands-scene--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "3-two-islands-scene--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T00:23:40",
+  "outputs": [
+    "3-two-islands-scene--nanobanana.png"
+  ]
+}

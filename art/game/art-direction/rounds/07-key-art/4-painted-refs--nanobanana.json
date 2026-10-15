@@ -1,0 +1,22 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint a Steam capsule key-art illustration for the game shown in the last attached image. The first three attached images are style references only: take their soft painterly 2D illustration look, their brushwork, their warm light and the way their white hand-lettered title sits inside the picture, and none of their content. Do not copy the last image's 3D render look: repaint its world as a 2D painting. The scene: the toy-like island fortress with cream stone walls, square battlements, orange tile roofs and a keep with a red flag, bronze cannons on the walls, a sailing ship with red and white striped sails big in the foreground on a bright blue sea, warm afternoon light, a cream haze at the horizon. The game title Grid Cannons in large clear white hand-lettered script with a soft shadow, in the upper third on the sky, part of the painting. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/inspirations/capsule-tiny-glade.png",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg",
+    "game/art-direction/inspirations/header (10).jpg",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "4-painted-refs--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T23:11:11",
+  "outputs": [
+    "4-painted-refs--nanobanana.png"
+  ]
+}

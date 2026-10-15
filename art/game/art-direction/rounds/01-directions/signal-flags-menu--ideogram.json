@@ -1,0 +1,17 @@
+{
+  "model": "ideogram/v4",
+  "prompt": "Main menu screen of a strategy game, 16:9. A wide background illustration of a coastal fortress with cannons under a flat bright sky, Bold flat primaries: navy, white, signal red, mustard yellow, with four distinct team colours deep blue, purple, teal green and olive, Bold and graphic, a board game come alive. The title GRID CANNONS large at the top in heavy geometric sans-serif letters built from flag shapes. Four menu buttons stacked on the left, in this order: Single, Versus, Sandbox, Quit. Clean game UI, legible text, flat shaded low poly world in the background, no other text.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_16_9",
+    "rendering_speed": "BALANCED"
+  },
+  "seed": 534625697,
+  "description": null,
+  "label": "signal-flags-menu--ideogram",
+  "est_cost_usd": 0.09,
+  "created": "2026-10-11T15:40:24",
+  "outputs": [
+    "signal-flags-menu--ideogram.png"
+  ]
+}

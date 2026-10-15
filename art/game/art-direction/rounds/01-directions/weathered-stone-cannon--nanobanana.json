@@ -1,0 +1,17 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "One siege cannon on a wooden wheeled carriage standing on a single square stone tile, three-quarter view from slightly above, isolated on a plain uniform background, nothing else in frame. Desaturated greys, wet slate, moss green, cold teal sea, mist white, one rust accent on the cannons. Heavy squat masses, chipped corners, uneven stone courses suggested by facet colour variation. Cool overcast with soft mist, no hard shadows. Flat shaded low poly game asset, a few clean facets, no textures, no text.",
+  "refs": [],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "weathered-stone-cannon--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T15:39:08",
+  "outputs": [
+    "weathered-stone-cannon--nanobanana.png"
+  ]
+}

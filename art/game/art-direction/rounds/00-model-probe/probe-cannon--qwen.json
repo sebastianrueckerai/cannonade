@@ -1,0 +1,16 @@
+{
+  "model": "alibaba/qwen-image-3/text-to-image",
+  "prompt": "One siege cannon on a wooden wheeled carriage standing on a single square stone tile, three-quarter view from slightly above, isolated on a plain uniform background, nothing else in frame. Muted natural colours: warm sandstone, teal sea, moss green. Simple blocky shapes with chamfered edges. Soft afternoon sun from the left. Flat shaded low poly game asset, a few clean facets, no textures, no text.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_16_9"
+  },
+  "seed": 1055932376,
+  "description": null,
+  "label": "probe-cannon--qwen",
+  "est_cost_usd": 0.04,
+  "created": "2026-10-11T15:36:27",
+  "outputs": [
+    "probe-cannon--qwen.png"
+  ]
+}

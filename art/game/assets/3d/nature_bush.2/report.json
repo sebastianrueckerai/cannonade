@@ -1,0 +1,42 @@
+{
+  "asset_id": "nature_bush.2",
+  "parts": {
+    "nature_bush.2": {
+      "verts": 42,
+      "tris": 80,
+      "non_manifold_edges": 0,
+      "materials": [
+        "nature_bush.2"
+      ],
+      "origin": [
+        0.0025,
+        -0.0096,
+        0.2367
+      ]
+    }
+  },
+  "verts": 42,
+  "tris": 80,
+  "non_manifold_edges": 0,
+  "materials": [
+    "nature_bush.2"
+  ],
+  "dims_m": [
+    0.7151,
+    0.7325,
+    0.4795
+  ],
+  "bbox_min": [
+    -0.3575,
+    -0.3663,
+    0.0
+  ],
+  "bbox_max": [
+    0.3575,
+    0.3663,
+    0.4795
+  ],
+  "solidity": 1.0,
+  "limits_ok": true,
+  "limit_failures": []
+}

@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a13c36-8236-7510-91eb-01a48f9c6318",
+  "inputs": [
+    "game/assets/3d/flak22/refs/b-view.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 1450
+  },
+  "label": "flak22 meshy-b-1450",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 49,
+  "created": "2026-10-14T23:00:15",
+  "outputs": {
+    "model": "meshy-b-1450.glb",
+    "rendered_image": "meshy-b-1450-preview.png"
+  }
+}

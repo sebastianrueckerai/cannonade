@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted reference view of a stylised game bush. Keep the same camera, composition, background and colours. Change only how the foliage is built: replace all individual leaves and leaf clusters with one single solid rounded mass, a closed lumpy ball sitting on the ground, its surface continuous with a bumpy rounded silhouette. Nothing see-through, no holes, no gaps, no individual leaves, no leaf cards, no separate blobs overlapping. The greens become large soft airbrushed colour regions on that one surface, no cluster outlines. Flat-shaded painted game-asset style. No text, no other objects.",
+  "refs": [
+    "game/assets/3d/nature_bush.3/refs/bush-look3.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 20 bush look3 fluffy ball ref",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-13T08:05:45",
+  "outputs": [
+    "bush-look3-ball.png"
+  ]
+}

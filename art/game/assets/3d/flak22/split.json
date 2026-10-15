@@ -1,0 +1,74 @@
+{
+  "source": "meshy-b-1000",
+  "part": "guns",
+  "barrel": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "pivot_pieces": [
+    2
+  ],
+  "pitch": 43,
+  "fixes": [
+    {
+      "op": "lift",
+      "pieces": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "stretch": [
+        1
+      ],
+      "by": 0.3,
+      "why": "the game aims the guns at balls up to straight overhead, and in the source the cradle's back end swung into the pedestal above 70 degrees. Lifting the ball and the guns on a longer neck (p01) clears every pitch from 0 to 90 at every yaw, measured on edge and face samples against the pedestal."
+    },
+    {
+      "op": "shorten",
+      "pieces": [
+        14,
+        15
+      ],
+      "base": [
+        12,
+        13
+      ],
+      "by": 0.25,
+      "why": "Sebastian at the gate: \"Make the whole thing smaller on its base and if needed shorten the barrels a bit. The flak can be less massive than other guns.\" At the full size a level aim reached 1.945 m from the pivot and passed through the mortar beside it. The build keeps the guns inside the plate at a level aim, which makes the flak smaller than the other guns. The 25 percent shorter barrels keep it from shrinking to half size"
+    }
+  ],
+  "notes": "Every piece above the ball turns and tilts as one: p14 and p15 the barrels, p12 and p13 their collars, p08 and p09 the cradle boxes, p05, p06, p10, p11 their end pieces, p07 the bracket under them, p03 and p04 the clamp ears at the ball. p00 the pedestal, p01 its neck and p02 the ball stay. The ball's centre is the pivot. The barrels point 43 degrees up in the source (their bounding box less their thickness); the game aims guns by their whole orientation, so the pitch stays as the rest pose. The 1450 run spends 352 of its 1,330 triangles on the ball",
+  "plate": {
+    "height": 0.1,
+    "margin": 0.05,
+    "chamfer": 0.03,
+    "colour": "#544d52",
+    "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. Painted in the D39 grey since session 11",
+    "paint": {
+      "kind": "plate",
+      "seed": 55
+    }
+  }
+}

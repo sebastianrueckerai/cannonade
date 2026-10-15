@@ -1,0 +1,48 @@
+{
+  "asset_id": "nature_bush.2",
+  "route": "procedural",
+  "inputs": {
+    "asset_yaml_sha": "7cc30e85dd1f",
+    "build_py_sha": "8f44c1e1b77f"
+  },
+  "steps": [
+    {
+      "name": "build",
+      "ok": true,
+      "elapsed_s": 0.96
+    },
+    {
+      "name": "normalise",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "materials",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.49
+    },
+    {
+      "name": "export",
+      "ok": true,
+      "elapsed_s": 0.01
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-13",
+  "cost_usd": 1.2,
+  "created": "2026-10-13T21:04:10+02:00"
+}

@@ -1,0 +1,42 @@
+{
+  "asset_id": "nature_boulder.2",
+  "parts": {
+    "nature_boulder.2": {
+      "verts": 42,
+      "tris": 80,
+      "non_manifold_edges": 0,
+      "materials": [
+        "nature_boulder.2"
+      ],
+      "origin": [
+        -0.0017,
+        0.0368,
+        0.3261
+      ]
+    }
+  },
+  "verts": 42,
+  "tris": 80,
+  "non_manifold_edges": 0,
+  "materials": [
+    "nature_boulder.2"
+  ],
+  "dims_m": [
+    0.8293,
+    0.9152,
+    0.7096
+  ],
+  "bbox_min": [
+    -0.4147,
+    -0.4576,
+    0.0
+  ],
+  "bbox_max": [
+    0.4147,
+    0.4576,
+    0.7096
+  ],
+  "solidity": 0.993,
+  "limits_ok": true,
+  "limit_failures": []
+}

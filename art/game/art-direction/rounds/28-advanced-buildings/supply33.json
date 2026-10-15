@@ -1,0 +1,22 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint it as a concept artist's painted sketch sheet for a cozy, bright strategy game: loose hand-painted brushwork with visible strokes, soft painted light from a warm sunny afternoon coming from the front right, cheerful bright colours, a warm light cream paper background with a soft painted shadow under each object. It is a painting, not a 3D render, not low poly, not a game screenshot. Cozy and friendly like a storybook toy, never grim. No people, no text, no labels, no numbers, no letters, no watermark.\n\nThe fourth attached image shows the four small supply depots this game already has, each on its own one-tile square of grass. The new building is their biggest cousin: the same painting style, the same warm brown timber, the same orange clay roof tiles. Never copy those depots.\n\nThe sheet shows three different designs for one new building, side by side from left to right, each standing on its own square of bright green grass and filling most of it, each in a three-quarter view from slightly above, with empty cream paper between them. The building is the big supply warehouse of a toy fortress, the biggest building on the map after the castle keep: a large two-storey timber warehouse of warm brown planks with an orange clay tile roof and a loading gantry, a thick timber beam with a hoist that sticks out over a wide upper loading door, a crate hanging from a thick rope. It is a storehouse, never a castle: no towers, no battlements, no stone walls. Every roof is made of perfectly flat smooth planes with straight edges, the orange clay tiles painted on them as a flat pattern, never raised tiles. Chunky simple shapes with flat faces and few big parts, friendly and toy-like. No people. Left: a long two-storey warehouse under one big gable roof, the gantry beam over a loading door in its gable end, barrels and stacked logs along its front. Middle: a tall timber granary raised on short thick posts over a low cream stone footing, a wide ramp up to its door, the gantry over the door. Right: a warehouse with a big gable roof and an open loading bay on its long side, a freestanding timber gantry tower over the bay with a hoist and a hanging crate, sacks and crates on the ground.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/inspirations/monsters-expedition-keyart2.jpg",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg",
+    "game/art-direction/rounds/19-first-batch/depot.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 28 supply33",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-14T22:53:37",
+  "outputs": [
+    "supply33.png"
+  ]
+}

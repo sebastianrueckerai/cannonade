@@ -1,0 +1,99 @@
+# The art kit of Cannonade, copied from blender-ai on 2026-10-15. The game repo keeps binaries as plain git, so it
+# commits only what a new art step needs: the anchors and inspirations, each model's final, source.blend, the run it is
+# built from and that run's input views. The round images, the render previews and the runs and views no model was built
+# from stay on disk here and versioned in blender-ai (Git LFS).
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# python
+.venv/
+__pycache__/
+
+# Blender backups
+*.blend[0-9]*
+*.blend@
+
+# intermediates rebuilt by meshsheet.py and barrel.py
+game/assets/3d/*/previews/route-test/
+game/assets/3d/*/previews/barrel/
+game/assets/3d/*/previews/pieces/
+
+# history, on disk only
+game/art-direction/rounds/**/*.png
+game/art-direction/rounds/**/*.jpg
+game/art-direction/rounds/**/*.jpeg
+game/art-direction/rounds/**/*.webp
+game/art-direction/rounds/**/*.mp4
+game/assets/3d/*/previews/
+game/assets/3d/*/raw/*
+game/assets/3d/*/refs/*
+!game/assets/3d/*/raw/*.json
+!game/assets/3d/*/refs/*.json
+!game/assets/3d/*/refs/prompts/
+
+# the runs the models are built from, and their input views
+!game/art-direction/rounds/21-ship/ship-hull.png
+!game/assets/3d/base.2/raw/meshy-b-550.glb
+!game/assets/3d/base.2/refs/a-sketch.png
+!game/assets/3d/base.2/refs/b-view.png
+!game/assets/3d/base.3/raw/meshy-b-550.glb
+!game/assets/3d/base.3/refs/a-sketch.png
+!game/assets/3d/base.3/refs/b-view.png
+!game/assets/3d/base/raw/meshy-b-550.glb
+!game/assets/3d/base/refs/a-sketch.png
+!game/assets/3d/base/refs/b-view.png
+!game/assets/3d/cannon/raw/meshy-b-1000.glb
+!game/assets/3d/cannon/refs/a-sketch.png
+!game/assets/3d/cannon/refs/b-clean.png
+!game/assets/3d/cannon22a/raw/meshy-v1-left-1500.glb
+!game/assets/3d/cannon22a/refs/a-sketch.png
+!game/assets/3d/cannon22a/refs/c-left.png
+!game/assets/3d/cannon22b/raw/meshy-b-1000.glb
+!game/assets/3d/cannon22b/refs/a-sketch.png
+!game/assets/3d/cannon22b/refs/b-view.png
+!game/assets/3d/cannon33a/raw/meshy-b-3000.glb
+!game/assets/3d/cannon33a/refs/a-sketch.png
+!game/assets/3d/cannon33a/refs/b-clean.png
+!game/assets/3d/flak22/raw/meshy-b-1000.glb
+!game/assets/3d/flak22/refs/a-sketch.png
+!game/assets/3d/flak22/refs/b-view.png
+!game/assets/3d/ship/raw/tripo-hull.glb
+!game/assets/3d/supply.2/raw/meshy-c-550.glb
+!game/assets/3d/supply.2/refs/a-sketch.png
+!game/assets/3d/supply.2/refs/c-view-flatroof.png
+!game/assets/3d/supply.3/raw/meshy-c-550.glb
+!game/assets/3d/supply.3/refs/a-sketch.png
+!game/assets/3d/supply.3/refs/c-view-flatroof.png
+!game/assets/3d/supply.4/raw/meshy-b-550.glb
+!game/assets/3d/supply.4/refs/a-sketch.png
+!game/assets/3d/supply.4/refs/b-view.png
+!game/assets/3d/supply/raw/meshy-d-550.glb
+!game/assets/3d/supply/refs/a-sketch.png
+!game/assets/3d/supply/refs/d-view-gridroof.png
+!game/assets/3d/supply22.2/raw/meshy-c-550.glb
+!game/assets/3d/supply22.2/refs/a-sketch.png
+!game/assets/3d/supply22.2/refs/c-view-flatroof.png
+!game/assets/3d/supply22.3/raw/meshy-b-550.glb
+!game/assets/3d/supply22.3/refs/a-sketch.png
+!game/assets/3d/supply22.3/refs/b-view.png
+!game/assets/3d/supply22/raw/meshy-c-550.glb
+!game/assets/3d/supply22/refs/a-sketch.png
+!game/assets/3d/supply22/refs/c-view-flatroof.png
+!game/assets/3d/supply33.2/raw/meshy-b-550.glb
+!game/assets/3d/supply33.2/refs/a-sketch.png
+!game/assets/3d/supply33.2/refs/b-view.png
+!game/assets/3d/supply33.3/raw/meshy-b-550.glb
+!game/assets/3d/supply33.3/refs/a-sketch.png
+!game/assets/3d/supply33.3/refs/b-view.png
+!game/assets/3d/supply33/raw/meshy-b-550.glb
+!game/assets/3d/supply33/refs/a-sketch.png
+!game/assets/3d/supply33/refs/b-view.png
+!game/assets/3d/upgrade_a/raw/meshy-b-600.glb
+!game/assets/3d/upgrade_a/refs/a-sketch.png
+!game/assets/3d/upgrade_a/refs/b-view.png
+!game/assets/3d/upgrade_b/raw/meshy-b-600.glb
+!game/assets/3d/upgrade_b/refs/a-sketch.png
+!game/assets/3d/upgrade_b/refs/b-view.png

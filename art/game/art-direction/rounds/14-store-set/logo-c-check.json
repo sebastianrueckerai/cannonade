@@ -1,0 +1,15 @@
+{
+  "tool": "storeset.py key",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": "unknown",
+  "params": {
+    "box": "unknown"
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "logo-c-check.png"
+  ],
+  "note": "Not named in PICKS.md. The keyed size is 1300x405 and the input and the box were not recovered."
+}

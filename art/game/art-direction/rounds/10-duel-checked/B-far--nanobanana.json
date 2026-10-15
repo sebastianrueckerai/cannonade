@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painting and change only the far castle in the upper right; replace it with a clearly different castle in the same soft painted style, at the same place and the same size on the grid, its walls running along the same grid lines: a tall round stone keep with a crenellated top and a blue flag, no timber lookout and no pointed roof on it; round corner towers instead of square ones; a long hall with an orange tiled roof along its left wall and one small house at the back right; a gate in the right part of its front wall. Inside, two bronze cannons, each on a wooden carriage with two wheels, stand on the open courtyard floor between the keep and the front wall, partly hidden behind the front battlements, their barrels raised to about 45 degrees and pointing toward the near castle in the lower left, both the same size. No cannon on a wall or a tower. Everything else in the painting stays exactly as it is: the near castle, its cannons, the shot with its smoke and its cannonball, the land, the river, the grid, the colours. No text, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/10-duel-checked/B-fix--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "B-far--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T00:48:48",
+  "outputs": [
+    "B-far--nanobanana.png"
+  ]
+}

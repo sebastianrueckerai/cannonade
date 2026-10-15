@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Game screenshot of a low-poly strategy game, camera high above and pitched 60 degrees down over a square tile grid, the grid visible on the land. A walled market town on a river island: warm grey stone walls enclose a courtyard of half-timbered houses with orange tile roofs, three bronze cannons on the walls, a round tower with a conical roof, a mill, a quay with a cog and a barge, green hedged fields around on the tile grid, the river running to the sea. Warm and saturated: orange tile roofs, cream plaster, dark timber frames, warm grey stone, blue river and sea, bright green fields and hedges, market cloth in red and blue. Warm late morning sun, soft shadows, clear air. Repeating motifs: orange tile roofs, timber frames, round towers with conical roofs, water channels, mills, market cloth, stacked barrels, hedged green fields on a grid. The feeling in the build phase: raising a town house by house, every house one colour block with a roof, the walls grow around them. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/ss_0b86a43dd3cd35b7cf1e6e03a0bc420861f9d96e.1920x1080.jpg",
+    "game/art-direction/inspirations/Foundation_ss_dbc1c23ffd249f0c8b07aae6312f33aa63a0e8eb.1920x1080.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "river-town-fortress--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:08:14",
+  "outputs": [
+    "river-town-fortress--nanobanana.png"
+  ]
+}

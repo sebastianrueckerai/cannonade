@@ -1,0 +1,52 @@
+# Typography of the Cannonade art kit (project name Grid Cannons, D26). Phase E of docs/process/art-direction.md,
+# rounds 07 to 15. The title is a logo image laid over the key art, never painted into it and never set from a font
+# at runtime (D24, D25). The UI font is one family for every screen. Sizes are px at 1280 by 720, the window of
+# gameplay_contract.yaml.
+_status: v0, round 15. Sebastian picked b_outline on 2026-10-12, decision D27. The logo file is anchors/logo.png.
+
+title:
+  text: CANNONADE                # the external name (D26); Grid Cannons stays the project and code name
+  lettering: white hand-lettered capitals with a slight bounce and a tall first C, from round 07 candidate 4, the text Sebastian called readable, clean, nice
+  picked: b_outline              # D27
+  candidates:                    # each keyed from a green screen to a transparent logo by pipeline/storeset.py
+    a_white:
+      file: rounds/15-cannonade/logo-a-white.png
+      fill: "#ffffff"
+      shadow: soft dark shadow
+      at_120x45: blurs against the pale sky
+    b_outline:                   # both critics rank it first for readability, rounds 14 and 15
+      file: rounds/15-cannonade/logo-b-outline.png
+      fill: "#ffffff"
+      outline: "#3a2e28"         # ui_dark
+      shadow: soft dark shadow
+      at_120x45: reads
+    c_cream:
+      file: rounds/15-cannonade/logo-c-cream.png
+      fill: "#fbefd9"            # ui_light
+      outline: "#3a2e28"         # ui_dark
+      shadow: "#c8322d"          # ui_accent, offset to the lower right
+      at_120x45: reads, the shadow thickens the letters
+  placement:
+    on: the open sky of the key art, never over a castle, a cannon, a flag or the shot
+    margin: 0.04 of the frame height on every side
+    small_capsule: the logo nearly fills it, Steam's rule
+    no_text: the Steam library hero and the page background carry no title
+  library_logo: the title alone on a transparent background, 1280 px wide
+
+ui:
+  family: Signika                # SIL OFL, a sturdy humanist sans with a large x-height; candidate until D2 tests it in the game at phone width
+  file: ui/font.ttf              # the slot in the game's art layer, docs/grid-cannons.md
+  weights: {regular: 400, semibold: 600}
+  sizes_px:                      # at 1280 by 720, scale with the window
+    menu_button: 20
+    hud_label: 16
+    hud_number: 18
+    tooltip: 14
+    minimum: 14
+  case: sentence case on buttons and labels, capitals only in the title logo
+  figures: tabular, so the HUD numbers do not jump
+  colours:
+    text: "#3a2e28"              # ui_dark on ui_light panels
+    text_on_dark: "#fbefd9"      # ui_light on a ui_dark panel
+    accent: "#c8322d"            # the one action a screen asks for
+  rule: text sits on a panel, never directly on the board, so it needs no outline or shadow

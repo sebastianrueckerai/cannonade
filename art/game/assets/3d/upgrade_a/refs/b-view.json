@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint this wooden crate as a clean reference picture for a 3D modeller. Keep exactly the same design, the same parts and the same colours: a box-shaped crate of warm brown wooden planks, framed by square timber beams along all its edges, with a round log end at each of its eight corners. Make the box a little wider than it is tall, four to three.\n\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 70 percent of the picture. Plain flat light grey background. No ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture. Only this one object, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/upgrade_a/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "upgrade_a three-quarter view",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T11:28:24",
+  "outputs": [
+    "b-view.png"
+  ]
+}

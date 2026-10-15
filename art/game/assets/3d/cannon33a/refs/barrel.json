@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Show only the barrel of this cannon, taken out of its mount: the big dark iron gun barrel with its wide muzzle, its riveted bands and its breech, and the two short trunnion pegs on its sides where it pivots. Keep the same design, colour and proportions as in the picture.\n\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 70 percent of the picture. Plain flat light grey background. No ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture. Only this one object, no text.",
+  "refs": [
+    "game/assets/3d/cannon33a/refs/b-clean.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "cannon33a barrel only",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T08:57:24",
+  "outputs": [
+    "barrel.png"
+  ]
+}

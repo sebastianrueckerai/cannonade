@@ -1,0 +1,18 @@
+{
+  "model": "local blend",
+  "prompt": null,
+  "refs": [
+    "panorama_soft.png",
+    "panorama_warm.png"
+  ],
+  "params": {"operation": "per-pixel 50/50 average of the two 2:1 panoramas, PIL"},
+  "seed": null,
+  "description": "The sky of the shipped round 25 look (D52): Sebastian's pick split the difference between candidates 9 (cozy_grid, soft sky) and 10 (honey_grid, warm sky), so the sky is the same split.",
+  "label": "round 25 sky soft-honey blend",
+  "est_cost_usd": 0.0,
+  "created": "2026-10-14T12:05:00",
+  "outputs": [
+    "panorama-soft-honey.png"
+  ],
+  "post": "Copied into the game repo as assets/art/sky/world_panorama.png, replacing the round 24 haze as the shipped default (D52)."
+}

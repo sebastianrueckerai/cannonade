@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Seen from higher above, closer to straight down, like a board game: a model sheet of a cannon in four sizes, in one row from left to right, every cannon the same dark iron grey, no wheels, no platform, each on a round dark iron turning mount that fills its square of tiles: one tile, a short iron cannon in a wooden cradle; exactly two by two tiles, a big iron cannon in a wooden cradle; exactly three by three tiles, a large iron cannon with a riveted shield plate on a turntable; exactly three by three tiles, a huge long iron gun with two recoil cylinders, a small boiler with a chimney and brass bands on a turntable. Below, five resource boxes, all exactly the same size, each filling most of one tile: planks with log ends, a cream stone block, dark iron ingots, a tool chest with a hammer, a crate with a gear. Style: exactly the flat-shaded low-poly painted toy look of the attached images: cream stone, dark brown wood, dark iron, green grass tiles with visible grid lines, every block edge with a small chamfer, the afternoon sun from the front right with medium shadows. A clean model sheet on a flat board of square green grass tiles, seen from the game's camera, high above at a three-quarter angle, with empty grass tiles between the objects. No people, no text, no labels, no numbers, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/world_style.png",
+    "game/art-direction/anchors/shape_corner.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "5-iron-ladder-top-sheet--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T02:18:04",
+  "outputs": [
+    "5-iron-ladder-top-sheet--nanobanana.png"
+  ]
+}

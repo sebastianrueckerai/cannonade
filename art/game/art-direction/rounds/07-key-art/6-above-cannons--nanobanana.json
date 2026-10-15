@@ -1,0 +1,22 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint a Steam capsule key-art illustration for the game shown in the last attached image. The first three attached images are style references only: take their soft painterly 2D illustration look, their brushwork, their warm light and the way their white hand-lettered title sits inside the picture, and none of their content. Repaint the world of the last image as a 2D painting, not a 3D render. The view is from high above at a three-quarter angle, like a board game seen from the player's chair, so the whole island fortress fills the frame: cream stone walls with square battlements and orange tile roofs, a keep with a red flag, and the cannons are the stars: four bronze cannons on the walls, two of them firing with round white smoke puffs and a cannonball in the air toward a sailing ship with red and white striped sails on the blue sea at the edge of the frame. The grass of the island shows a faint painted tile grid. Warm afternoon light, soft colours, not oversaturated, a cream haze at the horizon. The game title Grid Cannons in large clear white hand-lettered script with a soft shadow, across the quiet sky at the top, part of the painting. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/inspirations/capsule-tiny-glade.png",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg",
+    "game/art-direction/inspirations/header (10).jpg",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "6-above-cannons--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T23:23:17",
+  "outputs": [
+    "6-above-cannons--nanobanana.png"
+  ]
+}

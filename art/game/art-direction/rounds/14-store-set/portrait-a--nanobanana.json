@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint this painting as a tall portrait picture in exactly the same soft painted style, colours and light. Keep both castles exactly as they are, with all their buildings, their flags and their cannons: the near castle with the square keep, the timber lookout and the red flag in the lower half of the frame, the far castle with the stepped-gable tower house, the blue flag and the broken front wall in the upper half, the river and the tile grid on the land between them. Keep the one shot: the near castle's front cannon fires at the far castle, the flash and the round smoke cloud at its muzzle, the ball on the line of its barrel. Every cannon stands on its courtyard floor. Add an open quiet sky at the top of the frame and more land with trees and rocks at the bottom. No text, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "2:3",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "portrait-a",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T01:42:30",
+  "outputs": [
+    "portrait-a--nanobanana.png"
+  ]
+}

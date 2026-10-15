@@ -1,0 +1,58 @@
+{
+  "asset_id": "ship",
+  "parts": {
+    "ship": {
+      "verts": 1249,
+      "tris": 1200,
+      "non_manifold_edges": 1068,
+      "materials": [
+        "tripo_material_3bdd7939-42c7-493e-93a0-24056a8bed18"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "ship_cannon": {
+      "verts": 384,
+      "tris": 208,
+      "non_manifold_edges": 384,
+      "materials": [
+        "ship_gun_iron",
+        "ship_gun_wood"
+      ],
+      "origin": [
+        0.0,
+        0.4189,
+        0.5203
+      ]
+    }
+  },
+  "verts": 1633,
+  "tris": 1408,
+  "non_manifold_edges": 1452,
+  "materials": [
+    "ship_gun_iron",
+    "ship_gun_wood",
+    "tripo_material_3bdd7939-42c7-493e-93a0-24056a8bed18"
+  ],
+  "dims_m": [
+    0.4712,
+    1.192,
+    0.974
+  ],
+  "bbox_min": [
+    -0.2356,
+    -0.5,
+    0.0
+  ],
+  "bbox_max": [
+    0.2356,
+    0.692,
+    0.974
+  ],
+  "solidity": 0.422,
+  "limits_ok": true,
+  "limit_failures": []
+}

@@ -1,0 +1,30 @@
+{
+  "cols": 2,
+  "cell": 768,
+  "parallel": 2,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      }
+    }
+  },
+  "style": "Everything else stays exactly as it is: the near castle, its other cannon, the land, the river, the path, the tile grid, the trees, the colours, the light. No text, no letters, no watermark.",
+  "frames": {
+    "fix": "Edit this painting and change only two things. First, the far castle in the upper right: remove the two cannons that stand on its front wall and on its corner tower and rebuild the battlements and the tower top there as plain stone; then place two bronze cannons, each on a wooden carriage with two wheels, standing on the open courtyard floor inside that castle between the keep and the front wall, partly hidden behind the front battlements, their barrels raised to about 45 degrees and pointing toward the near castle in the lower left, both the same size, as big as the near castle's cannons would look at that distance. Second, {fire} fires at the far castle: a bright yellow flash and one round white smoke cloud right at its muzzle, and one dark cannonball a short way out beyond the muzzle exactly on the line of the barrel, with a faint trail back to the muzzle. {style}"
+  },
+  "directions": [
+    {
+      "slug": "A",
+      "refs": ["../09-duel-inside/n4-closer-diagonal-main--nanobanana.png"],
+      "fire": "the near castle's front cannon, the one nearer the bottom right of its pair"
+    },
+    {
+      "slug": "B",
+      "refs": ["../09-duel-inside/n1-land-diagonal-main--nanobanana.png"],
+      "fire": "the near castle's front cannon, the right one of its pair"
+    }
+  ]
+}

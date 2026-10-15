@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted reference of a stylised game bush. Keep the same camera, ground contact, palette and overall size. Change the plant into ONE single solid rounded mass: a fluffy domed cushion like a cumulus cloud resting on the ground, with only a few soft bulges in the outer silhouette. No separate lobes or heads, no gaps or holes anywhere, no dark outlines between lumps, no individual leaves or twigs, nothing see-through. Large soft airbrushed colour regions on the one surface, flat-shaded painted game-asset style. No text, no other objects.",
+  "refs": [
+    "game/assets/3d/nature_bush.3/refs/bush-look3-ball.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": null,
+  "est_cost_usd": 0.15,
+  "created": "2026-10-13T09:46:11",
+  "outputs": [
+    "bush-look3-mass.png"
+  ]
+}

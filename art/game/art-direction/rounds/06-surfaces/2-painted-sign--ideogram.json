@@ -1,0 +1,19 @@
+{
+  "model": "ideogram/v4",
+  "prompt": "A video game title logo. The words \"GRID CANNONS\" in two stacked lines, GRID above CANNONS, bold cheerful hand-painted sign-painter capitals, as if brushed by a harbour sign painter, slightly bouncy letters, cream paint with an orange-red drop shadow offset to the lower right and a thin dark-brown outline, the strokes clean and flat with no gradient. Centred on a plain flat sky-blue background, nothing else in the frame, no board behind the letters, no border, no watermark.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_4_3",
+    "rendering_speed": "BALANCED",
+    "expansion_model": "None",
+    "output_format": "png"
+  },
+  "seed": 1398342028,
+  "description": null,
+  "label": "2-painted-sign--ideogram",
+  "est_cost_usd": 0.09,
+  "created": "2026-10-11T22:46:41",
+  "outputs": [
+    "2-painted-sign--ideogram.png"
+  ]
+}

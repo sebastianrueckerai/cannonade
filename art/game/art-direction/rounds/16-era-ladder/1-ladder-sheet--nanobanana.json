@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A model sheet of a cannon in four eras of growth, in one row from left to right, each bigger than the last, every barrel complete on its mount and raised to fire to the upper right: first, on one single tile, a small bronze cannon on a wooden two-wheel carriage on a low cream stone platform; second, on a square of two by two tiles, a heavy bronze cannon on a turning wooden carriage on a round cream stone platform inside a low round parapet; third, on a square of three by three tiles, a large dark cast iron cannon on an iron turntable with a riveted iron shield plate in front of it, on a square cream stone base with corner bollards and a small powder store with an orange roof; fourth, on a square of three by three tiles, a huge dark iron artillery gun with a very long barrel and two recoil cylinders along the barrel, on a riveted dark steel platform, with a small boiler with one chimney and one pipe, brass bands and copper-green roof plates. Below that row, a second row of five single tiles, each with one small resource block: a stack of three wooden logs with light round ends; three cut cream stone blocks in a little pyramid; a stack of dark iron bars crossed in two layers; a wooden crate with a hammer and tongs on top; two iron cogwheels leaning on each other. Style: exactly the flat-shaded low-poly painted toy look of the attached images: the same palette, cream stone, dark brown wood, dark iron, orange roofs, green grass tiles with visible grid lines, every block edge with a small chamfer, the afternoon sun from the front right with medium shadows. A clean model sheet on a flat board of green grass tiles, seen from the game's camera, high above at a three-quarter angle, every object standing on its tiles, generous empty grass between the objects. No people, no text, no labels, no numbers, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/world_style.png",
+    "game/art-direction/anchors/shape_corner.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "1-ladder-sheet--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T02:10:51",
+  "outputs": [
+    "1-ladder-sheet--nanobanana.png"
+  ]
+}

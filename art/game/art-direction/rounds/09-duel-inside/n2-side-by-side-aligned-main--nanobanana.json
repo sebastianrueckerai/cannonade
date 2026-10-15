@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint a new scene: the green land map from high above at a three-quarter angle, two castles left and right, both the same size and each about a third of the frame wide, both drawn at the same angle as the near castle of the attached image so their walls run along the grid lines, a river running between them from the top of the frame to the bottom. Take the painting style, the colours, the castles and the land from the attached image. Cannons: each castle has exactly two bronze cannons of the same size, standing side by side on the open stone courtyard floor inside the walls, away from the walls, each a complete smooth barrel on a curved wooden carriage with two wheels, the barrel raised to 45 degrees so it points up over the wall toward the other castle; no cannon stands on a tower, on a wall, on a roof or on a house. No cannon fires, no smoke, no cannonball. The two castles are the same painted style and not mirror images. The tile grid on the land is painted in the same perspective as the castles, its lines parallel to the castle walls. No title, no text, no letters anywhere, the sky at the top plain and quiet. Soft painterly 2D illustration, soft colours, not oversaturated. No people, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/09-duel-inside/2-land-diagonal-scene--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "n2-side-by-side-aligned-main--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T00:37:20",
+  "outputs": [
+    "n2-side-by-side-aligned-main--nanobanana.png"
+  ]
+}

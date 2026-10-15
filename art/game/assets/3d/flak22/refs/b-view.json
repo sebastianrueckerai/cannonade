@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint this anti-air gun as a clean reference picture for a 3D modeller. Keep exactly the same design, the same parts, the same proportions and the same colours: two long thin dark iron barrels side by side, pointing up at the sky at 45 degrees, coming out of a boxy riveted iron cradle. The cradle sits on a round iron ball on top of a short thick round iron pedestal with a round riveted foot flange. The two barrels are parallel with a clear gap between them.\n\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 75 percent of the picture. Plain flat light grey background. No ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture. Only this one object, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/flak22/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "flak22 reference view, round 28 pick",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-14T22:58:32",
+  "outputs": [
+    "b-view.png"
+  ]
+}

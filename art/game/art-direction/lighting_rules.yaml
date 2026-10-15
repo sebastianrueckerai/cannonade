@@ -1,0 +1,108 @@
+# Lighting rules of the Grid Cannons art kit. Phase D of docs/process/art-direction.md, round 05-light.
+# The game's WorldEnvironment and DirectionalLight follow the picked variant, scripts/Main.gd in the game repo
+# (C11, session 07). Angles in degrees. sun_azimuth is the direction from the board centre to the sun, measured
+# from the direction toward the gameplay camera, positive to the right: 40 puts the sun at the front right, on the
+# camera's side, as D23 and the anchor frame show, and the light travels away from the camera to the back left.
+# Colours are hex, shadow strength 0 to 1.
+_status: v1, round 25, pick D52 on 2026-10-14. `picked` names the variant that is the rule, the others stay as the rejected alternatives.
+
+picked: soft_honey            # D52, the midpoint of round 25's cozy_grid and honey_grid, frame rounds/25-look/scenes/pick-soft_honey_003.png
+
+variants:
+  noon:                       # the anchor's own light, frame 1
+    sun_elevation: 70
+    sun_azimuth: -30
+    sun_colour: "#fff6e0"
+    ambient_colour: "#a9c8e8"
+    ambient_strength: 0.45
+    shadow_strength: 0.6
+    shadow_softness: 0.0
+    sky: "#6cb9f5"
+    fog: {enabled: false}
+    water: flat, one colour, no reflection
+  morning:                    # frame 2
+    sun_elevation: 25
+    sun_azimuth: -70
+    sun_colour: "#fff0d8"
+    ambient_colour: "#b8d0e6"
+    ambient_strength: 0.5
+    shadow_strength: 0.45
+    shadow_softness: 0.3
+    sky: "#8cc8f5"
+    fog: {enabled: true, colour: "#efe3d0", start_fraction: 1.0, end_fraction: 1.8}
+    water: calm, a faint sparkle
+  afternoon:                  # frame 3, the pick D23 until round 25
+    sun_elevation: 45
+    sun_azimuth: 40
+    sun_colour: "#ffe8c0"
+    ambient_colour: "#a9c8e8"
+    ambient_strength: 0.4
+    shadow_strength: 0.55
+    shadow_softness: 0.1
+    sky: "#6cb9f5"
+    fog: {enabled: true, colour: "#efe3d0", start_fraction: 1.0, end_fraction: 1.8}
+    water: flat blue, a thin foam line at the shore
+    godot_sun_energy: 0.5     # measured in the game, session 07: a lit top face then shows its palette colour
+    blender_eevee:            # C11, session 08: EEVEE render view matches the game screenshot, wall bands within 2%
+      sun_energy: 2.9
+      ambient_strength: 1.16
+      ambient_blue_scale: 0.92
+  fogged:                     # frame 4
+    sun_elevation: 70
+    sun_azimuth: -30
+    sun_colour: "#fff6e0"
+    ambient_colour: "#c8d8e8"
+    ambient_strength: 0.5
+    shadow_strength: 0.5
+    shadow_softness: 0.0
+    sky: "#9fd0f0"
+    fog: {enabled: true, colour: "#efe3d0", start_fraction: 0.4, end_fraction: 1.0}
+    water: calm, fading into the fog
+  overcast:                   # frame 5, the control without shadows
+    sun_elevation: 90
+    sun_azimuth: 0
+    sun_colour: "#e8ecf0"
+    ambient_colour: "#c8d0d8"
+    ambient_strength: 0.8
+    shadow_strength: 0.0
+    shadow_softness: 1.0
+    sky: "#b8c8d8"
+    fog: {enabled: false}
+    water: flat matte blue
+  evening:                    # frame 6
+    sun_elevation: 15
+    sun_azimuth: 70
+    sun_colour: "#ffb070"
+    ambient_colour: "#8090b8"
+    ambient_strength: 0.35
+    shadow_strength: 0.7
+    shadow_softness: 0.2
+    sky: "#f0a060"
+    fog: {enabled: true, colour: "#f0c090", start_fraction: 1.0, end_fraction: 1.8}
+    water: reflects the sky in long streaks
+  soft_honey:                 # round 25 pick (D52), the shipped look
+    sun_elevation: 38
+    sun_azimuth: 40
+    sun_colour: "#ffd29d"
+    ambient_colour: "#bec3c4"
+    ambient_strength: 0.46
+    shadow_strength: 0.56
+    shadow_softness: 0.1
+    sky: "#f7e3c0"   # the panorama's haze band; the panorama itself ships as the game's assets/art/sky/world_panorama.png (D52)
+    fog: {enabled: true, colour: "#f4e6cd", start_fraction: 1.0, end_fraction: 1.8, sky_affect: 0.2}
+    water: flat blue, a thin foam line at the shore
+    godot_sun_energy: 0.65
+    post: {tonemap: filmic, exposure: 0.97, white: 6.25, saturation: 1.07, contrast: 1.05, glow: 0.26}
+    blender_eevee:            # C11 remeasure, round 25: clean lit wall face vs the game frame, R -0.4% G +0.5% B +0.6%
+      sun_energy: 13.6
+      ambient_strength: 0.16
+      ambient_blue_scale: 0.92
+      grade_sat: 0.5          # node saturation scale: Godot grades in display space, the Blender nodes run in scene linear
+
+rules:                        # hold for every variant
+  - every wall and building casts a shadow onto its ground tile, the base shadow is what separates cream stone from yellow sand at 13 px
+  - the lit top face of a block is the lightest value in the frame after the sky, so the wall top reads as a band at 13 px
+  - the fog never reaches the tiles the player builds on: start_fraction is measured from the camera over the board depth, 1.0 is the far edge of the board, so start_fraction is at least 1.0. The fogged variant breaks this and was rejected for it
+  - shadow_strength is at least 0.5, below it the wall base no longer separates from the sand at the default view
+  - the water is one flat colour per tile at the default view, any sparkle or foam is a zoomed-view detail
+  - the grade is D52's exception to the old no-grading rule and stays mobile friendly: tonemap, exposure, white point, saturation, contrast and a glow of 0.26, no vignette, the palette still carries the mood

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted reference view of a stylised game tree. Keep the same camera, composition, background, trunk and colours. Change only how the foliage is built: replace all individual leaves and leaf clusters with one single solid rounded canopy mass, closed like a soft cloud with a bumpy rounded silhouette. The surface is continuous and closed, nothing see-through, no holes, no gaps, no individual leaves, no leaf cards, no separate blobs overlapping. The two greens become large soft airbrushed colour regions on that one surface, with no cluster outlines. Flat-shaded painted game-asset style. No text, no other objects.",
+  "refs": [
+    "game/assets/3d/nature_leaf_tree.2/refs/leaf-tree-look2.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 20 tree look2 fluffy ball ref",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-13T08:04:38",
+  "outputs": [
+    "leaf-tree-look2-ball.png"
+  ]
+}

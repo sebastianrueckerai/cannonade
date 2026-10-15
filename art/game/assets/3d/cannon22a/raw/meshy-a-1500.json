@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a12eee-5083-756f-a05c-6704d363e26b",
+  "inputs": [
+    "game/assets/3d/cannon22a/refs/a-sketch.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 1500
+  },
+  "label": "cannon22a meshy-a-1500",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 35,
+  "created": "2026-10-12T09:06:06",
+  "outputs": {
+    "model": "meshy-a-1500.glb",
+    "rendered_image": "meshy-a-1500-preview.png"
+  }
+}

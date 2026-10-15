@@ -1,0 +1,17 @@
+{
+  "tool": "storeset.py key",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": [
+    "game/art-direction/rounds/14-store-set/b-outline-title--nanobanana.png"
+  ],
+  "params": {
+    "box": null
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "logo-b-outline.png"
+  ],
+  "note": "Input confirmed by re-running storeset.py key without --box, pixel-identical."
+}

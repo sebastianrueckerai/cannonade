@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Painted sketch sheet edit. Keep the sheet exactly as it is: same painting style, same warm cream paper, same three square grass tiles, same small dark iron cannon on its square plate, same soft shadows and light, same twig colours on the three tangles. Make only these changes: repaint each of the three twig tangles clearly smaller, about a third of a tile wide and only a hand tall, so every tangle reads as much smaller than the cannon, keeping the same loose friendly tangle shapes, each lying centred on its own tile. Everything else stays identical.",
+  "refs": [
+    "game/art-direction/rounds/23-nature-rest/twiggy.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 23 twiggy r2 size fix",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-13T23:26:32",
+  "outputs": [
+    "twiggy-r2.png"
+  ]
+}

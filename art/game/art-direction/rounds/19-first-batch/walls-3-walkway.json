@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint it as a concept artist's painted sketch sheet for a cozy, bright strategy game: loose hand-painted brushwork with visible strokes, soft painted light from a warm sunny afternoon coming from the front right, cheerful bright colours, a warm light cream paper background with a soft painted shadow under each object. It is a painting, not a 3D render, not low poly, not a game screenshot. Cozy and friendly like a storybook toy, never grim. No people, no text, no labels, no numbers, no letters, no watermark.\n\nThe sheet shows the wall pieces of a toy fortress in two rows of four, each piece standing on its own square tile of bright green grass, seen in a three-quarter view from slightly above. The wall is warm cream stone, about as tall as its tile is wide and a third of a tile thick: a plain smooth slab with crisp edges and a narrow flat bevel along every edge, no stones or bricks drawn on its faces. Its top carries two rows of small square merlons, one along each face, with a narrow walkway of warm brown wooden planks running between them along the wall top, and a band of slightly darker sandy stone runs along the foot of the wall.\n\nLeft to right in each row: a straight wall running across its tile from one edge to the opposite edge; an L-shaped corner whose two arms run from the centre of the tile to two neighbouring edges; a T-shaped junction, a straight run with one arm branching off its middle; a cross whose four arms reach all four edges. Every arm reaches the very edge of its tile, so the pieces could join their neighbours. Top row: each piece one storey high. Bottom row: the same four pieces with a second storey of the same wall stacked on top, twice as tall, with the battlements only on the top storey.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/inspirations/monsters-expedition-keyart2.jpg",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 19 walls-3-walkway",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T11:29:52",
+  "outputs": [
+    "walls-3-walkway.png"
+  ]
+}

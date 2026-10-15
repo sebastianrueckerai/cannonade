@@ -1,0 +1,11 @@
+{
+  "critic": "google/gemini-2.5-pro",
+  "images": [
+    "game/art-direction/rounds/12-shore-duel/shore-final.png",
+    "game/art-direction/rounds/12-shore-duel/shore-crops.png"
+  ],
+  "prompt": "You are an independent critic for a low-poly browser strategy game in the spirit of Rampart: castles on a tile grid shoot at each other with cannons. This is a candidate for the main painted 2D illustration of the store page, without the title, which is added later as an overlay. Your job is faults, not taste.\n\nThe owner's checklist, every line must pass:\n1. Castles shoot at castles; ships are not the subject.\n2. The world seen from above.\n3. Exactly one cannon fires, with a big smoke plume and a visible ball.\n4. The firing barrel points where the ball flies: the flash and the smoke at the muzzle, the ball on the barrel's line.\n5. Every cannon stands inside the walls on the courtyard floor; never on a wall, a wall walk, a tower, a roof or a house.\n6. Every cannon is complete: one barrel on one wooden carriage with wheels, not floating, not pasted, not buried in a wall.\n7. The barrels raised to about 45 degrees, so they shoot over the wall.\n8. All cannons the same size, allowing for distance.\n9. Each castle has two cannons; the two castles are not mirror images.\n9b. The two castles clearly different: a different keep, different buildings, a different wall and tower layout.\n10. The tile grid aligned with the castles, its lines parallel to the walls.\n10b. Every castle wall is straight and runs along the grid; no round or curved walls. Round corner towers are allowed.\n11. Not too busy, nothing too small.\n11b. Not barren: trees, rocks, paths or water around the castles.\n12. Painterly, soft colours, not oversaturated, not a 3D render look.\n13. No text anywhere.\n\nImage 1 is the full image. Image 2 shows the near castle with the shot at twice the size and the island castle at four times the size. Judge lines 3 to 9 from image 2.\n\nList only the lines that FAIL, each with one short reason naming where in the image. If every line passes, write PASS. A line you cannot check counts as a FAIL. End with one line that starts with VERDICT: followed by PASS or FAIL and the failing line numbers.\n",
+  "answer": "PASS\nVERDICT: PASS",
+  "est_cost_usd": 0.03,
+  "created": "2026-10-12T01:22:01"
+}

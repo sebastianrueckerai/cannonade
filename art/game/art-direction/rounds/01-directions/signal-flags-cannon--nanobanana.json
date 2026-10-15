@@ -1,0 +1,17 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "One siege cannon on a wooden wheeled carriage standing on a single square stone tile, three-quarter view from slightly above, isolated on a plain uniform background, nothing else in frame. Bold flat primaries: navy, white, signal red, mustard yellow, with four distinct team colours deep blue, purple, teal green and olive. Hard faceted geometry, no bevels, every object reduced to its simplest solid, like a board game piece. Hard clean light, crisp shadows, no gradients. Flat shaded low poly game asset, a few clean facets, no textures, no text.",
+  "refs": [],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "signal-flags-cannon--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T15:39:07",
+  "outputs": [
+    "signal-flags-cannon--nanobanana.png"
+  ]
+}

@@ -1,0 +1,16 @@
+The purpose of this repo is to establish a design / art / asset workflow for my Godot game GridCannons projects using Blender and all needed tools like image or mesh models via APIs.
+I supplied keys for Meshy, Tripo, Fal, Replicate and Z.AI so there is a wide variety of models and I can add more if needed.
+
+docs/research/chatgpt-design-and-game-art-conversation.md is a convo with ChatGPT describing what I want and going towards a solution.
+
+Important are:
+
+- We are going to make assets for /home/womb/repos/grid-cannons. We have our own repo because the real goal here is to establish an end to end process (skills, prompts, best practices, documentation, APIs, scripts...) that I can copy. Grid Cannons is the ultimate example: A real decent sized game which will get its art from this process. For future projects I want to point them at this repo as a reference implementation to copy!
+- I want to automate the creative process for 2d and 3d game art. We can start copying the human process but then also see where the agentic workflow can differ (for example: making code and even meshes is now cheap or cheaper so we can go deep earlier, maybe skip some stages, have less prototypes and more variations of the finished product? - this is all speculation I am just saying: We want the best agentic process and a human process can be the starting point)
+- A few clear artifacts! I want the process(es) we use documented as mermaid charts (which model produces what gives it to what downstream model / changes which assets...) which is continuously updated as we make changes. These documents can become skills or be referenced in skills to make processes repeatable. I am talking about things like mood -> concept art -> 3d mesh (much simplified). I want all of this laid out, followed and if we change how we do things we change the documented process.
+- A clear folder layout with a separation between game assets and code or documents related to our process
+- As for the game grid cannons: I want to make it more modular so it becomes really easy to switch out the art. Currently it does not have 2d art. We need art for menus, a splash screen... things like this. Also a background image (think: skybox) for the world and of course the 3d assets. Not sure if I'll go flat or textured, but for sure low poly. The whole game should run in the browser. Its repo should have a pipeline as scripts or skills that can easily build and export this so I can run it locally in a browser. The ultimate aim is to demo it in the browser and host it on a small VM. All these changes should be made in the other repo but from here. But we just do this so it becomes easy to plug in our art and demo the process. Pure art preview can live in our repo. Your thoughts are welcome here
+
+- I also want a roadmap with all future tasks so development can happen in sessions where we pull the most important things from the roadmap (think backlog, but we can also have pure ideas / spikes whatever on there as long as we refine before pulling it into a dev session)
+
+Also look at: /home/womb/repos/portfolio It is not quite the same, but it is also a demo project for automating the design / ux flow for websites. I used my own portfolio as the ultimate demo here. Lots of video and image gen. We might be able to steal things from there.

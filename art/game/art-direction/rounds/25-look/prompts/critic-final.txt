@@ -1,0 +1,6 @@
+You are the art critic of a cozy painted strategy game. The FIRST TWO images are the style references (storybook toy world, warm sunny afternoon, friendly, never grim). The THIRD image is a contact sheet of the final eight look candidates, wide gameplay view. The FOURTH image is the same eight candidates close up. The FIFTH image is the same eight in a battle scene with every building type. Only the sky backdrop, lighting, colour grading and post-processing differ; the 3D scene is identical. The same numbering holds across all three sheets.
+
+Answer:
+1. Rank all eight candidates for the cozy storybook mood, one line of reasoning each.
+2. For the top two: any fault that survives at the far view AND the close view AND the battle view (banding, blown highlights, muddy greens, plastic feel, backdrop clash, team colours hard to tell apart).
+3. Which one candidate would you ship for a first game that must look friendly on a small store capsule and stay readable during play? One line why.

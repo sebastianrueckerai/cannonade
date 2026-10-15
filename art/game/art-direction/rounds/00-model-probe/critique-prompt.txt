@@ -1,0 +1,9 @@
+You are judging image models for a game-art pipeline, not judging the art direction. The attached contact sheet shows the same three prompts rendered by several models. Each tile is labelled <direction>-<frame>--<model>. The frames are: world (a coastal fortress on a tile grid from a camera pitched 60 degrees down), cannon (one cannon on one tile, isolated, three-quarter view), menu (a main menu with the title GRID CANNONS and four buttons).
+
+For each model, rate from 1 to 5 and give one sentence of evidence:
+1. Follows the prompt: the fortress is on a square tile grid, the camera pitch is steep, the cannon is isolated, the menu has the title and four buttons.
+2. Low-poly game-art look: flat shading, clean silhouettes, no photoreal texture, no painterly smear.
+3. Legible text in the menu frame: the title reads GRID CANNONS and the button labels are correct.
+4. Consistency across the three frames: do they look like one game.
+
+Then answer: which model for the world and cannon frames, which model for the menu frame, and which model is the cheap one to use for breadth. Give the model names exactly as in the labels. End with one line that starts with VERDICT:.

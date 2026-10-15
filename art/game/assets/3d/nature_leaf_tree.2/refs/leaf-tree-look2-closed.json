@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted reference view of a stylised game tree. Keep the same camera, composition, trunk and colours. Change only the canopy: close every dark opening and gap inside the crown and between the crown and the trunk. The crown is one continuous solid mass with a bumpy rounded silhouette, nothing see-through anywhere, no dark holes, no gaps between lobes, no sky visible through the crown. The greens stay large soft airbrushed colour regions on the one surface. Flat-shaded painted game-asset style. No text, no other objects.",
+  "refs": [
+    "game/assets/3d/nature_leaf_tree.2/refs/leaf-tree-look2-ball.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": "tree2-ref-closed",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-13T09:11:36",
+  "outputs": [
+    "leaf-tree-look2-closed.png"
+  ]
+}

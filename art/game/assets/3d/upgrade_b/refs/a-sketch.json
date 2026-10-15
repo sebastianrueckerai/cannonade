@@ -1,0 +1,13 @@
+{
+  "tool": "crop",
+  "source": "game/art-direction/anchors/resource_blocks.png",
+  "box_px": [
+    1610,
+    200,
+    2340,
+    860
+  ],
+  "pad_to_square": 730,
+  "est_cost_usd": 0,
+  "created": "2026-10-12T11:27:30"
+}

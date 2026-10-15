@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint it as a concept artist's painted sketch sheet for a cozy, bright strategy game: loose hand-painted brushwork with visible strokes, soft painted light from a warm sunny afternoon, cheerful bright colours, a warm light cream paper background with a soft painted shadow under each object. It is a painting, not a 3D render, not low poly, not a game screenshot. Cozy and friendly like a storybook toy, never grim. No people, no text, no labels, no numbers, no letters, no watermark. The sheet shows three cannons side by side from left to right, growing from small to large, in a three-quarter view from slightly above. Each cannon is a classic artillery cannon with exactly one barrel. Each sits on a round turning mount so it can swivel, with no wheels anywhere and no platform or base slab under it. Dark iron grey is the main colour of every cannon. Each cannon is visibly better and more advanced than the one before it, with a different design, never the same gun scaled up. Left, small: an iron swivel gun on a thick wooden post that turns. Middle, medium: a long iron fortress cannon on a wooden slide carriage that pivots on a round iron mount. Right, large: a heavy iron coastal gun with a thick reinforced breech, on a round riveted iron turntable with a low round shield, all iron and no wood.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/inspirations/monsters-expedition-keyart2.jpg",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "2-fortress-guns--nanobanana",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T03:19:26",
+  "outputs": [
+    "2-fortress-guns--nanobanana.png"
+  ]
+}

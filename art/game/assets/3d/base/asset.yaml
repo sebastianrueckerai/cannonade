@@ -1,0 +1,14 @@
+asset_id: base
+route: generative     # Meshy, then the cleanup by hand: cleanup.json, cleanup.py
+class: building
+dimensions:
+  max_x: 2.0
+  max_y: 2.0
+  max_z: 6.0
+budget:
+  max_tris: 600
+  max_materials: 2    # the team material first, painted by the game, then the texture
+parts:
+  - base
+pivots:
+  origin: ground_centre

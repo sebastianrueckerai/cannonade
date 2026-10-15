@@ -1,0 +1,44 @@
+{
+  "_status": "candidate painted-toy, round 03",
+  "name": "Painted toy",
+  "idea": "The anchor's own colours, measured and cleaned. Yellow-green grass, cream stone, terracotta roofs, teal sea.",
+  "team": {
+    "blue": {
+      "main": "#1f1f5e",
+      "highlight_plus": "#aaaadd",
+      "highlight_minus": "#ad3030"
+    },
+    "purple": {
+      "main": "#4a1671",
+      "highlight_plus": "#692d87",
+      "highlight_minus": "#e01414"
+    },
+    "teal": {
+      "main": "#197059",
+      "highlight_plus": "#aaddab",
+      "highlight_minus": "#ad3030"
+    },
+    "olive": {
+      "main": "#70631a",
+      "highlight_plus": "#aaddab",
+      "highlight_minus": "#ad3030"
+    }
+  },
+  "world": {
+    "sea": "#31b6ba",
+    "sand": "#f7d78a",
+    "grass": "#b9c440",
+    "leaf": "#3f8a3a",
+    "stone": "#f5e9c8",
+    "wood": "#8a5a3a",
+    "iron": "#3a322c",
+    "roofs": "#c9653f",
+    "sky": "#5cc0fb",
+    "fog": "#dff2f2"
+  },
+  "ui": {
+    "ui_accent": "#e0453a",
+    "ui_light": "#fff4d6",
+    "ui_dark": "#2b3a4a"
+  }
+}

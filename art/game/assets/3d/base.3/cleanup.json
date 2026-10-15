@@ -1,0 +1,11 @@
+{
+  "source": "meshy-b-550",
+  "part": "base",
+  "turn": 0,
+  "fit": 1.9,
+  "team": true,
+  "why": {
+    "fit": "the base is a 2x2 building (D40): the keep fills the 2x2 tiles less 5 cm per side, so the grid lines round it show",
+    "team": "the game paints the first material of every mesh under the base in the team colour"
+  }
+}

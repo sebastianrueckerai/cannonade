@@ -1,0 +1,16 @@
+asset_id: shell
+route: procedural
+class: prop
+dimensions:            # metres, Blender axes, Z up. Under 0.3 m (asset list)
+  max_x: 0.28
+  max_y: 0.28
+  max_z: 0.28
+budget:
+  max_tris: 300
+  max_materials: 1
+parts:
+  - shell
+pivots:
+  origin: centre       # the projectile flies about its centre, so the build's origin stays
+paint:
+  shell: {kind: iron, seed: 81}

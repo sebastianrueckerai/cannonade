@@ -1,0 +1,34 @@
+{
+  "cols": 3,
+  "cell": 1024,
+  "parallel": 3,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "2K"
+      },
+      "est": 0.25,
+      "refs": ["../../anchors/world_style.png", "../../anchors/shape_corner.png"]
+    }
+  },
+  "style": "Style: exactly the flat-shaded low-poly painted toy look of the attached images: cream stone, dark brown wood, dark iron, green grass tiles with visible grid lines, every block edge with a small chamfer, the afternoon sun from the front right with medium shadows. A clean model sheet on a flat board of square green grass tiles, seen from the game's camera, high above at a three-quarter angle, with empty grass tiles between the objects. No people, no text, no labels, no numbers, no letters, no watermark.",
+  "frames": {
+    "sheet": "{scene} {style}"
+  },
+  "directions": [
+    {
+      "slug": "3-iron-ladder",
+      "scene": "A model sheet of a cannon in four sizes, in one row from left to right. Every cannon is dark iron grey, the same dark iron grey for all four, with no wheels and no platform: each sits directly on the grass on a round dark iron turning mount, and each cannon fills its own square of tiles, its barrel pointing to the upper right. First, filling one single tile: a short thick iron cannon in a small wooden cradle on a round iron mount. Second, filling a square of exactly two by two tiles: a heavy iron cannon twice as big, in a wooden cradle on a wide round iron mount. Third, filling a square of exactly three by three tiles: a large iron cannon on a round iron turntable with a riveted iron shield plate in front of the gun. Fourth, filling a square of exactly three by three tiles: a huge iron artillery gun with a very long barrel and two recoil cylinders along it, on a riveted round turntable, with a small boiler and one chimney beside the gun on the same turntable, a few brass bands. Below that row, a second row of five resource crates, all exactly the same box size, each a box filling most of one single tile: a crate of stacked wooden planks with log ends on the front; one cut cream stone block; a crate of dark iron ingots; a wooden tool chest with a hammer on the lid; a wooden crate with one iron gear on the lid."
+    },
+    {
+      "slug": "4-iron-ladder",
+      "scene": "A model sheet of four gun emplacements growing in size, in one row from left to right, each standing straight on the grass with no platform and no base slab, each gun as large as its square of tiles allows. All four guns are the same dark iron grey and have no wheels: each turns on a round dark iron mount. On one tile: a short iron cannon in a wooden cradle. On exactly two by two tiles: a big iron cannon in a wooden cradle. On exactly three by three tiles: a large riveted iron gun behind a curved iron shield plate on a turntable. On exactly three by three tiles: a huge long-barrelled iron gun with recoil cylinders, a small boiler with a chimney and brass bands, on a turntable. In front, a row of five identical cube-shaped resource boxes, each the same size and filling most of one tile, different only in material: planks with log ends, cream stone, dark iron ingots, a tool chest with a hammer on the lid, a crate with a gear on the lid."
+    },
+    {
+      "slug": "5-iron-ladder-top",
+      "scene": "Seen from higher above, closer to straight down, like a board game: a model sheet of a cannon in four sizes, in one row from left to right, every cannon the same dark iron grey, no wheels, no platform, each on a round dark iron turning mount that fills its square of tiles: one tile, a short iron cannon in a wooden cradle; exactly two by two tiles, a big iron cannon in a wooden cradle; exactly three by three tiles, a large iron cannon with a riveted shield plate on a turntable; exactly three by three tiles, a huge long iron gun with two recoil cylinders, a small boiler with a chimney and brass bands on a turntable. Below, five resource boxes, all exactly the same size, each filling most of one tile: planks with log ends, a cream stone block, dark iron ingots, a tool chest with a hammer, a crate with a gear."
+    }
+  ]
+}

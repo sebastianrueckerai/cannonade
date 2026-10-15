@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Redraw the first image at the River Towns level of detail in a faceted and sharp shape language: every edge is hard with no bevel, every corner is a crisp right angle, the roofs are thin planes, the teeth of the battlements are square, the trees are made of flat triangular facets, the rocks are angular with flat faces, a low-poly look with visible flat faces everywhere. Detail level: every house is one block with a roof and one or two features, a door, a row of two windows, one chimney, the walls have a walkway behind the row of teeth and a shallow ledge at their base and no stones drawn, the towers have a roof, a flag and one window, a few crates and barrels on the ground, the cannons are a barrel on a two-wheel carriage. Five to eight parts per building. The palette of the first image stays exactly as it is: cream stone, orange roofs, green grass, yellow sand, blue sea, dark timber, bronze and iron cannons. Flat colours, no textures, no people, no text, no watermark. The first attached image is the frame to redraw. The second attached image shows only the amount of detail per building to match, take nothing else from it, not its colours, not its camera, not its buildings, not its interface. Keep the camera, the composition, the tile grid and every object of the first image in its place.",
+  "refs": [
+    "game/art-direction/rounds/04-shape/refs/corner.png",
+    "game/art-direction/rounds/04-shape/refs/river-towns.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "2-rivertowns-sharp--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:56:55",
+  "outputs": [
+    "2-rivertowns-sharp--nanobanana.png"
+  ]
+}

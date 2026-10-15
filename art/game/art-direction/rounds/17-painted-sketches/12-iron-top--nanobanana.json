@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted sketch sheet and change only the stack of dark iron bars, the third block from the left: turn the topmost layer of iron bars by 90 degrees, so it lies across the layer directly below it instead of along it. Every layer of the stack must cross the layer under it at a right angle. Keep the bars' size, the stack's overall size and place, and the painting style. Everything else stays exactly as it is: the wooden crate, the stone block, the open crate with the cog, the paper background, the shadows. No text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/17-painted-sketches/11-iron-crossed--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "21:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "12-iron-top",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T07:44:51",
+  "outputs": [
+    "12-iron-top--nanobanana.png"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "model": "ideogram/v4",
+  "prompt": "A video game title logo. The words \"GRID CANNONS\" in two stacked lines, GRID above CANNONS, tall engraved serif capitals cast in polished brass, the letters warm gold with one lighter highlight band across the upper half, a dark iron-grey engraved inner line following each letter, a slight bevel on the letter edges, a dark iron drop shadow offset to the lower right, the formal lettering of a ship's nameplate. Flat shaded low poly look, clean flat colours, no photoreal metal. Centred on a plain flat sky-blue background, nothing else in the frame, no plate, no border, no watermark.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_4_3",
+    "rendering_speed": "BALANCED",
+    "expansion_model": "None",
+    "output_format": "png"
+  },
+  "seed": 1964797871,
+  "description": null,
+  "label": "3-naval-brass--ideogram",
+  "est_cost_usd": 0.09,
+  "created": "2026-10-11T22:46:49",
+  "outputs": [
+    "3-naval-brass--ideogram.png"
+  ]
+}

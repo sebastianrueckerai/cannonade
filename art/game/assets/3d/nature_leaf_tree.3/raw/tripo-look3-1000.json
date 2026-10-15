@@ -1,0 +1,22 @@
+{
+  "provider": "tripo-fal",
+  "task_id": "01a1341d-6f34-7ee3-8959-7832f35f1c31",
+  "inputs": [
+    "game/assets/3d/nature_leaf_tree.3/refs/leaf-tree-look3-closed.png"
+  ],
+  "params": {
+    "endpoint": "tripo3d/tripo/v2.5/image-to-3d",
+    "texture": "standard",
+    "pbr": false,
+    "face_limit": 1000
+  },
+  "label": "tree3-ball-closed",
+  "credits": 0.3,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 76,
+  "created": "2026-10-13T09:16:20",
+  "outputs": {
+    "model_mesh": "tripo-look3-1000.glb",
+    "rendered_image": "tripo-look3-1000-preview.webp"
+  }
+}

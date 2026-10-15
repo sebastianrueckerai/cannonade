@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A battle moment in a scatter of small fogged islands in a teal sea that fades to cream at the horizon, a lighthouse fort on the largest, ships that appear out of the haze: cannons on the walls fire at attacking ships, cannonballs in flight, splashes in the water, round smoke puffs, one ship hit. Camera a little lower than the game camera so the shots read. Masts appear out of the fog, the cannon fire lights the mist orange for a moment, then the calm returns. Soft but saturated: teal sea fading to cream, pale sand, moss green grass with a visible checker grid, bone white and grey stone, pale driftwood, a red and white lighthouse, lantern orange accents. Soft bright overcast glow, a cream sky, fog banks at the horizon, faint shadows. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/monsters-expedition-mockups.jpg",
+    "game/art-direction/inspirations/monsters-expedition-biome01.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "lighthouse-islands-battle--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:07:10",
+  "outputs": [
+    "lighthouse-islands-battle--nanobanana.png"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painted sketch sheet and change only the large cannon on the right: remove its big round riveted shield disc completely, so the long iron barrel, its riveted iron housing with the gears and its round riveted iron turntable are fully visible. Keep the gun's size, place, design and the painting style. Everything else stays exactly as it is: the other two cannons, the paper background, the shadows. No text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/17-painted-sketches/8-shields-nowheels--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "10-large-noshield",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T07:41:09",
+  "outputs": [
+    "10-large-noshield--nanobanana.png"
+  ]
+}

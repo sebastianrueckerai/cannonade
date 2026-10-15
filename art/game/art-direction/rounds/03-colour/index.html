@@ -1,0 +1,105 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>03-colour</title>
+<style>
+body{font:15px/1.5 system-ui,sans-serif;margin:0;padding:24px;background:#f4f4f2;color:#111}
+h1{margin:0 0 4px} .meta{color:#666;margin-bottom:24px}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:24px}
+section{background:#fff;padding:16px;border-radius:6px} h2{margin:0 0 12px;font-size:18px}
+.imgs{display:flex;gap:8px;align-items:flex-start} .imgs a{flex:1} .imgs img{width:100%;display:block;border:1px solid #ddd}
+pre{white-space:pre-wrap;font-size:12px;background:#f7f7f7;padding:8px} details{margin-top:8px}
+.notes,.crit{background:#fff;padding:16px;margin-bottom:24px;border-radius:6px}
+</style>
+<h1>03-colour</h1><div class="meta">3 images · ~$0.51</div>
+<div class="notes"><pre># Round 03 notes
+
+Phase B, colour. Three palette candidates in `palette-&lt;slug&gt;.json`, swatch sheets in `swatches-&lt;slug&gt;.png`, each applied to the round 01 anchor frame through `google/nano-banana-2.1/edit` with the frame and the swatch sheet attached, see [round.json](round.json). The 13 pixel test per palette, `&lt;slug&gt;-13px.png`, comes from [teamcrop.py](../../../../pipeline/teamcrop.py): the recoloured frame scaled so a one metre wall is 13 px tall, a base block in each team colour pasted in, next to the four team colours and a wall on each ground colour, magnified four times. 3 images, 0.45 USD, plus two critiques. Everything on one sheet: [picks-sheet.jpg](picks-sheet.jpg).
+
+## Director&#x27;s read, provisional
+
+The three frames differ less than the swatches do: the edit kept the composition and shifted the colours, the sea went bluer in market-warmth and paler in fogged-teal, the roofs went orange and red. All three keep the toy mood. The difference that matters is in the ground: market-warmth&#x27;s grass is green where painted-toy&#x27;s is yellow-green, and green ground is the better bed for olive and for the sand next to it.
+
+1. **market-warmth**: the warmest and the clearest hierarchy. Orange roofs and bronze cannons sit on cream walls on green grass next to a blue sea, four colours that stay apart at 13 px. The warm stone separates from the sand better than the other two.
+2. **painted-toy**: the anchor as it is. The yellow-green grass and the yellow sand are close in hue, and the cream stone sits between them, so on a pure land map the ground is three yellows.
+3. **fogged-teal**: the bone white stone disappears into the pale sand at 13 px, and the softer grass takes saturation out of the one world Sebastian picked for its colours.
+
+The team colours fail the test in every palette the same way: deep blue #1f1f5e and purple #4a1671 are two dark blocks side by side at 13 px, on every ground. Teal and olive read. The fix is in the game&#x27;s colours, not in the palette: a lighter, redder purple. Proposal in [PICKS.md](PICKS.md).
+
+## Faults in the images
+
+- The edit does not hit the hex values. It moves each surface toward the swatch, which is enough for a comparison and not a measurement. The palette files hold the intended values.
+- The sails lost their stripes in none of the three, the flags changed colour in all three.
+</pre></div>
+<main><section><h2>fogged-teal-world--nanobanana</h2><div class="imgs"><a href="fogged-teal-world--nanobanana.png"><img loading="lazy" src="fogged-teal-world--nanobanana.png" alt=""></a></div><details><summary>google/nano-banana-2.1/edit · ~$0.15</summary><pre>Recolour the first image to the palette in the second image: the sea to #3dbdb0, the sand and beaches to #f3e3a8, the grass tiles to #a3c95c, the tree leaves and bushes to #4f8f5a, the stone walls, towers and keep to #f7f1e4, the wood of piers, carriages and ships to #9c7a57, the cannon barrels to #4a4742, the roofs to #c5564a, the sails stay white with stripes in #e8653c. Flat colours, no textures, no new objects, no text, no watermark. The first attached image is the frame to recolour, the second is the palette with the colour per surface. Keep every object, shape, shadow and the composition of the first image exactly as it is and change only the colours.</pre></details></section><section><h2>market-warmth-world--nanobanana</h2><div class="imgs"><a href="market-warmth-world--nanobanana.png"><img loading="lazy" src="market-warmth-world--nanobanana.png" alt=""></a></div><details><summary>google/nano-banana-2.1/edit · ~$0.15</summary><pre>Recolour the first image to the palette in the second image: the sea to #2f9fc9, the sand and beaches to #f0c975, the grass tiles to #8fbf3c, the tree leaves and bushes to #3d7f34, the stone walls, towers and keep to #e8d6b0, the wood of piers, carriages and ships to #7a4a2e, the cannon barrels to #33302e, the roofs to #d8632f, the sails stay white with stripes in #c8322d. Flat colours, no textures, no new objects, no text, no watermark. The first attached image is the frame to recolour, the second is the palette with the colour per surface. Keep every object, shape, shadow and the composition of the first image exactly as it is and change only the colours.</pre></details></section><section><h2>painted-toy-world--nanobanana</h2><div class="imgs"><a href="painted-toy-world--nanobanana.png"><img loading="lazy" src="painted-toy-world--nanobanana.png" alt=""></a></div><details><summary>google/nano-banana-2.1/edit · ~$0.15</summary><pre>Recolour the first image to the palette in the second image: the sea to #31b6ba, the sand and beaches to #f7d78a, the grass tiles to #b9c440, the tree leaves and bushes to #3f8a3a, the stone walls, towers and keep to #f5e9c8, the wood of piers, carriages and ships to #8a5a3a, the cannon barrels to #3a322c, the roofs to #c9653f, the sails stay white with stripes in #e0453a. Flat colours, no textures, no new objects, no text, no watermark. The first attached image is the frame to recolour, the second is the palette with the colour per surface. Keep every object, shape, shadow and the composition of the first image exactly as it is and change only the colours.</pre></details></section></main>
+<h2>Critiques</h2><div class="crit"><details><summary>gemini (google/gemini-2.5-pro)</summary><pre>As an independent art critic, I have reviewed the three palette candidates for the game. Here is my assessment based on the brief.
+
+***
+
+### 1 painted-toy
+
+*   **Mood:** This palette directly translates the &quot;painted toy&quot; concept. It is bright, simple, and has a high-contrast, almost primary feel. It achieves &quot;cheerful&quot; and &quot;sunlit,&quot; but leans more towards vibrant and energetic than &quot;cozy,&quot; with a slightly plasticky finish.
+*   **Separation at 13 pixels:** The team blue and purple are difficult to distinguish, sharing a very similar dark value. The most significant issue, however, is the stone wall readability. Against the pale yellow sand (`#f7d78a`), the light stone walls (`#f5e9c8`) have almost no value or hue separation, causing them to visually disappear.
+*   **Hierarchy:** The ground competes directly with player construction. Because walls blend into the sand, the foundational grid and the player&#x27;s primary building block fail to separate, which would be detrimental to gameplay. Roofs and cannons stand out adequately.
+*   **One swatch to change:** **Sand**. I would change the sand to a darker, more saturated ochre, perhaps `#e0b973`. This would provide necessary contrast against the pale stone walls, ensuring player constructions are always readable on sand tiles.
+
+### 2 market-warmth
+
+*   **Mood:** This palette perfectly captures the &quot;saturated but cosy&quot; brief. The warmer stone, rich orange roofs, and lush green give the world a welcoming, sun-drenched Mediterranean feel. It feels like a high-quality, hand-painted wooden toy set.
+*   **Separation at 13 pixels:** As with the first palette, team blue and purple remain too close in value and are the hardest pair to tell apart at a distance. However, all team colours have excellent separation from all ground types (grass, sand, and stone). Critically, the stone walls read clearly against both the greener grass and the warmer sand.
+*   **Hierarchy:** Excellent. Player objects are the clear focal point. The warm orange roofs act as a strong visual anchor for player territory, and walls are distinct from the ground they are built on. The environment serves as a beautiful and legible backdrop without competing for attention.
+*   **One swatch to change:** **Grass**. While good, the grass (`#8fbf3c`) is very vibrant. Desaturating it slightly to `#96b94f` would push it back in the visual hierarchy just a touch, allowing the team colours and interactive objects to pop even more.
+
+### 3 fogged-teal
+
+*   **Mood:** This palette departs significantly from the &quot;cheerful, sunlit&quot; directive. The desaturated teal sea, bone-white stone, and soft green create a muted, overcast, or misty morning atmosphere. The mood is more serene and melancholic, losing the cheerful energy of the brief.
+*   **Separation at 13 pixels:** This palette has critical readability failures. Team blue and purple are still problematic, but more importantly, the ground colours camouflage player units. The `team olive` is nearly invisible on the `grass`, and `team teal` has very poor contrast against both the `grass` and the `sea`.
+*   **Hierarchy:** Poor. The ground actively hides player colours, which is a cardinal sin for a strategy game. While the bright white stone walls stand out, the overall effect is one of confusion where the player&#x27;s identity is lost against the environment.
+*   **One swatch to change:** **Grass**. The current grass (`#a3c95c`) camouflages two of the four team colours. It must be changed to something with a different value and hue, such as a drier, yellower grass like `#d1c28f`, to provide a contrasting background for all teams.
+
+***
+
+**Ranking**
+
+1.  **market-warmth** best fulfills the brief by creating a cosy, sunlit world with outstanding gameplay readability and a clear visual hierarchy.
+2.  **painted-toy** captures the toy aesthetic well but is ranked second due to the critical failure of wall-on-sand readability.
+3.  **fogged-teal** is last as it both misses the specified mood and has severe, game-breaking issues with team colour camouflage.
+
+**Team Colour Correction**
+
+Regardless of the palette chosen, the **team blue** (`#1f1f5e`) needs correction. Its value is too close to the team purple, making them difficult to distinguish at a glance, especially in the heat of a match. I propose changing it to a more vibrant and distinct royal blue, such as **#2D55C4**, which maintains the blue identity while clearly separating itself from the deep purple.
+
+RANKING: market-warmth, painted-toy, fogged-teal</pre></details><details><summary>glm (glm-5v-turbo)</summary><pre>**1 painted-toy**
+
+- **Mood:** Perfectly preserves the cheerful, sunlit plastic-toy atmosphere—the anchor aesthetic is intact with its board-game saturation, cyan sea, and chartreuse grass feeling like a brightly lit playset rather than a real place.
+- **Separation at 13 px:** **Team Olive** (`#70631a`) bleeds into **Sand** (`#f7d78a`) at small scale, reading as “soiled ground” rather than a distinct faction; **Team Teal** (`#197059`) risks hue-confusion with the **Sea** (`#31b6ba`) despite value difference. **Walls** (Stone `#f5e9c8`) separate well from **Grass** (`#b9c440`) via complementary contrast, but vanish against **Sand** due to identical lightness and warmth.
+- **Hierarchy:** Poorly balanced—the hyper-saturated **Grass** and **Sea** scream as loudly as the player’s **Roofs** (`#c9653f`) and **Cannons** (Iron `#3a322c`), creating visual fatigue where the ground competes for attention instead of supporting the architecture.
+- **Change:** **Grass** (`#b9c440`)—desaturate and shift toward true green (e.g., `#8fbf3c`) to stop it from rivaling the roofs and team colours; currently it is the loudest element on screen, undermining the “cosy” brief.
+
+**2 market-warmth**
+
+- **Mood:** Drifts gently toward “sunny Mediterranean port”—still cheerful and sunlit, but the bluer sea, warmer stone, and terracotta roofs evoke a real, inhabited place rather than an abstract toy; cosiness is maintained through unified earth tones without losing energy.
+- **Separation at 13 px:** The strongest of the three. **Team Olive** now sits clearly apart from both the cooler **Grass** (`#8fbf3c`) and the orange-shifted **Sand** (`#f0c975`). **Team Blue** (`#1f1f5e`) gains hue-separation from the now-cyan-leaning **Sea** (`#2f9fc9`). **Walls** (Stone `#e8d6b0`) read distinctly from **Sand** via temperature (beige vs. gold) even at low resolution.
+- **Hierarchy:** Excellent. The naturalistic, mid-saturation **Grass** recedes into a supportive role, allowing the **Roofs** (`#d8632f`) and dark **Iron** (`#33302e`) to dominate the visual hierarchy. The **Sea** is present but no longer fights the foreground objects.
+- **Change:** **UI Dark** (`#3a2e28`)—currently a warm near-black that merges with **Wood** and **Iron**; shift to a cool charcoal (e.g., `#2c3e50`) so health bars and buttons read crisply against the warm game world without requiring heavy stroke outlines.
+
+**3 fogged-teal**
+
+- **Mood:** Drifts significantly toward “early morning mist” or “pastel illustration,” losing the decisive sunlit quality; the bone-white **Stone** (`#f7f1e4`) and pale **Sand** (`#f3e3a8`) flatten the lighting into an overcast, gentle haze that feels more suited to a puzzle game than a chunky strategy title.
+- **Separation at 13 px:** Critical failure on **Stone** vs. **Sand**—at 13 px, `#f7f1e4` and `#f3e3a8` are indistinguishable, making it impossible to read where terrain ends and fortifications begin on coastal maps. **Team Purple** (`#4a1671`) and **Team Blue** (`#1f1f5e`) lose contrast against the pale **Fog** (`#f1ece0`) and **Stone**, merging into muddy darks.
+- **Hierarchy:** Broken by high-key values. The pale grounds wash out depth, causing **Walls** to float invisibly while the **Roofs** (`#c5564a`) become aggressive, isolated red spots that unbalance the composition. Player objects fail to “pop” because the ground is already near-white.
+- **Change:** **Stone** (`#f7f1e4`)—must darken substantially (to `#d4c4a0` or similar) to create necessary value-separation from **Sand** and to register as “solid structure” rather than empty space; alternatively, saturate **Sand** to golden-orange (`#eebb55`) to push it away from the bone walls.
+
+---
+
+**Rankings**
+
+1. **market-warmth:** The only palette that honours the cheerful toy brief while delivering the tactical clarity a grid-based strategy game demands, balancing warm atmosphere with readable hierarchy.
+2. **painted-toy:** Nails the aesthetic mood but sacrifices too much functional hierarchy to ground saturation, risking visual noise that obscures gameplay state during extended sessions.
+3. **fogged-teal:** Atmospherically lovely but functionally unsuitable, with fatal contrast failures at the 13px scale that hide walls in terrain and turn team colours into indistinct shadows.
+
+**Team Colour Correction**
+
+Regardless of palette, **Team Olive** (`#70631a`) requires correction. It is the only team colour that reads as “mud” or “shadow” rather than a distinct faction identity—its value is too dark and its chroma too brown, causing it to blur with **Sand**, **Wood**, and **UI Dark** across all three schemes while lacking the clarity of the blue/purple/teal triad.  
+
+**Proposed hex:** `#8a9a2e` (a brighter, clearer olive-green that maintains the yellow-green hue family but lifts value and saturation to match the “cheerful” brief, ensuring it pops against both sand and grass without drifting into military-drab murkiness).
+
+RANKING: market-warmth, painted-toy, fogged-teal</pre></details></div>

@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A wide establishing view, slightly elevated, of a scatter of small fogged islands in a teal sea that fades to cream at the horizon, a lighthouse fort on the largest, ships that appear out of the haze. Age of sail at a remote trading post: a lighthouse, a signal mast, pale wooden piers, a medieval round tower for the keep, pine and gorse rather than palms. Soft but saturated: teal sea fading to cream, pale sand, moss green grass with a visible checker grid, bone white and grey stone, pale driftwood, a red and white lighthouse, lantern orange accents. Soft bright overcast glow, a cream sky, fog banks at the horizon, faint shadows. Repeating motifs: the lighthouse, fog banks, gulls, rope, lanterns, pale wooden piers, pine trees, rock shelves at the waterline, the checker grid on the land. The feeling: calm, airy, remote. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/monsters-expedition-mockups.jpg",
+    "game/art-direction/inspirations/monsters-expedition-biome01.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "lighthouse-islands-coast--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:07:20",
+  "outputs": [
+    "lighthouse-islands-coast--nanobanana.png"
+  ]
+}

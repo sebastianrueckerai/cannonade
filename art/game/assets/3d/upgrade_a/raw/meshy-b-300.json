@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a12f73-b64a-70b6-b81f-346062895134",
+  "inputs": [
+    "game/assets/3d/upgrade_a/refs/b-view.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 300
+  },
+  "label": "upgrade_a meshy-b-300",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 59,
+  "created": "2026-10-12T11:32:13",
+  "outputs": {
+    "model": "meshy-b-300.glb",
+    "rendered_image": "meshy-b-300-preview.png"
+  }
+}

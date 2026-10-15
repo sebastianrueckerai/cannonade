@@ -1,0 +1,23 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint an equirectangular 360-degree sky panorama for a cozy, bright strategy game: one wide seamless painted sky whose left and right edges join perfectly, ready to wrap around a whole horizon. It is a painting, not a photo, not a 3D render: soft hand-painted brushwork with visible strokes, cheerful and friendly like a storybook toy world, never grim, in the warm light of a sunny afternoon. The horizon runs exactly along the middle height of the image: the top half is sky only, the bottom half carries no ground, no sea and no objects, only the soft warm cream haze of the horizon (#efe3d0) gently continued and fading downward. The zenith straight above is a clear friendly blue (#6cb9f5) that eases lighter and a little warmer toward the horizon. Soft cumulus clouds drift across the upper half: rounded, toy-like, with warm sunlit cream tops (#ffe8c0 glow) and soft blue-grey bases, sparse enough that plenty of open blue shows between them, and their shadows never reach the horizon band. No people, no birds, no boats, no text, no labels, no numbers, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 24 sky panorama",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-13T23:36:12",
+  "outputs": [
+    "sky.png",
+    "world_panorama.png",
+    "sky-half.png"
+  ],
+  "post": "world_panorama.png is sky.png centre-cropped 16:9 -> 2:1 (80 px off top and bottom) for the equirect wrap; sky-half.png is a small inspection copy."
+}

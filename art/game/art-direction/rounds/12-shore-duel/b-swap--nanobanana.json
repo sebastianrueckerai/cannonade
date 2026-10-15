@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The first attached image is the painting to edit. Replace only the castle on the green shore in the lower left of the first image with the castle in the lower left of the second attached image: its square keep with a timber lookout under an orange pyramid roof and a red flag, its small orange-roofed houses along its left wall, its square corner towers, its gate, and its two bronze cannons on wooden carriages standing on the open courtyard floor, the same size, barrels raised. Put it at the same place, a little larger than the castle it replaces, its walls along the same grid lines, its cannons big and clear. Its front cannon, the right one of the pair, fires at the castle on the island: a bright yellow flash and one round white smoke cloud right at its muzzle, and one dark cannonball a short way out beyond the muzzle exactly on the line of its barrel, with a faint straight trail back to the muzzle. Everything else of the first image stays exactly as it is: the bay, the island, the island castle with its tower house, its battlements and its cannons, the shore, the trees, the rocks, the tile grid, the light, the colours. No other smoke, no other ball. No text, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/11-duel-more/2-final.png",
+    "game/art-direction/rounds/11-duel-more/1-final.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "b-swap--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T01:20:00",
+  "outputs": [
+    "b-swap--nanobanana.png"
+  ]
+}

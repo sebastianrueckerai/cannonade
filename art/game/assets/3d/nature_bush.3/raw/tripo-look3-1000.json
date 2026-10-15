@@ -1,0 +1,22 @@
+{
+  "provider": "tripo-fal",
+  "task_id": "01a13408-ee2e-7433-950b-15da411608f1",
+  "inputs": [
+    "game/assets/3d/nature_bush.3/refs/bush-look3-ball.png"
+  ],
+  "params": {
+    "endpoint": "tripo3d/tripo/v2.5/image-to-3d",
+    "texture": "standard",
+    "pbr": false,
+    "face_limit": 1000
+  },
+  "label": "bush-look3-ball",
+  "credits": 0.3,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 65,
+  "created": "2026-10-13T08:53:45",
+  "outputs": {
+    "model_mesh": "tripo-look3-1000.glb",
+    "rendered_image": "tripo-look3-1000-preview.webp"
+  }
+}

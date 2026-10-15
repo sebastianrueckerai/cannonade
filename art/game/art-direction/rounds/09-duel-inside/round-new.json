@@ -1,0 +1,49 @@
+{
+  "cols": 2,
+  "cell": 768,
+  "parallel": 4,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      }
+    },
+    "flux3": {
+      "id": "blackforestlabs/flux-3/edit-image",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1k",
+        "output_format": "png"
+      },
+      "only": ["n1-land-diagonal"]
+    }
+  },
+  "style": "Take the painting style, the colours, the castles and the land from the attached image. Cannons: each castle has exactly two bronze cannons of the same size, standing side by side on the open stone courtyard floor inside the walls, away from the walls, each a complete smooth barrel on a curved wooden carriage with two wheels, the barrel raised to 45 degrees so it points up over the wall toward the other castle; no cannon stands on a tower, on a wall, on a roof or on a house. No cannon fires, no smoke, no cannonball. The two castles are the same painted style and not mirror images. The tile grid on the land is painted in the same perspective as the castles, its lines parallel to the castle walls. No title, no text, no letters anywhere, the sky at the top plain and quiet. Soft painterly 2D illustration, soft colours, not oversaturated. No people, no watermark.",
+  "frames": {
+    "main": "{scene} {style}"
+  },
+  "directions": [
+    {
+      "slug": "n1-land-diagonal",
+      "refs": ["2-land-diagonal-scene--nanobanana.png"],
+      "scene": "Paint a new version of this scene: the green land map from high above at a three-quarter angle, the near castle bottom left and large, the far castle upper right and smaller, the river and the sand path between them, round trees and rocks."
+    },
+    {
+      "slug": "n2-side-by-side-aligned",
+      "refs": ["2-land-diagonal-scene--nanobanana.png"],
+      "scene": "Paint a new scene: the green land map from high above at a three-quarter angle, two castles left and right, both the same size and each about a third of the frame wide, both drawn at the same angle as the near castle of the attached image so their walls run along the grid lines, a river running between them from the top of the frame to the bottom."
+    },
+    {
+      "slug": "n3-islands-diagonal",
+      "refs": ["2-land-diagonal-scene--nanobanana.png", "3-two-islands-scene--nanobanana.png"],
+      "scene": "Paint a new scene: two castle islands from high above at a three-quarter angle, the near island bottom left and large, the far island upper right and smaller, a strait of blue sea between them, yellow sand at the shores, the castles drawn at the same angle as the near castle of the first attached image, the islands like those of the second attached image."
+    },
+    {
+      "slug": "n4-closer-diagonal",
+      "refs": ["2-land-diagonal-scene--nanobanana.png"],
+      "scene": "Paint a new version of this scene, closer: the near castle fills the lower left half of the frame so its two cannons are big and clear, the far castle upper right across the river, the land from high above at a three-quarter angle."
+    }
+  ]
+}

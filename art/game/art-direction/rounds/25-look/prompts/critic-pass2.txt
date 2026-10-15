@@ -1,0 +1,8 @@
+You are the art critic of a cozy painted strategy game. The FIRST TWO images are the style references (storybook toy world, warm sunny afternoon, friendly, never grim). The LAST image is a numbered contact sheet of 12 refined look variants of the same in-game scene; only the sky backdrop, lighting, colour grading and post-processing differ. Some variants now use different painted sky panoramas behind the board.
+
+For EACH numbered variant judge from afar: warmth and coziness, match to the reference mood, board readability, colour harmony, and how the painted backdrop sits behind the board. Then answer:
+
+1. Rank the FOUR variants that best carry the cozy storybook mood. For each, one line on what still holds it back (symptom, not knob).
+2. Any variant where the backdrop haze colour clashes with the board or reads dirty - number and symptom.
+3. Compare the backdrops head to head: warm honey haze, soft ivory haze, clearer blue-leaning haze - which serves the cozy afternoon mood best, and which serves board readability best? Can one serve both?
+4. One line: the single change that would most increase coziness across the sheet now.

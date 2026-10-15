@@ -1,0 +1,32 @@
+{
+  "asset_id": "base",
+  "route": "generative",
+  "inputs": {
+    "asset_yaml_sha": "92dea040e7f1"
+  },
+  "steps": [
+    {
+      "name": "import",
+      "ok": true,
+      "elapsed_s": 0.01
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.17
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-12",
+  "cost_usd": 0.45,
+  "created": "2026-10-12T15:45:42+02:00"
+}

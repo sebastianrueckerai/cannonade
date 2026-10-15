@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The harbour of a fortified shipyard on a rock, where everything is being built: wooden cranes, slipways, scaffolds, rope walks and a forge, the cannons cast in sight of the walls, seen closer and from a lower angle than the game camera, in the evening with the forge lit. Piers, boats, the quay buildings, crates and barrels, no people. Evening: the forge glows orange, lanterns on the cranes, the sea goes deep blue, the brass catches the last light. Repeating motifs: wooden cranes and pulleys, slipways, rope coils, scaffolding, stacked timber, stone blocks and iron bars as visible resources, forge glow, copper roofs, brass gun barrels. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/Foundation_ss_dbc1c23ffd249f0c8b07aae6312f33aa63a0e8eb.1920x1080.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "shipwright-yard-harbour--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:08:54",
+  "outputs": [
+    "shipwright-yard-harbour--nanobanana.png"
+  ]
+}

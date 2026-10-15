@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A new frame in exactly the style, palette, lighting and camera of the attached image: the same painted toy fortress with cream walls, orange roofs and black cannons on a tile grid, but on a river map: a wide blue river two tiles wide winds across the grid from the top edge to the bottom edge, with sand tiles along both banks and one wooden plank bridge, and green grass tiles on both sides reaching every edge of the frame. No sea, no island, no coastline, the tile grid runs to every edge of the frame. A few round trees, bushes and pebbles on the grass. Flat colours, no people, no text, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/colour_frame.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "map-river--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:56:07",
+  "outputs": [
+    "map-river--nanobanana.png"
+  ]
+}

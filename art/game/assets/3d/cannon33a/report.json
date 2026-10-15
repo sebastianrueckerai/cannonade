@@ -1,0 +1,69 @@
+{
+  "asset_id": "cannon33a",
+  "parts": {
+    "barrel": {
+      "verts": 1020,
+      "tris": 978,
+      "non_manifold_edges": 942,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.009,
+        0.201,
+        1.2475
+      ]
+    },
+    "mount": {
+      "verts": 2617,
+      "tris": 1963,
+      "non_manifold_edges": 2549,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "plate": {
+      "verts": 40,
+      "tris": 20,
+      "non_manifold_edges": 40,
+      "materials": [
+        "plate_plate"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 3677,
+  "tris": 2961,
+  "non_manifold_edges": 3531,
+  "materials": [
+    "Material_0",
+    "plate_plate"
+  ],
+  "dims_m": [
+    2.9,
+    2.9,
+    1.6644
+  ],
+  "bbox_min": [
+    -1.45,
+    -1.45,
+    0.0
+  ],
+  "bbox_max": [
+    1.45,
+    1.45,
+    1.6644
+  ],
+  "solidity": 0.701,
+  "limits_ok": true,
+  "limit_failures": []
+}

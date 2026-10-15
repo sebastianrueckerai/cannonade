@@ -1,0 +1,17 @@
+{
+  "tool": "storeset.py key",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": [
+    "game/art-direction/rounds/14-store-set/c-cream-title--nanobanana.png"
+  ],
+  "params": {
+    "box": "unknown, about 0,0.345,1,1"
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "logo-c-cream.png"
+  ],
+  "note": "Input is the lettering of the same name. Without --box a re-run gives 2275x1110, not 2275x620, so a --box was used. --box 0,0.345,1,1 reproduces the size and every alpha value, but 24964 visible pixels differ in RGB by up to 12, so the exact box is unknown."
+}

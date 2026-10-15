@@ -1,0 +1,9 @@
+You are the art critic of a cozy painted strategy game. The FIRST TWO images are the style references (storybook toy world, warm sunny afternoon, friendly, never grim). The THIRD image is the designer's cozy reference: a soft warm ivory-golden look he loves. The FOURTH image is his readability reference: a low-sun honey look whose longer shadows make the individual ground tiles pop, so players can read the grid. The FIFTH image is a contact sheet of three NEW candidates, wide gameplay view. The SIXTH image is the same three close up. Only sky, lighting, colour grading and post differ; the 3D scene is identical. Numbering holds across both sheets.
+
+The designer's brief: keep the soft cozy mood of his cozy reference, but make the ground tiles read as clearly as in his readability reference.
+
+Answer:
+1. Rank the three new candidates, one line of reasoning each.
+2. For each: is the grid as readable as in the readability reference? Judge the wide view from afar, squinting.
+3. Any fault that survives afar and close (blown highlights, washed-out warmth, muddy greens, shadows too dark, backdrop clash)?
+4. Which one candidate would you ship? One line why.

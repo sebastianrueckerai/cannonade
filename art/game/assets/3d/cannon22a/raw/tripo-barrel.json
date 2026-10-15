@@ -1,0 +1,26 @@
+{
+  "provider": "tripo",
+  "task_id": "e1dd5fab-bee0-463c-848f-678b38920daa",
+  "inputs": [
+    "game/assets/3d/cannon22a/refs/barrel.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "image_to_model",
+    "file": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 1000,
+    "files": "uploaded"
+  },
+  "label": "cannon22a tripo-barrel",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 260,
+  "created": "2026-10-12T09:57:40",
+  "outputs": {
+    "model": "tripo-barrel.glb",
+    "rendered_image": "tripo-barrel-preview.webp"
+  }
+}

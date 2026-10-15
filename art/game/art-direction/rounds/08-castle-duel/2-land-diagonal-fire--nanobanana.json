@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painting and change nothing but one shot. The cannon standing on top of the near castle's right corner tower, the one whose barrel points up and to the right toward the far castle, fires at the far castle: the ball flies up and to the right along its barrel toward the far castle. The shot: a bright yellow flash and one round white smoke cloud right at that cannon's muzzle, and one cannonball, a dark sphere about the size of the cannon's wheel, a short way out beyond the muzzle, exactly on the barrel's axis, with a faint trail back to the muzzle. The cannon itself, the direction of its barrel, the other cannons, the castles, the grid, the colours and the title all stay exactly as they are. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/08-castle-duel/2-land-diagonal-scene--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "2-land-diagonal-fire--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T00:08:34",
+  "outputs": [
+    "2-land-diagonal-fire--nanobanana.png"
+  ]
+}

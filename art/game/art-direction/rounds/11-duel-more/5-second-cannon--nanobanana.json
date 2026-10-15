@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painting and change only one thing: in the far castle in the upper right, add a second bronze cannon on a wooden carriage with two wheels on the courtyard floor, just to the right of and slightly in front of its one cannon, exactly the same size and the same shape, its barrel raised the same way and pointing the same way, toward the near castle in the lower left. Everything else stays exactly as it is. No text, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/11-duel-more/5-fixed-fix--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "5-second-cannon",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T01:03:01",
+  "outputs": [
+    "5-second-cannon--nanobanana.png"
+  ]
+}

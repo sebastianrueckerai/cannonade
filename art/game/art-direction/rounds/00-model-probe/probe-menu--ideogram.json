@@ -1,0 +1,17 @@
+{
+  "model": "ideogram/v4",
+  "prompt": "Main menu screen of a strategy game, 16:9. A wide background illustration of a coastal fortress with cannons in the late afternoon, Muted natural colours: warm sandstone, teal sea, moss green, Calm and clear. The title GRID CANNONS large at the top in a bold clean sans-serif. Four menu buttons stacked on the left, in this order: Single, Versus, Sandbox, Quit. Clean game UI, legible text, flat shaded low poly world in the background, no other text.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_16_9",
+    "rendering_speed": "BALANCED"
+  },
+  "seed": 713810545,
+  "description": null,
+  "label": "probe-menu--ideogram",
+  "est_cost_usd": 0.09,
+  "created": "2026-10-11T15:35:00",
+  "outputs": [
+    "probe-menu--ideogram.png"
+  ]
+}

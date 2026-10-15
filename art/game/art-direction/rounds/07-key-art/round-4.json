@@ -1,0 +1,60 @@
+{
+  "cols": 3,
+  "cell": 768,
+  "parallel": 3,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      }
+    }
+  },
+  "style": "Every cannon is complete and correct: a bronze barrel on a wooden carriage with two wheels, standing on the wall walk behind the battlements or on the courtyard floor, seen from above like everything else, never a barrel pasted over a house or a roof. The firing cannon's barrel points straight at the enemy fortress. The smoke plume is one round white cloud at its muzzle, drifting in the barrel's direction. The cannonball sits on the straight line from that muzzle to the enemy fortress, about halfway, with a faint trail behind it back toward the muzzle. The title and its lettering stay exactly as they are. Painted 2D illustration. No people, no other words, no watermark.",
+  "frames": {
+    "capsule": "{scene} {style}"
+  },
+  "directions": [
+    {
+      "slug": "20-land-fix-a",
+      "refs": ["12-land-map-capsule--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but the cannons. Replace the broken firing cannon on the near fortress with a correct one standing on the wall walk of the wall that faces the far fortress, and put two cannons on carriages on the far fortress's wall that faces the near fortress, pointing back at it. Keep the land, the river, the tile grid, the fortresses, the colours and the title as they are."
+    },
+    {
+      "slug": "20-land-fix-b",
+      "refs": ["12-land-map-capsule--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but the cannons. Replace the broken firing cannon on the near fortress with a correct one standing on the wall walk of the wall that faces the far fortress, and put two cannons on carriages on the far fortress's wall that faces the near fortress, pointing back at it. Keep the land, the river, the tile grid, the fortresses, the colours and the title as they are."
+    },
+    {
+      "slug": "21-land-closer",
+      "refs": ["12-land-map-capsule--nanobanana.png"],
+      "scene": "Repaint this scene with the two fortresses closer together and larger, each about a third of the frame wide, the near one bottom left with the red flag and the far one upper right with the blue flag, the river and the path between them, the tile grid over the green land, the same soft colours, the title in the same lettering on the sky at the top. Each fortress has two cannons on carriages on the wall facing the other. The near fortress fires one shot at the far one."
+    },
+    {
+      "slug": "22-islands-fix",
+      "refs": ["11-two-islands-capsule--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but the cannons. Put three bronze cannons on wooden carriages on the right fortress's wall walk along the wall that faces the left fortress, pointing at it, the same kind as the cannons of the left fortress. The left fortress keeps its cannons and its one shot. Keep the islands, the strait, the colours and the title as they are."
+    },
+    {
+      "slug": "23-diagonal-fix",
+      "refs": ["13-diagonal-depth-capsule--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but the shot. Turn the firing cannon on the near fortress so its barrel points straight at the enemy island in the upper right, and move the smoke plume and the cannonball onto that line. Put two cannons on carriages on the enemy fortress's wall that faces the near fortress. Keep the islands, the bay, the colours and the title as they are."
+    },
+    {
+      "slug": "24-land-new-a",
+      "refs": ["12-land-map-capsule--nanobanana.png"],
+      "scene": "Paint a new version of this scene from a little higher above: the same green land map with the tile grid, the river and the path, two fortresses with cream walls, square battlements and orange roofs, the near one bottom left with a red flag and larger, the far one upper right with a blue flag, round trees and rocks, the same soft colours, the title in the same lettering on the sky at the top. Each fortress has two cannons on carriages on its wall facing the other, drawn complete and seen from above. The near fortress fires one shot at the far one."
+    },
+    {
+      "slug": "24-land-new-b",
+      "refs": ["12-land-map-capsule--nanobanana.png"],
+      "scene": "Paint a new version of this scene from a little higher above: the same green land map with the tile grid, the river and the path, two fortresses with cream walls, square battlements and orange roofs, the near one bottom left with a red flag and larger, the far one upper right with a blue flag, round trees and rocks, the same soft colours, the title in the same lettering on the sky at the top. Each fortress has two cannons on carriages on its wall facing the other, drawn complete and seen from above. The near fortress fires one shot at the far one."
+    },
+    {
+      "slug": "25-land-side",
+      "refs": ["12-land-map-capsule--nanobanana.png"],
+      "scene": "Paint a new version of this scene with the two fortresses side by side, the red-flag one on the left and the blue-flag one on the right, both large, the river running between them from the top of the frame to the bottom, the tile grid over the green land, round trees and rocks, the same soft colours, the title in the same lettering on the sky at the top. Each fortress has two cannons on carriages on the wall facing the other, drawn complete and seen from above. The left fortress fires one shot straight across the river at the right one."
+    }
+  ]
+}

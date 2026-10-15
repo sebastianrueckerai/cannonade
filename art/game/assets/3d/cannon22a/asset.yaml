@@ -1,0 +1,18 @@
+asset_id: cannon22a
+route: generative     # Meshy, then the cleanup by hand: split.json, barrel.py final
+class: gun
+dimensions:           # metres, Blender axes, Z up. The footprint is 2.0 m square
+  max_x: 2.0
+  max_y: 2.0
+  max_z: 2.0
+budget:
+  max_tris: 1500        # D37
+  max_materials: 2     # the texture and the plate
+parts:
+  - barrel
+  - mount
+  - plate
+pivots:
+  origin: ground_centre
+  anchor: plate       # the plate stands square on the tile; the build keeps the whole gun inside it
+  barrel: trunnion_axis

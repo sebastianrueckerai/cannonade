@@ -1,0 +1,90 @@
+# Geometry rules of the Grid Cannons art kit. Phase C of docs/process/art-direction.md, round 04-shape.
+# Every procedural build.py and every image-to-3D normalisation reads its numbers from here. A rule change is a
+# new version and a decision entry. Units are metres, one tile is 1.0 m. The game's default view shows
+# 24.7 px per tile across and 12.3 px per vertical metre; zoomed in, 192 px and 96 px (gameplay_contract.yaml).
+_status: v0, round 04, pick D22 on 2026-10-11. The picked language and level are the rule, the other entries stay as the rejected alternatives. v1 (session 11, D53): the wall face carries the painted stone grain; the 13 px rules are unchanged.
+
+picked:
+  shape_language: faceted_sharp
+  detail_level: river_towns
+  bevel_m: 0.05               # the anchor's chamfer, one segment, on every block edge
+  bevel_segments: 1
+  nature:                     # D41 shapes on the D45 procedural route; measured on the nine assets of session 08
+    bush: one lump 0.5 to 0.8 m across and 0.35 to 0.5 m tall, 80 tris, solidity 1.0
+    tree: crown and trunk one mesh, 0.55 to 1.0 m across, up to 1.8 m tall, 118 tris, solidity 0.63 or more
+    boulder: one lump 0.8 to 0.9 m across and 0.7 to 0.8 m tall, 80 tris, solidity 0.99 or more
+
+shape_language:
+  rounded_chunky:             # painted wooden toy blocks
+    bevel_m: 0.10             # every edge, a tenth of a tile, two segments
+    bevel_segments: 2
+    corner_radius_m: 0.10
+    roof_thickness_m: 0.12
+    merlon_top: rounded
+    facet_min_m: 0.08         # the smallest flat face, smaller faces merge
+    trees: 3 to 5 spheres on a short trunk
+    rocks: rounded, 8 to 12 faces, no sharp ridge
+  faceted_sharp:              # low poly with visible flat faces, picked
+    bevel_m: 0.05             # one chamfer segment, the anchor's edge
+    bevel_segments: 1
+    corner_radius_m: 0.0
+    roof_thickness_m: 0.05
+    merlon_top: square
+    facet_min_m: 0.15         # the smallest flat face, the smallest feature the default view shows
+    trees: one round crown on a tapered trunk, the picked nature numbers (D41, D45)
+    rocks: single rounded lumps, the picked nature numbers
+
+detail_level:                 # what a building may carry, the tri budget caps it either way
+  kingdoms:                   # Kingdoms and Castles, the least
+    parts_per_building: 3     # block, roof, one window
+    parts_per_wall: 2         # slab, merlon row
+    props_on_ground: none
+  river_towns:                # River Towns, the middle, picked
+    parts_per_building: {min: 5, max: 8}   # block, roof, door, two windows, chimney, one prop
+    parts_per_wall: 3         # slab, merlon row, base ledge or walkway
+    props_on_ground: crates and barrels, one per tile at most
+  foundation:                 # Foundation, the ceiling
+    parts_per_building: {min: 12, max: 20} # timber frame, tile ridges, shutters, chimney, balcony, stone course, props
+    parts_per_wall: 5         # slab, merlons with slits, stone course, walkway, ledge
+    props_on_ground: cart, well, barrels, ball stacks
+
+silhouette:
+  - every building reads from its outline at 24.7 px per tile, one mass plus one roof, nothing that only shows as a surface mark
+  - the roof is the colour block that tells a building from a wall, every building has one, no wall has one
+  - a feature narrower than 0.15 m is invisible at the default view, 3.7 px, so it may exist only for the zoomed view
+  - merlons are at least 0.25 m wide and 0.25 m tall, 6 by 3 px at the default view, so the wall top reads as a notched edge
+  - the gate is an arch at least 0.6 m wide, 15 px, a dark opening, not a drawn door
+
+wall:                         # the game's wall piece. Look 1 is game/assets/3d/wall_cornice.py (D38)
+  length_m: 1.0
+  height_m: 1.0               # the lower level, 12.3 px at the default view
+  thickness_m: 0.3
+  upper_level_m: 1.0          # the upper wall stacks a second metre, the frames of round 04 show this two-level wall
+  merlon_rhythm: one 0.25 m merlon centred 0.25 m either side of the tile centre, the tile seam in a 0.25 m gap, a solid post over every junction (D38)
+
+wall_at_13px:                 # what a one metre wall shows at the default view, from the round 04 test on the two-level wall, confirmed by the first real wall in the game, session 07 (D38)
+  shows: a light top band, a mid-tone face, a dark base shadow on the ground tile, the notched top edge, the stone against grass and sand by colour
+  does_not_show: stones, slits, drawn detail, a bevel narrower than 0.1 m; the painted grain stays invisible at the default view (D53)
+  zoomed_96px: the bevel, the merlon shape, the painted grain and merlon weathering, the walkway behind the merlons
+
+gun_ladder:                   # D28, one gun per footprint size. The designs are open until phase F picks them.
+  every_gun: a standard cannon with one barrel, dark iron grey main colour, a round turning mount, no wheels, fills its footprint, cozy
+  plate: a square plate under every gun, the footprint less 0.05 m per side, 0.1 m tall, 0.03 m chamfer on the top edges, the gun's own grey, square to the grid while the gun turns (D39)
+  size_1: medieval and age of sail, wooden parts allowed
+  size_2: bigger guns, visibly more advanced than size 1, some wood allowed
+  size_3: iron and early industry, visibly more advanced than size 2, no wood
+  never: the same model scaled up, more than one barrel, a mortar
+
+resource_block:               # D29, a box so it is easy to see, drops into a square field and stacks
+  size_m: [0.8, 0.8, 0.6]
+  blocks: [crate with log ends, stacked stone blocks, iron ingots in two crossed layers of three with a stepped pyramid on top, open crate with one cog]
+
+budget_tris:                  # from gameplay_contract.yaml
+  wall: 200
+  building: 600
+  gun_1: 1150                 # D37, picked on the bench: the game zooms to 192 px a tile, where fewer faces show. Each gun budget includes the 20 triangles of its plate (D39)
+  gun_2: 1500
+  gun_3: 3000
+  nature: 300
+  terrain: 50
+  prop: 300

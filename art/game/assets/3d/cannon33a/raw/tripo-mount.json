@@ -1,0 +1,26 @@
+{
+  "provider": "tripo",
+  "task_id": "8d5c1e38-3435-4352-95d2-4a930f0c3be8",
+  "inputs": [
+    "game/assets/3d/cannon33a/refs/mount.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "image_to_model",
+    "file": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 3000,
+    "files": "uploaded"
+  },
+  "label": "cannon33a tripo-mount",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 336,
+  "created": "2026-10-12T09:49:17",
+  "outputs": {
+    "model": "tripo-mount.glb",
+    "rendered_image": "tripo-mount-preview.webp"
+  }
+}

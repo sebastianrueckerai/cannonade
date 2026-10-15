@@ -1,0 +1,11 @@
+You are an independent art critic for a low-poly browser strategy game in the spirit of Rampart. The world is decided: a painted toy fortress on a tile grid, cheerful, chunky, sunlit. This is the colour phase. The attached sheet shows three palette candidates, one row each, in this order: 1 painted-toy (the anchor frame's own colours), 2 market-warmth (orange tile roofs, greener grass, bluer sea, warm stone), 3 fogged-teal (bone white stone, pale sand, softer grass, teal sea, red roofs). Each row holds three images: the same world frame recoloured to the palette, the swatch sheet with the colour per surface, and the 13 pixel test: the frame scaled so a one metre wall is 13 pixels tall with a base block in each of the four team colours pasted in the middle, next to the four team colours and a wall on each ground colour of the palette, all magnified four times without smoothing.
+
+The brief: saturated but cosy colours and lighting, a readable grid, four team colours that must stay apart at the default view: deep blue #1f1f5e, purple #4a1671, teal green #197059, olive #70631a. These are the game's current colours and may be corrected. Maps are island, river or pure land from one tileset, so grass, sand and stone carry the look as much as the sea does.
+
+For each palette give:
+- Mood: does the recoloured frame keep the cheerful sunlit toy mood, or does it drift, and where to.
+- Separation at 13 pixels: from the test image, which of the four team colours are hard to tell apart, and on which ground colour. Do the walls still read against the grass and the sand.
+- Hierarchy: do the player's objects, walls, cannons and roofs, stand out from the ground and the sea, or does the ground compete.
+- One swatch to change, named by role, with a reason.
+
+Then rank the three for this game, one sentence per rank. Then say which of the four team colours needs a correction regardless of palette, and propose a hex for it. End with one line that starts with RANKING: followed by the palette slugs in order.

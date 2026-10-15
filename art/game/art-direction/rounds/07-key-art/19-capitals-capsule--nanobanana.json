@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint a Steam capsule key-art illustration of the toy fortress island seen from high above at a three-quarter angle, as the first attached image shows it, with the island in the lower two thirds of the frame and the upper third fading into one flat warm sky colour with a few soft painterly clouds, where the title goes in the white capitals with the soft outline of the second attached image, made larger, above the keep and its flag and touching nothing. Three bronze cannons on the sea-facing wall; only the middle one fires, a big white smoke plume and a visible cannonball flying out over the sea; a sailing ship with striped sails small and far on the right. A faint painted tile grid on the grass. The first attached image sets the painterly look: its soft brushwork, its clouds, its colours, its painted toy fortress with cream walls, square battlements and orange roofs. The second attached image sets the title lettering only. Take nothing else from them. The title Grid Cannons is large and clear, in the lettering of the second attached image, placed where the painting is quietest, and it covers no building, no cannon and no flag. Every shot is physically right: the cannon's barrel points at its target, the smoke plume leaves the muzzle along the barrel, and the cannonball flies on from the muzzle in a shallow arc toward the target. Painted 2D illustration, not a 3D render. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/07-key-art/6-above-cannons--nanobanana.png",
+    "game/art-direction/rounds/07-key-art/7-above-outlined--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "19-capitals-capsule--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T23:39:45",
+  "outputs": [
+    "19-capitals-capsule--nanobanana.png"
+  ]
+}

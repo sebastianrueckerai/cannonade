@@ -1,0 +1,26 @@
+{
+  "provider": "tripo",
+  "task_id": "19127e72-94f0-42d1-8168-8eca25f6e353",
+  "inputs": [
+    "game/assets/3d/cannon/refs/b-clean.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "image_to_model",
+    "file": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 1000,
+    "files": "uploaded"
+  },
+  "label": "cannon tripo-b-1000",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 219,
+  "created": "2026-10-12T09:05:05",
+  "outputs": {
+    "model": "tripo-b-1000.glb",
+    "rendered_image": "tripo-b-1000-preview.webp"
+  }
+}

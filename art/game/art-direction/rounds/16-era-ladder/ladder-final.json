@@ -1,0 +1,19 @@
+{
+  "tool": "mask.py paste",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": [
+    "game/art-direction/rounds/16-era-ladder/13-open-cradle-tier1--nanobanana.png",
+    "game/art-direction/rounds/16-era-ladder/14-wood-cradles--nanobanana.png",
+    "game/art-direction/rounds/16-era-ladder/masks-cradles.png"
+  ],
+  "params": {
+    "feather": 6
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "ladder-final.png"
+  ],
+  "note": "Inputs given by the session, base, top, mask. A re-run of mask.py paste with the existing masks-cradles.png gives a pixel-identical output."
+}

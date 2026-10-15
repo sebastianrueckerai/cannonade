@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint it as a concept artist's painted sketch sheet for a cozy, bright strategy game: loose hand-painted brushwork with visible strokes, soft painted light from a warm sunny afternoon coming from the front right, cheerful bright colours, a warm light cream paper background with a soft painted shadow under each object. It is a painting, not a 3D render, not low poly, not a game screenshot. Cozy and friendly like a storybook toy, never grim. No people, no text, no labels, no numbers, no letters, no watermark.\n\nThe sheet shows three stylized toadstools for a toy fortress game, side by side in one row, each standing on its own square grass tile one metre wide, seen in a three-quarter view from slightly above. The tiles lie loose on the cream paper like game pieces, their edges drawn as a slightly darker green line, so the size of each toadstool reads against its tile. Every toadstool has the same shape: a thick cream stalk and a wide rounded cap with a pale band under it and a few small lighter dots on top, about a third of a tile wide and just under half a tile tall. The three toadstools differ only in their cap colours: Left: a warm red-orange cap with cream dots. Middle: a chestnut brown cap with soft cream dots. Right: a pale sandy-tan cap with soft cream dots. In front of the middle object, on its own tile, stands a small dark iron cannon on a low square plate that fills its tile: it is the size reference of the game. The toadstool must read as much smaller than the cannon.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/inspirations/monsters-expedition-keyart2.jpg",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 23 mushroom palette board",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-13T23:17:16",
+  "outputs": [
+    "mushroom.png"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A close material study for a painted wooden toy fortress island on a sunlit table, a sheet of teal sea around it, toy ships with striped sails: on a plain light background, laid out like a sample sheet with space between the items, one wall segment with a battlement, one cannon on its carriage, one roof corner, one crate, one barrel, one tree, one rock. It shows how stone, wood, bronze, cloth and leaves look in this world. Painted wood: every surface a single flat colour with a fat bevel and a slightly lighter top face, bronze cannons on cherry red carriages, canvas sails with red and white stripes. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/ss_0b86a43dd3cd35b7cf1e6e03a0bc420861f9d96e.1920x1080.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "toy-harbour-material--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:06:32",
+  "outputs": [
+    "toy-harbour-material--nanobanana.png"
+  ]
+}

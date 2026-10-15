@@ -1,0 +1,42 @@
+{
+  "asset_id": "tile",
+  "parts": {
+    "tile": {
+      "verts": 12,
+      "tris": 20,
+      "non_manifold_edges": 0,
+      "materials": [
+        "tile_grain"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 12,
+  "tris": 20,
+  "non_manifold_edges": 0,
+  "materials": [
+    "tile_grain"
+  ],
+  "dims_m": [
+    1.0,
+    1.0,
+    0.2
+  ],
+  "bbox_min": [
+    -0.5,
+    -0.5,
+    0.0
+  ],
+  "bbox_max": [
+    0.5,
+    0.5,
+    0.2
+  ],
+  "solidity": 1.0,
+  "limits_ok": true,
+  "limit_failures": []
+}

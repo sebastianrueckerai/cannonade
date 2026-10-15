@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint this mortar as a clean reference picture for a 3D modeller. Keep exactly the same design, the same parts, the same proportions and the same colours: a squat dark iron mortar with a fat pot-shaped barrel and a thick flared muzzle ring, pointing up at 45 degrees, held by two thick round trunnion pins between two heavy riveted iron cheek plates, the cheek plates standing on an open round riveted iron ring. The barrel is one solid piece that clears the cheek plates with a small visible gap, touching them only at the trunnion pins. Only one barrel.\n\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 75 percent of the picture. Plain flat light grey background. No ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture. Only this one object, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/cannon22b/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "cannon22b reference view, round 28 pick",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-14T22:58:31",
+  "outputs": [
+    "b-view.png"
+  ]
+}

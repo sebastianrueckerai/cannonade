@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The first attached image is the painting to edit. In the far castle in the upper right of the first image, replace only its tall round keep with the tower of the island castle in the second attached image: a tall square stone tower house with a stepped gable roof of orange tiles, small windows and a door, the blue flag on its top. Put the tower house where the round keep stood, a little taller than the round keep so it is the landmark of the far castle. Keep everything else of the far castle exactly as it is: its walls, its round corner towers, its long hall with the orange roof, its small house, its gate and its two cannons on the courtyard floor. Everything else of the first image stays exactly as it is: the near castle, its cannons, the shot with its smoke, its ball and its trail, the river, the land, the tile grid, the light, the colours. No text, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/11-duel-more/1-final.png",
+    "game/art-direction/rounds/11-duel-more/2-final.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "b-swap--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T01:24:00",
+  "outputs": [
+    "b-swap--nanobanana.png"
+  ]
+}

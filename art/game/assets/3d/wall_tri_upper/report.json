@@ -1,0 +1,42 @@
+{
+  "asset_id": "wall_tri_upper",
+  "parts": {
+    "wall": {
+      "verts": 70,
+      "tris": 136,
+      "non_manifold_edges": 0,
+      "materials": [
+        "wall_stone"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 70,
+  "tris": 136,
+  "non_manifold_edges": 0,
+  "materials": [
+    "wall_stone"
+  ],
+  "dims_m": [
+    0.69,
+    1.0,
+    1.25
+  ],
+  "bbox_min": [
+    -0.19,
+    -0.5,
+    0.75
+  ],
+  "bbox_max": [
+    0.5,
+    0.5,
+    2.0
+  ],
+  "solidity": 0.735,
+  "limits_ok": true,
+  "limit_failures": []
+}

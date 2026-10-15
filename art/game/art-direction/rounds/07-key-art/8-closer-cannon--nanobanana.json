@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint a Steam capsule key-art illustration for the game shown in the last attached image. The first two attached images are style references only: take the first one's painterly look, its colours and its white hand-lettered title, and the second one's soft brushwork, and none of their composition. Repaint the world of the last image as a 2D painting, not a 3D render. The camera is above the fortress and close: a bronze cannon on the near wall is big in the lower foreground, just fired, a round white smoke puff at its mouth and a cannonball flying toward a sailing ship with red and white striped sails on the blue sea beyond the walls; behind the cannon the courtyard, the keep with a red flag, the orange roofs and the far wall with more cannons; a faint painted tile grid on the ground. Warm afternoon light, soft colours, not oversaturated. The game title Grid Cannons in large clear white hand-lettered script with a soft shadow, across the quiet sky at the top, part of the painting. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/07-key-art/4-painted-refs--nanobanana.png",
+    "game/art-direction/inspirations/capsule-tiny-glade.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "8-closer-cannon--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T23:24:06",
+  "outputs": [
+    "8-closer-cannon--nanobanana.png"
+  ]
+}

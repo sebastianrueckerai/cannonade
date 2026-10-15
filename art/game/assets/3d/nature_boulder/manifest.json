@@ -1,0 +1,48 @@
+{
+  "asset_id": "nature_boulder",
+  "route": "procedural",
+  "inputs": {
+    "asset_yaml_sha": "e21c4eea26ff",
+    "build_py_sha": "8f44c1e1b77f"
+  },
+  "steps": [
+    {
+      "name": "build",
+      "ok": true,
+      "elapsed_s": 0.91
+    },
+    {
+      "name": "normalise",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "materials",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.52
+    },
+    {
+      "name": "export",
+      "ok": true,
+      "elapsed_s": 0.01
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-13",
+  "cost_usd": 0.55,
+  "created": "2026-10-13T21:04:24+02:00"
+}

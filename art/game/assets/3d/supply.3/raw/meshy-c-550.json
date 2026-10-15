@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a12f90-5a67-7092-96ef-ed2f283bbf8e",
+  "inputs": [
+    "game/assets/3d/supply.3/refs/c-view-flatroof.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 550
+  },
+  "label": "supply.3 meshy-c-550",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 69,
+  "created": "2026-10-12T12:03:39",
+  "outputs": {
+    "model": "meshy-c-550.glb",
+    "rendered_image": "meshy-c-550-preview.png"
+  }
+}

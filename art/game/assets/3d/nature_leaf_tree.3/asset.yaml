@@ -1,0 +1,16 @@
+asset_id: nature_leaf_tree.3
+route: procedural      # D45: one solid mass from the shared builder, build: below
+class: nature
+dimensions:
+  max_x: 0.6
+  max_y: 1.05
+  max_z: 0.95
+budget:
+  max_tris: 300
+  max_materials: 1
+  min_solidity: 0.4
+parts:
+  - nature_leaf_tree.3
+pivots:
+  origin: ground_centre
+build: ../nature_build.py

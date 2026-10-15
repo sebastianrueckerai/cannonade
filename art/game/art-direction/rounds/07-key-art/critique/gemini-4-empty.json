@@ -1,0 +1,12 @@
+{
+  "critic": "google/gemini-2.5-pro",
+  "images": [
+    "game/art-direction/rounds/07-key-art/picks-sheet-4.jpg",
+    "game/art-direction/rounds/07-key-art/capsule-small-4.png"
+  ],
+  "prompt": "critique-prompt-4.txt, max_side 2048, max_tokens 8000",
+  "answer": "",
+  "note": "empty answer, rerun at 12000 tokens as gemini-4.json",
+  "est_cost_usd": 0.03,
+  "created": "2026-10-12T00:20:00"
+}

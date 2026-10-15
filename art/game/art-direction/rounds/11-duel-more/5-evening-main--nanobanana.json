@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Late afternoon, a warm low sun from the right, long soft shadows: a green land map with a river between two castles, the near castle lower left with a square keep, a timber lookout and a red flag, the far castle upper right with a round keep, round corner towers and a blue flag. Take only the soft painterly 2D look, the colours and the light of the attached image, and make a new picture. Rules for every cannon: each castle has two bronze cannons of the same size, each a complete barrel on one wooden carriage with two wheels, standing on the open stone courtyard floor inside its walls, away from the walls, never on a wall, a wall walk, a tower, a roof or a house; the barrels raised to about 45 degrees, pointing up over the wall at the other castle. Exactly one cannon fires: {shooter} fires at the other castle, with a bright yellow flash and one big round white smoke cloud right at its muzzle and one dark cannonball a short way out beyond the muzzle on the line of its barrel, with a faint trail back to the muzzle; no other cannon fires, no other smoke, no other ball. The tile grid on the land is painted in the same perspective as the castles, its lines parallel to their walls. The world is seen from high above at a three-quarter angle. No ships. No people. No text, no letters, no title, no watermark. Soft colours, not oversaturated, not a 3D render.",
+  "refs": [
+    "game/art-direction/rounds/10-duel-checked/B-final.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "5-evening-main--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T00:57:39",
+  "outputs": [
+    "5-evening-main--nanobanana.png"
+  ]
+}

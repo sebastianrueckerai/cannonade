@@ -1,0 +1,42 @@
+{
+  "asset_id": "cluster_shard",
+  "parts": {
+    "cluster_shard": {
+      "verts": 10,
+      "tris": 16,
+      "non_manifold_edges": 0,
+      "materials": [
+        "cluster_shard_iron"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 10,
+  "tris": 16,
+  "non_manifold_edges": 0,
+  "materials": [
+    "cluster_shard_iron"
+  ],
+  "dims_m": [
+    0.12,
+    0.0764,
+    0.0955
+  ],
+  "bbox_min": [
+    -0.06,
+    -0.0382,
+    -0.0477
+  ],
+  "bbox_max": [
+    0.06,
+    0.0382,
+    0.0477
+  ],
+  "solidity": 1.0,
+  "limits_ok": true,
+  "limit_failures": []
+}

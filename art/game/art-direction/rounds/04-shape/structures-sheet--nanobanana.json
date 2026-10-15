@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "A reference sheet of the shipwright's yard structures of the first image, each redrawn as a painted wooden toy in the style and the palette of the second image: a tall wooden crane with a boom, a pulley and a hook; a slipway with the ribs of a half-built hull on blocks; wooden scaffolding against a stone wall; a round stone tower with a copper-green roof and a flag; a forge with a chimney and an orange glow in its mouth; a stack of timber logs; a stack of cream stone blocks; a stack of dark iron bars. Eight structures in two rows of four, each standing alone on its own patch of green grass tiles with the grid visible, with empty cream ground between them, seen from the same high three-quarter camera as the second image. Flat colours, fat bevels on every block, rounded corners, thick parts, few pieces per structure, no people, no text, no labels, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/structures.png",
+    "game/art-direction/anchors/colour_frame.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "structures-sheet--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:56:14",
+  "outputs": [
+    "structures-sheet--nanobanana.png"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painting and change nothing but the cannons. Put three bronze cannons on wooden carriages on the right fortress's wall walk along the wall that faces the left fortress, pointing at it, the same kind as the cannons of the left fortress. The left fortress keeps its cannons and its one shot. Keep the islands, the strait, the colours and the title as they are. Every cannon is complete and correct: a bronze barrel on a wooden carriage with two wheels, standing on the wall walk behind the battlements or on the courtyard floor, seen from above like everything else, never a barrel pasted over a house or a roof. The firing cannon's barrel points straight at the enemy fortress. The smoke plume is one round white cloud at its muzzle, drifting in the barrel's direction. The cannonball sits on the straight line from that muzzle to the enemy fortress, about halfway, with a faint trail behind it back toward the muzzle. The title and its lettering stay exactly as they are. Painted 2D illustration. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/07-key-art/11-two-islands-capsule--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "22-islands-fix-capsule--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T23:52:46",
+  "outputs": [
+    "22-islands-fix-capsule--nanobanana.png"
+  ]
+}

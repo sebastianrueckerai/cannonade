@@ -1,0 +1,16 @@
+{
+  "model": "alibaba/qwen-image-3/text-to-image",
+  "prompt": "Main menu screen of a strategy game, 16:9. A wide background illustration of a coastal fortress with cannons in the late afternoon, Muted natural colours: warm sandstone, teal sea, moss green, Calm and clear. The title GRID CANNONS large at the top in a bold clean sans-serif. Four menu buttons stacked on the left, in this order: Single, Versus, Sandbox, Quit. Clean game UI, legible text, flat shaded low poly world in the background, no other text.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_16_9"
+  },
+  "seed": 889039685,
+  "description": null,
+  "label": "probe-menu--qwen",
+  "est_cost_usd": 0.04,
+  "created": "2026-10-11T15:37:06",
+  "outputs": [
+    "probe-menu--qwen.png"
+  ]
+}

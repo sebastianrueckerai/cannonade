@@ -1,0 +1,22 @@
+You are an independent art critic for a low-poly browser strategy game in the spirit of Rampart: build walls and cannons on a tile grid, then cannons fire at ships. This is the mood and theme phase. Nothing is decided yet except the starting point: the round 01 world frame, a bright toy-like fortress island with a readable grid, and the client's notes: a saturated but cosy palette and lighting, a readable grid, the River Towns level of detail, age of sail with medieval elements, small fogged islands like A Monster's Expedition.
+
+Attached are four moodboards, one image each, in this order:
+1. toy-harbour: a painted wooden toy fortress island on a sunlit table. Tone: cheerful, chunky, sunlit.
+2. lighthouse-islands: small fogged islands in a teal sea that fades to cream, a lighthouse fort. Tone: calm, airy, remote.
+3. river-town: a walled market town at a river mouth, half-timber and orange tile roofs. Tone: homely, busy, storybook.
+4. shipwright-yard: a fortified shipyard where everything is being built, cranes, slipways, a forge. Tone: inventive, busy, warm metal.
+
+Each board holds six frames in this order, left to right, top to bottom: coast (a wide view), fortress (the game camera, pitched 60 degrees down over the tile grid), harbour (at another time of day), battle (cannons firing at ships), material (a sample sheet of wall, cannon, roof, crate, barrel, tree, rock), sky.
+
+The brief: low poly, flat colours, readable at a tiny size (a one metre wall is 13 pixels tall at the default view), four team colours must stay distinguishable (deep blue, purple, teal green, olive), one identity across world, UI and store art. Never photoreal, gritty war, horror, a pixel-art copy of the original, or generic asset-store low poly with no identity.
+
+For each candidate give:
+- Identity: in one sentence, what this world is that the other three are not.
+- Words against images: do the six frames show the tone words, or did the image model drift. Name the frame that drifted most.
+- Readability: from the fortress frame, will walls, cannons and ownership read when a wall is 13 pixels tall. Will the four team colours sit on this world without fighting it.
+- Consistency: do the six frames belong to one game.
+- Risk: the one thing most likely to go wrong when 60 assets are built in this world.
+- Store appeal: would the coast or harbour frame make a stranger stop on a Steam page.
+- One recommended edit that keeps the world but fixes its biggest fault.
+
+Then rank the four from best to worst for this game, one sentence per rank. Pick for the whole game, not for the prettiest frame. Say whether a merge of two would beat the best single candidate and name it in words. End with one line that starts with RANKING: followed by the slugs in order.

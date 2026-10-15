@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint this painting as a very wide panorama in exactly the same soft painted style, colours and light. Both castles stay exactly as they are, with all their buildings, flags, cannons, the broken front wall and the one shot, but smaller in the frame and side by side in the middle band of the picture: the near castle with the red flag left of centre, the far castle with the stepped-gable tower house and the blue flag right of centre, the river and the tile grid on the land between them, the cannonball flying from the near castle toward the far castle. More green land with trees, rocks, paths and the river fills the wide frame to the left and the right, a thin quiet sky along the top. The whole of both castles, from the flag tops to the wall bases, fits inside the middle half of the frame's height. No text, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "21:9",
+    "resolution": "4K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "hero-wide",
+  "est_cost_usd": 0.4,
+  "created": "2026-10-12T01:45:29",
+  "outputs": [
+    "hero-wide--nanobanana.png"
+  ]
+}

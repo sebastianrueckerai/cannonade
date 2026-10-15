@@ -1,0 +1,8 @@
+Draw this same cannon from four sides as a turnaround sheet for a 3D modeller, in a 2 by 2 grid of equal cells. Keep exactly the same design, parts, proportions and colours.
+
+- Top left: the front view. The muzzle points straight at the viewer.
+- Top right: the left side view. The gun's left side faces the viewer, so the muzzle points to the left edge of the picture.
+- Bottom left: the back view. The breech faces the viewer, the muzzle points away.
+- Bottom right: the right side view. The gun's right side faces the viewer, so the muzzle points to the right edge of the picture.
+
+Orthographic views at eye level with no perspective, the same scale and the same ground line in every cell, each view centred in its cell with the whole object visible. Plain flat light grey background, no ground, no cast shadow, soft even light. Crisp clean outlines and smooth painted surfaces. No labels, no text, no lines between the cells.

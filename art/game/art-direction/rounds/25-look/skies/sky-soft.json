@@ -1,0 +1,22 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint an equirectangular 360-degree sky panorama for a cozy, bright strategy game: one wide seamless painted sky whose left and right edges join perfectly, ready to wrap around a whole horizon. It is a painting, not a photo, not a 3D render: soft hand-painted brushwork with visible strokes, cheerful and friendly like a storybook toy world, never grim. The horizon runs exactly along the middle height of the image: the top half is sky only, the bottom half carries no ground, no sea and no objects, only the soft warm cream haze of the horizon gently continued and fading downward. No people, no birds, no boats, no text, no labels, no numbers, no letters, no watermark.\n A pastel, milky-washed sky: the zenith a gentle powder blue (#8fc0ea) that eases into a warm pale cream at the horizon, only a few very soft, faint half-dissolved clouds, calm and airy, the horizon haze a soft ivory (#f2ead9). Nothing sharp, nothing saturated, a quiet morning gentleness.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 25 sky soft",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-14T10:19:35",
+  "outputs": [
+    "sky-soft",
+    "panorama_soft.png"
+  ],
+  "post": "panorama_soft.png is the 16:9 original centre-cropped to 2:1 (80 px off top and bottom) and copied into the game repo as assets/art/sky/panorama_soft.png."
+}

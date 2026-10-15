@@ -1,0 +1,26 @@
+{
+  "provider": "tripo",
+  "task_id": "47ddda2f-0022-497a-9a62-ad8eedec6700",
+  "inputs": [
+    "game/assets/3d/nature_boulder.3/refs/boulder-look3.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "image_to_model",
+    "file": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 1000,
+    "files": "uploaded"
+  },
+  "label": "nature boulder look3 tripo lowpoly",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 162,
+  "created": "2026-10-12T18:43:13",
+  "outputs": {
+    "model": "tripo-look3-1000.glb",
+    "rendered_image": "tripo-look3-1000-preview.webp"
+  }
+}

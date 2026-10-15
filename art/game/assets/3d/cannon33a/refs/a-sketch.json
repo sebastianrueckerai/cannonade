@@ -1,0 +1,13 @@
+{
+  "tool": "crop",
+  "source": "game/art-direction/anchors/gun_ladder.png",
+  "box_px": [
+    1500,
+    165,
+    2587,
+    1004
+  ],
+  "pad_to_square": 1167,
+  "est_cost_usd": 0,
+  "created": "2026-10-12T08:55:36"
+}

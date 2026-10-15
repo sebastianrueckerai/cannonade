@@ -1,0 +1,24 @@
+{
+  "source": "meshy-b-1000",
+  "barrel": [
+    6,
+    9
+  ],
+  "pivot_pieces": [
+    5
+  ],
+  "pitch": 45,
+  "fixes": [],
+  "notes": "p09 the pot, p06 the band round it. p05 is the trunnion axle through both cheek plates, the pivot. p00 the ring, p01 and p02 the bed rails, p03 and p04 the cheek plates, p07 and p08 the bosses on them: all body. The pot points 46 degrees up in the source (its centre against the axle), so pitch 45 levels it: the game tilts a level barrel. The 1450 run made 1,520 triangles, over the 1,500 budget with the plate (D37)",
+  "plate": {
+    "height": 0.1,
+    "margin": 0.05,
+    "chamfer": 0.03,
+    "colour": "#544d52",
+    "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. Painted in the D39 grey since session 11",
+    "paint": {
+      "kind": "plate",
+      "seed": 54
+    }
+  }
+}

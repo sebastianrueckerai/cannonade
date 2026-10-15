@@ -1,0 +1,61 @@
+{
+  "cols": 2,
+  "cell": 768,
+  "parallel": 4,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      },
+      "refs": ["../10-duel-checked/B-final.png"]
+    }
+  },
+  "style": "Take only the soft painterly 2D look, the colours and the light of the attached image, and make a new picture. Rules for every cannon: each castle has two bronze cannons of the same size, each a complete barrel on one wooden carriage with two wheels, standing on the open stone courtyard floor inside its walls, away from the walls, never on a wall, a wall walk, a tower, a roof or a house; the barrels raised to about 45 degrees, pointing up over the wall at the other castle. Exactly one cannon fires: {shooter} fires at the other castle, with a bright yellow flash and one big round white smoke cloud right at its muzzle and one dark cannonball a short way out beyond the muzzle on the line of its barrel, with a faint trail back to the muzzle; no other cannon fires, no other smoke, no other ball. The tile grid on the land is painted in the same perspective as the castles, its lines parallel to their walls. The world is seen from high above at a three-quarter angle. No ships. No people. No text, no letters, no title, no watermark. Soft colours, not oversaturated, not a 3D render.",
+  "frames": {
+    "main": "{scene} {style}"
+  },
+  "directions": [
+    {
+      "slug": "1-land-two-designs",
+      "shooter": "one cannon of the near castle",
+      "scene": "A green land map with a winding river between two castles: the near castle lower left, large, with a square keep topped by a timber lookout under an orange pyramid roof and a red flag, a gatehouse and three small houses along its left wall; the far castle upper right, with a tall round crenellated keep and a blue flag, round corner towers, a long hall with an orange roof along its left wall and a gate on its right."
+    },
+    {
+      "slug": "2-island-and-shore",
+      "shooter": "one cannon of the castle on the shore",
+      "scene": "A coast: the near castle stands on the green shore in the lower left, a star-shaped fort with four pointed bastions, low thick walls, a stone barracks and a tall flagpole with a red flag; across a bay of blue sea, the far castle stands on a small round island in the upper right, a tall square tower house with a stepped gable, a curtain wall around it, a blue flag."
+    },
+    {
+      "slug": "3-hilltop-and-valley",
+      "shooter": "one cannon of the lower castle",
+      "scene": "Gently rising green land: the lower castle bottom left, wide and low, with a long rectangular wall, a twin-towered gate and a square keep with an orange roof and a red flag; the higher castle top right on a raised green terrace, compact and tall, a round keep with a conical slate-grey roof, two round towers and a blue flag. A sand path climbs between them."
+    },
+    {
+      "slug": "4-closer-near-castle",
+      "shooter": "one of the two cannons of the near castle",
+      "scene": "A closer view: the near castle fills the lower left half of the frame, its two cannons big and clear on the courtyard floor, a square keep with a timber lookout, an orange roof and a red flag, small houses along its back wall; the far castle upper right across a river, smaller, clearly a different castle with a tall round keep, round towers, a long hall and a blue flag."
+    },
+    {
+      "slug": "5-evening",
+      "shooter": "one cannon of the near castle",
+      "scene": "Late afternoon, a warm low sun from the right, long soft shadows: a green land map with a river between two castles, the near castle lower left with a square keep, a timber lookout and a red flag, the far castle upper right with a round keep, round corner towers and a blue flag."
+    },
+    {
+      "slug": "6-river-fork",
+      "shooter": "one cannon of the left castle",
+      "scene": "Two castles on either bank where a river forks: the left castle lower left, an L-shaped castle with a tall square keep at its corner, an orange-roofed hall and a red flag; the right castle in the middle right, a ring-shaped castle with a round wall, six small round towers and a blue flag. Small fields and round trees around them."
+    },
+    {
+      "slug": "7-sand-and-grass",
+      "shooter": "one cannon of the near castle",
+      "scene": "A coast of yellow sand and green grass: the near castle lower left on the grass, a square castle with a gatehouse, a keep with a timber lookout and a red flag; the far castle upper right on a sandy point by the sea, a long low fort with a round keep, a powder house and a blue flag."
+    },
+    {
+      "slug": "8-wall-hit",
+      "shooter": "one cannon of the near castle",
+      "scene": "A green land map with a river between two castles, the near castle lower left with a square keep, a timber lookout and a red flag, the far castle upper right with a round keep, round towers and a blue flag. One merlon of the far castle's front wall is knocked off, a few cream stone blocks lie in the grass below it from an earlier shot, nothing else broken."
+    }
+  ]
+}

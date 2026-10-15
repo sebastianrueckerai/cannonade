@@ -1,0 +1,45 @@
+{
+  "cols": 3,
+  "cell": 768,
+  "parallel": 3,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      }
+    }
+  },
+  "style": "The shot: a bright yellow flash and one round white smoke cloud right at that cannon's muzzle, and one cannonball, a dark sphere about the size of the cannon's wheel, a short way out beyond the muzzle, exactly on the barrel's axis, with a faint trail back to the muzzle. The cannon itself, the direction of its barrel, the other cannons, the castles, the grid, the colours and the title all stay exactly as they are. No people, no other words, no watermark.",
+  "frames": {
+    "fire": "{scene} {style}"
+  },
+  "directions": [
+    {
+      "slug": "1-side-by-side",
+      "refs": ["1-side-by-side-scene--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but one shot. The upper of the two cannons inside the left castle's courtyard, the one nearer the back wall, fires at the right castle: it points to the right, so the ball flies to the right over the left castle's wall toward the right castle."
+    },
+    {
+      "slug": "2-land-diagonal",
+      "refs": ["2-land-diagonal-scene--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but one shot. The cannon standing on top of the near castle's right corner tower, the one whose barrel points up and to the right toward the far castle, fires at the far castle: the ball flies up and to the right along its barrel toward the far castle."
+    },
+    {
+      "slug": "3-two-islands",
+      "refs": ["3-two-islands-scene--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but one shot. The cannon standing on top of the left island castle's right corner tower, the one whose barrel points to the right across the strait, fires at the right island castle: the ball flies to the right along its barrel over the strait toward the right castle."
+    },
+    {
+      "slug": "4-side-closer",
+      "refs": ["4-side-closer-scene--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but one shot. The upper cannon of the right castle, the one on the wall walk at its upper left corner whose barrel points to the left, fires at the left castle: the ball flies to the left along its barrel over the river toward the left castle."
+    },
+    {
+      "slug": "5-land-top-down",
+      "refs": ["5-land-top-down-scene--nanobanana.png"],
+      "scene": "Edit this painting and change nothing but one shot. The cannon standing on top of the near castle's back corner tower, the one whose barrel points up and to the right toward the far castle, fires at the far castle: the ball flies up and to the right along its barrel toward the far castle."
+    }
+  ]
+}

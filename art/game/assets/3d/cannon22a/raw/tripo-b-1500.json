@@ -1,0 +1,26 @@
+{
+  "provider": "tripo",
+  "task_id": "cb8ad5b7-e989-478c-8a5d-b6b28e305db4",
+  "inputs": [
+    "game/assets/3d/cannon22a/refs/b-clean.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "image_to_model",
+    "file": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 1500,
+    "files": "uploaded"
+  },
+  "label": "cannon22a tripo-b-1500",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 294,
+  "created": "2026-10-12T09:58:13",
+  "outputs": {
+    "model": "tripo-b-1500.glb",
+    "rendered_image": "tripo-b-1500-preview.webp"
+  }
+}

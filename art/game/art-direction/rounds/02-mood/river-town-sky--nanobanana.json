@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The sky of a walled market town where a river meets the sea, half-timbered houses packed behind stone walls, orange tile roofs, a round tower with a conical roof, mills and quays, green fields on a grid, a wide panoramic view over the sea to the horizon, only a thin strip of island at the bottom edge. A warm blue sky with soft white clouds, the sea a calm blue, a hint of hills on the horizon, storybook clear. Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "refs": [
+    "game/art-direction/rounds/01-directions/toy-harbour-world--nanobanana.png",
+    "game/art-direction/inspirations/ss_0b86a43dd3cd35b7cf1e6e03a0bc420861f9d96e.1920x1080.jpg",
+    "game/art-direction/inspirations/Foundation_ss_dbc1c23ffd249f0c8b07aae6312f33aa63a0e8eb.1920x1080.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "river-town-sky--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T21:08:46",
+  "outputs": [
+    "river-town-sky--nanobanana.png"
+  ]
+}

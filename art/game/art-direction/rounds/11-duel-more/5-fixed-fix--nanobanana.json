@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Edit this painting and change only the shot. First remove the shot of the far castle in the upper right completely: its yellow flash, its smoke cloud, its cannonball and its trail, and repaint its cannon as a quiet cannon standing on the courtyard floor with its barrel raised, and the grass and the wall where the smoke was. Then the near castle's front cannon, the right one of its pair in the lower left, fires at the far castle: a bright yellow flash and one round white smoke cloud right at its muzzle, and one dark cannonball a short way out beyond the muzzle exactly on the line of its barrel, with a faint trail back to the muzzle. Everything else stays exactly as it is: both castles, all other cannons, the land, the river, the grid, the colours, the light. No other smoke, no other ball. No text, no letters, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/11-duel-more/5-evening-main--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "5-fixed-fix--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T01:01:27",
+  "outputs": [
+    "5-fixed-fix--nanobanana.png"
+  ]
+}

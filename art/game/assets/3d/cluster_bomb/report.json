@@ -1,0 +1,42 @@
+{
+  "asset_id": "cluster_bomb",
+  "parts": {
+    "cluster_bomb": {
+      "verts": 50,
+      "tris": 96,
+      "non_manifold_edges": 0,
+      "materials": [
+        "cluster_bomb_iron"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 50,
+  "tris": 96,
+  "non_manifold_edges": 0,
+  "materials": [
+    "cluster_bomb_iron"
+  ],
+  "dims_m": [
+    0.294,
+    0.294,
+    0.276
+  ],
+  "bbox_min": [
+    -0.147,
+    -0.147,
+    -0.138
+  ],
+  "bbox_max": [
+    0.147,
+    0.147,
+    0.138
+  ],
+  "solidity": 0.936,
+  "limits_ok": true,
+  "limit_failures": []
+}

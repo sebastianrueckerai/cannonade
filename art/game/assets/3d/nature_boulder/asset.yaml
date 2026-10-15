@@ -1,0 +1,16 @@
+asset_id: nature_boulder
+route: procedural      # D45: one solid mass from the shared builder, build: below
+class: nature
+dimensions:
+  max_x: 0.9
+  max_y: 0.9
+  max_z: 0.8
+budget:
+  max_tris: 300
+  max_materials: 1
+  min_solidity: 0.4
+parts:
+  - nature_boulder
+pivots:
+  origin: ground_centre
+build: ../nature_build.py

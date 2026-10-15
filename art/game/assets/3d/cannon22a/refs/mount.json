@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Show this cannon's mount with the gun barrel taken out: the iron-fitted wooden cradle with its riveted iron side plate and the round riveted iron disc, standing on the open iron ring with spokes, with the empty trunnion seats at the top where the barrel rests. Keep the same design, colours and proportions as in the picture.\n\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 70 percent of the picture. Plain flat light grey background. No ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture. Only this one object, no text.",
+  "refs": [
+    "game/assets/3d/cannon22a/refs/b-clean.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "cannon22a mount only",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T08:57:35",
+  "outputs": [
+    "mount.png"
+  ]
+}

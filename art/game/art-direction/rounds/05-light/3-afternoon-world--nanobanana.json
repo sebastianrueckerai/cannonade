@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Relight the attached frame: afternoon, the sun from the front right at about 45 degrees above the horizon, medium shadows falling to the back left, warm golden light on every lit face, a cream fog band at the horizon, the sea flat blue with a thin white foam line along the shore. Keep every object, every colour of the palette, the camera, the composition and the tile grid of the attached image exactly as it is. Change only the direction and the colour of the light, the shadows, the sky, the fog and the surface of the water. Flat colours, no textures, no new objects, no people, no text, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/05-light/1-noon--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "3-afternoon-world--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T22:11:42",
+  "outputs": [
+    "3-afternoon-world--nanobanana.png"
+  ]
+}

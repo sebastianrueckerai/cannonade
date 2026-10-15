@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint it as a concept artist's painted sketch sheet for a cozy, bright strategy game: loose hand-painted brushwork with visible strokes, soft painted light from a warm sunny afternoon coming from the front right, cheerful bright colours, a warm light cream paper background with a soft painted shadow under each object. It is a painting, not a 3D render, not low poly, not a game screenshot. Cozy and friendly like a storybook toy, never grim. No people, no text, no labels, no numbers, no letters, no watermark.\n\nThe sheet shows three stylized conifer trees for a toy fortress game, side by side in one row, each standing on its own square grass tile one metre wide, seen in a three-quarter view from slightly above. The tiles lie loose on the cream paper like game pieces, their edges drawn as a slightly darker green line, so the size of each tree reads against its tile. Every conifer has the same shape: one tall soft tree of stacked rounded foliage tiers, three or four plump rounded layers rising to a soft point, on a very short stocky trunk, about three quarters of a tile wide and about one and a half tiles tall. The three conifers differ only in their colours: Left: deep spruce green, darkest at the bottom, a soft blue-green at the top. Middle: warm pine green, a dark forest green base and a lighter yellow-green top. Right: muted fir green, a grey-green base and a fresh green top. In front of the middle object, on its own tile, stands a small dark iron cannon on a low square plate that fills its tile: it is the size reference of the game. The conifer must read as clearly taller than the cannon.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/inspirations/monsters-expedition-keyart2.jpg",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 23 evergreen palette board",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-13T23:16:39",
+  "outputs": [
+    "evergreen.png"
+  ]
+}

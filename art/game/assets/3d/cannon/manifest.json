@@ -1,0 +1,32 @@
+{
+  "asset_id": "cannon",
+  "route": "generative",
+  "inputs": {
+    "asset_yaml_sha": "420e60923311"
+  },
+  "steps": [
+    {
+      "name": "import",
+      "ok": true,
+      "elapsed_s": 0.01
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.6
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-14",
+  "cost_usd": 6.75,
+  "created": "2026-10-14T23:48:29+02:00"
+}

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Paint a new version of this scene from a little higher above: the same green land map with the tile grid, the river and the path, two fortresses with cream walls, square battlements and orange roofs, the near one bottom left with a red flag and larger, the far one upper right with a blue flag, round trees and rocks, the same soft colours, the title in the same lettering on the sky at the top. Each fortress has two cannons on carriages on its wall facing the other, drawn complete and seen from above. The near fortress fires one shot at the far one. Every cannon is complete and correct: a bronze barrel on a wooden carriage with two wheels, standing on the wall walk behind the battlements or on the courtyard floor, seen from above like everything else, never a barrel pasted over a house or a roof. The firing cannon's barrel points straight at the enemy fortress. The smoke plume is one round white cloud at its muzzle, drifting in the barrel's direction. The cannonball sits on the straight line from that muzzle to the enemy fortress, about halfway, with a faint trail behind it back toward the muzzle. The title and its lettering stay exactly as they are. Painted 2D illustration. No people, no other words, no watermark.",
+  "refs": [
+    "game/art-direction/rounds/07-key-art/12-land-map-capsule--nanobanana.png"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "24-land-new-a-capsule--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T23:52:37",
+  "outputs": [
+    "24-land-new-a-capsule--nanobanana.png"
+  ]
+}

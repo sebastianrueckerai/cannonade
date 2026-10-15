@@ -1,0 +1,13 @@
+{
+  "tool": "crop",
+  "source": "game/art-direction/rounds/28-advanced-buildings/mortar.png",
+  "box_px": [
+    40,
+    300,
+    930,
+    1340
+  ],
+  "est_cost_usd": 0,
+  "note": "the picked design of round 28, cut at the empty paper around it",
+  "created": "2026-10-14T22:57:32"
+}

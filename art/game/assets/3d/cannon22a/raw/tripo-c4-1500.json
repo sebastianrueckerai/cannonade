@@ -1,0 +1,29 @@
+{
+  "provider": "tripo",
+  "task_id": "15332e5a-5d46-45d8-9783-4a0b2b8fdae3",
+  "inputs": [
+    "game/assets/3d/cannon22a/refs/c-front.png",
+    "game/assets/3d/cannon22a/refs/c-left.png",
+    "game/assets/3d/cannon22a/refs/c-back.png",
+    "game/assets/3d/cannon22a/refs/c-right.png"
+  ],
+  "params": {
+    "model_version": "v3.1-20260211",
+    "type": "multiview_to_model",
+    "files": "uploaded",
+    "texture": true,
+    "pbr": false,
+    "smart_low_poly": true,
+    "face_limit": 1500,
+    "file": "uploaded"
+  },
+  "label": "cannon22a tripo-c4-1500",
+  "credits": 40,
+  "est_cost_usd": 0.4,
+  "elapsed_s": 353,
+  "created": "2026-10-12T09:59:12",
+  "outputs": {
+    "model": "tripo-c4-1500.glb",
+    "rendered_image": "tripo-c4-1500-preview.webp"
+  }
+}

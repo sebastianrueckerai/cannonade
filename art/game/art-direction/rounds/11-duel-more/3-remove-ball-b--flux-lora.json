@@ -1,0 +1,24 @@
+{
+  "model": "fal-ai/flux-lora/inpainting",
+  "prompt": "a soft painted storybook illustration of plain green grass tiles with thin darker grid lines, and one faint thin straight white smoke trail crossing diagonally from lower left to upper right, no ball, no blob, nothing else",
+  "refs": [
+    "game/art-direction/rounds/11-duel-more/3-hilltop-and-valley-main--nanobanana.png",
+    "game/art-direction/rounds/11-duel-more/masks/3-ball-b.png"
+  ],
+  "params": {
+    "strength": 0.9,
+    "image_size": {
+      "width": 1376,
+      "height": 768
+    },
+    "output_format": "png"
+  },
+  "seed": 4328371689288881359,
+  "description": null,
+  "label": "3-remove-ball-b",
+  "est_cost_usd": 0.07,
+  "created": "2026-10-12T01:03:42",
+  "outputs": [
+    "3-remove-ball-b--flux-lora.png"
+  ]
+}

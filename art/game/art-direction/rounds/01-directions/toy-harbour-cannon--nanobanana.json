@@ -1,0 +1,17 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "One siege cannon on a wooden wheeled carriage standing on a single square stone tile, three-quarter view from slightly above, isolated on a plain uniform background, nothing else in frame. Warm saturated toy colours: cream stone, terracotta roofs, bright teal sea, sunny yellow sand, cherry red accents. Chunky rounded blocks with fat bevels, like painted wooden toy pieces, slightly oversized cannons. Bright noon sun, soft shadows, no haze. Flat shaded low poly game asset, a few clean facets, no textures, no text.",
+  "refs": [],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "toy-harbour-cannon--nanobanana",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-11T15:38:55",
+  "outputs": [
+    "toy-harbour-cannon--nanobanana.png"
+  ]
+}

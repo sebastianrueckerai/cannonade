@@ -1,0 +1,111 @@
+{
+  "cols": 6,
+  "cell": 512,
+  "parallel": 4,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "1K"
+      }
+    }
+  },
+  "style": "Low poly, flat shaded, every object made of a few clean facets, no textures, no text, no UI, no watermark. The attached images are style references only: the first shows the low-poly flat-shaded look and the readable tile grid to keep, the others give colours, mood and the amount of detail per building. Create a new image, do not copy, crop or edit a reference.",
+  "frames": {
+    "coast": "A wide establishing view, slightly elevated, of {world}. {era}. {palette}. {light}. Repeating motifs: {motifs}. The feeling: {tone}. {style}",
+    "fortress": "Game screenshot of a low-poly strategy game, camera high above and pitched 60 degrees down over a square tile grid, the grid visible on the land. {fortress}. {palette}. {light}. Repeating motifs: {motifs}. The feeling in the build phase: {build}. {style}",
+    "harbour": "The harbour of {world}, seen closer and from a lower angle than the game camera, {time_other}. Piers, boats, the quay buildings, crates and barrels, no people. {palette_other}. Repeating motifs: {motifs}. {style}",
+    "battle": "A battle moment in {world}: cannons on the walls fire at attacking ships, cannonballs in flight, splashes in the water, round smoke puffs, one ship hit. Camera a little lower than the game camera so the shots read. {battle}. {palette}. {light}. {style}",
+    "material": "A close material study for {world}: on a plain light background, laid out like a sample sheet with space between the items, one wall segment with a battlement, one cannon on its carriage, one roof corner, one crate, one barrel, one tree, one rock. It shows how stone, wood, bronze, cloth and leaves look in this world. {materials}. {style}",
+    "sky": "The sky of {world}, a wide panoramic view over the sea to the horizon, only a thin strip of island at the bottom edge. {sky}. {style}"
+  },
+  "directions": [
+    {
+      "slug": "toy-harbour",
+      "name": "The toy harbour",
+      "world": "a painted wooden toy fortress island on a sunlit table, a sheet of teal sea around it, toy ships with striped sails",
+      "era": "Age of sail merchant harbour with a stone keep and one medieval tower, as a toy maker would build it",
+      "tone": "cheerful, chunky, sunlit",
+      "palette": "Warm saturated toy paint: cream stone, terracotta roofs, bright teal sea, sunny yellow sand, fresh green grass, cherry red and white accents",
+      "palette_other": "Late afternoon: the cream stone turns gold, the sea a deeper teal, long soft shadows, the paint colours stay saturated",
+      "light": "Bright noon sun, soft shadows, no haze",
+      "motifs": "striped sails, crenellations like teeth, barrels and crates, a flag on every tower, pebble beaches, round trees, fat bevels on every block",
+      "build": "stacking painted blocks on a board game, friendly and quick",
+      "battle": "A fairground shooting gallery: pop, splash, a ship tips over like a toy, no wreckage stays, no fire",
+      "fortress": "A toy fortress island: cream stone walls with fat bevels enclose a courtyard with three cannons on wooden carriages, a stone keep with a terracotta roof, two toy ships with striped sails at a small wooden pier, round trees, calm teal sea",
+      "materials": "Painted wood: every surface a single flat colour with a fat bevel and a slightly lighter top face, bronze cannons on cherry red carriages, canvas sails with red and white stripes",
+      "time_other": "in the late afternoon",
+      "sky": "A clear bright blue sky with two or three fat white clouds, the sea a flat sheet of teal, a toy's sky, no haze",
+      "refs": [
+        "../01-directions/toy-harbour-world--nanobanana.png",
+        "../../inspirations/ss_0b86a43dd3cd35b7cf1e6e03a0bc420861f9d96e.1920x1080.jpg"
+      ]
+    },
+    {
+      "slug": "lighthouse-islands",
+      "name": "The lighthouse islands",
+      "world": "a scatter of small fogged islands in a teal sea that fades to cream at the horizon, a lighthouse fort on the largest, ships that appear out of the haze",
+      "era": "Age of sail at a remote trading post: a lighthouse, a signal mast, pale wooden piers, a medieval round tower for the keep, pine and gorse rather than palms",
+      "tone": "calm, airy, remote",
+      "palette": "Soft but saturated: teal sea fading to cream, pale sand, moss green grass with a visible checker grid, bone white and grey stone, pale driftwood, a red and white lighthouse, lantern orange accents",
+      "palette_other": "Dawn: the fog glows pink and cream, the lighthouse beam is on, the sea is pale teal, everything soft and bright",
+      "light": "Soft bright overcast glow, a cream sky, fog banks at the horizon, faint shadows",
+      "motifs": "the lighthouse, fog banks, gulls, rope, lanterns, pale wooden piers, pine trees, rock shelves at the waterline, the checker grid on the land",
+      "build": "settling a quiet island, every placement clear against the water, the fog hides nothing on the player's own island",
+      "battle": "Masts appear out of the fog, the cannon fire lights the mist orange for a moment, then the calm returns",
+      "fortress": "A fortress on a small fogged island: bone white and grey stone walls, a checker grid on the grass inside, three cannons on the walls, a red and white lighthouse as the keep, a pale pier with two sailing ships, pine trees, fog softening the far edge of the island, teal sea fading to cream at the horizon",
+      "materials": "Bone white and grey stone, pale driftwood planks, red and white painted lighthouse plaster, rope, cream canvas, dark green pine, a wisp of fog behind the sheet",
+      "time_other": "at dawn with the lighthouse lit",
+      "sky": "A cream and pale blue sky, fog on the horizon, the teal sea fading into the fog, gulls, soft and bright, no sun disc",
+      "refs": [
+        "../01-directions/toy-harbour-world--nanobanana.png",
+        "../../inspirations/monsters-expedition-mockups.jpg",
+        "../../inspirations/monsters-expedition-biome01.jpg"
+      ]
+    },
+    {
+      "slug": "river-town",
+      "name": "The market town at the river mouth",
+      "world": "a walled market town where a river meets the sea, half-timbered houses packed behind stone walls, orange tile roofs, a round tower with a conical roof, mills and quays, green fields on a grid",
+      "era": "Late medieval into early age of sail: the first bronze cannons on old stone walls, cogs and barges at the quay, timber frames and tile roofs",
+      "tone": "homely, busy, storybook",
+      "palette": "Warm and saturated: orange tile roofs, cream plaster, dark timber frames, warm grey stone, blue river and sea, bright green fields and hedges, market cloth in red and blue",
+      "palette_other": "Golden evening: the roofs glow orange, the river turns gold, windows lit warm, long shadows, the greens go deep",
+      "light": "Warm late morning sun, soft shadows, clear air",
+      "motifs": "orange tile roofs, timber frames, round towers with conical roofs, water channels, mills, market cloth, stacked barrels, hedged green fields on a grid",
+      "build": "raising a town house by house, every house one colour block with a roof, the walls grow around them",
+      "battle": "A siege from the water: the fight is at the wall and on the river, the town behind the wall keeps going, cannon smoke drifts over the roofs",
+      "fortress": "A walled market town on a river island: warm grey stone walls enclose a courtyard of half-timbered houses with orange tile roofs, three bronze cannons on the walls, a round tower with a conical roof, a mill, a quay with a cog and a barge, green hedged fields around on the tile grid, the river running to the sea",
+      "materials": "Warm grey stone with lighter mortar lines, dark timber frames on cream plaster, orange clay tiles, bronze cannons on oak carriages, red and blue market cloth, bright green leaves",
+      "time_other": "in the golden evening",
+      "sky": "A warm blue sky with soft white clouds, the sea a calm blue, a hint of hills on the horizon, storybook clear",
+      "refs": [
+        "../01-directions/toy-harbour-world--nanobanana.png",
+        "../../inspirations/ss_0b86a43dd3cd35b7cf1e6e03a0bc420861f9d96e.1920x1080.jpg",
+        "../../inspirations/Foundation_ss_dbc1c23ffd249f0c8b07aae6312f33aa63a0e8eb.1920x1080.jpg"
+      ]
+    },
+    {
+      "slug": "shipwright-yard",
+      "name": "The shipwright's island",
+      "world": "a fortified shipyard on a rock, where everything is being built: wooden cranes, slipways, scaffolds, rope walks and a forge, the cannons cast in sight of the walls",
+      "era": "Age of sail at its busiest, a naval dockyard: oak and iron, bronze guns, the first forge chimneys, so the way to bigger guns is visible but not taken yet",
+      "tone": "inventive, busy, warm metal",
+      "palette": "Warm and saturated: honey oak, bronze and brass, rust red bollards, iron grey, sail cream, forge orange, copper green roofs, a deep blue sea, warm grey rock",
+      "palette_other": "Evening: the forge glows orange, lanterns on the cranes, the sea goes deep blue, the brass catches the last light",
+      "light": "Warm afternoon sun, long shadows from the cranes, clear air",
+      "motifs": "wooden cranes and pulleys, slipways, rope coils, scaffolding, stacked timber, stone blocks and iron bars as visible resources, forge glow, copper roofs, brass gun barrels",
+      "build": "the yard is the game, timber piles, stone blocks and iron bars stack visibly into the guns the player builds",
+      "battle": "The yard's own guns answer the fleet, sparks and smoke, the forge glow behind, the cranes keep swinging",
+      "fortress": "A fortified shipyard on a rock island: warm grey stone walls enclose a yard with wooden cranes, a slipway with a half-built hull, stacks of timber, stone blocks and iron bars, a forge with a small chimney, three bronze cannons on the walls, two sailing ships at the quay, the sea deep blue, the land on a tile grid",
+      "materials": "Honey oak planks, bronze and brass cannon barrels, iron bars, rope coils, cream canvas, warm grey stone blocks, copper green roof plates, forge orange, each a flat colour with clean facets",
+      "time_other": "in the evening with the forge lit",
+      "sky": "A warm blue afternoon sky with high thin clouds, the sea deep blue with white caps, a few gulls, clear and bright",
+      "refs": [
+        "../01-directions/toy-harbour-world--nanobanana.png",
+        "../../inspirations/Foundation_ss_dbc1c23ffd249f0c8b07aae6312f33aa63a0e8eb.1920x1080.jpg"
+      ]
+    }
+  ]
+}

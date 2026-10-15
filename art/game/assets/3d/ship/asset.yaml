@@ -1,0 +1,15 @@
+asset_id: ship
+route: generative     # Tripo hull from the painted side view, cleanup, then gun.py builds the cannon by hand (D47)
+class: ship
+dimensions:           # metres, Blender axes, Z up. The hull is one water tile long
+  max_x: 1.0
+  max_y: 1.20         # measured 1.192: the muzzle overhangs the stem by 0.18, the oversized joke (D47)
+  max_z: 1.2          # measured hull+sail 0.974; the gun stays below the sail top
+budget:
+  max_tris: 1500      # hull 1200 + gun 208
+  max_materials: 3    # baked hull texture, gun iron, carriage wood (the picked side view shows the wood)
+parts:
+  - ship
+  - ship_cannon
+pivots:
+  origin: ground_centre

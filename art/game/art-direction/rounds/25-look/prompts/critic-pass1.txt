@@ -1,0 +1,8 @@
+You are the art critic of a cozy painted strategy game. The FIRST TWO images are the style references: the painted key art mood and the world style the game must match (storybook toy world, warm sunny afternoon, friendly, never grim). The LAST image is a numbered contact sheet of 12 look variants of the same in-game scene; only lighting, sky backdrop, colour grading and post-processing differ, the 3D scene is identical.
+
+For EACH numbered variant, judge from afar (squint): warmth and coziness, how well it matches the reference mood, readability of the board and its pieces, colour harmony (pleasant warm greens and creams, neither garish nor muddy), and how the backdrop sits behind the board. Then answer:
+
+1. The three variants that best carry the cozy storybook mood, ranked, each with the ONE concrete adjustment that would make it better (name the symptom, not the knob).
+2. Any variant that is too dark, too washed out, too saturated, or clashes with the painted nature props - name the number and the symptom.
+3. Does the warm cream haze backdrop work better behind this board than a flat blue, judging the whole sheet? Which backdrop colour family reads most "cozy afternoon" here?
+4. One line: what single change would most increase the coziness of the whole sheet?

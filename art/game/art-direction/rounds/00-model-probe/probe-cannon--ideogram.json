@@ -1,0 +1,17 @@
+{
+  "model": "ideogram/v4",
+  "prompt": "One siege cannon on a wooden wheeled carriage standing on a single square stone tile, three-quarter view from slightly above, isolated on a plain uniform background, nothing else in frame. Muted natural colours: warm sandstone, teal sea, moss green. Simple blocky shapes with chamfered edges. Soft afternoon sun from the left. Flat shaded low poly game asset, a few clean facets, no textures, no text.",
+  "refs": [],
+  "params": {
+    "image_size": "landscape_16_9",
+    "rendering_speed": "BALANCED"
+  },
+  "seed": 352039092,
+  "description": null,
+  "label": "probe-cannon--ideogram",
+  "est_cost_usd": 0.09,
+  "created": "2026-10-11T15:35:00",
+  "outputs": [
+    "probe-cannon--ideogram.png"
+  ]
+}

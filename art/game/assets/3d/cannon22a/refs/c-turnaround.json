@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Draw this same cannon from four sides as a turnaround sheet for a 3D modeller, in a 2 by 2 grid of equal cells. Keep exactly the same design, parts, proportions and colours.\n\n- Top left: the front view. The muzzle points straight at the viewer.\n- Top right: the left side view. The gun's left side faces the viewer, so the muzzle points to the left edge of the picture.\n- Bottom left: the back view. The breech faces the viewer, the muzzle points away.\n- Bottom right: the right side view. The gun's right side faces the viewer, so the muzzle points to the right edge of the picture.\n\nOrthographic views at eye level with no perspective, the same scale and the same ground line in every cell, each view centred in its cell with the whole object visible. Plain flat light grey background, no ground, no cast shadow, soft even light. Crisp clean outlines and smooth painted surfaces. No labels, no text, no lines between the cells.",
+  "refs": [
+    "game/assets/3d/cannon22a/refs/b-clean.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "cannon22a c turnaround",
+  "est_cost_usd": 0.25,
+  "created": "2026-10-12T08:57:30",
+  "outputs": [
+    "c-turnaround.png"
+  ]
+}

@@ -1,0 +1,12 @@
+You are an independent critic for a low-poly browser strategy game in the spirit of Rampart: a painted toy fortress on a tile grid, cheerful, chunky, sunlit, cream stone, orange roofs, green grass, yellow sand, blue sea, and cannons, the heart of the game: castles shoot at castles. This phase decides the painted 2D key art of the store page. Your job is faults, above all the cannons, not taste.
+
+The owner's brief for this sheet: both castles carry cannons; every cannon is complete, a bronze barrel on a wooden carriage with wheels, standing on a wall walk or a courtyard floor, seen from above like everything else, never a barrel pasted over a house or a roof; the firing cannon's barrel points straight at the enemy castle; the smoke plume is at its muzzle and drifts in the barrel's direction; the cannonball sits on the straight line from the muzzle to the enemy castle. The title stays large and clear on the sky. The painting is soft and painterly, the tile grid hinted.
+
+Image 1 is the picks sheet, eight candidates labelled: 20a and 20b, the favourite land map with its cannons redrawn, two attempts; 21, the land map with the castles closer; 22, two islands with cannons added to the right castle; 23, the diagonal duel with the shot turned onto the right line; 24a and 24b, the land map painted anew; 25, the land map with the castles side by side.
+Image 2 is the capsule size test: each candidate at 460 and 231 pixels wide, the Steam header capsule and the small capsule, magnified twice.
+
+Answer in this order, short and concrete:
+1. Per candidate, the cannons: how many on each castle, is each one complete with a carriage and wheels and standing on a wall walk or a floor, is any one pasted over a house, a roof or a tree, is any one floating or cut off.
+2. Per candidate, the shot: where the firing barrel points, where the plume is, where the ball is, whether the ball lies on the barrel's line toward the enemy castle. Say right or wrong, and what is wrong.
+3. Per candidate: the title, every letter correct, large enough at 231 px, covering nothing. Anything that changed from the reference that should not have, such as a lost river, a lost grid, a moved fortress or a new object.
+4. Rank the eight, correctness of the cannons and the shot first, the rest second, one sentence each. End with one line that starts with RANKING: followed by the eight labels in order.

@@ -1,0 +1,31 @@
+{
+  "cols": 2,
+  "cell": 1024,
+  "parallel": 2,
+  "models": {
+    "nanobanana": {
+      "id": "google/nano-banana-2.1/edit",
+      "params": {
+        "aspect_ratio": "16:9",
+        "resolution": "2K"
+      },
+      "est": 0.25,
+      "refs": ["ladder-final.png"]
+    }
+  },
+  "frames": {
+    "shield": "Edit this model sheet and change only {which}: {change} The gun keeps its dark iron grey barrel, its round riveted iron turning mount, its size and its place, and has no wheels. Everything else stays exactly as it is: the other three cannons, the five resource boxes, the green tile grid, the camera, the light. No text, no labels, no watermark."
+  },
+  "directions": [
+    {
+      "slug": "15-round-shield",
+      "which": "the third cannon from the left",
+      "change": "replace its flat square shield plate with one round riveted dark iron shield, a large disc standing upright in front of the gun, the barrel passing through a hole in its centre."
+    },
+    {
+      "slug": "16-half-shield",
+      "which": "the second cannon from the left",
+      "change": "keep its wooden cradle and add a small low half shield of riveted dark iron in front of the cradle, about half the height of the gun, curved, with one narrow horizontal visor slit across its upper part; the long barrel reaches over the half shield."
+    }
+  ]
+}

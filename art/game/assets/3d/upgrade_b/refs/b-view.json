@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint this stack of iron ingots as a clean reference picture for a 3D modeller. Keep exactly the same design and the same dark iron grey colour: dark iron ingots with sloped sides, stacked in three layers of three ingots, each layer turned crosswise to the layer below it, together forming a box a little wider than it is tall. No wooden box, nothing else.\n\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 70 percent of the picture. Plain flat light grey background. No ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture. Only this one object, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/upgrade_b/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "upgrade_b three-quarter view",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-12T11:28:17",
+  "outputs": [
+    "b-view.png"
+  ]
+}

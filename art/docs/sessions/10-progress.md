@@ -1,0 +1,8 @@
+# Session 10 progress
+
+- Budget: 14 USD cap from 2026-10-13T23:23. Spent: 2.00 USD across 8 paid runs (4 round-23 boards, mushroom r2, twiggy r2, mushroom r3, the sky panorama). Manual tracking; `img.py cost` under-reports.
+- Redirected mid-session (D51): no new nature kinds for the first game. Round 23 (evergreen, mushroom, stones, twiggy boards and the r2/r3 size edits) is parked as artifacts, unpicked. Evergreen and stones had passed inspection, mushroom never passed its size check — all moot.
+- Sky (C9): [round 24](../game/art-direction/rounds/24-sky/sky.png) painted on the style anchors, 16:9 centre-cropped to 2:1, in the game repo as `assets/art/sky/world_panorama.png` (untracked until the pick). The game camera pitches too steeply to ever show the clouds; the visible effect is the warm haze band behind the board.
+- Game repo change: [Map.gd](/home/womb/repos/grid-cannons/scripts/components/Map.gd) nature draw trimmed to the three approved kinds. Evidence: [10-first-game.png](10-first-game.png) (single mode, nature and sky), [10-first-game-close.png](10-first-game-close.png), [10-sky-battle.png](10-sky-battle.png) (the whole first-batch building set in the sandbox, no nature by design there).
+- Waiting on Sebastian: the sky stays or goes; the session-07 palette-material look of guns/walls/buildings beside the painted nature — repaint on the D49 path or hold.
+- Both answered before close: the sky became the D52 panorama in the look round; the texture question named the flat set (nine wall pieces, tile, shell, gun plates) and became C12, the [session 11 repaint](11-repaint.md).

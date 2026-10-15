@@ -1,0 +1,17 @@
+{
+  "tool": "storeset.py key",
+  "retroactive": true,
+  "argv": "unknown",
+  "inputs": [
+    "game/art-direction/rounds/15-cannonade/a-white-title--nanobanana.png"
+  ],
+  "params": {
+    "box": null
+  },
+  "est_cost_usd": 0.0,
+  "created": "unknown",
+  "outputs": [
+    "logo-a-white.png"
+  ],
+  "note": "Input recovered from PICKS.md and confirmed by re-running storeset.py key without --box, which gives a pixel-identical logo."
+}

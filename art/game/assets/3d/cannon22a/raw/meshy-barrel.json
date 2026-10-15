@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a12eee-54fd-77c4-b175-a5d43b5da648",
+  "inputs": [
+    "game/assets/3d/cannon22a/refs/barrel.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 1000
+  },
+  "label": "cannon22a meshy-barrel",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 35,
+  "created": "2026-10-12T09:06:06",
+  "outputs": {
+    "model": "meshy-barrel.glb",
+    "rendered_image": "meshy-barrel-preview.png"
+  }
+}

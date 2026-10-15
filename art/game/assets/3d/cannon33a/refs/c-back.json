@@ -1,0 +1,7 @@
+{
+  "tool": "crop",
+  "source": "game/assets/3d/cannon33a/refs/c-turnaround.png",
+  "est_cost_usd": 0,
+  "note": "each view taken as its connected region, the rest filled with the background, centred, one shared scale, the largest view fills 80 percent, 1024 px. The sheet's right view repeated the left side and is left out",
+  "created": "2026-10-12T09:00:56"
+}

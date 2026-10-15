@@ -1,0 +1,69 @@
+{
+  "asset_id": "cannon22a",
+  "parts": {
+    "barrel": {
+      "verts": 830,
+      "tris": 466,
+      "non_manifold_edges": 830,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.0468,
+        0.016,
+        0.7024
+      ]
+    },
+    "mount": {
+      "verts": 1879,
+      "tris": 984,
+      "non_manifold_edges": 1878,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "plate": {
+      "verts": 40,
+      "tris": 20,
+      "non_manifold_edges": 40,
+      "materials": [
+        "plate_plate"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 2749,
+  "tris": 1470,
+  "non_manifold_edges": 2748,
+  "materials": [
+    "Material_0",
+    "plate_plate"
+  ],
+  "dims_m": [
+    1.9,
+    1.9,
+    1.1381
+  ],
+  "bbox_min": [
+    -0.95,
+    -0.95,
+    0.0
+  ],
+  "bbox_max": [
+    0.95,
+    0.95,
+    1.1381
+  ],
+  "solidity": 0.534,
+  "limits_ok": true,
+  "limit_failures": []
+}
