@@ -30,7 +30,8 @@ highest-numbered file in [art/docs/sessions/](art/docs/sessions), and it can nam
   (`scripts/data/` classes). `scripts/Catalog.gd` (autoload) loads and validates them and
   spawns configured buildings: always create buildings with `Catalog.spawn(id)`, never by
   instantiating a prefab. Model scenes in `prefabs/` are visuals only; the catalog adds
-  the behaviour components from the data.
+  the behaviour components from the data. A def with `parked = true` stays in the files but
+  out of the game (D64: the 3×3 guns). Park a building, never delete its files or assets.
 - `scripts/sandbox/` – Sandbox editor + battle lab (`scenes/sandbox.tscn`). It wraps a
   `Main` built from a `config` dictionary; layouts are `ScenarioDef` item lists
   (`data/scenarios/` examples, `user://scenarios/` saves). `BattleLab.gd` (`tools/lab.tscn`)

@@ -22,6 +22,7 @@ Measured in the survey of the game repo, see [grid-cannons.md](../grid-cannons.m
 |---|---|---|
 | main menu | dark ColorRect, buttons made in code with the default theme | background image, Theme resource, title treatment |
 | splash | none | one scene, one image, the logo |
+| loading screen | a bar on a dark panel | one piece of concept art at random behind the bar, from the anchors through `storeset.py loading` (D65) |
 | HUD and sandbox UI | built in code, default theme | the same Theme resource |
 | icons | none | one icon per building type, readable at 32 px |
 | world background | none | one panoramic sky image for a PanoramaSkyMaterial |

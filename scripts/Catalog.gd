@@ -57,11 +57,10 @@ func load_dir(dir: String, replace_cache := false) -> void:
 		var def: BuildingDef = res
 		def.id = f.get_basename()
 		var problems := _check_def(def)
-		if problems.is_empty():
+		for p in problems:
+			errors.append("%s: %s" % [f, p])
+		if problems.is_empty() and not def.parked:
 			defs[def.id] = def
-		else:
-			for p in problems:
-				errors.append("%s: %s" % [f, p])
 	ids.assign(defs.keys())
 	ids.sort()
 	_check_catalog()

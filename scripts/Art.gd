@@ -52,6 +52,16 @@ static func texture(name: String) -> Texture2D:
 	return load(p) if ResourceLoader.exists(p) else null
 
 
+## One look of a UI image at random: ui/<name>.png, ui/<name>.2.png and on, numbered without a gap. Null without a file.
+static func texture_look(name: String) -> Texture2D:
+	var looks: Array[String] = []
+	var file := name + ".png"
+	while ResourceLoader.exists(DIR + "ui/" + file):
+		looks.append(file)
+		file = "%s.%d.png" % [name, looks.size() + 1]
+	return texture(looks[_rng.randi_range(0, looks.size() - 1)]) if not looks.is_empty() else null
+
+
 static func sky_texture() -> Texture2D:
 	var p := DIR + "sky/world_panorama.png"
 	return load(p) if ResourceLoader.exists(p) else null

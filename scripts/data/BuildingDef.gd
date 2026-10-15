@@ -26,6 +26,8 @@ enum Category { BUILDING, WALL, BASE, HIDDEN }
 @export var consumes: Dictionary[String, float] = {}
 ## Relative chance to be offered as the next building / wall (0 = never)
 @export var draw_weight := 0.0
+## Kept in the files but out of the game: no recipe, draw or Sandbox palette offers it
+@export var parked := false
 
 @export_group("Recipe")
 ## Upgrade pattern: building ids of a size x size square of single tile

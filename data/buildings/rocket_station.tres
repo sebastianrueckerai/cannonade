@@ -15,6 +15,7 @@ script = ExtResource("5_sbxjr")
 display_name = "Rocket station"
 description = "Rockets destroy the tile they hit."
 model = ExtResource("4_7kejt")
+parked = true
 size = 3
 consumes = Dictionary[String, float]({
 "supply": 9.0

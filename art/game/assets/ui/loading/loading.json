@@ -1,0 +1,37 @@
+{
+  "tool": "storeset.py loading",
+  "argv": [
+    "pipeline/storeset.py",
+    "loading",
+    "--out",
+    "game/assets/ui/loading",
+    "game/art-direction/anchors/world_style.png",
+    "game/art-direction/anchors/structures.png",
+    "game/art-direction/anchors/shape_corner.png",
+    "game/art-direction/anchors/resource_blocks.png",
+    "game/art-direction/anchors/structures_toy.png"
+  ],
+  "inputs": [
+    "game/art-direction/anchors/world_style.png",
+    "game/art-direction/anchors/structures.png",
+    "game/art-direction/anchors/shape_corner.png",
+    "game/art-direction/anchors/resource_blocks.png",
+    "game/art-direction/anchors/structures_toy.png"
+  ],
+  "params": {
+    "size": [
+      1920,
+      1080
+    ]
+  },
+  "est_cost_usd": 0.0,
+  "created": "2026-10-15T11:58:57",
+  "outputs": [
+    "loading.png",
+    "loading.2.png",
+    "loading.3.png",
+    "loading.4.png",
+    "loading.5.png",
+    "sheet.jpg"
+  ]
+}

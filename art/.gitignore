@@ -21,6 +21,10 @@ game/assets/3d/*/previews/route-test/
 game/assets/3d/*/previews/barrel/
 game/assets/3d/*/previews/pieces/
 
+# the loading screens, rebuilt by pipeline/storeset.py loading. The game's copies are in assets/art/ui/
+game/assets/ui/loading/*.png
+game/assets/ui/loading/sheet.jpg
+
 # history, on disk only
 game/art-direction/rounds/**/*.png
 game/art-direction/rounds/**/*.jpg

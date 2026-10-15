@@ -4,6 +4,8 @@ Start prompt for the session, in the game repo: "Run session 13 from art/docs/se
 
 Roadmap item: B18, the upgrade tree v1. It is ticked when the game plays the recipes of [rules.md](../../game/design/rules.md) section 7. The crater tile look rides along.
 
+Sebastian, 2026-10-15 (D64): no siege gun for now. Leave `cannon33a` parked (`parked = true` in its file): the game has 1x1 and 2x2 guns only, and the crater, which comes from the siege shell, waits with it. The `lab` test passes again since game round D (roadmap I11).
+
 ## Why these deliverables
 
 - **The battle is over in about 6 s.** Today the first breach switches off the whole fort (D59). Rules v2 checks the enclosure once, at the end of the build phase, keeps the guns firing through the battle, and makes the base the flag. That is the change the whole game waits for.

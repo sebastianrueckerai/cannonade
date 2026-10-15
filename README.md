@@ -52,8 +52,8 @@ Rounds alternate between a **build phase** (green timer) and a **battle phase** 
 Areas fully enclosed by walls turn grey; only guns inside enclosed areas can fire, and
 guns that need supply only work with enough supply buildings inside your walls.
 Upgrade blocks placed in 2×2 squares merge into bigger guns, flak, shield generators or
-supply depots depending on their pattern. A 3×3 square with the rocket station pattern
-becomes a rocket station. Any other 3×3 square merges one of its 2×2 squares.
+supply depots depending on their pattern. The 3×3 guns are parked for now, so a full 3×3
+square merges one of its 2×2 squares.
 
 ## Buildings are data
 
@@ -79,6 +79,11 @@ use the new numbers right away (a reload already running finishes first).
    placed on]`).
 5. Save and press F5 (or restart). Problems in the data are listed in the main menu and
    in the F5 message, never a crash.
+
+**Park a building:** tick `parked`. The file and its model stay, and the data is still
+checked, but no recipe, draw or Sandbox palette offers the building. The 3×3 guns
+(`cannon33a`, `cannon33b`, `cannon33c`, `rocket_station`) are parked for now, so the game
+has 1×1 and 2×2 guns only.
 
 The model (`model`) can be any scene; reuse another building's model while prototyping.
 Behaviours look for parts by node name: `Barrel` and `ProjectileSpawn` (cannons),
@@ -195,8 +200,8 @@ geometry). A few things were changed on purpose:
 * Combining an upgrade block into a building uses the block up (Unity kept it, so it
   could be combined again and again).
 * Any single-tile building can be part of an upgrade pattern, not only upgrade blocks.
-* There are no 3×3 cannons for now. A 3×3 square merges only when a building has its
-  pattern. Otherwise one of its 2×2 squares merges. Unity made a 3×3 cannon of any 3×3
+* There are no 3×3 guns for now. A 3×3 square merges only when a building in the game has
+  its pattern. Otherwise one of its 2×2 squares merges. Unity made a 3×3 cannon of any 3×3
   square.
 * The start base is walled in with all four wall shapes (Unity only used three).
 * Splash damage hits each tile in range (Unity damaged the target tile once per splash tile).
@@ -224,8 +229,9 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
   discarding and stacking walls, buildings, combining, and firing from an enclosed gun.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
   cluster bombs, rockets, shield, flak and ships behave as in the game.
-* `tests/menu_test` – menu → chosen game mode → Esc → menu. The loading screen stays up,
-  with a moving bar, until the game is built, and keeps input away from the game meanwhile.
+* `tests/menu_test` – menu → chosen game mode → Esc → menu. The loading screen shows concept
+  art, not the splash, and stays up with a moving bar until the game is built. It keeps
+  input away from the game meanwhile.
 * `tests/practice_test` – practice mode: Enter switches the phase, the fort never fires and
   never grows, and every battle starts with the whole fort again.
 * `tests/camera_test` – wheel zoom towards the cursor within its limits, middle mouse panning.

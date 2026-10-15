@@ -76,7 +76,7 @@ Every asset the game needs, read from the game data in [/home/womb/repos/grid-ca
 | HUD: timer, phase, help, supply bars | UI | later | none | open |
 | building icons | UI | later | one per placeable building, selected and disabled | open |
 | cooldown bar | UI | later | none | open |
-| loading screen | screen | later | none | open |
+| loading screen | screen | done | five looks, one at random | done, D65: five anchors at 1920 by 1080 from `storeset.py loading`, never the splash's key art. Sebastian picks the final set |
 | sandbox panel | UI | later | none | open |
 
 ## Store and marketing

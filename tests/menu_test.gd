@@ -23,6 +23,7 @@ func _ready() -> void:
 	# the loading screen stays up while the game is built underneath; an Esc meanwhile does not reach the game
 	var main: Node = null
 	var bar_values := {}
+	var art := ""
 	for i in 900:
 		await get_tree().process_frame
 		var scene := get_tree().current_scene
@@ -31,10 +32,13 @@ func _ready() -> void:
 		var loading := get_tree().root.get_node_or_null("Loading")
 		if main != null and loading != null:
 			bar_values[loading.find_children("*", "ProgressBar", true, false)[0].value] = true
+			for tr in loading.find_children("*", "TextureRect", true, false):
+				art = tr.texture.resource_path
 			if bar_values.size() == 2:
 				_esc()
 		if is_instance_valid(main) and main.game != null and main.game.started:
 			break
+	_check(art.begins_with("res://assets/art/ui/loading"), "the loading screen shows concept art, not the splash (%s)" % art)
 	_check(bar_values.size() >= 3, "the loading bar moves while the game is built (%d steps)" % bar_values.size())
 	_check(is_instance_valid(main) and main.game.started and get_tree().current_scene == main,
 			"game started from the menu, Esc while loading changed nothing")

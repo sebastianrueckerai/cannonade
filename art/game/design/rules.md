@@ -22,6 +22,8 @@ The Rampart rule replaces today's rule, under which the first breach switches of
 
 ## 3. The guns
 
+Sebastian, 2026-10-15 (D64): no siege gun for now. The game has 1x1 and 2x2 guns only, and `cannon33a` stays parked in its file with its art. While it is parked, a 3x3 square with 5 to 9 iron makes no 3x3 building, and section 5's crater has no source.
+
 The job column names what nothing else does. A gun without a job is cut.
 
 | id | footprint | fired | blast | range tiles | reload s | supply | job |

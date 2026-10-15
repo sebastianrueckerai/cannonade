@@ -11,6 +11,7 @@ Drop a file here with the right name and the game uses it. Nothing else to wire.
 | `3d/tile.glb` | every map tile, its first mesh replaces the slab box and gets repainted by the game |
 | `3d/wall_<shape>_<level>.glb` | every slot of one wall shape and level: `wall_line_base`, `wall_line_upper`, `wall_curve_base`, ... `wall_cross_upper`. Origin at the tile centre on the ground, the upper model starts 1 m up |
 | `ui/splash.png` | the splash screen |
+| `ui/loading.png`, `ui/loading.2.png`, ... | the loading screen, one look at random behind the bar, numbered from 2 without a gap. Made from the art kit's anchors by `art/pipeline/storeset.py loading`, imported as lossy WebP at quality 0.8 |
 | `ui/logo.png` | the menu title |
 | `ui/menu_background.png` | behind the menu |
 | [ui/theme.tres](ui/theme.tres) | the splash, menu and loading screens. The in-game HUD and the sandbox panel keep the default theme until they are styled, because their layout is sized by it |

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_y16ww"]
+[ext_resource type="Resource" path="res://data/projectiles/shell.tres" id="2_4kexl"]
+[ext_resource type="Script" path="res://scripts/data/CannonBehaviour.gd" id="3_j00gi"]
+[ext_resource type="PackedScene" path="res://prefabs/Cannon33c.tscn" id="4_84j46"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="5_ldbnj"]
+
+[sub_resource type="Resource" id="Resource_f3lh5"]
+script = ExtResource("3_j00gi")
+projectile = ExtResource("2_4kexl")
+
+[resource]
+script = ExtResource("5_ldbnj")
+display_name = "Cannon 3x3 (centre)"
+model = ExtResource("4_84j46")
+parked = true
+size = 3
+recipe_pattern = PackedStringArray("upgrade_a", "upgrade_a", "upgrade_a", "upgrade_a", "upgrade_b", "upgrade_a", "upgrade_a", "upgrade_a", "upgrade_a")
+recipe_combine = PackedStringArray()
+behaviours = Array[ExtResource("1_y16ww")]([SubResource("Resource_f3lh5")])

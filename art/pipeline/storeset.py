@@ -10,7 +10,10 @@ repo root.
 storeset.py key --out LOGO.png LETTERING.png [--box x0,y0,x1,y1]
     the flat background colour, sampled at the corners, keyed out to alpha and unmixed from the edges
 storeset.py compose --wide ART.png --tall TALL.png --hero HERO.png --logo LOGO.png --out DIR
-    every asset of ASSETS at its exact pixel size, plus sheet.jpg with all of them"""
+    every asset of ASSETS at its exact pixel size, plus sheet.jpg with all of them
+storeset.py loading --out DIR IMAGE...
+    the game's loading screens, loading.png, loading.2.png and on, one per image at LOADING: a 16:9 image is cropped
+    to fill, a wider one fits the width on the colour of its corners"""
 
 import argparse
 import datetime as dt
@@ -37,6 +40,7 @@ ASSETS = {
     "itch_cover": (630, 500, "tall", 0.5, 0.47, 0.37, 0.15, 0.66),
     "splash_1920x1080": (1920, 1080, "wide", 0.5, 0.5, 0.34, 0.13, 0.50),
 }
+LOADING = (1920, 1080)
 ICON_BOX = (0.105, 0.30, 0.495, 1.0)  # the near castle with its firing cannon and its smoke, in fractions of the wide art
 
 
@@ -89,6 +93,21 @@ def cover(im, w, h, fx, fy):
     return r.crop((x, y, x + w, y + h))
 
 
+def corner_colour(im):
+    px = np.asarray(im.convert("RGB"))
+    k = max(4, min(im.size) // 40)
+    corners = np.concatenate([px[:k, :k], px[:k, -k:], px[-k:, :k], px[-k:, -k:]]).reshape(-1, 3)
+    return tuple(int(v) for v in np.median(corners, axis=0))
+
+
+def fit(im, w, h):
+    s = min(w / im.width, h / im.height)
+    r = im.resize((round(im.width * s), round(im.height * s)), Image.LANCZOS)
+    canvas = Image.new("RGB", (w, h), corner_colour(im))
+    canvas.paste(r, ((w - r.width) // 2, (h - r.height) // 2))
+    return canvas
+
+
 def place_logo(canvas, logo, cx, cy, wf):
     m = round(0.04 * canvas.height)                           # the logo never touches the frame edge
     lw = min(round(canvas.width * wf), canvas.width - 2 * m)
@@ -137,6 +156,24 @@ def cmd_compose(a):
         print(p, Image.open(p).size)
 
 
+def cmd_loading(a):
+    out = Path(a.out)
+    out.mkdir(parents=True, exist_ok=True)
+    w, h = LOADING
+    made = []
+    for i, src in enumerate(a.images):
+        im = Image.open(src).convert("RGB")
+        img = fit(im, w, h) if im.width / im.height > w / h * 1.1 else cover(im, w, h, 0.5, 0.5)
+        p = out / ("loading.png" if i == 0 else f"loading.{i + 1}.png")
+        img.save(p)
+        made.append(p)
+    sheet(made, out / "sheet.jpg")
+    write_sidecar(out / "loading.json", "loading", a.images, {"size": list(LOADING)},
+                  [p.name for p in made] + ["sheet.jpg"])
+    for p in made:
+        print(p, Image.open(p).size)
+
+
 def sheet(paths, dest, cell=460):
     font = ImageFont.load_default(18)
     for f in ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"]:
@@ -173,6 +210,10 @@ def main():
     for n in ("wide", "tall", "hero", "logo", "out"):
         c.add_argument(f"--{n}", required=True)
     c.set_defaults(f=cmd_compose)
+    lo = sp.add_parser("loading")
+    lo.add_argument("--out", required=True)
+    lo.add_argument("images", nargs="+")
+    lo.set_defaults(f=cmd_loading)
     a = ap.parse_args()
     a.f(a)
 
