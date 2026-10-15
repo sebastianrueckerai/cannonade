@@ -46,5 +46,7 @@ Cost: 9.11 USD of the session's 12 USD cap.
 
 The picks replace the five anchors of today's loading set (D65).
 
-- [ ] 1  - [ ] 2  - [ ] 3  - [ ] 4  - [ ] 5  - [ ] 6  - [ ] 7  - [ ] 8  - [ ] 9  - [ ] 10
-- [ ] 11  - [ ] 12  - [ ] 13  - [ ] 14  - [ ] 15  - [ ] 16  - [ ] 17  - [ ] 18  - [ ] 19  - [ ] 20
+- [x] 1  - [x] 2  - [x] 3  - [x] 4  - [x] 5  - [x] 6  - [x] 7  - [x] 8  - [x] 9  - [x] 10
+- [x] 11  - [x] 12  - [x] 13  - [x] 14  - [x] 15  - [x] 16  - [x] 17  - [x] 18  - [x] 19  - [x] 20
+
+Sebastian, 2026-10-15: "All of these are good. Use them randomly for the loading screen." (D66)

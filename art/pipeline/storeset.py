@@ -12,8 +12,8 @@ storeset.py key --out LOGO.png LETTERING.png [--box x0,y0,x1,y1]
 storeset.py compose --wide ART.png --tall TALL.png --hero HERO.png --logo LOGO.png --out DIR
     every asset of ASSETS at its exact pixel size, plus sheet.jpg with all of them
 storeset.py loading --out DIR IMAGE...
-    the game's loading screens, loading.png, loading.2.png and on, one per image at LOADING: a 16:9 image is cropped
-    to fill, a wider one fits the width on the colour of its corners"""
+    the game's loading screens, loading.jpg, loading.2.jpg and on, one per image at LOADING as JPEG at quality 90:
+    a 16:9 image is cropped to fill, a wider one fits the width on the colour of its corners"""
 
 import argparse
 import datetime as dt
@@ -164,8 +164,8 @@ def cmd_loading(a):
     for i, src in enumerate(a.images):
         im = Image.open(src).convert("RGB")
         img = fit(im, w, h) if im.width / im.height > w / h * 1.1 else cover(im, w, h, 0.5, 0.5)
-        p = out / ("loading.png" if i == 0 else f"loading.{i + 1}.png")
-        img.save(p)
+        p = out / ("loading.jpg" if i == 0 else f"loading.{i + 1}.jpg")
+        img.save(p, quality=90)
         made.append(p)
     sheet(made, out / "sheet.jpg")
     write_sidecar(out / "loading.json", "loading", a.images, {"size": list(LOADING)},

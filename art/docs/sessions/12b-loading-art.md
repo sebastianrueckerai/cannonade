@@ -28,3 +28,5 @@ Sebastian, 2026-10-15: "Just make a few more pictures in the same style as the c
 Twenty pictures pass the checklist, one per idea, on the [picks page](../../game/art-direction/rounds/29-loading-art/PICKS.md), waiting on Sebastian's picks. Nine came out right at the first try. Eight were painted again, for a fault or for their own landscape, and three were fixed through masks. Spent 9.11 USD of the 12 USD cap.
 
 One change to the game: the loading bar moved to the bottom right corner, because the castle pictures keep the cover's layout, which puts a castle corner where a centred bar sits.
+
+Sebastian picked all twenty (D66). They are the loading looks, `ui/loading.jpg` to `ui/loading.20.jpg` in the art layer.
