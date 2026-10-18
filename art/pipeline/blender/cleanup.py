@@ -1,6 +1,7 @@
 # Sent to Blender by pipeline/cleanup.py with JOB prepended, see the cleanup.json keys there.
-# Raw mode renders the run as it came from the API. Otherwise: turn, size, origin at the ground centre, texture
-# scaled down, the team faces on a first material of their own, then final.glb, source.blend and the renders.
+# Raw mode renders the run as it came from the API. Otherwise: turn, size, needle faces pruned, origin at the
+# ground centre, texture scaled down, the team faces on a first material of their own, then final.glb, source.blend
+# and the renders.
 import bmesh
 import colorsys
 import math
@@ -47,6 +48,22 @@ def drop_loose_verts(ob):
     bm = bmesh.new()
     bm.from_mesh(ob.data)
     gone = sum(1 for v in bm.verts if not v.link_faces)
+    for v in [v for v in bm.verts if not v.link_faces]:
+        bm.verts.remove(v)
+    bm.to_mesh(ob.data)
+    bm.free()
+    return gone
+
+
+def prune_slivers(ob, ratio=20.0):
+    # the runs carry a few needle triangles at eaves and ridges, hair-thin spikes past the silhouette
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    gone = 0
+    for f in [f for f in bm.faces
+              if max((e.calc_length() for e in f.edges), default=0.0) > ratio * math.sqrt(max(f.calc_area(), 1e-12))]:
+        gone += 1
+        bm.faces.remove(f)
     for v in [v for v in bm.verts if not v.link_faces]:
         bm.verts.remove(v)
     bm.to_mesh(ob.data)
@@ -177,6 +194,7 @@ if not JOB["raw"]:
         k = JOB["fit"] / max(dims.x, dims.y)
         s = Vector((k, k, k))
     transform(ob, Matrix.Diagonal((*s, 1)))
+    res["slivers_pruned"] = prune_slivers(ob)
     if JOB.get("max_tris"):
         tris = sum(len(p.vertices) - 2 for p in ob.data.polygons)
         if tris > JOB["max_tris"]:

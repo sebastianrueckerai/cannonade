@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a150fc-79d0-733f-840d-e511663c6a48",
+  "inputs": [
+    "game/assets/3d/castle/refs/e-view-1.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle meshy from squat wide ref",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 36,
+  "created": "2026-10-18T23:48:41",
+  "outputs": {
+    "model": "meshy-c-e1.glb",
+    "rendered_image": "meshy-c-e1-preview.png"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The building in this picture is still too tall. Keep the same building, style, colours, plain grey background, wide frame and camera. Change one thing: the whole building stands half as tall as it is wide, half, not two thirds. Make it lower and wider: the keep is a squat fat block, its base spans nearly the full width of the frame, the battlements sit close above the windows, the corner turrets are small stubby bumps, the wing stays even lower. The top half of the frame stays empty plain background.",
+  "refs": [
+    "game/assets/3d/castle.2/refs/d-view.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K",
+    "num_images": 2
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle chunky keep reference squat edit 2",
+  "est_cost_usd": 0.3,
+  "created": "2026-10-18T23:47:34",
+  "outputs": [
+    "e-view-1.png",
+    "e-view-2.png"
+  ]
+}
