@@ -19,6 +19,7 @@ func _ready() -> void:
 		for kind in ["wall", "building"]:
 			_check_slot(kind, i)
 	await _check_hovers()
+	_check_wall_shapes()
 	await _check_corners()
 	main.free()
 	await get_tree().process_frame
@@ -92,6 +93,44 @@ func _check_hovers() -> void:
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == map.tiles[free.x][free.y].go,
 			"the wall moves onto the hovered tile as the placement preview")
+
+
+## A wall piece's placeholder model spans the footprint its access grid blocks, so the
+## slot icon and the placement preview read as the piece's shape.
+func _check_wall_shapes() -> void:
+	for def in Catalog.drawable(BuildingDef.Category.WALL):
+		var xs: Array = []
+		var zs: Array = []
+		for z in 3:
+			for x in 3:
+				if not def.access[3 * z + x]:
+					xs.append(x)
+					zs.append(z)
+		if xs.is_empty():
+			continue
+		var want := float(xs.max() - xs.min() + 1) / float(zs.max() - zs.min() + 1)
+		var corners: Array = []
+		var piece := def.model.instantiate()
+		_piece_extents(piece, Transform3D(), corners)
+		piece.free()
+		var box := AABB(corners[0], Vector3.ZERO)
+		for p in corners:
+			box = box.expand(p)
+		var aspect := box.size.x / box.size.z
+		var ok := (aspect < 0.9) if want < 0.75 else ((aspect > 1.05) if want > 1.33 else (aspect >= 0.7 and aspect <= 1.4))
+		check(ok, "%s placeholder spans its footprint (aspect %.2f, want %.2f)" % [def.id, aspect, want])
+
+
+func _piece_extents(node: Node3D, xform: Transform3D, corners: Array) -> void:
+	var world := xform * node.transform
+	if node is MeshInstance3D:
+		var part: AABB = node.get_aabb()
+		for cx in [part.position.x, part.end.x]:
+			for cy in [part.position.y, part.end.y]:
+				for cz in [part.position.z, part.end.z]:
+					corners.append(world * Vector3(cx, cy, cz))
+	for c in node.get_children():
+		_piece_extents(c, world, corners)
 
 
 ## Every supply bar and preview panel is fully on screen and clear of the others.
