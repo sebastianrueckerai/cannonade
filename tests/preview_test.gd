@@ -19,7 +19,7 @@ func _ready() -> void:
 		for kind in ["wall", "building"]:
 			_check_slot(kind, i)
 	await _check_hovers()
-	_check_wall_shapes()
+	await _check_wall_shapes()
 	await _check_corners()
 	main.free()
 	await get_tree().process_frame
@@ -96,27 +96,64 @@ func _check_hovers() -> void:
 
 
 ## A wall piece's placeholder model spans the footprint its access grid blocks, so the
-## slot icon and the placement preview read as the piece's shape. The art models the
-## placed wall swaps to must span the same footprint, or the wall lands rotated.
+## slot icon and the placement preview read as the piece's shape. Every model the placed
+## wall can show instead — the wrapper's FBX, the art layer's glb files, the model the
+## swap actually installs — must span that footprint and reach the tile edges its access
+## grid connects, or the wall lands rotated (K4).
 func _check_wall_shapes() -> void:
 	for def in Catalog.drawable(BuildingDef.Category.WALL):
 		var want := _footprint_aspect(def)
-		_check_model_spans(def.model.instantiate(), want, "%s placeholder" % def.id)
+		var conn := _connectors(def)
+		_check_model(def.model.instantiate(), want, conn, "%s placeholder" % def.id)
 		for b in def.behaviours:
 			for key in ["lower_models", "upper_models"]:
 				var models: Array = b.get(key)
 				for i in models.size():
-					_check_model_spans(models[i].instantiate(), want, "%s %s[%d]" % [def.id, key, i])
+					_check_model(models[i].instantiate(), want, conn, "%s %s[%d]" % [def.id, key, i])
+		await _check_wall_art(def, want, conn)
+
+
+## The art files the game loads for this def (the FBX names of its wrappers are the art ids)
+## and one swap through a live wrapper, as WallModel does it when a wall is placed.
+func _check_wall_art(def, want: float, conn: Array) -> void:
+	var ids := {}
+	for b in def.behaviours:
+		for key in ["lower_models", "upper_models"]:
+			for ps in b.get(key):
+				var wrapper: Node3D = (ps as PackedScene).instantiate()
+				var model := wrapper.get_node("Model") as Node3D
+				ids["wall_" + model.scene_file_path.get_file().get_basename().rstrip("0123456789")] = key
+				wrapper.free()
+	for id in ids:
+		var n := 1
+		while true:
+			var path := "res://assets/art/3d/%s.glb" % id if n == 1 else "res://assets/art/3d/%s.%d.glb" % [id, n]
+			if not ResourceLoader.exists(path):
+				break
+			_check_model((load(path) as PackedScene).instantiate(), want, conn, "%s art %s" % [def.id, id])
+			n += 1
+	var live: Node3D = (def.behaviours[0].get("lower_models")[0] as PackedScene).instantiate()
+	get_tree().root.add_child(live)
+	await get_tree().process_frame
+	_check_model(live.get_node("Model"), want, conn, "%s swapped-in model" % def.id, false)
+	live.free()
+
+
+## The sides the def's access grid blocks, [up, down, left, right]; up is -z, right is +x.
+func _connectors(def) -> Array:
+	var a: Array = def.access
+	return [not a[5], not a[3], not a[1], not a[7]]
 
 
 ## The aspect (x over z) of the 3x3 area of cells the piece blocks: below 0.75 a bar
-## along z, above 1.33 a bar along x, else roughly square.
+## along z, above 1.33 a bar along x, else roughly square. The access array is
+## column-major, so cell (x, z) sits at 3 * x + z.
 func _footprint_aspect(def) -> float:
 	var xs: Array = []
 	var zs: Array = []
 	for z in 3:
 		for x in 3:
-			if not def.access[3 * z + x]:
+			if not def.access[3 * x + z]:
 				xs.append(x)
 				zs.append(z)
 	if xs.is_empty():
@@ -124,16 +161,29 @@ func _footprint_aspect(def) -> float:
 	return float(xs.max() - xs.min() + 1) / float(zs.max() - zs.min() + 1)
 
 
-func _check_model_spans(piece: Node3D, want: float, what: String) -> void:
+const EDGE_REACH := 0.4
+const SIDES := ["up", "down", "left", "right"]
+
+
+func _check_model(piece: Node3D, want: float, conn: Array, what: String, free_after := true) -> void:
 	var corners: Array = []
 	_piece_extents(piece, Transform3D(), corners)
-	piece.free()
+	if free_after:
+		piece.free()
 	var box := AABB(corners[0], Vector3.ZERO)
 	for p in corners:
 		box = box.expand(p)
 	var aspect := box.size.x / box.size.z
-	var ok := (aspect < 0.9) if want < 0.75 else ((aspect > 1.05) if want > 1.33 else (aspect >= 0.7 and aspect <= 1.4))
+	# A turned piece inverts its aspect (1 / aspect), so the bands only have to sit on the
+	# right side of 1 with room for the modelled variance of the FBX variants (tee uppers
+	# run to 0.93); the edge checks below are the exact discriminator.
+	var ok := (aspect < 0.95) if want < 0.75 else ((aspect > 1.05) if want > 1.33 else (aspect >= 0.7 and aspect <= 1.4))
 	check(ok, "%s spans its footprint (aspect %.2f, want %.2f)" % [what, aspect, want])
+	# How far the geometry stays inside the 0.4 m line per side; negative means it reaches the edge.
+	var inside := [box.position.z + EDGE_REACH, EDGE_REACH - box.end.z,
+			box.position.x + EDGE_REACH, EDGE_REACH - box.end.x]
+	for i in 4:
+		check((inside[i] < 0.0) == conn[i], "%s reaches the %s edge exactly when the piece connects it" % [what, SIDES[i]])
 
 
 func _piece_extents(node: Node3D, xform: Transform3D, corners: Array) -> void:
