@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Style references only: the attached images set the painting style, the colours and the mood. Do not copy their content. Paint it as a concept artist's painted sketch sheet for a cozy, bright strategy game: loose hand-painted brushwork with visible strokes, soft painted light from a warm sunny afternoon coming from the front right, cheerful bright colours, a warm light cream paper background with a soft painted shadow under each object. It is a painting, not a 3D render, not low poly, not a game screenshot. Cozy and friendly like a storybook toy, never grim. No people, no text, no labels, no numbers, no letters, no watermark.\n\nThe sheet shows four different designs for one building, side by side from left to right: the castle keep of a toy fortress, the prize the walls are built around. Each design stands on its own square tile of bright green grass and fills most of it, seen in a three-quarter view from slightly above. Each design is one single solid tower of warm cream stone, plain smooth walls with no stones drawn on them: a Bergfried, one unbroken massive keep from the ground to the top, with no curtain wall, no courtyard, no fence, no gatehouse and no detached buildings of any kind. The tower is built in three or four distinct storeys, each storey slightly narrower than the one below it, with a clear horizontal band between storeys, so each storey reads as a separate drum that could crumble away on its own. The team colour is a plain royal blue: on every design the roofs and the flags are royal blue, and nothing else is blue. Design 1: the classic bergfried, a square tower with crenellated battlements on top, small window slits, one royal blue flag on a corner pole. Design 2: the round drum, one big round tower with a steep conical royal blue roof and a long royal blue banner hanging down the top storey. Design 3: the chunky toy keep, everything square and chunky, the top storey carrying four small corner turrets with tiny royal blue pyramid roofs, battlements between them. Design 4: the tower house, one main square tower with a smaller round turret grown out of its side as one solid connected mass, a stepped gable on the main tower, a royal blue flag on the turret.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/inspirations/monsters-expedition-keyart2.jpg",
+    "game/art-direction/inspirations/capsule-my-time-at-portia.jpg"
+  ],
+  "params": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "round 32 castle",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T22:12:51",
+  "outputs": [
+    "castle.png"
+  ]
+}
