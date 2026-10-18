@@ -7,16 +7,16 @@ const StatesMap = preload("res://scripts/StatesMap.gd")
 @export var sizeZ := 20
 @export var tileSize := 1.0
 @export var tilePrefab: PackedScene = preload("res://prefabs/Slab.tscn")
-# The ground colours of the art kit, palette.json in the blender-ai repo (D21): open ground is sand or grass for
-# the whole map, enclosed ground and the ground under a wall are stone paving a shade darker than the walls, water
-# is the sea. Each tile lerps from the lighter min colour (a high tile) to the darker max colour (a low tile).
-@export var maxEnclosedColors: Array = [Color("#e8d6b0").darkened(0.16)]
-@export var minEnclosedColors: Array = [Color("#e8d6b0").darkened(0.04)]
+# The ground colours of the art kit, palette.json (D21, D70): open ground is sand or grass for the whole map,
+# enclosed ground and the ground under a wall are stamped mud, well darker than the light walls, water is the
+# sea. Each tile lerps from the lighter min colour (a high tile) to the darker max colour (a low tile).
+@export var maxEnclosedColors: Array = [Color("#b2915f")]
+@export var minEnclosedColors: Array = [Color("#dcc399")]
 @export var maxOpenColors: Array = [Color("#f0c975").darkened(0.08), Color("#8fbf3c").darkened(0.08)]
 @export var minOpenColors: Array = [Color("#f0c975").lightened(0.06), Color("#8fbf3c").lightened(0.06)]
 @export var waterColorMin := Color("#2f9fc9").lightened(0.04)
 @export var waterColorMax := Color("#2f9fc9").darkened(0.06)
-@export var wallColor := Color("#e8d6b0").darkened(0.1)
+@export var wallColor := Color("#b2915f")
 # The approved painted kinds only (D50); the other six kinds wait on blender-ai C5 and
 # stay out of the draw so no old FBX prop appears in a first game.
 @export var customModelMakerPrefabs: Array = [
@@ -167,7 +167,7 @@ func make_land_map() -> void:
 			var rand := U.value()
 			var y := lerpf(0.1, -0.1, rand)
 			var tgo := U.instantiate(tilePrefab, go)
-			Art.swap_mesh(tgo.get_node("Model"), "tile")
+			Art.swap_mesh(tgo.get_node("Model"), "tile_mud")
 			tgo.name = "Tile_%d_%d" % [xi, zi]
 			tgo.position = tile_position(xi, zi, y)
 			var t := U.comp(tgo, "BuildingPlace")

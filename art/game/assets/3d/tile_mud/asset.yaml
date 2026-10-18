@@ -1,0 +1,17 @@
+asset_id: tile_mud
+route: procedural
+class: terrain
+dimensions:
+  max_x: 1.0
+  max_y: 1.0
+  max_z: 0.2
+budget:
+  max_tris: 50
+  max_materials: 1
+parts:
+  - tile
+pivots:
+  origin: ground_centre
+build: ../tile/build.py      # the paving slab geometry of the tile, unchanged
+paint:
+  tile: {kind: stamp, seed: 73, top_planar: true}   # stamped mud, near-white; the Map multiplies its colour on top

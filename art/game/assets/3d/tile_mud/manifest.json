@@ -1,0 +1,48 @@
+{
+  "asset_id": "tile_mud",
+  "route": "procedural",
+  "inputs": {
+    "asset_yaml_sha": "ed8ce8a71d33",
+    "build_py_sha": "00203af1628b"
+  },
+  "steps": [
+    {
+      "name": "build",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "normalise",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "materials",
+      "ok": true,
+      "elapsed_s": 0.77
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.8
+    },
+    {
+      "name": "export",
+      "ok": true,
+      "elapsed_s": 0.02
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-18",
+  "cost_usd": 0,
+  "created": "2026-10-18T22:49:13+02:00"
+}

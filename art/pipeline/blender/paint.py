@@ -47,6 +47,15 @@ PAINTERS = {
         "streaks": None,
         "stipples": None,
     },
+    "stamp": {
+        "stops": [(0.0, "#ffffff"), (1.0, "#faf7f1")],   # near-white like grain: the Map colour multiplies on top
+        "grain": (0.06, 0.03),           # packed earth, coarser than the paved tile
+        "ground": None,
+        "patches": [(8, (40, 100), (0.85, 1.0), (-70, -30)), (6, (30, 70), (0.8, 1.0), (30, 60))],
+        "streaks": None,
+        "stipples": (16, (4.0, 7.0), (0.8, 1.0), (-50, -25)),   # pebbles and dirt flecks
+        "edge": (1.0, 36.0, 0.32),       # soft stamped border, darker toward the piece edge
+    },
 }
 
 
@@ -73,16 +82,22 @@ def pnoise(u, v, su, sv, off):
     return noise.noise(Vector((math.cos(a) * 1.7, math.sin(a) * 1.7, v * sv + off)))
 
 
-def cube_uv(ob):
+def cube_uv(ob, top_planar=False):
     """World-metre cube projection, object space. Side faces: u along the face in metres (mod 1),
     v over the object height. Top and bottom faces: u along x, v fixed at the face's height, so
-    they sample one texture row and pick up the grain and the weathering rows."""
+    they sample one texture row and pick up the grain and the weathering rows. With `top_planar`
+    (a terrain top, where one row would flatten the pattern): the full texture over the piece's
+    x-y extent, one stamp per piece. (`% 1` would collapse a centred 1 m piece onto the seam.)"""
     me = ob.data
     uv = me.uv_layers.active or me.uv_layers.new(name="UVMap")
     zs = [v.co.z for v in me.vertices]
     lo, h = min(zs), max(zs) - min(zs)
     if h < 1e-6:
         h = 1.0
+    xs = [v.co.x for v in me.vertices]
+    ys = [v.co.y for v in me.vertices]
+    x0, sx = min(xs), (max(xs) - min(xs)) or 1.0
+    y0, sy = min(ys), (max(ys) - min(ys)) or 1.0
     for p in me.polygons:
         for li in p.loop_indices:
             c = me.vertices[me.loops[li].vertex_index].co
@@ -92,7 +107,10 @@ def cube_uv(ob):
                 u = c.y % 1.0
             else:
                 u = c.x % 1.0
-            uv.data[li].uv = (u, (c.z - lo) / h)
+            if top_planar and abs(p.normal.z) > 0.5:
+                uv.data[li].uv = ((c.x - x0) / sx, (c.y - y0) / sy)
+            else:
+                uv.data[li].uv = (u, (c.z - lo) / h)
     return uv
 
 
@@ -153,6 +171,16 @@ def paint_texture(params, seed):
         for _ in range(count):
             dab(flat, rng, rng.randrange(W), int(rng.random() * H),
                 rng.uniform(rlo, rhi), rng.uniform(alo, ahi), rng.uniform(clo, chi))
+    if params.get("edge"):
+        strength, wpx, dark = params["edge"]
+        for y in range(H):
+            dy = min(y, H - 1 - y)
+            for x in range(W):
+                d = min(dy, x, W - 1 - x) / wpx
+                if d < 1.0:
+                    o = (y * W + x) * 4
+                    k = strength * (1.0 - d) ** 1.4 * dark
+                    flat[o:o + 3] = [ch * (1.0 - k) for ch in flat[o:o + 3]]
     return flat
 
 
@@ -164,7 +192,7 @@ def painted_material(ob, spec):
     params.update(spec.get("over") or {})
     name = f"{ob.name}_{kind}"
     if ob.data.uv_layers.active is None:
-        cube_uv(ob)
+        cube_uv(ob, top_planar=spec.get("top_planar", False))
     img = bpy.data.images.new(name + "_tex", width=W, height=H)
     img.colorspace_settings.name = "sRGB"
     img.pixels[:] = [v / 255.0 for v in paint_texture(params, int(spec["seed"]))]

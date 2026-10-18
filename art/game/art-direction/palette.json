@@ -1,5 +1,5 @@
 {
-  "_status": "v0, phase B pick D21 on 2026-10-11. Team colours are the corrected set B, the game's scripts/Main.gd follows in roadmap F10. The edit frames of round 03 approximate these values, the hex here is the rule.",
+  "_status": "v0, phase B pick D21 on 2026-10-11. Team colours are the corrected set B, the game's scripts/Main.gd follows in roadmap F10. The edit frames of round 03 approximate these values, the hex here is the rule. Round 33 (D70) adds the stamped-mud paving pair, mud_light to mud_dark.",
   "name": "market-warmth",
   "world": {
     "sea": "#2f9fc9",
@@ -7,6 +7,8 @@
     "grass": "#8fbf3c",
     "leaf": "#3d7f34",
     "stone": "#e8d6b0",
+    "mud_light": "#dcc399",
+    "mud_dark": "#b2915f",
     "wood": "#7a4a2e",
     "iron": "#33302e",
     "roofs": "#d8632f",

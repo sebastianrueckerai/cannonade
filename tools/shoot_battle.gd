@@ -8,6 +8,9 @@ extends Node
 ##   --top=H      with --look: the camera straight down from H metres, to check what sits on the ground
 ##   --reload=K   every gun reloads K times slower, so a screenshot catches a reload in progress
 ##   --seed=N     the map seed, default 1, which draws grass for the open ground
+##   --paving=min,max,wall   hex colours for the enclosed ground (the lerp ends of the build's
+##                per-tile variation) and the ground under walls; open ground and water stay as built
+##   --tile=id    swap the ground slab model first (e.g. tile_mud), so the colour lands on it
 ##   --align      at the first shot, print each gun's mount centre minus its plate centre in metres, the placed
 ##                gate of assets-3d.md: under 0.02 on both axes
 
@@ -18,6 +21,8 @@ var sb: Node
 var shots: Array = []
 var out := "user://battle"
 var align := false
+var paving := ""
+var tile_id := ""
 
 
 func _ready() -> void:
@@ -30,6 +35,8 @@ func _ready() -> void:
 		shots.append(float(s))
 	out = args.get("out", out)
 	align = args.has("align")
+	paving = args.get("paving", "")
+	tile_id = args.get("tile", "")
 	if args.has("artseed"):
 		Art._rng.seed = int(args["artseed"])
 	if args.has("reload"):  # stretch every gun's reload at spawn, so a mid-reload frame exists to shoot
@@ -91,6 +98,9 @@ func _stack_row(side: int, z: int) -> void:
 func _process(_delta: float) -> void:
 	if shots.is_empty() or sb.battle_time() < shots[0]:
 		return
+	if paving != "":  # at shot time the walls stand, so the enclosures are final
+		_apply_paving(paving)
+		paving = ""
 	var t: float = shots.pop_front()
 	if align:
 		align = false
@@ -99,6 +109,20 @@ func _process(_delta: float) -> void:
 	get_viewport().get_texture().get_image().save_png("%s_%03d.png" % [out, int(t * 10)])
 	if shots.is_empty():
 		get_tree().quit()
+
+
+func _apply_paving(spec: String) -> void:
+	var p: PackedStringArray = spec.split(",")
+	for x in sb.map.sizeX:
+		for z in sb.map.sizeZ:
+			var t = sb.map.tiles[x][z]
+			if t.water:
+				continue
+			if tile_id != "":
+				Art.swap_mesh(t.model(), tile_id)
+			t.enclosedColor = Color(p[0]).lerp(Color(p[1]), (0.1 - t.go.position.y) / 0.2)
+			t.wallColor = Color(p[2])
+			t.reset_color()
 
 
 func _print_align() -> void:

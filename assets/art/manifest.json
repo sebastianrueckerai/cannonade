@@ -490,6 +490,21 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-14T17:25:45+02:00"
   },
+  "tile_mud": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 20,
+    "source_sha": "d23867eb4e40",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-18T22:59:17+02:00"
+  },
   "upgrade_a": {
     "size": [
       0.8,

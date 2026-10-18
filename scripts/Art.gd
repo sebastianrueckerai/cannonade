@@ -214,6 +214,10 @@ static func swap_mesh(mi: MeshInstance3D, id: String) -> bool:
 	if _mesh_cache[id] == null:
 		return false
 	mi.mesh = _mesh_cache[id]
+	for s in mi.get_surface_override_material_count():
+		mi.set_surface_override_material(s, null)   # the overrides belong to the old mesh's material
+		if mi.has_meta("unique_mat_%d" % s):
+			mi.remove_meta("unique_mat_%d" % s)
 	mi.transform = Transform3D(Basis.IDENTITY, Vector3(0, -SLAB_TOP, 0))
 	return true
 
