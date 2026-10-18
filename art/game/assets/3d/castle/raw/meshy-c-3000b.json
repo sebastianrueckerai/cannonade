@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a150d3-f962-7034-b2f6-a4603a5b8fb5",
+  "inputs": [
+    "game/assets/3d/castle/refs/b-view.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle meshy-c-3000b squashed ref",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 30,
+  "created": "2026-10-18T23:04:20",
+  "outputs": {
+    "model": "meshy-c-3000b.glb",
+    "rendered_image": "meshy-c-3000b-preview.png"
+  }
+}

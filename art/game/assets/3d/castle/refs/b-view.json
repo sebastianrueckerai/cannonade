@@ -1,0 +1,20 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint the building on the grass tile as a clean reference picture for a 3D modeller. Keep exactly the same design, the same parts and the same colours, and leave out the grass tile it stands on: a squat round keep of plain smooth warm cream stone with a low royal blue conical roof, a smaller round stair tower attached directly to its side with its own little low royal blue pointed roof, a low rectangular annex wing attached at the foot with a shallow pitched royal blue roof, an arched wooden door with two steps at the annex, a royal blue banner hanging on the big round wall, a few small dark windows. Every part touches the next with no gap: one connected building. Royal blue is only on the roofs and the banner.\\nThe proportion is the most important rule: the building is low and wide. Its total height, from the ground to the very tip of the highest roof, is half of its total width: on a base four units wide it stands only two units tall. Every roof is low and shallow. Nothing is tall: no spire, no high tower, no high flagpole, the stair tower reaches only a little above the main roof, the annex is even lower than the main drum.\\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 75 percent of the width of the picture and under half of its height. Plain flat light grey background. No grass tile, no ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture, roofs as smooth simple surfaces. Only this one building, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/castle/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle round drum reference view low",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T23:02:01",
+  "outputs": [
+    "b-view.png"
+  ],
+  "post": "vertical squash to h/w=0.66, the ratio of the picked sketch (a-sketch.png), bottom anchored on plain grey: the repaint came out tall (h/w 0.95) against the D68 rule of at most half as tall as wide"
+}

@@ -1,0 +1,44 @@
+{
+  "asset_id": "castle.2",
+  "parts": {
+    "castle": {
+      "verts": 3501,
+      "tris": 2852,
+      "non_manifold_edges": 3034,
+      "materials": [
+        "team",
+        "Material_0"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 3501,
+  "tris": 2852,
+  "non_manifold_edges": 3034,
+  "materials": [
+    "Material_0",
+    "team"
+  ],
+  "dims_m": [
+    2.9,
+    2.9,
+    1.42
+  ],
+  "bbox_min": [
+    -1.45,
+    -1.45,
+    0.0
+  ],
+  "bbox_max": [
+    1.45,
+    1.45,
+    1.42
+  ],
+  "solidity": 1.206,
+  "limits_ok": true,
+  "limit_failures": []
+}

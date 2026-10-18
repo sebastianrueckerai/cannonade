@@ -1,0 +1,9 @@
+{
+  "model": "local crop",
+  "source": "../../../art-direction/rounds/32-castle/castle4.png",
+  "box_px": [760, 660, 1480, 1340],
+  "design": "2 of 4, round 32 board 4",
+  "est_cost_usd": 0,
+  "created": "2026-10-18T00:00:00",
+  "outputs": ["a-sketch.png"]
+}

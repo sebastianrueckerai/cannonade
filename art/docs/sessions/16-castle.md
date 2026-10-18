@@ -4,11 +4,11 @@ The rules v3 draft ([rules-v3-draft.md](../../game/design/rules-v3-draft.md)) ma
 
 ## Deliverables
 
-1. The painted sketch board of four keep designs, Sebastian's pick. Round 31 drew walled compounds and was stopped before the pick (D68); round 32 draws the Bergfried board.
-2. The picked design as a 3x3 model on the generative route (reference view, Meshy ladder, meshsheet pick, cleanup), `game/assets/3d/castle/`.
+1. The painted sketch board of four keep designs, Sebastian's pick. Round 31 drew walled compounds and was stopped before the pick (D68); round 32's fourth board, the multi-part keeps, ended in the pick: designs 2 and 3 are the castle's two looks (D69).
+2. Both looks as 3x3 models on the generative route: reference view, Meshy, cleanup, `game/assets/3d/castle/` (the round drum) and `game/assets/3d/castle.2/` (the chunky keep), built and cleaned, waiting on Sebastian's look at the models board.
 3. If the model passes: five damage states as variants of the same castle, whole sections crumbled, top view readable. Their route follows from what the picked mesh gives us: per-piece edits in `source.blend`, or a hybrid rebuild. Only after Sebastian likes the healthy model.
 
-Roadmap: C13. Budget: the standing 4 USD of this session cover the sketch round, the reference views and the Meshy ladder with room for one repeat.
+Roadmap: C13. Budget: the standing 4 USD of this session cover the sketch round, the reference views and the Meshy ladder with room for one repeat; 3.07 USD spent after the repeat (the first repaints and meshes came out tall and were redone, D69).
 
 ## Limits
 

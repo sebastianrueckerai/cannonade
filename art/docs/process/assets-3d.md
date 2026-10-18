@@ -100,6 +100,10 @@ What the providers and other users recommend for the input: separate files for s
 
 The route test of session 06 ran the three guns through both APIs with every input and method. Its results and verdicts are in [round 18](../../game/art-direction/rounds/18-gun-3d/RESULTS.md).
 
+Lessons from session 16:
+
+- **The reference repaint drifts tall.** Both castle reference views came out with a height-over-width ratio near 1.0 against the D68 rule of at most half, whatever the prompt said. The picked sketch's ratio is measured, the repaint is squashed to it as a free post step recorded in the sidecar, and Meshy follows the result closely: both first meshes were as tall as their reference told them to be. A keep a touch over the rule is squashed to `size` in cleanup.json rather than regenerated.
+
 Lessons from session 12:
 
 - **A gun the game aims whole needs the anchor's orientation.** The flak's `Guns` anchor is turned by replacing its whole basis, so a part posed pitched up aimed that far above every target until the art layer gave the anchor the part's rest orientation. Its anchor was also a placeholder mesh, which the art layer hides, and the art under it vanished. Probe a new anchor in the game before any board: visible, and aimed at a test point.

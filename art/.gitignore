@@ -45,6 +45,12 @@ game/assets/3d/*/refs/*
 !game/assets/3d/base.3/raw/meshy-b-550.glb
 !game/assets/3d/base.3/refs/a-sketch.png
 !game/assets/3d/base.3/refs/b-view.png
+!game/assets/3d/castle.2/raw/meshy-c2-3000b.glb
+!game/assets/3d/castle.2/refs/a-sketch.png
+!game/assets/3d/castle.2/refs/b-view.png
+!game/assets/3d/castle/raw/meshy-c-3000b.glb
+!game/assets/3d/castle/refs/a-sketch.png
+!game/assets/3d/castle/refs/b-view.png
 !game/assets/3d/base/raw/meshy-b-550.glb
 !game/assets/3d/base/refs/a-sketch.png
 !game/assets/3d/base/refs/b-view.png

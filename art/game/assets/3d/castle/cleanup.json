@@ -1,0 +1,16 @@
+{
+  "source": "meshy-c-3000b",
+  "part": "castle",
+  "turn": 0,
+  "team": true,
+  "max_tris": 3500,
+  "why": {
+    "team": "the royal blue conical roofs and the banner are the team part, read at the default view (D68)",
+    "size": "the castle is a 3x3 building: the keep fills the 3x3 tiles less 5 cm per side, so the grid lines round it show; the size squashes the drum 12 percent to keep the at-most-half height rule of D68 and squares its slightly oval plan"
+  },
+  "size": [
+    2.9,
+    2.9,
+    1.45
+  ]
+}

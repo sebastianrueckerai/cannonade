@@ -1,0 +1,25 @@
+{
+  "source": "meshy-c2-3000b",
+  "part": "castle",
+  "turn": 0,
+  "team": true,
+  "max_tris": 3500,
+  "why": {
+    "fit": "the castle is a 3x3 building: the keep fills the 3x3 tiles less 5 cm per side, so the grid lines round it show",
+    "team": "the four royal blue turret roofs are the team part, read at the default view (D68)",
+    "size": "the four royal blue turret roofs are the team part, read at the default view (D68); size squares the plan to the 3x3 tiles less 5 cm per side",
+    "team_deck": "the deck inside the battlements is this keep's roof, measured at z 0.96 to 1.05 on final.glb; the game paints it in the team colour like the base's keep (D42)"
+  },
+  "size": [
+    2.9,
+    2.9,
+    1.42
+  ],
+  "team_deck": {
+    "z": [
+      0.9,
+      1.1
+    ],
+    "inside": 1.25
+  }
+}
