@@ -12,6 +12,14 @@ that ships them. New work, leftovers, open questions and ideas go in as new item
 their section, with a tag. Never delete an item: strike it through with the reason. Keep no other
 TODO lists.
 
+## Git workflow
+Sebastian plays the game from the main checkout, so its master must always be the newest. Do new work in
+a worktree off the latest master; when it is done, merge it into master and push, then update the main
+checkout too (`git -C /home/womb/repos/grid-cannons merge --ff-only origin/master`). A session isolated
+in a worktree cannot run git there: it ends its report with that command for Sebastian to run. Delete
+finished worktrees and prune dangling ones (`git worktree remove`, `git worktree prune`); leave the
+locked worktrees of live sessions alone.
+
 ## Art, design and plans
 [art/](art) holds Cannonade's art kit, copied from blender-ai on 2026-10-15 and laid out the same way: the
 art direction, the sources of every model, the pipeline that makes art, rules v2 with the recipes
