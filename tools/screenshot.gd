@@ -53,8 +53,11 @@ func _process(_delta: float) -> void:
 	if main == null or main.game == null:
 		return
 	if aim != null:
-		var human = main.game.players[0]
-		human.simulated_aim = main.game.map.tile_position(aim.x, aim.y, 0.1)
+		var wp: Vector3 = main.game.map.tile_position(aim.x, aim.y, 0.1)
+		if not main.camera.is_position_behind(wp):
+			var ev := InputEventMouseMotion.new()
+			ev.position = main.camera.unproject_position(wp)
+			Input.parse_input_event(ev)
 	if shots.is_empty():
 		return
 	if U.time >= shots[0]:

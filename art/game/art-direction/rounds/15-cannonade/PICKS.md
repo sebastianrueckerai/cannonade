@@ -47,7 +47,9 @@ One limit: Steam never crops only the centre 860 x 380 px of the library hero. B
 
 ## Pick
 
-- [ ] a  - [ ] b  - [ ] c
+- [ ] a  - [x] b  - [ ] c
 - [ ] correction: ______
 
 ## Comments
+
+- 2026-10-18, Sebastian: b, the title is more clearly readable. Style b ships, and its itch.io cover is the game's cover.
