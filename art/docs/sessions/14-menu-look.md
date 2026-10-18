@@ -29,13 +29,13 @@ The web-menu thread owns [Menu.gd](/home/womb/repos/grid-cannons/scripts/Menu.gd
 
 ## Result
 
-Done, awaiting the pick. Four directions built and shot in the real menu at both widths;
+Done and shipped. Sebastian picked 2, the harbour chart, and it is integrated (D67). Four directions built and shot in the real menu at both widths;
 gen 1 thrown away after its two-critic round; a and b carried into gen 2, d dead, c the flat
 control. Gen 2 needed four regens (edge-to-edge buttons, single outline) plus a deterministic
 a-panel crop and a panel-padding fix that put all seven buttons back above the fold at 390
 (pixel-verified). Both critics ship b, the harbour chart; a, the wooden sign, is the
 runner-up with a known contrast cost. Boards by number in [PICKS.md]
-(../game/art-direction/rounds/30-menu-look/PICKS.md). D7 stays open until Sebastian picks.
+(../game/art-direction/rounds/30-menu-look/PICKS.md). D7 ticked with the integration commit.
 About $2.1 of the $6 cap spent (tracker reads $1.62, under-counts regens).
 
 Two things surfaced that belong to Menu.gd, not this round: a painted title on the sign and

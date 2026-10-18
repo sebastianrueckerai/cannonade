@@ -404,3 +404,7 @@ Sebastian: "When I play a game it takes a while to load. There should be concept
 ## D66. All twenty pictures of round 29 are the loading screen (2026-10-15, Sebastian)
 
 Amends D65. From the [picks page](../game/art-direction/rounds/29-loading-art/PICKS.md), with the pictures open: "All of these are good. Use them randomly for the loading screen." The twenty pictures replace the five anchors of D65 as the loading looks, one at random per load. They live in the art layer as JPEG at quality 90, `ui/loading.jpg` to `ui/loading.20.jpg`, 0.4 MB each, because the game imports them as lossy WebP anyway and twenty PNGs would add 50 MB to a repository without Git LFS.
+
+## D67. The menu wears the harbour chart (2026-10-18, Sebastian)
+
+Amends nothing; decides D7. Sebastian, with [the boards](../game/art-direction/rounds/30-menu-look/PICKS.md) open: "2 looks great lets go with that." The menu, splash and loading screens take direction 2 of round 30: Alegreya Regular as `ui/font.ttf`, ochre buttons with one ink outline (`ui/button.png`), the cream chart sheet with the ruled margin and the compass corner (`ui/panel.png`), margins per `ui/manifest.json`, colours per `ui/theme.tres`. Hover and pressed states derive in Art.gd. The flat look stays recoverable in the round folder. The wooden sign (direction 1) stays in the round folder too, unforgotten.

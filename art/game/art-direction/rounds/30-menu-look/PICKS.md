@@ -10,7 +10,13 @@ wide. Boards: [compare-v2-1280.png](shots/compare-v2-1280.png) (stacked, numbers
 | 2 | Harbour chart | Alegreya | ochre card, one ink outline | cream chart sheet, ruled margin, faint compass |
 | 3 | Flat (current, control) | Signika | flat cream box, thin ink border | flat cream box |
 
-## Recommendation: 2, the harbour chart
+## Picked: 2, the harbour chart (2026-10-18, D67)
+
+Integrated as-is: the files from `candidates/b/ui/` now live in the game's ui/ slots. The two
+planned tweaks below were NOT applied: measured text contrast is 9.4 to 1 (AAA), darker ink
+would fix a board-scale artifact, not the menu; the button outline is the pressability cue
+that gen 1 lacked. The full font family is moot while the ui/ slot takes one ttf; Alegreya
+Regular is what the boards showed and what shipped.
 
 Both critics (gemini, glm) independently rank 2 first to ship: "the only design that bridges
 the cozy hand-painted identity and UI function". My pixel checks agree — cleanest textures of

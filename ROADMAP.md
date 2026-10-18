@@ -64,8 +64,9 @@ Sections A to H cover the art and the process that makes it, sections I to K the
 - [ ] D4 **must** Readability check: the real menu at 1280 by 720 and at 390 wide, critic, Sebastian approves.
 - [x] D5 **must** Loading screen art: one piece of concept art at random behind the bar, never the key art of the splash (D65). Five anchors at 1920 by 1080 from [storeset.py](art/pipeline/storeset.py) `loading`, in the game as `assets/art/ui/loading.png` and its numbered looks. Sebastian picks the final set. Replaced by the twenty pictures of D6 (D66).
 - [x] D6 **must** Concept art painted for the loading screen in the cover art's style: 20 ideas, pictures, critics, fixes, Sebastian's picks. Planned as [session 12b](art/docs/sessions/12b-loading-art.md), round 29. Session 12b: twenty pictures pass, on the [picks page](art/game/art-direction/rounds/29-loading-art/PICKS.md), The loading bar moved to the bottom right corner. Sebastian picked all twenty (D66), and they are the loading looks.
-- [ ] D7 **must** Menu look round: the UI font family, the button and panel material and shape, texture use. Four directions built in the real menu through the Art.gd slots and shot at 1280 by 720 and 390 wide, gen 1 thrown away, two critics, Sebastian picks. Planned as [session 14](art/docs/sessions/14-menu-look.md), round 30. Feeds D2 and D4.
+- [x] D7 **must** Menu look round: the UI font family, the button and panel material and shape, texture use. Four directions built in the real menu through the Art.gd slots and shot at 1280 by 720 and 390 wide, gen 1 thrown away, two critics, Sebastian picks. Planned as [session 14](art/docs/sessions/14-menu-look.md), round 30. Feeds D2 and D4.
 
+- [ ] D68 The controls screen (G7) inherits the chart look through the shared theme; check the compass corner on its small panels, tag art-direction.
 ## E. Marketing
 
 - [x] E1 **must** Key art from approved hero renders, gameplay screenshots and the marketing anchor. Session 05: a painted key art instead (D24, D25), [marketing_style.png](art/game/art-direction/anchors/marketing_style.png).
