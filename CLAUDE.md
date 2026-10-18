@@ -13,12 +13,16 @@ their section, with a tag. Never delete an item: strike it through with the reas
 TODO lists.
 
 ## Git workflow
-Sebastian plays the game from the main checkout, so its master must always be the newest. Do new work in
-a worktree off the latest master; when it is done, merge it into master and push, then update the main
-checkout too (`git -C /home/womb/repos/grid-cannons merge --ff-only origin/master`). A session isolated
-in a worktree cannot run git there: it ends its report with that command for Sebastian to run. Delete
-finished worktrees and prune dangling ones (`git worktree remove`, `git worktree prune`); leave the
-locked worktrees of live sessions alone.
+Sebastian plays the game from the main checkout, so its master must always be the newest. He does not
+edit the checkout by hand and does not run merges: the session that finished the work merges it itself.
+Do new work in a worktree off the latest master; when it is done, merge it into the local master and
+push. The harness blocks a worktree session's git against the main checkout, and master is checked out
+there, so merge by push: set `receive.denyCurrentBranch = updateInstead` in the main checkout's
+`.git/config`, `git push /home/womb/repos/grid-cannons <branch>:master`, then remove the setting again.
+Git refuses that push while the checkout holds uncommitted changes, which is the guard for Sebastian's
+edits; if it refuses, stop and report. Then push master to origin. A session cannot remove the
+worktree it lives in: the next session prunes dangling worktrees (`git worktree remove`,
+`git worktree prune`); leave the locked worktrees of live sessions alone.
 
 ## Art, design and plans
 [art/](art) holds Cannonade's art kit, copied from blender-ai on 2026-10-15 and laid out the same way: the
