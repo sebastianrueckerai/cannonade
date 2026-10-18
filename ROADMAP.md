@@ -97,6 +97,7 @@ Sections A to H cover the art and the process that makes it, sections I to K the
 - [x] G3 **must** Smoke test in headless Chromium: loads, menu shows, one round plays.
 - [ ] G4 **must** Host on a small VM: nginx static, compression for `.wasm` and `.pck`.
 - [ ] G5 **idea** Export and publish on push.
+- [x] G6 **must** The web menu shows the two showcase modes only, "Player vs. AI" and "Watch: AI vs. AI", plus a "How to play" panel that maps the controls and explains the game (Sebastian, 2026-10-18). Sandbox, the other modes and Quit stay off the browser build; every other platform keeps the full menu, now with the panel too. The panel lists the Enter key only where Practice is reachable. Test: [tests/menu_test](tests/menu_test.gd). Session 14: [14-web-menu.md](art/docs/sessions/14-web-menu.md).
 
 ## H. Spikes on the agentic process itself
 

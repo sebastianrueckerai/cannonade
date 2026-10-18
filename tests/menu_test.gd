@@ -16,7 +16,32 @@ func _ready() -> void:
 	await _frames(3)
 	var menu := get_tree().current_scene
 	var buttons := menu.find_children("*", "Button", true, false)
-	_check(buttons.size() == 7, "menu has 7 buttons")
+	_check(buttons.size() == 8, "menu has 8 buttons (5 modes, How to play, Sandbox, Quit)")
+	_check(buttons.any(func(b): return b.text.contains("Single player"))
+			and buttons.any(func(b): return b.text.contains("4 AIs"))
+			and buttons.any(func(b): return b.text.contains("Practice")),
+			"desktop keeps the modes the web build hides")
+	var help: Button = null
+	for b in buttons:
+		if b.text == "How to play":
+			help = b
+	_check(help != null, "the menu has a How to play button")
+	help.pressed.emit()
+	await _frames(2)
+	_check(_labels_with("fire the cannons", menu) == 1, "How to play lists the controls")
+	_esc()
+	await _frames(2)
+	_check(_labels_with("fire the cannons", menu) == 0, "Esc closes How to play")
+	help.pressed.emit()
+	await _frames(2)
+	var close: Button = null
+	for b in menu.find_children("*", "Button", true, false):
+		if b.text == "Close":
+			close = b
+	_check(close != null, "How to play has a Close button")
+	close.pressed.emit()
+	await _frames(2)
+	_check(_labels_with("fire the cannons", menu) == 0, "the Close button closes How to play")
 	for b in buttons:
 		if b.text.contains("AI vs. AI"):
 			b.pressed.emit()
@@ -62,6 +87,14 @@ func _esc() -> void:
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().process_frame
+
+
+func _labels_with(part: String, root: Node) -> int:
+	var n := 0
+	for l in root.find_children("*", "Label", true, false):
+		if l.text.contains(part):
+			n += 1
+	return n
 
 
 func _check(c: bool, msg: String) -> void:
