@@ -43,7 +43,7 @@ func fly_towards(dest: Vector3, dest_tile) -> void:
 	point2.y = 2.0 * segmentLength
 	point3.y = segmentLength
 	flyTime = maxf(go.global_position.distance_to(point1) / velocity, 0.0001)
-	destinationTile = dest_tile
+	aim_tile(dest_tile)
 	_set_body_x(bodyUpX)
 	curveDist = point1.distance_to(point2)
 	phase = 0

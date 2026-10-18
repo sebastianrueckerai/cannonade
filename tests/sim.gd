@@ -59,6 +59,8 @@ func _process(_delta: float) -> void:
 			stats["shots"] += 1
 	stats["max_projectiles"] = maxi(stats["max_projectiles"], U.projectiles.size())
 	stats["rounds"] = g.roundNumber
+	if not stats.get("marked") and not U.projectiles.is_empty():
+		_scan_marked(g)
 	for p in g.players:
 		var k: int = p.playerID
 		var walls: int = p.wallTiles.size()
@@ -84,6 +86,15 @@ func _process(_delta: float) -> void:
 		_report(g)
 		_check_invariants(g)
 		_finish()
+
+
+## Sees whether any tile currently carries a targeting marker.
+func _scan_marked(g) -> void:
+	for x in g.map.sizeX:
+		for z in g.map.sizeZ:
+			if g.map.tiles[x][z]._target_tints > 0:
+				stats["marked"] = true
+				return
 
 
 ## Very simple stand-in for a human: places walls on free tiles in range.
@@ -152,6 +163,8 @@ func _check_outcome(g) -> void:
 			_fail("AI %d never lost a wall in battle" % k)
 	if battle_happened and stats["shots"] == 0:
 		_fail("nobody fired")
+	if battle_happened and not stats.get("marked"):
+		_fail("no tile ever carried a targeting marker during battle")
 	if g.fleet.ships.size() > 0:
 		var moved: int = stats.get("ships_moved", 0)
 		if moved != g.fleet.ships.size():
@@ -168,6 +181,10 @@ func _fail(msg: String) -> void:
 
 func _check_invariants(g) -> void:
 	var m = g.map
+	var aimed := {}
+	for p in U.projectiles:
+		if U.alive(p.destinationTile):
+			aimed[p.destinationTile] = true
 	for x in m.sizeX:
 		for z in m.sizeZ:
 			var t = m.tiles[x][z]
@@ -184,6 +201,8 @@ func _check_invariants(g) -> void:
 				_fail("building on water %d,%d" % [x, z])
 			if U.get_color(t.model()) == Color.BLACK:
 				_fail("tile %d,%d painted pure black (selection must outline, not blacken)" % [x, z])
+			if t._target_tints > 0 and not aimed.has(t):
+				_fail("tile %d,%d marked but no live shot aims at it" % [x, z])
 	for p in g.players:
 		for t in p.wallTiles:
 			if not U.alive(t.structure) or U.comp(t.structure, "Wall") == null:

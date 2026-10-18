@@ -190,6 +190,8 @@ func reset_color(enclosed = null) -> void:
 
 
 var _applied_color = null
+## targeting marker: shots in flight at this tile (refcounted) light it up
+var _target_tints := 0
 
 
 ## Colour of the tile slab (skips the material write when nothing changes).
@@ -198,6 +200,23 @@ func set_tile_color(c: Color) -> void:
 		return
 	_applied_color = c
 	U.set_color(model(), c)
+
+
+## Puts the targeting marker of a shooter on this tile: the tile and everything
+## on it light up, subtly tinted in the shooter's colour, until the last shot
+## aimed here lands (target_off).
+func target_on(color: Color) -> void:
+	_target_tints += 1
+	if _target_tints > 1:
+		return
+	U.set_emission(go, Color.WHITE.lerp(color, 0.3), 1.2)
+
+
+func target_off() -> void:
+	_target_tints = maxi(_target_tints - 1, 0)
+	if _target_tints > 0:
+		return
+	U.set_emission(go, Color.WHITE, 0.0)
 
 
 func shake(duration: float) -> void:

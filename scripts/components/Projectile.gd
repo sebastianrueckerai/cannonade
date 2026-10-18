@@ -23,7 +23,7 @@ func fly_towards(dest: Vector3, dest_tile, distance_xz: float, v: float, angle: 
 	start = go.global_position
 	expiredTime = 0.0
 	destination = dest
-	destinationTile = dest_tile
+	aim_tile(dest_tile)
 	distanceXZ = maxf(distance_xz, 0.0001)
 	velocity = v
 	angleRads = angle

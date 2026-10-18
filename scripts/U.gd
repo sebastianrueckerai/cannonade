@@ -157,6 +157,19 @@ func set_surface_color(mi: MeshInstance3D, surface: int, c: Color) -> void:
 	_unique_material(mi, surface).albedo_color = c
 
 
+## Emission glow on every mesh below root (the targeting marker); energy 0 turns it off.
+func set_emission(root: Node, c: Color, energy: float) -> void:
+	if not alive(root):
+		return
+	for mi in meshes(root):
+		if mi.get_script() != null or mi.mesh == null or mi.mesh.get_surface_count() == 0:
+			continue
+		var m := _unique_material(mi, 0)
+		m.emission_enabled = energy > 0.0
+		m.emission = c
+		m.emission_energy_multiplier = energy
+
+
 func get_color(root: Node) -> Color:
 	for mi in meshes(root):
 		if mi.get_script() != null:

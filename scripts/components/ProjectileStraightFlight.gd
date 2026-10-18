@@ -12,7 +12,7 @@ func fly_towards(dest_tile, dmg: float) -> void:
 	expiredTime = 0.0
 	damage = dmg
 	start = go.global_position
-	destinationTile = dest_tile
+	aim_tile(dest_tile)
 	var distance := start.distance_to(dest_tile.go.global_position)
 	flyTime = maxf(distance / maxf(velocity, 0.001), 0.0001)
 	U.look_at(go, dest_tile.go.global_position)

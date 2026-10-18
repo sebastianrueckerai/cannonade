@@ -27,7 +27,6 @@ var maxLeft := 3
 var maxRight := 2
 var maxPlanRange := 3
 var inPlanRange := PackedByteArray()
-var lastHighlight = null
 ## A dormant AI never acts (sandbox: test a build against a stationary enemy).
 var dormant := false
 ## What the AI shoots at: "walls" (the original behaviour), "guns", "supply" or "random"
@@ -335,7 +334,6 @@ func try_stack_next_wall() -> bool:
 			for r in rots:
 				nbb.rotate_clockwise()
 			stack_wall(map.tiles[k.x][k.y])
-			highlight_building_place(map.tiles[k.x][k.y])
 			break
 	return rots > -1
 
@@ -366,7 +364,6 @@ func _try_build_supply_on_existing_unbuildable_update() -> bool:
 		var cluster = UpgradeCluster.new(tile, self)
 		if can_build and can_combine_next_building_with_tile(tile) and not cluster.can_be_built():
 			combine_building(tile)
-			highlight_building_place(tile)
 			return true
 	return false
 
@@ -400,18 +397,10 @@ func try_build_next_wall() -> bool:
 						bb.rotate_counter_clockwise()
 					var tile = map.tiles[k.x][k.y]
 					build_next_wall(tile)
-					highlight_building_place(tile)
 					break
 		if rots > -1:
 			break
 	return rots > -1
-
-
-func highlight_building_place(tile) -> void:
-	if U.alive(lastHighlight):
-		lastHighlight.highlight_off()
-	lastHighlight = tile
-	tile.highlight_on(highlightPosColor)
 
 
 func try_build_walled_in_gun() -> bool:
@@ -423,7 +412,6 @@ func try_build_walled_in_gun() -> bool:
 			if map.statesMap.is_closed(ix * 3, iz * 3) and ibr(ix, iz) and map.get_mini(ix, iz) == 0 \
 					and not in_upgrade_plan:
 				build_next_building(map.tiles[ix][iz])
-				highlight_building_place(map.tiles[ix][iz])
 				return true
 	return false
 
@@ -437,7 +425,6 @@ func try_build_gun_in_plan() -> bool:
 			var in_upgrade_plan: bool = upgradePlan != null and upgradePlan.upgrade_tiles_contain(xz.x, xz.x)
 			if ibr(xz.x, xz.y) and map.get_mini(xz.x, xz.y) == 0 and not in_upgrade_plan:
 				build_next_building(map.tiles[xz.x][xz.y])
-				highlight_building_place(map.tiles[xz.x][xz.y])
 				return true
 	return false
 
