@@ -14,9 +14,14 @@ func _ready() -> void:
 	var scene := arg("scene", "res://scenes/menu.tscn")
 	var out := arg("out", "/tmp/ui.png")
 	get_window().size = Vector2i(int(arg("width", "1280")), int(arg("height", "720")))
+	if arg("stretch", "1") == "0":
+		get_window().content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
 	var node: Node = load(scene).instantiate()
 	get_tree().root.add_child.call_deferred(node)
 	await get_tree().process_frame
+	var fn := arg("call", "")
+	if fn != "":
+		node.call(fn)
 	for i in int(arg("frames", "10")):
 		await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(out)

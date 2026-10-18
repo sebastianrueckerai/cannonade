@@ -26,6 +26,63 @@ func _ready() -> void:
 		if b.text == "Tutorial & Controls":
 			tut = b
 	_check(tut != null, "the menu has a Tutorial & Controls button")
+	# the fit round: the panel must fit a 720-tall window without scaling, and the
+	# help overlay must shrink when the window is shorter than it
+	var panels: Array = menu.find_children("*", "PanelContainer", true, false)
+	var menu_panel: PanelContainer = panels[0]
+	_check(menu_panel.get_combined_minimum_size().y < 700.0,
+			"menu panel min height %s fits a 720 window without scaling"
+			% menu_panel.get_combined_minimum_size().y)
+	get_window().size = Vector2i(1280, 720)
+	tut.pressed.emit()
+	await _frames(3)
+	var help_panel: PanelContainer = null
+	for p in menu.find_children("*", "PanelContainer", true, false):
+		if p.get_parent() is ColorRect:
+			help_panel = p
+	_check(help_panel != null and help_panel.scale.y * help_panel.get_combined_minimum_size().y
+			<= menu.size.y + 0.5, "Tutorial & Controls fits the window height")
+	_check(help_panel != null and help_panel.scale.y < 1.0,
+			"Tutorial & Controls scales down when the window is shorter than it")
+	_esc()
+	await _frames(2)
+	# a corrupt input_remap.cfg must not stop the menu building or later rows loading
+	var t_key0 := InputEventKey.new()
+	t_key0.device = -1
+	t_key0.physical_keycode = KEY_T
+	var cfg := ConfigFile.new()
+	cfg.set_value("map", "build_wall", "nonsense")
+	cfg.set_value("map", "fire", var_to_str([t_key0]))
+	cfg.save("user://input_remap.cfg")
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	await _frames(3)
+	menu = get_tree().current_scene
+	_check(menu.find_children("*", "Button", true, false).size() == 8,
+			"menu builds with a corrupt input_remap.cfg")
+	tut = null
+	for b in menu.find_children("*", "Button", true, false):
+		if b.text == "Tutorial & Controls":
+			tut = b
+	tut.pressed.emit()
+	await _frames(2)
+	var fire0: Button = menu.find_children("fire", "Button", true, false)[0]
+	_check(fire0.text.contains("T"), "a corrupt row does not stop later rows loading")
+	_check(not fire0.text.contains("Space"), "the corrupt row's action keeps no stale binding")
+	_esc()
+	await _frames(2)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://input_remap.cfg"))
+	InputMap.action_erase_events("fire")
+	var space0 := InputEventKey.new()
+	space0.device = -1
+	space0.physical_keycode = KEY_SPACE
+	InputMap.action_add_event("fire", space0)
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	await _frames(3)
+	menu = get_tree().current_scene
+	tut = null
+	for b in menu.find_children("*", "Button", true, false):
+		if b.text == "Tutorial & Controls":
+			tut = b
 	if not ok:
 		print("MENU TEST FAILED")
 		get_tree().quit(1)

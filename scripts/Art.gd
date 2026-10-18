@@ -281,13 +281,21 @@ static func _load_manifest() -> void:
 		return
 	_manifest_loaded = true
 	var p := DIR + "manifest.json"
-	if not FileAccess.file_exists(p):
-		return
-	var parsed = JSON.parse_string(FileAccess.get_file_as_string(p))
-	if parsed is Dictionary:
-		_manifest = parsed
-	else:
-		push_error("Art: manifest.json is not a JSON object")
+	if FileAccess.file_exists(p):
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(p))
+		if parsed is Dictionary:
+			_manifest = parsed
+		else:
+			push_error("Art: manifest.json is not a JSON object")
+	# The UI's slice margins live beside the textures they describe.
+	var ui := DIR + "ui/manifest.json"
+	if FileAccess.file_exists(ui):
+		var parsed_ui = JSON.parse_string(FileAccess.get_file_as_string(ui))
+		if parsed_ui is Dictionary:
+			for key in parsed_ui:
+				_manifest[key] = parsed_ui[key]
+		else:
+			push_error("Art: ui/manifest.json is not a JSON object")
 
 
 ## Transform of `node` relative to `root`, from the local transforms, so it works before the node is in the tree.

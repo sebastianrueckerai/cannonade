@@ -150,6 +150,7 @@ Sections A to H cover the art and the process that makes it, sections I to K the
 - [ ] I31 **idea** More shipped example scenarios, with their `description` shown in the editor.
 - [ ] I32 **spike** The game build takes 2.4 s (versus) and 9.2 s (four AIs) headless. 80 % of it is placing decorations, one scene instance each. A MultiMesh per model would cut it.
 - [ ] I33 **decide** The practice fort as a scenario file in [data/scenarios/](data/scenarios), drawn in the Sandbox editor, in place of the list in `Main.TARGET`.
+- [x] I34 **must** Every menu and text box fits every window size (Sebastian, 2026-10-18). The window now scales its UI (`canvas_items` + `expand`), so all anchored panels track the window; the UI slice margins from [assets/art/ui/manifest.json](assets/art/ui/manifest.json) are read (before, the loader missed the file and the 9-slice fallback made the menu panel 616x1080, too tall for a 720 window); the Tutorial & Controls overlay scales itself down when the window is shorter than it; a corrupt `input_remap.cfg` no longer stops the menu. Test: `tests/menu_test`.
 
 Note: Godot does not write values equal to a field's default into `.tres` files, the Inspector still shows them. Changing a default in [scripts/data/](scripts/data) changes every file that relies on it.
 

@@ -14,6 +14,7 @@ var failures: Array = []
 
 
 func _ready() -> void:
+	get_tree().root.size = Vector2i(1280, 720)  # headless windows are 64 x 64
 	Main.requested_mode = "versus"
 	Main.requested_args = {"seed": "7", "no-decorations": "true"}
 	main = Main.new()

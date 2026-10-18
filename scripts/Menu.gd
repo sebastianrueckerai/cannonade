@@ -104,6 +104,16 @@ func _ready() -> void:
 		box.add_child(problems)
 
 
+## Shrinks the panel when the window is smaller than it, so the overlay fits every
+## resolution; the scale stays 1 when there is room.
+func _scale_to_fit(panel: Control) -> void:
+	var need := panel.get_combined_minimum_size()
+	if need == Vector2.ZERO:
+		return
+	panel.pivot_offset = panel.size * 0.5
+	panel.scale = Vector2(1, 1) * min(1.0, size.x / need.x, size.y / need.y)
+
+
 func _start(mode: String) -> void:
 	Main.requested_mode = mode
 	Loading.go("res://scenes/game.tscn")
@@ -151,6 +161,7 @@ func _show_help() -> void:
 	panel.grow_horizontal = GROW_DIRECTION_BOTH
 	panel.grow_vertical = GROW_DIRECTION_BOTH
 	dim.add_child(panel)
+	dim.resized.connect(_scale_to_fit.bind(panel))
 	var box := VBoxContainer.new()
 	box.custom_minimum_size = Vector2(560, 0)
 	box.add_theme_constant_override("separation", 12)
@@ -202,6 +213,7 @@ func _show_help() -> void:
 	close.pressed.connect(_close_help)
 	box.add_child(close)
 	close.grab_focus()
+	_scale_to_fit.bind(panel).call_deferred()
 	_help = dim
 
 
@@ -308,7 +320,12 @@ func _load_remap() -> void:
 	for row in REMAP:
 		if not cfg.has_section_key("map", row[0]):
 			continue
-		var events: Array = str_to_var(cfg.get_value("map", row[0]))
+		var events: Array = []
+		var raw = str_to_var(str(cfg.get_value("map", row[0])))
+		if raw is Array:
+			for ev in raw:
+				if ev is InputEvent:
+					events.append(ev)
 		if events.is_empty():
 			continue
 		for old in InputMap.action_get_events(row[0]):
