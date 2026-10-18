@@ -26,7 +26,9 @@ Does a wooden sign read as cozy next to the painted background, or as a second p
 
 ## References
 
-(the web pass notes land here)
+The web pass (2026-10-18) gave the genre pattern rather than per-game captures — interfaceingame's per-game pages 404 for both titles probed. The pattern, from the [cozy UI asset collections](https://itch.io/game-assets/tag-cozy/tag-user-interface) and the [painted-menu pin boards](https://fi.pinterest.com/jhtakalo/menus-ui): wooden boards as the button container, warm light, rounded organic shapes, one accent. From genre knowledge, the comparables to name: Songs of Conquest (painted parchment panels, warm book serif), Northgard (quiet flat panels over a painted ground, texture nearly absent), Kingdoms and Castles (light, flat, toy-like, no wood). Wood is the common risk: it texture-loads the screen fast.
+
+The stronger references are in-house: the logo language from the round 06 painted-sign study (cream lettering, dark outline, warm offset shadow, now [logo.png](/home/womb/repos/grid-cannons/assets/art/ui/logo.png)), the painted [menu background](/home/womb/repos/grid-cannons/assets/art/ui/menu_background.png), bible chapter 5 (ui_light panels, corner cut, ui_dark outline), D24 (painted illustration, never a render edit), and the style anchors [marketing_style.png](../anchors/marketing_style.png) and [world_style.png](../anchors/world_style.png) as texture style refs for generation.
 
 ## Limits
 
