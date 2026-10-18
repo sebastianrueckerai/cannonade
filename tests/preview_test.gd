@@ -96,29 +96,44 @@ func _check_hovers() -> void:
 
 
 ## A wall piece's placeholder model spans the footprint its access grid blocks, so the
-## slot icon and the placement preview read as the piece's shape.
+## slot icon and the placement preview read as the piece's shape. The art models the
+## placed wall swaps to must span the same footprint, or the wall lands rotated.
 func _check_wall_shapes() -> void:
 	for def in Catalog.drawable(BuildingDef.Category.WALL):
-		var xs: Array = []
-		var zs: Array = []
-		for z in 3:
-			for x in 3:
-				if not def.access[3 * z + x]:
-					xs.append(x)
-					zs.append(z)
-		if xs.is_empty():
-			continue
-		var want := float(xs.max() - xs.min() + 1) / float(zs.max() - zs.min() + 1)
-		var corners: Array = []
-		var piece := def.model.instantiate()
-		_piece_extents(piece, Transform3D(), corners)
-		piece.free()
-		var box := AABB(corners[0], Vector3.ZERO)
-		for p in corners:
-			box = box.expand(p)
-		var aspect := box.size.x / box.size.z
-		var ok := (aspect < 0.9) if want < 0.75 else ((aspect > 1.05) if want > 1.33 else (aspect >= 0.7 and aspect <= 1.4))
-		check(ok, "%s placeholder spans its footprint (aspect %.2f, want %.2f)" % [def.id, aspect, want])
+		var want := _footprint_aspect(def)
+		_check_model_spans(def.model.instantiate(), want, "%s placeholder" % def.id)
+		for b in def.behaviours:
+			for key in ["lower_models", "upper_models"]:
+				var models: Array = b.get(key)
+				for i in models.size():
+					_check_model_spans(models[i].instantiate(), want, "%s %s[%d]" % [def.id, key, i])
+
+
+## The aspect (x over z) of the 3x3 area of cells the piece blocks: below 0.75 a bar
+## along z, above 1.33 a bar along x, else roughly square.
+func _footprint_aspect(def) -> float:
+	var xs: Array = []
+	var zs: Array = []
+	for z in 3:
+		for x in 3:
+			if not def.access[3 * z + x]:
+				xs.append(x)
+				zs.append(z)
+	if xs.is_empty():
+		return 1.0
+	return float(xs.max() - xs.min() + 1) / float(zs.max() - zs.min() + 1)
+
+
+func _check_model_spans(piece: Node3D, want: float, what: String) -> void:
+	var corners: Array = []
+	_piece_extents(piece, Transform3D(), corners)
+	piece.free()
+	var box := AABB(corners[0], Vector3.ZERO)
+	for p in corners:
+		box = box.expand(p)
+	var aspect := box.size.x / box.size.z
+	var ok := (aspect < 0.9) if want < 0.75 else ((aspect > 1.05) if want > 1.33 else (aspect >= 0.7 and aspect <= 1.4))
+	check(ok, "%s spans its footprint (aspect %.2f, want %.2f)" % [what, aspect, want])
 
 
 func _piece_extents(node: Node3D, xform: Transform3D, corners: Array) -> void:
