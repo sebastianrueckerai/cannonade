@@ -112,6 +112,66 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-14T23:48:59+02:00"
   },
+  "castle_d1": {
+    "size": [
+      2.4841,
+      3.3196,
+      2.9
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "castle_d1"
+    ],
+    "tris": 3274,
+    "source_sha": "23de9d17ca4b",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-19T01:06:55+02:00"
+  },
+  "castle_d2": {
+    "size": [
+      2.9,
+      3.0326,
+      2.8687
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "castle_d2"
+    ],
+    "tris": 2726,
+    "source_sha": "7bb305c0cf16",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-19T01:06:55+02:00"
+  },
+  "castle_d3": {
+    "size": [
+      2.7294,
+      2.5315,
+      2.9
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "castle_d3"
+    ],
+    "tris": 2957,
+    "source_sha": "8d261cb607f6",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-19T01:06:55+02:00"
+  },
+  "castle_d4": {
+    "size": [
+      2.9,
+      1.3247,
+      2.5992
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "castle_d4"
+    ],
+    "tris": 3105,
+    "source_sha": "595853f91ad1",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-19T01:06:55+02:00"
+  },
   "cluster_bomb": {
     "size": [
       0.294,

@@ -4,7 +4,7 @@ class: building
 dimensions:           # Blender axes, metres; 3x3 footprint less 5 cm per side (D68)
   max_x: 2.9
   max_y: 2.9
-  max_z: 1.5          # at most half as tall as the footprint is wide (D68)
+  max_z: 3.6          # the tall round-1 pick, taken although it breaks D68's half-height rule (Sebastian, 2026-10-19)
 budget:
   max_tris: 3500
   max_materials: 2    # the team material first, painted by the game, then the texture

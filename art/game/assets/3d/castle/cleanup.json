@@ -1,5 +1,5 @@
 {
-  "source": "meshy-c-e1",
+  "source": "meshy-c-3000",
   "part": "castle",
   "turn": 0,
   "team": true,
@@ -7,6 +7,6 @@
   "max_tris": 3500,
   "why": {
     "team": "the royal blue conical roofs and the banner are the team part, read at the default view (D68)",
-    "fit": "uniform scale, proportions kept: the reference e-view-1 and the mesh are already half as tall as wide, so nothing is squashed; the longer side of the footprint becomes the 2.9 m of the 3x3 tiles less 5 cm per side"
+    "fit": "uniform scale, proportions kept: the tall round-1 mesh is the picked look (Sebastian, 2026-10-19: the best looking one, taken although it breaks the half-height rule); the longer side of the footprint becomes the 2.9 m of the 3x3 tiles less 5 cm per side"
   }
 }

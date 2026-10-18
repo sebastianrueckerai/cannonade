@@ -1,0 +1,12 @@
+{
+  "source": "meshy-c-d4b",
+  "part": "castle_d4",
+  "turn": 0,
+  "team": false,
+  "fit": 2.9,
+  "max_tris": 3500,
+  "why": {
+    "team": "no blue survives this state: a stub of bare wall and a mound of rubble",
+    "fit": "the same uniform 2.9 m plan as the healthy castle, so the states swap on one 3x3 plot"
+  }
+}

@@ -16,3 +16,9 @@ Roadmap: C13. Budget: the standing 4 USD of this session cover the sketch round,
 - The team colour is royal blue in the sketches, a separate first material in the model, on parts that read at the default view: roofs, flags, banners.
 - Sketches are paintings in the marketing style, never the low-poly render look (D30). At most 25 images shown (D19).
 - Every image and mesh keeps its sidecar. Every pick is Sebastian's, asked with the images open.
+
+## Result (2026-10-19)
+
+Sebastian passed the healthy models and picked the tall one against D68's half-height clause (D71): `castle` is the round-1 mesh `meshy-c-3000`, 3.5 m tall on the 2.9 m plan, `max_z` in its `asset.yaml` raised to 3.6. The damage states of deliverable 3 went the picture-chain way after the API probe: Meshy's 51 endpoints hold no mesh-edit-by-prompt, and Meshy Edit is browser-only, so each state is a nano-banana edit of the previous picture and each picture gets its own Meshy run. A first chain came out finely detailed and Sebastian rejected it ("very high detail"); the chunky prompts (big simple shapes, no gravel) passed. Shipped: `castle_d1` to `castle_d4` built, cleaned, approved and synced (D72), and [damage_view.tscn](/home/womb/repos/grid-cannons/tools/damage_view.tscn) in the game repo shows the four states side by side, textured, the team material painted in team blue. 8.47 USD of the 10 USD window.
+
+Still open: `castle.2`'s height (its tall run `meshy-c2-3000` sits in `raw/` unused, Sebastian has not answered), the game wiring (Catalog def, the castle in a live battle) and the models board, which still holds the half-height rows on disk.

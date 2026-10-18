@@ -1,0 +1,32 @@
+{
+  "asset_id": "castle_d2",
+  "route": "generative",
+  "inputs": {
+    "asset_yaml_sha": "7b4f04004ee3"
+  },
+  "steps": [
+    {
+      "name": "import",
+      "ok": true,
+      "elapsed_s": 0.01
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.01
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.47
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-19",
+  "cost_usd": 0.45,
+  "created": "2026-10-19T01:06:47+02:00"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "meshy-c-d2b",
+  "part": "castle_d2",
+  "turn": 0,
+  "team": true,
+  "fit": 2.9,
+  "max_tris": 3500,
+  "why": {
+    "team": "the surviving royal blue roof halves are the team part (D68)",
+    "fit": "the same uniform 2.9 m plan as the healthy castle, so the states swap on one 3x3 plot"
+  }
+}
