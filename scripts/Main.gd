@@ -47,6 +47,7 @@ var ui: CanvasLayer
 var phase_label: Label
 var quit_after := -1.0
 var practice := false
+var _preview_env: Environment = null
 ## Set before adding the node to build from this config instead of a mode
 ## (used by the sandbox). Extra keys: "seed", "decorate", "colors" (hex per
 ## player), "hud" (timer / phase / help, default true), "previews" (next piece
@@ -226,26 +227,93 @@ func _setup_environment(cfg: Dictionary) -> void:
 	add_child(we)
 
 
-## Next wall / next building previews (Unity: wallSpawnN / upgradeSpawnN on the
-## camera overlay canvas). Children of the camera, in the screen corners.
+## Next wall / next building previews (Unity: wallSpawnN / upgradeSpawnN on the camera
+## overlay canvas). Each piece sits in its own orthogonal SubViewport, shown as a
+## TextureRect in a screen corner: the wall icon is the piece seen from above (its
+## tetris footprint, square to the screen), the building icon its front. Pieces placed
+## on the camera itself came out skewed by the corner perspective.
 func _make_spawns(i: int, _n: int) -> Array:
-	var d := 8.0
-	var half_h := tan(deg_to_rad(camera.fov) / 2.0) * d
-	var half_w := half_h * 16.0 / 9.0
 	var right := i % 2 == 1
 	var top := i >= 2
-	var x := (half_w - 0.45) * (1.0 if right else -1.0)
-	var y := (half_h * 0.55) * (1.0 if top else -1.0)
-	var out: Array = []
-	for k in 2:
-		var s := Node3D.new()
-		s.name = "%sSpawn%d" % ["wall" if k == 0 else "building", i + 1]
-		camera.add_child(s)
-		s.position = Vector3(x, y + (0.0 if k == 0 else 0.75), -d)
-		# model up axis towards the camera, model "up" (-z) towards screen up
-		s.basis = Basis(Vector3.RIGHT, PI / 2.0).scaled(Vector3.ONE * 0.4)
-		out.append(s)
-	return out
+	return [
+		_make_preview_slot("wall", i, right, top),
+		_make_preview_slot("building", i, right, top),
+	]
+
+
+func _make_preview_slot(kind: String, i: int, right: bool, top: bool) -> Node3D:
+	var wall := kind == "wall"
+	var size := Vector2i(120, 120) if wall else Vector2i(150, 100)
+	# distance of the icon from its screen corner (the panel adds 8 px all round); the
+	# building sits above the wall. In ai4 the top corners also carry the supply bars,
+	# so players 3 / 4's icons start below those.
+	var margin_y := (16 if wall else 162) if not top else (262 if wall else 136)
+	var vp := SubViewport.new()
+	vp.name = "%sPreview%d" % [kind, i + 1]
+	vp.size = size
+	vp.transparent_bg = true
+	vp.world_3d = World3D.new()
+	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(vp)
+	var cam := Camera3D.new()
+	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
+	if wall:
+		cam.size = 1.6
+		cam.position = Vector3(0, 6, 0)
+		# looks down; map up (-z) is screen up
+		cam.basis = Basis(Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
+	else:
+		cam.size = 3.2
+		cam.position = Vector3(0, 1.3, 6)  # default orientation: front view
+	vp.add_child(cam)
+	var light := DirectionalLight3D.new()
+	light.light_color = Color("#ffd29d")
+	light.basis = Basis.looking_at(-Vector3(0.44, 0.62, 0.65), Vector3.UP)  # the board's sun
+	vp.add_child(light)
+	if _preview_env == null:
+		_preview_env = Environment.new()
+		_preview_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		_preview_env.ambient_light_color = Color("#bec3c4")
+		_preview_env.ambient_light_energy = 0.46
+	var we := WorldEnvironment.new()
+	we.environment = _preview_env
+	vp.add_child(we)
+	var spawn := Node3D.new()
+	spawn.name = "%sSpawn%d" % [kind, i + 1]
+	vp.add_child(spawn)
+	var panel := PanelContainer.new()
+	panel.name = "%sPanel%d" % [kind, i + 1]
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.05, 0.07, 0.09, 0.45)
+	sb.set_corner_radius_all(10)
+	sb.set_content_margin_all(8)
+	panel.add_theme_stylebox_override("panel", sb)
+	var rect := TextureRect.new()
+	rect.name = "%sRect%d" % [kind, i + 1]
+	rect.texture = vp.get_texture()
+	rect.custom_minimum_size = size
+	panel.add_child(rect)
+	panel.anchor_left = 1.0 if right else 0.0
+	panel.anchor_right = panel.anchor_left
+	panel.anchor_top = 0.0 if top else 1.0
+	panel.anchor_bottom = panel.anchor_top
+	var w := float(size.x + 16)
+	var h := float(size.y + 16)
+	var mx := 16.0
+	var my := float(margin_y)
+	panel.offset_left = -mx - w if right else mx
+	panel.offset_right = -mx if right else mx + w
+	panel.offset_top = my if top else -my - h
+	panel.offset_bottom = my + h if top else -my
+	ui.add_child(panel)
+	spawn.visibility_changed.connect(_slot_visibility_changed.bind(spawn, vp, panel))
+	return spawn
+
+
+## The "previews" config flag and the practice mode toggle the spawns; the icons follow.
+func _slot_visibility_changed(spawn: Node3D, vp: SubViewport, panel: Control) -> void:
+	panel.visible = spawn.visible
+	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if spawn.visible else SubViewport.UPDATE_DISABLED
 
 
 func _setup_ui() -> void:
@@ -292,15 +360,17 @@ func _make_supply_bars(i: int, is_ai: bool, color: Color) -> Array:
 	var box := VBoxContainer.new()
 	box.name = "Supply%d" % (i + 1)
 	var right := i % 2 == 1
-	var top_y := 10.0 if i < 2 else 260.0
+	var x := 10.0  # ai4: players 3 / 4's bars sit beside players 1 / 2's, above their icons
+	if i >= 2:
+		x = 200.0
 	box.set_anchors_preset(Control.PRESET_TOP_RIGHT if right else Control.PRESET_TOP_LEFT)
-	box.position = Vector2(-190 if right else 10, top_y)
+	box.position = Vector2(-x - 180.0 if right else x, 10.0)
 	if right:
 		box.anchor_left = 1.0
 		box.anchor_right = 1.0
-		box.offset_left = -190
-		box.offset_right = -10
-		box.offset_top = top_y
+		box.offset_left = -x - 180.0
+		box.offset_right = -x
+		box.offset_top = 10.0
 	box.custom_minimum_size = Vector2(180, 0)
 	ui.add_child(box)
 	var title := Label.new()
