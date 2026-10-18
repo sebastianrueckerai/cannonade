@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "An empty wooden shop-board button, one single plank of warm brown wood, cut corners, a thin cream painted outline near the edge, painted grain, cozy children's-book gouache style, soft even light. The middle is completely plain and quiet. Straight-on front view. No text, no letters, no words, no icons.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "seed": 6117
+  },
+  "seed": null,
+  "description": "",
+  "label": "gen1 a-button",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T14:09:30",
+  "outputs": [
+    "a-button.png"
+  ]
+}

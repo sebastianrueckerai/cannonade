@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "An empty aged nautical chart sheet seen straight on, front view, wide horizontal rectangle. Cream parchment #fbefd9 with faint paper grain. A thin double dark-brown ink ruled line near the edge like a chart margin, corners slightly cut. Around the whole sheet runs a narrow even band of warm dark shadow (#3a2e28 at low opacity), hard-edged like an offset ink stamp, lifting the sheet off its background. One faint compass-rose watermark in the top-right corner only, very low contrast. The entire middle is completely plain cream, ready for text. Hand-painted cozy gouache illustration, even light. No text, no letters, no words, no map lines, no compass in the middle, no soft photographic blur.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "seed": 7501
+  },
+  "seed": null,
+  "description": "",
+  "label": "gen2 b-panel",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T14:31:51",
+  "outputs": [
+    "b-panel.png"
+  ]
+}

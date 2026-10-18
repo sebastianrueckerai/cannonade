@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "An empty carved wooden panel seen straight on: warm dark chocolate wood, a chiselled bevel border with soft rounded carving, gentle cozy tavern warmth, the broad centre surface flat, smooth and completely plain. Hand-painted cozy children's-book gouache illustration, even light. No text, no letters, no words, no carved figures in the centre.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "seed": 2648
+  },
+  "seed": null,
+  "description": "",
+  "label": "gen1 d-panel",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T14:10:24",
+  "outputs": [
+    "d-panel.png"
+  ]
+}

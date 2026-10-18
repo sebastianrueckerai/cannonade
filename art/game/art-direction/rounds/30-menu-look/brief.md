@@ -33,3 +33,21 @@ The stronger references are in-house: the logo language from the round 06 painte
 ## Limits
 
 From the session plan: 4 directions, gen 1 dies, at most 2 carried forward, cap USD 6, stop 19:00, nothing in the live ui/ slots before the pick.
+
+## Gen 1 verdict (critics: gemini + glm, cross-checked on native-res crops)
+
+Carried to gen 2: **a** (paint it flatter and brighter, plainer centres) and **b** (ink-outline the buttons, lift the sheet off the background). **d dies**: measured — cream-on-dark text low contrast, frames eat a quarter of the 44 px button, "Practice" label clipped at 390, carved frame busy; both critics call it a different genre. **c stays the fallback only**: perfect legibility, no theme; critics call it pasted-on (it is the bible-literal control, that is its job).
+
+Claims that failed the crop check and were dropped: all four titles drown (montage artefact — titles are cream on their panel, legible), a black rectangle behind d's buttons (the panel frame, no defect), b's text is light grey (it is ink; the real b defect is the pale button outline).
+
+Gen 2 learnings baked into the prompts: wood as flat 3-tone painted illustration (base #8b5a2b, highlight #a67c52, shadow #5c3d1e), knots and seams only in the frame band, never the stretched middle 60 %; brighter than walnut so the menu is not a dark hole over the harbour; no nails, rope or bevels; parchment buttons get a solid 2–3 px ink outline so they read as pressable; the chart sheet gets the logo's language — thin ink line plus a warm hard-edged shadow band around it; a faint compass-rose watermark in one corner only. Title painted onto the sign and a wax-seal accent are Menu.gd work, out of this round's scope (noted for the session plan's result).
+
+## Gen 2 outcome
+
+Four regens beyond the first pass (both buttons regenerated edge-to-edge — gen-1's cream
+backdrop margins and b's doubled inner line were the two defect classes), a-panel's 40 px
+backdrop cropped deterministically in the builder, panel content padding 20→12 px vertical so
+all seven buttons sit above the fold at 390 (pixel-verified: last bottom y ≈ 695 of 720).
+Both critics on the final board independently ship **b, the harbour chart**; **a** is the
+atmospheric runner-up with the known contrast cost (cream on oak) and one knot in the panel
+frame. Boards and verified facts in [PICKS.md](PICKS.md); awaiting Sebastian's pick.

@@ -1,0 +1,25 @@
+[gd_resource type="Theme" load_steps=5 format=3]
+
+[sub_resource type="StyleBoxFlat" id="btn_normal"]
+bg_color = Color(0.16, 0.22, 0.32, 1)
+
+[sub_resource type="StyleBoxFlat" id="btn_hover"]
+bg_color = Color(0.22, 0.3, 0.42, 1)
+
+[sub_resource type="StyleBoxFlat" id="btn_pressed"]
+bg_color = Color(0.89, 0.68, 0.46, 1)
+
+[sub_resource type="StyleBoxFlat" id="panel"]
+bg_color = Color(0.08, 0.1, 0.14, 0.85)
+
+[resource]
+default_font_size = 20
+Button/colors/font_color = Color(0.984, 0.937, 0.851, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0.227, 0.18, 0.157, 1)
+Button/styles/focus = SubResource("btn_hover")
+Button/styles/hover = SubResource("btn_hover")
+Button/styles/normal = SubResource("btn_normal")
+Button/styles/pressed = SubResource("btn_pressed")
+Label/colors/font_color = Color(0.984, 0.937, 0.851, 1)
+PanelContainer/styles/panel = SubResource("panel")

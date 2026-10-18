@@ -1,0 +1,7 @@
+You are an independent art director judging three menu looks for Cannonade, a cozy hand-painted children's-book strategy game. The image stacks three numbered screenshots of the same menu: 1 = painted wooden sign (old serif, cream text on oak planks), 2 = harbour chart (serif, ink text on cream parchment, ruled margins, faint compass), 3 = flat current look (clean sans, flat boxes). The game already ships look 3; 1 and 2 are candidates.
+
+Judge as a jury member, not a cheerleader:
+1. Rank the three for: cozy hand-painted character fit, text legibility, and how boring vs alive the menu feels.
+2. For the winner you pick: name its single biggest weakness.
+3. For each of 1 and 2: one concrete flaw a painter should fix (texture, contrast, spacing — not layout).
+4. Which would you ship for a children's-book strategy game, and why, in two sentences?

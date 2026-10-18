@@ -1,0 +1,18 @@
+You are an art director reviewing menu skin candidates for Cannonade, a painted-2D naval artillery game (flat painted style, cream/ink/red palette, no 3D renders, no gradients-heavy UI). The main menu renders over a painted harbour scene.
+
+Image 1 is the desktop board (1280x720): four candidates in a 2x2 grid, numbered by position:
+1 top-left "a wood sign" - painted wooden sign, IM Fell font
+2 top-right "b harbour chart" - old nautical chart parchment, Alegreya font
+3 bottom-left "c bible flat" - flat cream control-panel look, Signika font (no texture, the current safe baseline style)
+4 bottom-right "d carved dark" - dark carved painted panel, Metamorphous font
+
+Image 2 is the same four candidates at mobile width (390x720), left to right in the same order.
+
+For EACH candidate answer:
+- First impression in one sentence.
+- Legibility and fit at desktop width: any button or text problems?
+- Legibility and fit at mobile width.
+- Does the material (wood / parchment / flat / carved) match a painted harbour game menu, or feel pasted on?
+- Worst defect and the single highest-impact fix.
+
+Then: which TWO candidates would you keep for a second generation, and what exactly should change in that second generation for each of the two? Be concrete and specific; refer to candidates by number.

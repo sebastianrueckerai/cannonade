@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "An empty carved wooden plaque button: warm dark wood, a chiselled raised border frame, cut corners, the inner surface flat, smooth and completely plain, cozy hand-painted gouache style, soft even light, straight-on front view. No text, no letters, no words, no icons.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "seed": 7320
+  },
+  "seed": null,
+  "description": "",
+  "label": "gen1 d-button",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T14:10:43",
+  "outputs": [
+    "d-button.png"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "An empty aged cream parchment panel (#fbefd9) seen straight on, like a folded harbour chart. Thin dark-brown ink line framing the edge just inside the border, corners cut at 45 degrees, faint paper grain and two soft warm stains near the corners only. The large centre is completely plain and quiet. Hand-painted cozy gouache illustration, even light. No text, no letters, no words, no drawings in the centre.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "seed": 2376
+  },
+  "seed": null,
+  "description": "",
+  "label": "gen1 b-panel",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T14:09:48",
+  "outputs": [
+    "b-panel.png"
+  ]
+}

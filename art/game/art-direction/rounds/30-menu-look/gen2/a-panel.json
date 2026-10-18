@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1",
+  "prompt": "An empty painted wooden sign panel seen straight on, front view, wide horizontal rectangle. Flat hand-painted illustration in exactly three tones: base warm oak #8b5a2b, single brushstroke highlight #a67c52 along plank top edges, shadow #5c3d1e between planks. The outer frame band shows calm planks with seams; the entire middle 60 percent is ONE flat plain plank tone, no knots, no grain lines, no seams, ready for text. Bright cozy gouache children's-book illustration, even light, reads as a painting not a photo. Thin darker painted border band at the panel edge. No text, no letters, no words, no nails, no rope, no hardware, no carving.",
+  "refs": [
+    "game/art-direction/anchors/marketing_style.png",
+    "game/art-direction/anchors/world_style.png"
+  ],
+  "params": {
+    "seed": 8793
+  },
+  "seed": null,
+  "description": "",
+  "label": "gen2 a-panel",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T14:31:07",
+  "outputs": [
+    "a-panel.png"
+  ]
+}
