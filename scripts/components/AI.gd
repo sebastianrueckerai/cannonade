@@ -409,9 +409,9 @@ func try_build_next_wall() -> bool:
 
 func highlight_building_place(tile) -> void:
 	if U.alive(lastHighlight):
-		lastHighlight.reset_color()
+		lastHighlight.highlight_off()
 	lastHighlight = tile
-	tile.set_tile_color(Color.BLACK)
+	tile.highlight_on(highlightPosColor)
 
 
 func try_build_walled_in_gun() -> bool:

@@ -182,6 +182,8 @@ func _check_invariants(g) -> void:
 				_fail("miniMap says %d at empty tile %d,%d" % [owner_id, x, z])
 			if t.water and U.alive(t.structure):
 				_fail("building on water %d,%d" % [x, z])
+			if U.get_color(t.model()) == Color.BLACK:
+				_fail("tile %d,%d painted pure black (selection must outline, not blacken)" % [x, z])
 	for p in g.players:
 		for t in p.wallTiles:
 			if not U.alive(t.structure) or U.comp(t.structure, "Wall") == null:
