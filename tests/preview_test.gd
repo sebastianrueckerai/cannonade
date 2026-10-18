@@ -30,7 +30,7 @@ func _ready() -> void:
 
 func _build(mode: String, the_seed: String) -> void:
 	Main.requested_mode = mode
-	Main.requested_args = {"seed": the_seed, "no-decorations": "true"}
+	Main.requested_args = {"seed": the_seed}
 	main = Main.new()
 	get_tree().root.add_child.call_deferred(main)
 	await get_tree().process_frame
@@ -69,7 +69,9 @@ func _check_slot(kind: String, i: int) -> void:
 
 
 ## The next wall rests centred in the slot over void and follows the cursor onto a
-## free tile (across the viewport boundary), like in the game.
+## free tile (across the viewport boundary), like in the game. The tile's trees and
+## stones hide under the preview, so the piece's orientation reads, and they come
+## back when the preview leaves the tile.
 func _check_hovers() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
@@ -81,11 +83,17 @@ func _check_hovers() -> void:
 		for dx in range(-r, r + 1):
 			for dz in range(-r, r + 1):
 				var t = map.tiles[base.x + dx][base.y + dz]
-				if human.ibr(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
+				if human.ibr(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable() \
+						and not t.decorations.is_empty():
 					free = Vector2i(t.idxX, t.idxZ)
-	check(free.x >= 0, "a free tile in range exists")
+	check(free.x >= 0, "a free tile with trees or stones on it exists in range")
 	if free.x < 0:
 		return
+	var deco_meshes: Array = []
+	for d in map.tiles[free.x][free.y].decorations:
+		deco_meshes.append_array(U.meshes(d))
+	check(deco_meshes.all(func(m): return m.visible),
+			"the tile's trees and stones show before the preview lands")
 	var ev := InputEventMouseMotion.new()
 	ev.position = main.camera.unproject_position(map.tile_position(free.x, free.y, 0.1))
 	Input.parse_input_event(ev)
@@ -93,6 +101,17 @@ func _check_hovers() -> void:
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == map.tiles[free.x][free.y].go,
 			"the wall moves onto the hovered tile as the placement preview")
+	check(deco_meshes.all(func(m): return not m.visible),
+			"the tile's trees and stones hide under the placement preview")
+	ev = InputEventMouseMotion.new()
+	ev.position = Vector2(2, 2)  # a viewport corner, off the board like the start
+	Input.parse_input_event(ev)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	check(human.nextWall.get_parent() == human.wallSpawn,
+			"the wall returns to the gui slot off the board")
+	check(deco_meshes.all(func(m): return m.visible),
+			"the tile's trees and stones come back when the preview leaves")
 
 
 ## A wall piece's placeholder model spans the footprint its access grid blocks, so the

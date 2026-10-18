@@ -22,6 +22,8 @@ var nextWall: Node3D = null
 var nextBuilding: Node3D = null
 ## BuildingPlace component of the tile under the cursor
 var buildableTileSelected = null
+## tile whose trees and stones are hidden under the placement preview
+var decorHiddenTile = null
 var canBuildOnTile := false
 var freeTileSelected := false
 var canStackWall := false
@@ -98,6 +100,7 @@ func _pick() -> Array:
 
 
 func update_point_and_tile_selected() -> void:
+	_restore_decorations()
 	if U.alive(buildableTileSelected):
 		buildableTileSelected.highlight_off()
 	canStackWall = false
@@ -174,6 +177,7 @@ func next_wall_to_map() -> void:
 		nextWall.position = Vector3.ZERO
 		switch_casting_shadows(nextWall, true)
 		_lighten_wall()
+		_hide_decorations()
 
 
 func _restore_wall_color() -> void:
@@ -195,6 +199,17 @@ func next_wall_to_wall() -> void:
 	switch_casting_shadows(nextWall, true)
 	nextWall.position = Vector3(0, 1, 0)
 	_lighten_wall()
+
+
+func _hide_decorations() -> void:
+	buildableTileSelected.hide_decorations()
+	decorHiddenTile = buildableTileSelected
+
+
+func _restore_decorations() -> void:
+	if U.alive(decorHiddenTile):
+		decorHiddenTile.show_decorations()
+	decorHiddenTile = null
 
 
 func _stackable_wall_fits(old_wall: Node3D, _new_wall: Node3D) -> bool:

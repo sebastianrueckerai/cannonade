@@ -80,6 +80,17 @@ func destroy_decorations() -> void:
 	decorations = []
 
 
+func hide_decorations() -> void:
+	for d in decorations:
+		U.set_visible_meshes(d, false)
+
+
+func show_decorations() -> void:
+	for d in decorations:
+		if U.alive(d):
+			U.set_visible_meshes(d, true)
+
+
 func damage_structure(damage: float) -> void:
 	var bb = block()
 	if bb != null:
