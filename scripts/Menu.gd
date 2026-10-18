@@ -11,21 +11,31 @@ const MODES := [
 	["ai4", "Watch: 4 AIs"],
 	["practice", "Practice (a fort that never fires back)"],
 ]
-const CONTROLS := [
-	["Left mouse", "place the next wall / stack it on one of your walls"],
-	["Right mouse", "place the next building / combine it with the one below"],
-	["X / Y or Z", "rotate the wall"],
-	["Mouse wheel", "zoom in / out towards the cursor"],
-	["Middle mouse drag", "pan the view while zoomed in"],
-	["Space", "fire the cannons"],
-	["Click outside the map", "discard the wall / building in hand"],
+## The five actions the panel remaps; everything else (wheel, middle drag,
+## Enter, Esc) is hardcoded where it is used and listed as a fixed row.
+const REMAP := [
+	["build_wall", "place the next wall / stack it on one of your walls"],
+	["build_building", "place the next building / combine it with the one below"],
+	["rotate_cw", "rotate the wall clockwise"],
+	["rotate_ccw", "rotate the wall counter-clockwise"],
+	["fire", "fire the cannons"],
 ]
+const FIXED := [
+	["zoom in / out towards the cursor", "Mouse wheel"],
+	["pan the view while zoomed in", "Middle mouse drag"],
+	["discard the wall / building in hand", "Click outside the map"],
+]
+const REMAP_PATH := "user://input_remap.cfg"
 
 ## The help overlay while open, null when closed.
 var _help: Control = null
+var _note: Label = null
+var _capturing := ""
+var _capture_btn: Button = null
 
 
 func _ready() -> void:
+	_load_remap()
 	theme = Art.theme()
 	var bg := Art.texture("menu_background.png")
 	if bg != null:
@@ -68,7 +78,7 @@ func _ready() -> void:
 		b.pressed.connect(_start.bind(entry[0]))
 		box.add_child(b)
 	var help := Button.new()
-	help.text = "How to play"
+	help.text = "Tutorial & Controls"
 	help.custom_minimum_size = Vector2(0, 44)
 	help.pressed.connect(_show_help)
 	box.add_child(help)
@@ -105,6 +115,29 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## While a capture runs, every key or mouse button press rebuilds that action's
+## binding (in _input, so no button behind the overlay can swallow it first).
+func _input(event: InputEvent) -> void:
+	if _capturing == "":
+		return
+	if event.is_action_pressed("ui_cancel"):
+		_end_capture()
+		get_viewport().set_input_as_handled()
+		return
+	if event is InputEventMouseMotion:
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		_apply_remap(_normalized_key(event))
+	elif event is InputEventMouseButton and event.pressed:
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN,
+				MOUSE_BUTTON_WHEEL_LEFT, MOUSE_BUTTON_WHEEL_RIGHT]:
+			return
+		_apply_remap(_normalized_mouse(event))
+	else:
+		return
+	get_viewport().set_input_as_handled()
+
+
 func _show_help() -> void:
 	var dim := ColorRect.new()
 	dim.color = Color(0, 0, 0, 0.6)
@@ -123,7 +156,7 @@ func _show_help() -> void:
 	box.add_theme_constant_override("separation", 12)
 	panel.add_child(box)
 	var title := Label.new()
-	title.text = "How to play"
+	title.text = "Tutorial & Controls"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 32)
 	box.add_child(title)
@@ -131,23 +164,38 @@ func _show_help() -> void:
 	intro.text = "You and an AI opponent build forts on one island. Rounds switch between a green build phase and a red battle phase.\n\nWall your guns in: only cannons inside a fully walled-in area can fire, and supply depots inside keep them fed. Upgrade blocks placed in 2x2 squares merge into heavier guns, flak, shield generators or supply depots.\n\nDestroy the enemy base before yours falls."
 	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(intro)
-	var rows: Array = CONTROLS.duplicate()
-	if not OS.has_feature("web"):
-		rows.append(["Enter", "switch between build and battle (Practice)"])
-	rows.append(["Esc", "back to the menu"])
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 24)
 	grid.add_theme_constant_override("v_separation", 4)
 	box.add_child(grid)
-	for row in rows:
-		var key := Label.new()
-		key.text = row[0]
-		key.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		grid.add_child(key)
+	for row in REMAP:
 		var what := Label.new()
 		what.text = row[1]
 		grid.add_child(what)
+		var bind := Button.new()
+		bind.name = row[0]
+		bind.text = _binding_text(InputMap.action_get_events(row[0]))
+		bind.custom_minimum_size = Vector2(220, 0)
+		bind.pressed.connect(_capture.bind(row[0], bind))
+		grid.add_child(bind)
+	var fixed: Array = FIXED.duplicate()
+	if not OS.has_feature("web"):
+		fixed.append(["switch between build and battle (Practice)", "Enter"])
+	fixed.append(["back to the menu", "Esc"])
+	for row in fixed:
+		var what := Label.new()
+		what.text = row[0]
+		grid.add_child(what)
+		var key := Label.new()
+		key.text = row[1]
+		key.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		grid.add_child(key)
+	_note = Label.new()
+	_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_note.add_theme_color_override("font_color", Color(1, 0.45, 0.4))
+	_note.visible = false
+	box.add_child(_note)
 	var close := Button.new()
 	close.text = "Close"
 	close.custom_minimum_size = Vector2(0, 44)
@@ -160,5 +208,110 @@ func _show_help() -> void:
 func _close_help() -> void:
 	if _help == null:
 		return
+	_capturing = ""
+	_capture_btn = null
 	_help.queue_free()
 	_help = null
+	_note = null
+
+
+func _capture(action: String, btn: Button) -> void:
+	_capturing = action
+	_capture_btn = btn
+	btn.text = "press a key or mouse button"
+	_note.visible = false
+
+
+func _end_capture() -> void:
+	if _capture_btn != null:
+		_capture_btn.text = _binding_text(InputMap.action_get_events(_capturing))
+	_capturing = ""
+	_capture_btn = null
+
+
+func _apply_remap(ev: InputEvent) -> void:
+	var action := _capturing
+	var btn := _capture_btn
+	_end_capture()
+	for row in REMAP:
+		if row[0] != action and InputMap.action_has_event(row[0], ev):
+			_note.text = "\"%s\" already maps %s." % [_event_text(ev), row[1]]
+			_note.visible = true
+			return
+	for old in InputMap.action_get_events(action):
+		InputMap.action_erase_event(action, old)
+	InputMap.action_add_event(action, ev)
+	btn.text = _event_text(ev)
+	_save_remap()
+
+
+## The captured event rebuilt in the project's own event shape: all devices,
+## physical keycode only, so it compares equal to the defaults.
+func _normalized_key(e: InputEventKey) -> InputEventKey:
+	var ev := InputEventKey.new()
+	ev.device = -1
+	ev.physical_keycode = e.physical_keycode
+	ev.alt_pressed = e.alt_pressed
+	ev.ctrl_pressed = e.ctrl_pressed
+	ev.shift_pressed = e.shift_pressed
+	return ev
+
+
+func _normalized_mouse(e: InputEventMouseButton) -> InputEventMouseButton:
+	var ev := InputEventMouseButton.new()
+	ev.device = -1
+	ev.button_index = e.button_index
+	ev.alt_pressed = e.alt_pressed
+	ev.ctrl_pressed = e.ctrl_pressed
+	ev.shift_pressed = e.shift_pressed
+	return ev
+
+
+func _event_text(e: InputEvent) -> String:
+	if e is InputEventKey:
+		var s := ""
+		if e.alt_pressed:
+			s += "Alt+"
+		if e.ctrl_pressed:
+			s += "Ctrl+"
+		if e.shift_pressed:
+			s += "Shift+"
+		var code: int = e.physical_keycode if e.physical_keycode != 0 else e.keycode
+		return s + OS.get_keycode_string(code)
+	if e is InputEventMouseButton:
+		match e.button_index:
+			MOUSE_BUTTON_LEFT: return "Left mouse"
+			MOUSE_BUTTON_RIGHT: return "Right mouse"
+			MOUSE_BUTTON_MIDDLE: return "Middle mouse"
+			_: return "Mouse %d" % e.button_index
+	return e.as_text()
+
+
+func _binding_text(events: Array) -> String:
+	var parts: Array[String] = []
+	for e in events:
+		parts.append(_event_text(e))
+	return " / ".join(parts)
+
+
+func _save_remap() -> void:
+	var cfg := ConfigFile.new()
+	for row in REMAP:
+		cfg.set_value("map", row[0], var_to_str(InputMap.action_get_events(row[0])))
+	cfg.save(REMAP_PATH)
+
+
+func _load_remap() -> void:
+	var cfg := ConfigFile.new()
+	if cfg.load(REMAP_PATH) != OK:
+		return
+	for row in REMAP:
+		if not cfg.has_section_key("map", row[0]):
+			continue
+		var events: Array = str_to_var(cfg.get_value("map", row[0]))
+		if events.is_empty():
+			continue
+		for old in InputMap.action_get_events(row[0]):
+			InputMap.action_erase_event(row[0], old)
+		for ev in events:
+			InputMap.action_add_event(row[0], ev)

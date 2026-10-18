@@ -1,5 +1,5 @@
 extends Node
-## Menu -> game -> Esc -> menu flow.
+## Menu -> game -> Esc -> menu flow, the Tutorial & Controls panel, remapping.
 ##   godot --headless --fixed-fps 30 res://tests/menu_test.tscn
 
 var ok := true
@@ -16,33 +16,76 @@ func _ready() -> void:
 	await _frames(3)
 	var menu := get_tree().current_scene
 	var buttons := menu.find_children("*", "Button", true, false)
-	_check(buttons.size() == 8, "menu has 8 buttons (5 modes, How to play, Sandbox, Quit)")
+	_check(buttons.size() == 8, "menu has 8 buttons (5 modes, Tutorial & Controls, Sandbox, Quit)")
 	_check(buttons.any(func(b): return b.text.contains("Single player"))
 			and buttons.any(func(b): return b.text.contains("4 AIs"))
 			and buttons.any(func(b): return b.text.contains("Practice")),
 			"desktop keeps the modes the web build hides")
-	var help: Button = null
+	var tut: Button = null
 	for b in buttons:
-		if b.text == "How to play":
-			help = b
-	_check(help != null, "the menu has a How to play button")
-	help.pressed.emit()
+		if b.text == "Tutorial & Controls":
+			tut = b
+	_check(tut != null, "the menu has a Tutorial & Controls button")
+	if not ok:
+		print("MENU TEST FAILED")
+		get_tree().quit(1)
+		return
+	tut.pressed.emit()
 	await _frames(2)
-	_check(_labels_with("fire the cannons", menu) == 1, "How to play lists the controls")
+	_check(_labels_with("fire the cannons", menu) == 1, "Tutorial & Controls lists the controls")
+	var fire_btn: Button = menu.find_children("fire", "Button", true, false)[0]
+	_check(fire_btn.text.contains("Space"), "a remappable row shows its current binding")
+	var ccw_btn: Button = menu.find_children("rotate_ccw", "Button", true, false)[0]
+	_check(ccw_btn.text.contains("Y / Z"), "a row with two keys shows both")
+	fire_btn.pressed.emit()
+	await _frames(2)
+	_check(fire_btn.text.contains("press"), "clicking a binding waits for the next input")
+	_key(KEY_T)
+	await _frames(2)
+	_check(fire_btn.text.contains("T"), "the next key becomes the binding")
+	var t_key := InputEventKey.new()
+	t_key.device = -1
+	t_key.physical_keycode = KEY_T
+	_check(InputMap.action_has_event("fire", t_key), "the new binding is in the input map")
 	_esc()
 	await _frames(2)
-	_check(_labels_with("fire the cannons", menu) == 0, "Esc closes How to play")
-	help.pressed.emit()
+	_check(_labels_with("fire the cannons", menu) == 0, "Esc closes Tutorial & Controls")
+	# a fresh menu load applies the saved bindings
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	await _frames(3)
+	menu = get_tree().current_scene
+	tut = null
+	for b in menu.find_children("*", "Button", true, false):
+		if b.text == "Tutorial & Controls":
+			tut = b
+	tut.pressed.emit()
 	await _frames(2)
+	fire_btn = menu.find_children("fire", "Button", true, false)[0]
+	_check(fire_btn.text.contains("T"), "a remapped binding survives a menu reload")
+	var wall_btn: Button = menu.find_children("build_wall", "Button", true, false)[0]
+	_check(wall_btn.text.contains("Left"), "an untouched action keeps its default binding")
+	wall_btn.pressed.emit()
+	await _frames(2)
+	_key(KEY_T)
+	await _frames(2)
+	_check(wall_btn.text.contains("Left"), "an input already on another action is rejected")
+	_check(InputMap.action_has_event("fire", t_key), "the rejected input leaves the other binding alone")
 	var close: Button = null
 	for b in menu.find_children("*", "Button", true, false):
 		if b.text == "Close":
 			close = b
-	_check(close != null, "How to play has a Close button")
+	_check(close != null, "Tutorial & Controls has a Close button")
 	close.pressed.emit()
 	await _frames(2)
-	_check(_labels_with("fire the cannons", menu) == 0, "the Close button closes How to play")
-	for b in buttons:
+	_check(_labels_with("fire the cannons", menu) == 0, "the Close button closes Tutorial & Controls")
+	# hermetic cleanup: drop the saved map and the in-process remap
+	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://input_remap.cfg"))
+	InputMap.action_erase_event("fire", t_key)
+	var space := InputEventKey.new()
+	space.device = -1
+	space.physical_keycode = KEY_SPACE
+	InputMap.action_add_event("fire", space)
+	for b in menu.find_children("*", "Button", true, false):
 		if b.text.contains("AI vs. AI"):
 			b.pressed.emit()
 	# the loading screen stays up while the game is built underneath; an Esc meanwhile does not reach the game
@@ -80,6 +123,14 @@ func _ready() -> void:
 func _esc() -> void:
 	var ev := InputEventAction.new()
 	ev.action = "ui_cancel"
+	ev.pressed = true
+	Input.parse_input_event(ev)
+
+
+func _key(k: int) -> void:
+	var ev := InputEventKey.new()
+	ev.keycode = k
+	ev.physical_keycode = k
 	ev.pressed = true
 	Input.parse_input_event(ev)
 

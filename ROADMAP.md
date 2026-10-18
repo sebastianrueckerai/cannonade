@@ -98,6 +98,7 @@ Sections A to H cover the art and the process that makes it, sections I to K the
 - [ ] G4 **must** Host on a small VM: nginx static, compression for `.wasm` and `.pck`.
 - [ ] G5 **idea** Export and publish on push.
 - [x] G6 **must** The web menu shows the two showcase modes only, "Player vs. AI" and "Watch: AI vs. AI", plus a "How to play" panel that maps the controls and explains the game (Sebastian, 2026-10-18). Sandbox, the other modes and Quit stay off the browser build; every other platform keeps the full menu, now with the panel too. The panel lists the Enter key only where Practice is reachable. Test: [tests/menu_test](tests/menu_test.gd). Session 14: [14-web-menu.md](art/docs/sessions/14-web-menu.md).
+- [x] G7 **must** The panel is "Tutorial & Controls" and its controls table remaps the five gameplay actions (build wall, build building, rotate both ways, fire): click a binding, press a key or mouse button, the binding applies everywhere at once and survives a restart via `user://` (Sebastian, 2026-10-18). A key already on another action is rejected; Esc cancels the capture and still closes the panel. Camera wheel, middle-drag pan, Enter and Esc stay fixed rows. Test: [tests/menu_test](tests/menu_test.gd). Session 15: [15-tutorial-controls-remap.md](art/docs/sessions/15-tutorial-controls-remap.md).
 
 ## H. Spikes on the agentic process itself
 
