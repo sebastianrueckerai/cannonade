@@ -46,8 +46,9 @@ var wallTiles: Array = []
 var activeCannons: Array = []
 var playerID := 0
 var map = null
-## inBuildRange[x * map.sizeZ + z]
-var inBuildRange := PackedByteArray()
+## reach[x * map.sizeZ + z] = 1 where a placement may touch: within map.buildingRange (Chebyshev) of an own
+## wall tile or of a tile of an own castle that is not a ruin
+var reach := PackedByteArray()
 var secondsLastBuilding := 0.0
 var game = null
 var voidSelected := false
@@ -64,10 +65,31 @@ func setup() -> void:
 	mainColor = Color.html(mainColorHexCode)
 	highlightPosColor = Color.html(highlightPosColorHexCode)
 	highlightNegColor = Color.html(highlightNegColorHexCode)
+	refresh_reach()
 
 
-func ibr(x: int, z: int) -> bool:
-	return inBuildRange[x * map.sizeZ + z] != 0
+func in_reach(x: int, z: int) -> bool:
+	return reach[x * map.sizeZ + z] != 0
+
+
+## Rebuilds `reach`; runs on every own placement and loss and whenever a castle changes hands.
+func refresh_reach() -> void:
+	reach = _anchor_mask(map.buildingRange)
+
+
+## 1 within r tiles (Chebyshev) of an own wall tile or of a tile of an own castle that is not a ruin.
+func _anchor_mask(r: int) -> PackedByteArray:
+	var m := PackedByteArray()
+	m.resize(map.sizeX * map.sizeZ)
+	var anchors: Array = wallTiles.duplicate()
+	for c in map.castles:
+		if U.alive(c) and not c.is_ruin() and c.owner() == self:
+			anchors.append_array(c.my_tiles())
+	for t in anchors:
+		for x in range(maxi(t.idxX - r, 0), mini(t.idxX + r, map.sizeX - 1) + 1):
+			for z in range(maxi(t.idxZ - r, 0), mini(t.idxZ + r, map.sizeZ - 1) + 1):
+				m[x * map.sizeZ + z] = 1
+	return m
 
 
 # --------------------------------------------------------------- input
@@ -132,7 +154,7 @@ func update_point_and_tile_selected() -> void:
 		if freeTileSelected:
 			next_wall_to_map()
 			next_building_to_gui()
-			canPlaceBuilding = ibr(x, z)
+			canPlaceBuilding = in_reach(x, z)
 			canPlaceWall = can_place_piece(buildableTileSelected)
 			var lit: Array = piece_tiles(buildableTileSelected) if U.alive(nextWall) else []
 			if lit.is_empty():
@@ -203,7 +225,7 @@ func can_place_piece(tile) -> bool:
 	for t in tiles:
 		if not t.is_free():
 			return false
-		reached = reached or ibr(t.idxX, t.idxZ)
+		reached = reached or in_reach(t.idxX, t.idxZ)
 	return reached
 
 
@@ -377,51 +399,7 @@ func remove_building_from_player(bb) -> void:
 	var castle = U.comp(bgo, "Castle")
 	if castle != null:
 		map.castles.erase(castle)
-	remove_buildable_area(key.x, key.y)
-
-
-func remove_buildable_area(x: int, z: int) -> void:
-	mark_buildable_area_line_of_sight(x, z, false)
-	var from_x := maxi(x - 2 * map.buildingRange, 0)
-	var to_x := mini(x + 2 * map.buildingRange, map.sizeX - 1)
-	var from_z := maxi(z - 2 * map.buildingRange, 0)
-	var to_z := mini(z + 2 * map.buildingRange, map.sizeZ - 1)
-	for xi in range(from_x, to_x + 1):
-		for zi in range(from_z, to_z + 1):
-			if map.get_mini(xi, zi) == playerID:
-				mark_buildable_area_waterflow(xi, zi, true)
-
-
-func mark_buildable_area_waterflow(x: int, z: int, buildable := true) -> void:
-	var max_x: int = map.sizeX
-	var max_z: int = map.sizeZ
-	var newly := {Vector2i(x, z): true}
-	var queue: Array[Vector2i] = [Vector2i(x, z)]
-	var head := 0
-	var r: int = map.buildingRange
-	while head < queue.size():
-		var xz := queue[head]
-		head += 1
-		for xi in range(maxi(xz.x - 1, 0), mini(xz.x + 1, max_x - 1) + 1):
-			for zi in range(maxi(xz.y - 1, 0), mini(xz.y + 1, max_z - 1) + 1):
-				var k := Vector2i(xi, zi)
-				if absi(x - xi) <= r and absi(z - zi) <= r and not newly.has(k) and not map.tiles[xi][zi].water:
-					newly[k] = true
-					queue.append(k)
-	var v := 1 if buildable else 0
-	for k in newly:
-		inBuildRange[k.x * max_z + k.y] = v
-
-
-func mark_buildable_area_line_of_sight(x: int, z: int, buildable := true) -> void:
-	mark_square_on_array(x, z, inBuildRange, map.buildingRange, buildable)
-
-
-func mark_square_on_array(x: int, z: int, arr: PackedByteArray, r: int, value := true) -> void:
-	var v := 1 if value else 0
-	for xi in range(maxi(x - r, 0), mini(x + r, map.sizeX - 1) + 1):
-		for zi in range(maxi(z - r, 0), mini(z + r, map.sizeZ - 1) + 1):
-			arr[xi * map.sizeZ + zi] = v
+	refresh_reach()
 
 
 func manage_player_actions() -> void:
@@ -460,8 +438,8 @@ func manage_player_actions() -> void:
 
 
 func _build(tile, n: Node3D) -> Node3D:
-	mark_buildable_area_waterflow(tile.idxX, tile.idxZ)
 	tile.build(n, self)
+	refresh_reach()
 	return n
 
 
@@ -540,8 +518,8 @@ func build_next_wall(tile) -> void:
 
 
 func build_wall(tile, wall: Node3D) -> void:
-	_build(tile, wall)
 	wallTiles.append(tile)
+	_build(tile, wall)
 
 
 ## The start castle covers the square of its size with `tile` at its centre,

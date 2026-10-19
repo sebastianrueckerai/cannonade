@@ -40,11 +40,9 @@ var _slice_start := 0
 
 
 func setup() -> void:
+	maxPlanRange = maxi(maxi(maxUp, maxDown), maxi(maxLeft, maxRight))
 	super.setup()
 	activePlans = []
-	maxPlanRange = maxi(maxi(maxUp, maxDown), maxi(maxLeft, maxRight))
-	inPlanRange = PackedByteArray()
-	inPlanRange.resize(map.sizeX * map.sizeZ)
 
 
 func update_point_and_tile_selected() -> void:
@@ -254,9 +252,10 @@ func _start_expotential_wall_costs() -> int:
 	return 20
 
 
-func mark_buildable_area_waterflow(x: int, z: int, buildable := true) -> void:
-	super.mark_buildable_area_waterflow(x, z, buildable)
-	mark_square_on_array(x, z, inPlanRange, maxPlanRange, buildable)
+## Plans start within maxPlanRange of the same anchors that set the reach.
+func refresh_reach() -> void:
+	super.refresh_reach()
+	inPlanRange = _anchor_mask(maxPlanRange)
 
 
 func search_best_building_plans(plans = null, max_plans := 3) -> Array:
@@ -394,7 +393,7 @@ func try_build_walled_in_gun() -> bool:
 		return false
 	for ix in map.sizeX:
 		for iz in map.sizeZ:
-			if ibr(ix, iz) and map.get_mini(ix, iz) == 0:
+			if in_reach(ix, iz) and map.get_mini(ix, iz) == 0:
 				build_next_building(map.tiles[ix][iz])
 				return true
 	return false
@@ -406,7 +405,7 @@ func try_build_gun_in_plan() -> bool:
 	for plan in activePlans:
 		for xz in plan.xzWalledInTiles:
 			# (sic) the original checks (x, x)
-			if ibr(xz.x, xz.y) and map.get_mini(xz.x, xz.y) == 0:
+			if in_reach(xz.x, xz.y) and map.get_mini(xz.x, xz.y) == 0:
 				build_next_building(map.tiles[xz.x][xz.y])
 				return true
 	return false

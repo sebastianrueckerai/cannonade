@@ -53,8 +53,6 @@ func become_ruin() -> void:
 func claim(p) -> void:
 	hold_tiles(p)
 	repaint()
-	for t in my_tiles():
-		p.mark_buildable_area_waterflow(t.idxX, t.idxZ)
 
 
 func is_ruin() -> bool:
@@ -69,10 +67,14 @@ func owner():
 ## Writes the holder of the 3x3 square: every tile, the mini map (255 = no
 ## player) and the block itself.
 func hold_tiles(p) -> void:
+	var before = owner()
 	U.comp(go, "BuildingBlock").player = p
 	for t in my_tiles():
 		t.player = p
 		map.set_mini(t.idxX, t.idxZ, 255 if p == null else p.playerID)
+	for q in [before, p]:
+		if U.alive(q):
+			q.refresh_reach()
 
 
 func my_tiles() -> Array:

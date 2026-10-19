@@ -80,8 +80,6 @@ func _initialize_players() -> void:
 		p.map = map
 		p.wallSpawn = wallSpawns[i] if i < wallSpawns.size() else null
 		p.buildingSpawn = buildingSpawns[i] if i < buildingSpawns.size() else null
-		p.inBuildRange = PackedByteArray()
-		p.inBuildRange.resize(map.sizeX * map.sizeZ)
 		p.partsLabel = partsLabels[i] if i < partsLabels.size() else null
 		p.castlesLabel = castlesLabels[i] if i < castlesLabels.size() else null
 		p.setup()

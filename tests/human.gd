@@ -89,7 +89,7 @@ func free_tile_in_range() -> Vector2i:
 		for dx in range(-r, r + 1):
 			for dz in range(-r, r + 1):
 				var t = map.tiles[b.x + dx][b.y + dz]
-				if human.ibr(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
+				if human.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
 					return Vector2i(t.idxX, t.idxZ)
 	return Vector2i(-1, -1)
 
@@ -105,7 +105,7 @@ func free_quad_in_range() -> Vector2i:
 				var free := true
 				for q in [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]:
 					var t = map.tiles[x + q.x][z + q.y]
-					if not (human.ibr(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable()):
+					if not (human.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable()):
 						free = false
 				if free:
 					return Vector2i(x, z)
@@ -181,6 +181,45 @@ func _run() -> void:
 	check(U.alive(target.wallStacked) and Catalog.def_of(target.wallStacked).id == "wall",
 			"a single block stacks on an own wall")
 
+	# reach: a placement needs one tile within two of an own wall or castle. Walls walk the castle's column
+	# north from the ring's top row, guns south from its bottom row; d counts tiles out from the ring.
+	var top := b.y + 2
+	var north: Array = []
+	for d in range(1, 7):
+		north.append(Vector2i(b.x, top + d))
+	check(_all_free(north), "the column north of the ring is free")
+	_hold("wall_1")
+	await point_at_tile(Vector2i(b.x, top + 3))
+	await press("build_wall")
+	check(not U.alive(map.tiles[b.x][top + 3].structure), "a block three tiles from every own wall is refused")
+	_hold("wall_3")
+	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()  # upright: d = 4, 3, 2
+	await point_at_tile(Vector2i(b.x, top + 3))
+	await press("build_wall")
+	check(_all_blocks([Vector2i(b.x, top + 2), Vector2i(b.x, top + 3), Vector2i(b.x, top + 4)]),
+			"an upright three places with only its bottom tile in reach")
+	_hold("wall_1")
+	await point_at_tile(Vector2i(b.x, top + 6))
+	await press("build_wall")
+	check(_all_blocks([Vector2i(b.x, top + 6)]), "new blocks extend reach: a block two past them places")
+	var bottom := b.y - 2
+	var south: Array = []
+	for d in range(1, 5):
+		south.append(Vector2i(b.x, bottom - d))
+	check(_all_free(south), "the column south of the ring is free")
+	_offer_building("cannon")
+	await point_at_tile(Vector2i(b.x, bottom - 3))
+	await press("build_building")
+	check(not U.alive(map.tiles[b.x][bottom - 3].structure), "a gun three tiles from every own wall is refused")
+	await point_at_tile(Vector2i(b.x, bottom - 2))
+	await press("build_building")
+	check(U.alive(map.tiles[b.x][bottom - 2].structure), "a gun two tiles out places")
+	_hold("wall_1")
+	await point_at_tile(Vector2i(b.x, bottom - 4))
+	await press("build_wall")
+	check(not U.alive(map.tiles[b.x][bottom - 4].structure), "a gun anchors no reach: a block two past it is refused")
+	map.tiles[b.x][bottom - 2].un_build()  # it would count as an active gun below
+
 	# right click places the next building (a fixed piece: a drawn gun here would
 	# also count as active below)
 	await seconds(0.5)
@@ -225,6 +264,19 @@ func _run() -> void:
 	await press("fire")
 	await seconds(12.0)
 	check(not U.alive(enemy_wall.structure), "space fires a shell that destroys the aimed enemy wall")
+
+	# with every own wall gone the castle alone anchors reach; a ruined castle anchors nothing
+	var own = null
+	for c in map.castles:
+		if c.owner() == human:
+			own = c
+	for t in human.wallTiles.duplicate():
+		t.un_build()
+	check(human.wallTiles.is_empty(), "every own wall is gone")
+	check(human.in_reach(b.x + 3, b.y) and not human.in_reach(b.x + 4, b.y),
+			"the castle alone reaches two tiles past its edge, not three")
+	own.become_ruin()
+	check(not human.in_reach(b.x + 2, b.y), "a ruined castle anchors nothing")
 
 
 ## Replaces the randomly drawn wall piece (fixture for a specific piece).

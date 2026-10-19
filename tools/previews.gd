@@ -73,7 +73,7 @@ func _capture_map_hover() -> void:
 		for dx in range(-r, r + 1):
 			for dz in range(-r, r + 1):
 				var t = map.tiles[base.x + dx][base.y + dz]
-				if human.ibr(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
+				if human.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
 					free = Vector2i(t.idxX, t.idxZ)
 	if free.x >= 0:
 		var ev := InputEventMouseMotion.new()

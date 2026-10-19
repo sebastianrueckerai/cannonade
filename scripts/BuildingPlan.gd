@@ -108,7 +108,7 @@ func can_be_finished() -> bool:
 
 func reachable() -> bool:
 	for xz in ring:
-		if player.ibr(xz.x, xz.y):
+		if player.in_reach(xz.x, xz.y):
 			return true
 	return false
 

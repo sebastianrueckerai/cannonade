@@ -90,7 +90,7 @@ func _check_hovers() -> void:
 		for dx in range(-r, r + 1):
 			for dz in range(-r, r + 1):
 				var t = map.tiles[base.x + dx][base.y + dz]
-				if human.ibr(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable() \
+				if human.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable() \
 						and not t.decorations.is_empty():
 					free = Vector2i(t.idxX, t.idxZ)
 	check(free.x >= 0, "a free tile with trees or stones on it exists in range")

@@ -65,7 +65,7 @@ func enemy_free_tiles() -> Array:
 		for dx in range(-r, r + 1):
 			for dz in range(-r, r + 1):
 				var t = map.tiles[b.x + dx][b.y + dz]
-				if enemy.ibr(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
+				if enemy.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
 					out.append(t)
 	return out
 
