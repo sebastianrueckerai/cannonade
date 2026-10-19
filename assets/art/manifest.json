@@ -610,6 +610,21 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-13T09:52:46+02:00"
   },
+  "wall": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "wall"
+    ],
+    "tris": 188,
+    "source_sha": "d07f8a0459bb",
+    "approved_by": null,
+    "synced": "2026-10-19T22:05:27+02:00"
+  },
   "wall_cross_base": {
     "size": [
       1.0,
@@ -729,5 +744,20 @@
     "source_sha": "5502515f4d1d",
     "approved_by": "Sebastian",
     "synced": "2026-10-14T17:25:45+02:00"
+  },
+  "wall_upper": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "wall"
+    ],
+    "tris": 188,
+    "source_sha": "3caaa2a8b541",
+    "approved_by": null,
+    "synced": "2026-10-19T22:05:27+02:00"
   }
 }
