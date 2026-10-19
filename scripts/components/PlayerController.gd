@@ -53,6 +53,8 @@ var wallColor := Color.WHITE
 var stats := {}
 ## last mouse position in viewport coordinates
 var mousePosition := Vector2.ZERO
+## castles currently faded for blocking the cursor piece
+var fadedCastles: Array = []
 
 
 func setup() -> void:
@@ -138,6 +140,31 @@ func update_point_and_tile_selected() -> void:
 				next_wall_to_wall()
 			else:
 				next_wall_to_gui()
+	_fade_blocking_castles()
+
+
+## Castles between the camera and the cursor fade out while a held piece hides
+## behind them; everything turns solid again once nothing blocks.
+func _fade_blocking_castles() -> void:
+	if not U.alive(nextWall) and not U.alive(nextBuilding):
+		for c in fadedCastles:
+			U.set_alpha(c.go, 1.0)
+		fadedCastles.clear()
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam == null or map == null:
+		return
+	var blocking: Array = []
+	for c in map.castles:
+		if U.alive(c) and c.bounds().intersects_segment(cam.global_position, aimPoint) != null:
+			blocking.append(c)
+	for c in fadedCastles:
+		if not blocking.has(c):
+			U.set_alpha(c.go, 1.0)
+	for c in blocking:
+		if not fadedCastles.has(c):
+			U.set_alpha(c.go, 0.35)
+	fadedCastles = blocking
 
 
 func can_combine_next_building_with_tile(tile) -> bool:
@@ -154,6 +181,8 @@ func _combination(placed: Node3D, tile) -> BuildingDef:
 
 
 func try_get_next_building() -> void:
+	if game != null and not game.buildingAllowed:
+		return
 	if not U.alive(nextBuilding) and secondsLastBuilding + secondsBetweenBuildings < U.time:
 		secondsLastBuilding = 0.0
 		var def := Catalog.draw(BuildingDef.Category.BUILDING)

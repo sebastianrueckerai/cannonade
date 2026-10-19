@@ -151,6 +151,52 @@ func _run() -> void:
 	check(map.tiles[wall_spot.x][wall_spot.y].isWall, "an open wall never burns")
 	check(neutrals().size() == 8 and ruins() == 0, "no neutral burns or ruins")
 
+	# 2b: the hand follows the phase (there is nothing to place while the guns fire)
+	game.next_phase()  # to battle
+	check(not U.alive(human.nextWall) and not U.alive(human.nextBuilding),
+			"the held pieces fly away when the battle starts")
+	await frames(95)  # the fly-away (3 s) ends without drawing a new wall
+	check(not U.alive(human.nextWall) and not U.alive(human.nextBuilding),
+			"nothing returns to the hand while the battle runs")
+	game.next_phase()  # back to building
+	check(U.alive(human.nextWall), "a fresh wall is drawn when building returns")
+
+	# 2c: a neutral castle wears brown, and one that blocks the cursor fades
+	var neutral0 = neutrals()[0]
+	var pc := centre(neutral0)
+	var body_mat = U.meshes(neutral0.go)[0].get_surface_override_material(0)
+	check(body_mat != null and body_mat.albedo_color.is_equal_approx(Color("#9c7a4f")),
+			"an uncaptured castle wears the brown neutral, not near-white")
+	var cam := get_viewport().get_camera_3d()
+	var cdir: Vector3 = (neutral0.go.global_position - cam.global_position).normalized()
+	var ground_t := (0.1 - cam.global_position.y) / cdir.y
+	var behind: Vector3 = cam.global_position + cdir * ground_t
+	check(neutral0.bounds().intersects_segment(cam.global_position, behind) != null,
+			"the picked ray really passes through the castle")
+	human.mousePosition = cam.unproject_position(behind)
+	human.update_point_and_tile_selected()
+	body_mat = U.meshes(neutral0.go)[0].get_surface_override_material(0)
+	check(body_mat != null and is_equal_approx(body_mat.albedo_color.a, 0.35),
+			"the castle between the camera and the cursor fades out")
+	var clear := pc  # the farthest tile whose ray misses the castle
+	for x in range(2, map.sizeX - 2):
+		for z in range(2, map.sizeZ - 2):
+			var q := Vector2i(x, z)
+			var d: int = maxi(absi(q.x - pc.x), absi(q.y - pc.y))
+			var qd: int = maxi(absi(clear.x - pc.x), absi(clear.y - pc.y))
+			if d > qd and neutral0.bounds().intersects_segment(cam.global_position,
+					map.tile_position(q.x, q.y) + Vector3.UP * 0.1) == null:
+				clear = q
+	check(maxi(absi(clear.x - pc.x), absi(clear.y - pc.y)) >= 10,
+			"a far tile with a clear ray exists")
+	human.mousePosition = cam.unproject_position(
+			map.tile_position(clear.x, clear.y) + Vector3.UP * 0.1)
+	human.update_point_and_tile_selected()
+	body_mat = U.meshes(neutral0.go)[0].get_surface_override_material(0)
+	check(body_mat != null and body_mat.albedo_color.a == 1.0
+			and body_mat.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED,
+			"the castle turns solid again once nothing blocks")
+
 	# 3: the claim (ring a neutral)
 	var target := ringable_neutral()
 	check(target.x > 0, "a neutral with room for a ring exists")

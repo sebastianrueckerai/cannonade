@@ -47,6 +47,15 @@ func _ready() -> void:
 	_bar = ProgressBar.new()
 	_bar.custom_minimum_size = Vector2(360, 24)
 	_bar.show_percentage = false
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color(0.24, 0.22, 0.19)
+	track.set_corner_radius_all(3)
+	track.set_content_margin_all(3.0)
+	_bar.add_theme_stylebox_override("background", track)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color(0.78, 0.58, 0.26)
+	fill.set_corner_radius_all(2)
+	_bar.add_theme_stylebox_override("fill", fill)
 	box.add_child(_bar)
 	if next_scene.is_empty():
 		push_error("Loading: no next_scene set, use Loading.go(path)")

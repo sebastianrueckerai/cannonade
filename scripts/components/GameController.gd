@@ -163,7 +163,8 @@ func _update_round_time(delta: float) -> void:
 
 
 ## Ends the current phase: build turns into battle (through the rules check)
-## and back.
+## and back. The hand follows the phase: held pieces fly away when the battle
+## starts, a fresh wall is drawn when building returns.
 func next_phase() -> void:
 	roundNumber += 1
 	buildingAllowed = not buildingAllowed
@@ -171,6 +172,12 @@ func next_phase() -> void:
 	timeLeftInRound = roundDuration if buildingAllowed else battleDuration
 	if not buildingAllowed and castles and started:
 		run_check()
+	for p in players:
+		if buildingAllowed:
+			p.get_next_wall()
+		else:
+			p.drop(p.nextWall, true)
+			p.drop(p.nextBuilding, false)
 	round_changed.emit(roundNumber, buildingAllowed)
 
 

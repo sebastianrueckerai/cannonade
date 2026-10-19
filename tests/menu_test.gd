@@ -39,12 +39,15 @@ func _ready() -> void:
 	await _frames(3)
 	var help_panel: PanelContainer = null
 	for p in menu.find_children("*", "PanelContainer", true, false):
-		if p.get_parent() is ColorRect:
+		if p.get_parent() is ScrollContainer:
 			help_panel = p
-	_check(help_panel != null and help_panel.scale.y * help_panel.get_combined_minimum_size().y
-			<= menu.size.y + 0.5, "Tutorial & Controls fits the window height")
-	_check(help_panel != null and help_panel.scale.y < 1.0,
-			"Tutorial & Controls scales down when the window is shorter than it")
+	var help_scroll: ScrollContainer = (help_panel.get_parent()
+			if help_panel != null else null)
+	_check(help_panel != null and help_scroll.size.y <= menu.size.y + 0.5,
+			"the Tutorial & Controls scroll area never leaves the window")
+	_check(help_panel != null and help_scroll.get_v_scroll_bar().max_value
+			>= help_panel.get_combined_minimum_size().y,
+			"the whole tutorial scrolls into view when the window is shorter than it")
 	_esc()
 	await _frames(2)
 	# a corrupt input_remap.cfg must not stop the menu building or later rows loading

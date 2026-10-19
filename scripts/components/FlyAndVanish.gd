@@ -33,6 +33,6 @@ func _process(_delta: float) -> void:
 		go.global_position = startPosition.lerp(endPosition, minf(percent, 1.0))
 		if percent >= 1.0:
 			fly = false
-			if isWall and U.alive(player):
+			if isWall and U.alive(player) and player.game.buildingAllowed:
 				player.get_next_wall()
 			U.destroy(go)

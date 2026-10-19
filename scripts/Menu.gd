@@ -102,16 +102,6 @@ func _ready() -> void:
 		box.add_child(problems)
 
 
-## Shrinks the panel when the window is smaller than it, so the overlay fits every
-## resolution; the scale stays 1 when there is room.
-func _scale_to_fit(panel: Control) -> void:
-	var need := panel.get_combined_minimum_size()
-	if need == Vector2.ZERO:
-		return
-	panel.pivot_offset = panel.size * 0.5
-	panel.scale = Vector2(1, 1) * min(1.0, size.x / need.x, size.y / need.y)
-
-
 func _start(mode: String) -> void:
 	Main.requested_mode = mode
 	Loading.go("res://scenes/game.tscn")
@@ -154,12 +144,13 @@ func _show_help() -> void:
 		if e is InputEventMouseButton and e.pressed:
 			_close_help())
 	add_child(dim)
+	var scroll := ScrollContainer.new()
+	scroll.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	dim.add_child(scroll)
 	var panel := PanelContainer.new()
-	panel.set_anchors_preset(PRESET_CENTER)
-	panel.grow_horizontal = GROW_DIRECTION_BOTH
-	panel.grow_vertical = GROW_DIRECTION_BOTH
-	dim.add_child(panel)
-	dim.resized.connect(_scale_to_fit.bind(panel))
+	panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	scroll.add_child(panel)
 	var box := VBoxContainer.new()
 	box.custom_minimum_size = Vector2(560, 0)
 	box.add_theme_constant_override("separation", 12)
@@ -211,7 +202,6 @@ func _show_help() -> void:
 	close.pressed.connect(_close_help)
 	box.add_child(close)
 	close.grab_focus()
-	_scale_to_fit.bind(panel).call_deferred()
 	_help = dim
 
 

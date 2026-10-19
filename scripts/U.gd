@@ -152,6 +152,20 @@ func set_color(root: Node, c: Color) -> void:
 		_unique_material(mi, 0).albedo_color = c
 
 
+## Every surface of a building turns see-through (a < 1) or solid again.
+func set_alpha(root: Node, a: float) -> void:
+	if not alive(root):
+		return
+	for mi in meshes(root):
+		if mi.get_script() != null or mi.mesh == null:
+			continue
+		for s in mi.mesh.get_surface_count():
+			var m := _unique_material(mi, s)
+			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA if a < 1.0 \
+					else BaseMaterial3D.TRANSPARENCY_DISABLED
+			m.albedo_color.a = a
+
+
 ## renderer.materials[i].color = c
 func set_surface_color(mi: MeshInstance3D, surface: int, c: Color) -> void:
 	_unique_material(mi, surface).albedo_color = c

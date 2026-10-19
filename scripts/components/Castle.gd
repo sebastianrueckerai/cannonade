@@ -4,11 +4,29 @@ extends "res://scripts/components/Component.gd"
 ## leaves a ruin that nobody claims or builds on.
 
 const RUIN := 4
-const NEUTRAL_COLOR := Color("#e8d6b0")
+const NEUTRAL_COLOR := Color("#9c7a4f")
 const STATES := ["castle", "castle_d1", "castle_d2", "castle_d3", "castle_d4"]
 
 var state := 0
 var map = null
+var _bounds := AABB()
+var _bounds_known := false
+
+
+## World-space bounds of the attached art, for occlusion tests against the
+## cursor. Recomputed after a state swap.
+func bounds() -> AABB:
+	if _bounds_known:
+		return _bounds
+	_bounds_known = true
+	var art := go.get_node_or_null("Art")
+	if art != null:
+		for mi in U.meshes(art):
+			if mi.mesh == null:
+				continue
+			var b: AABB = mi.global_transform * mi.get_aabb()
+			_bounds = b if not _bounds.has_volume() else _bounds.merge(b)
+	return _bounds
 
 
 func take_damage(damage: float) -> void:
@@ -72,6 +90,8 @@ func set_state(n: int) -> void:
 		if child.has_meta("art_id"):
 			U.destroy(child)
 	Art.attach(go, STATES[n])
+	_bounds = AABB()
+	_bounds_known = false
 	repaint()
 
 
