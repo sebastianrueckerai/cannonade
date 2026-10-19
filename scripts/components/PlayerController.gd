@@ -289,7 +289,7 @@ func next_wall_to_map() -> void:
 		nextWall.position = Vector3.ZERO
 		_settle_cells()
 		switch_casting_shadows(nextWall, true)
-		_lighten_wall()
+		_darken_wall()
 		_hide_decorations()
 
 
@@ -327,9 +327,10 @@ func _restore_wall_color() -> void:
 		U.set_color(nextWall, wallColor)
 
 
-func _lighten_wall() -> void:
+## The held piece on the board reads darker than the placed blocks round it.
+func _darken_wall() -> void:
 	if U.alive(nextWall):
-		U.set_color(nextWall, Color.WHITE.lerp(wallColor, 0.5))
+		U.set_color(nextWall, wallColor.darkened(0.3))
 
 
 func switch_casting_shadows(n: Node3D, on := true) -> void:
@@ -340,7 +341,7 @@ func next_wall_to_wall() -> void:
 	U.set_parent(nextWall, buildableTileSelected.go)
 	switch_casting_shadows(nextWall, true)
 	nextWall.position = Vector3(0, 0.75, 0)  # the upper storey's body starts on the block's top
-	_lighten_wall()
+	_darken_wall()
 
 
 func _hide_decorations() -> void:

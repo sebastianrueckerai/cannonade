@@ -114,6 +114,9 @@ func _check_hovers() -> void:
 			"the piece moves onto the hovered tile as the placement preview")
 	check(human.nextBuilding.get_parent() == human.buildingSpawn,
 			"the building stays in its slot; only the wall previews on the tile")
+	var plain := Catalog.spawn("wall")
+	check(_visible_albedo(human.nextWall).v < _visible_albedo(plain).v,
+			"the preview on the board is darker than a placed block")
 	check(deco_meshes.all(func(m): return not m.visible),
 			"the tile's trees and stones hide under the placement preview")
 	ev = InputEventMouseMotion.new()
@@ -123,6 +126,9 @@ func _check_hovers() -> void:
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == human.wallSpawn,
 			"the wall returns to the gui slot off the board")
+	check(_visible_albedo(human.nextWall) == _visible_albedo(plain),
+			"back in the gui slot the piece wears the placed block's colour again")
+	plain.free()
 	check(human.nextBuilding.get_parent() == human.buildingSpawn,
 			"the building returns to its slot off the board")
 	check(deco_meshes.all(func(m): return m.visible),
