@@ -42,6 +42,12 @@ func frames(n := 1) -> void:
 		await get_tree().process_frame
 
 
+func seconds(t: float) -> void:
+	var end: float = U.time + t
+	while U.time < end:
+		await get_tree().process_frame
+
+
 func _find_label(node, text: String) -> bool:
 	if node is Label and node.text == text:
 		return true
@@ -161,7 +167,7 @@ func _run() -> void:
 	game.next_phase()  # back to building
 	check(U.alive(human.nextWall), "a fresh wall is drawn when building returns")
 
-	# 2c: a neutral castle wears brown, and one that blocks the cursor fades
+	# 2c: a neutral castle wears brown, and it fades only while a piece previews behind it
 	var neutral0 = neutrals()[0]
 	var pc := centre(neutral0)
 	var body_mat = U.meshes(neutral0.go)[0].get_surface_override_material(0)
@@ -173,11 +179,43 @@ func _run() -> void:
 	var behind: Vector3 = cam.global_position + cdir * ground_t
 	check(neutral0.bounds().intersects_segment(cam.global_position, behind) != null,
 			"the picked ray really passes through the castle")
-	human.mousePosition = cam.unproject_position(behind)
+	# a free tile at or past the ground point whose ray still pierces the castle
+	var bpos: Vector2i = map.tile_index_at(behind)
+	var hide := Vector2i(-1, -1)
+	for d in range(0, 6):
+		for dx in range(-d, d + 1):
+			for dz in range(-d, d + 1):
+				if hide.x >= 0 or maxi(absi(dx), absi(dz)) != d:
+					continue
+				var q := bpos + Vector2i(dx, dz)
+				if q.x < 1 or q.y < 1 or q.x > map.sizeX - 2 or q.y > map.sizeZ - 2:
+					continue
+				var t = map.tiles[q.x][q.y]
+				if U.alive(t.structure) or t.water or t.disabled:
+					continue
+				if neutral0.bounds().intersects_segment(cam.global_position,
+						map.tile_position(q.x, q.y) + Vector3.UP * 0.1) != null:
+					hide = q
+	check(hide.x >= 0, "a free tile behind the castle exists")
+	if hide.x >= 0:
+		await seconds(0.4)  # the wall is drawn at once, the gun after its cooldown
+		human.mousePosition = cam.unproject_position(
+				map.tile_position(hide.x, hide.y) + Vector3.UP * 0.1)
+		human.update_point_and_tile_selected()
+		body_mat = U.meshes(neutral0.go)[0].get_surface_override_material(0)
+		check(body_mat != null and is_equal_approx(body_mat.albedo_color.a, 0.35),
+				"the castle behind the cursor piece fades out")
+		check(human.nextWall.get_parent() == map.tiles[hide.x][hide.y].go
+				and human.nextBuilding.get_parent() == map.tiles[hide.x][hide.y].go,
+				"the held wall and the held gun stand on the hidden tile")
+	# on the castle itself nothing previews, so nothing fades
+	human.mousePosition = cam.unproject_position(
+			map.tile_position(pc.x, pc.y) + Vector3.UP * 0.1)
 	human.update_point_and_tile_selected()
 	body_mat = U.meshes(neutral0.go)[0].get_surface_override_material(0)
-	check(body_mat != null and is_equal_approx(body_mat.albedo_color.a, 0.35),
-			"the castle between the camera and the cursor fades out")
+	check(body_mat != null and body_mat.albedo_color.a == 1.0
+			and body_mat.transparency == BaseMaterial3D.TRANSPARENCY_DISABLED,
+			"hovering the castle itself keeps it solid")
 	var clear := pc  # the farthest tile whose ray misses the castle
 	for x in range(2, map.sizeX - 2):
 		for z in range(2, map.sizeZ - 2):

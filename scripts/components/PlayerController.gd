@@ -118,12 +118,14 @@ func update_point_and_tile_selected() -> void:
 		voidSelected = hit[2] == null
 	if voidSelected:
 		next_wall_to_gui()
+		next_building_to_gui()
 	if buildableTileSelected != null:
 		var x: int = buildableTileSelected.idxX
 		var z: int = buildableTileSelected.idxZ
 		freeTileSelected = not U.alive(buildableTileSelected.structure) and buildableTileSelected.buildable()
 		if freeTileSelected:
 			next_wall_to_map()
+			next_building_to_map()
 			if ibr(x, z):
 				buildableTileSelected.highlight_on(highlightPosColor)
 				canBuildOnTile = true
@@ -140,13 +142,15 @@ func update_point_and_tile_selected() -> void:
 				next_wall_to_wall()
 			else:
 				next_wall_to_gui()
+			next_building_to_gui()
 	_fade_blocking_castles()
 
 
-## Castles between the camera and the cursor fade out while a held piece hides
+## Castles between the camera and the cursor fade out while a piece previews
 ## behind them; everything turns solid again once nothing blocks.
 func _fade_blocking_castles() -> void:
-	if not U.alive(nextWall) and not U.alive(nextBuilding):
+	if (not U.alive(nextWall) and not U.alive(nextBuilding)) \
+			or (not freeTileSelected and not canStackWall):
 		for c in fadedCastles:
 			U.set_alpha(c.go, 1.0)
 		fadedCastles.clear()
@@ -207,6 +211,22 @@ func next_wall_to_map() -> void:
 		switch_casting_shadows(nextWall, true)
 		_lighten_wall()
 		_hide_decorations()
+
+
+## The held building previews on the hovered tile like the wall, so the fade
+## reveals a gun parked behind a castle (and the piece reads before it is placed).
+func next_building_to_map() -> void:
+	if U.alive(nextBuilding):
+		U.set_parent(nextBuilding, buildableTileSelected.go)
+		nextBuilding.position = Vector3.ZERO
+		switch_casting_shadows(nextBuilding, true)
+
+
+func next_building_to_gui() -> void:
+	if U.alive(nextBuilding) and buildingSpawn != null:
+		U.set_parent(nextBuilding, buildingSpawn)
+		nextBuilding.position = Vector3.ZERO
+		switch_casting_shadows(nextBuilding, false)
 
 
 func _restore_wall_color() -> void:

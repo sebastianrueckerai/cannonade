@@ -120,12 +120,9 @@ func _update_double_stack_plan() -> void:
 
 
 func execute_building_plan() -> void:
-	# a drawn shooter over the parts cap can never be placed; drop it so the hand rotates
+	# a drawn shooter over the parts cap can never be placed; discard it so the hand rotates
 	if U.alive(nextBuilding) and U.shooter(nextBuilding) != null and over_parts_cap(nextBuilding):
-		drop(nextBuilding, false)
-	# cannons carry an Upgrade comp as fusion parts; only real blocks are discarded
-	if U.alive(nextBuilding) and U.comp(nextBuilding, "Upgrade") != null and U.shooter(nextBuilding) == null:
-		drop(nextBuilding, false)
+		_discard_next_building()
 	var did := try_build_gun_in_plan()
 	if not did:
 		did = try_build_walled_in_gun()
@@ -145,6 +142,14 @@ func execute_building_plan() -> void:
 		nextAction = U.time + secondsBetweenBuilds
 	else:
 		nextAction = U.time + secondsIdleRetry
+
+
+## Discards the held building without the fly-away; the next draw follows the
+## usual cooldown, as it would after fly_away.
+func _discard_next_building() -> void:
+	U.destroy(nextBuilding)
+	nextBuilding = null
+	secondsLastBuilding = U.time
 
 
 func _count_walled_in_tiles_in_finished_plans() -> int:

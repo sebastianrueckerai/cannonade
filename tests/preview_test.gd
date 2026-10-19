@@ -68,15 +68,20 @@ func _check_slot(kind: String, i: int) -> void:
 			"showing the %s slot %d restores panel and viewport" % [kind, n])
 
 
-## The next wall rests centred in the slot over void and follows the cursor onto a
-## free tile (across the viewport boundary), like in the game. The tile's trees and
-## stones hide under the preview, so the piece's orientation reads, and they come
-## back when the preview leaves the tile.
+## The next wall and the held building rest centred in their slots over void and
+## follow the cursor onto a free tile (across the viewport boundary), like in
+## the game. The tile's trees and stones hide under the preview, so the piece's
+## orientation reads, and they come back when the preview leaves the tile.
 func _check_hovers() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == human.wallSpawn and human.nextWall.position == Vector3.ZERO,
 			"the offered wall rests centred in the gui slot")
+	var wait := 0.0
+	while not U.alive(human.nextBuilding) and wait < 2.0:
+		await get_tree().process_frame
+		wait += 1.0 / 30.0
+	check(U.alive(human.nextBuilding), "a building is offered beside the wall")
 	var base := Vector2i(map.sizeX / 2, map.sizeZ / 4)
 	var free := Vector2i(-1, -1)
 	for r in range(2, 6):
@@ -101,6 +106,8 @@ func _check_hovers() -> void:
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == map.tiles[free.x][free.y].go,
 			"the wall moves onto the hovered tile as the placement preview")
+	check(human.nextBuilding.get_parent() == map.tiles[free.x][free.y].go,
+			"the building moves onto the hovered tile as the placement preview")
 	check(deco_meshes.all(func(m): return not m.visible),
 			"the tile's trees and stones hide under the placement preview")
 	ev = InputEventMouseMotion.new()
@@ -110,6 +117,8 @@ func _check_hovers() -> void:
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == human.wallSpawn,
 			"the wall returns to the gui slot off the board")
+	check(human.nextBuilding.get_parent() == human.buildingSpawn,
+			"the building returns to its slot off the board")
 	check(deco_meshes.all(func(m): return m.visible),
 			"the tile's trees and stones come back when the preview leaves")
 
