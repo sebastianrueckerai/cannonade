@@ -33,6 +33,11 @@ func _ready() -> void:
 	check(castle != null and castle.size == 3 and castle.health == 120.0
 			and castle.category == BuildingDef.Category.BASE and castle.draw_weight == 0.0,
 			"the castle is a 3x3 base of 120 health that never draws")
+	check(Catalog.get_def("base") == null and Catalog.get_def("upgrade_a") == null
+			and Catalog.get_def("upgrade_b") == null and Catalog.parked.has("upgrade_a"),
+			"the old base and the upgrade blocks are parked out of the game")
+	check(Catalog.ids.has("upgrade_a") == false and Catalog.is_ingredient("cannon"),
+			"parked defs never draw; the cannon is the ingredient of the fusion")
 	_prepare_tmp_catalog()
 	_check_problem_reports()
 	await _check_workflow_in_game()

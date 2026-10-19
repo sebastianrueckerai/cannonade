@@ -12,3 +12,4 @@ model = ExtResource("2_51ui8")
 draw_weight = 1.0
 recipe_pattern = PackedStringArray()
 recipe_combine = PackedStringArray()
+parked = true

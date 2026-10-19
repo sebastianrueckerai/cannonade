@@ -94,6 +94,24 @@ func free_tile_in_range() -> Vector2i:
 	return Vector2i(-1, -1)
 
 
+## A free 2x2 square in build range, for the cannon fusion.
+func free_quad_in_range() -> Vector2i:
+	var b := base_xz()
+	for r in range(2, 5):
+		for dx in range(-r, r + 1):
+			for dz in range(-r, r + 1):
+				var x: int = b.x + dx
+				var z: int = b.y + dz
+				var free := true
+				for q in [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]:
+					var t = map.tiles[x + q.x][z + q.y]
+					if not (human.ibr(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable()):
+						free = false
+				if free:
+					return Vector2i(x, z)
+	return Vector2i(-1, -1)
+
+
 func _run() -> void:
 	await frames(3)
 	var b := base_xz()
@@ -145,22 +163,29 @@ func _run() -> void:
 		await press("rotate_cw")
 	check(U.alive(target.wallStacked), "a fitting wall stacks on an own wall")
 
-	# right click places the next building
+	# right click places the next building (a fixed piece: a drawn gun here would
+	# also count as active below)
 	await seconds(0.5)
+	_offer_building("supply")
 	var building = human.nextBuilding
 	free = free_tile_in_range()
 	await point_at_tile(free)
 	await press("build_building")
 	check(U.alive(building) and map.tiles[free.x][free.y].structure == building, "right click places the building")
 
-	# right click with an upgrade on a combinable block builds the combination (supply)
-	var up_tile := free_tile_in_range()
-	human.build_building(map.tiles[up_tile.x][up_tile.y], Catalog.spawn("upgrade_a"))
-	_offer_building("upgrade_a")
-	await point_at_tile(up_tile)
+	# right click with a cannon on the fourth tile of a 2x2 fuses the heavy gun
+	var quad := free_quad_in_range()
+	for i in 3:
+		var q = map.tiles[quad.x + i / 2][quad.y + i % 2]
+		human.build_building(q, Catalog.spawn("cannon"))
+	_offer_building("cannon")
+	await point_at_tile(quad + Vector2i(1, 1))
 	await press("build_building")
-	var combined = map.tiles[up_tile.x][up_tile.y].structure
-	check(U.comp(combined, "SupplyBuilding") != null, "upgrade + upgrade block combine into a supply building")
+	var fused = map.tiles[quad.x][quad.y].structure
+	check(U.alive(fused) and Catalog.def_of(fused).id == "cannon22a",
+			"the fourth cannon fuses the square into the heavy gun (got %s)"
+			% [Catalog.def_of(fused).id if U.alive(fused) else "nothing"])
+	map.tiles[quad.x][quad.y].upgradeCluster.un_build_upgrade()  # would burn outside the walls
 
 	# a gun inside the walls fires at the enemy in the battle phase
 	_pocket()

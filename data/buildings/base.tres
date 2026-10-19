@@ -13,3 +13,4 @@ size = 2
 model = ExtResource("2_vn0pk")
 recipe_pattern = PackedStringArray()
 recipe_combine = PackedStringArray()
+parked = true

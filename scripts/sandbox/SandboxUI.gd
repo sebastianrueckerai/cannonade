@@ -170,7 +170,7 @@ func _build_bottom() -> void:
 			"mirrored top to bottom (replaces the other side; Ctrl+Z undoes)", func(): sandbox.mirror(sandbox.side)))
 	var base: BuildingDef = Catalog.base_def()
 	if base != null:
-		_tool(base.id, "Base", "Move this side's base", bar)
+		_tool(base.id, "Castle", "Move this side's castle", bar)
 	for id in Catalog.ids:
 		var d: BuildingDef = Catalog.defs[id]
 		if d.category != BuildingDef.Category.BUILDING:

@@ -16,11 +16,12 @@ func _ready() -> void:
 	await _frames(3)
 	var menu := get_tree().current_scene
 	var buttons := menu.find_children("*", "Button", true, false)
-	_check(buttons.size() == 8, "menu has 8 buttons (5 modes, Tutorial & Controls, Sandbox, Quit)")
-	_check(buttons.any(func(b): return b.text.contains("Single player"))
-			and buttons.any(func(b): return b.text.contains("4 AIs"))
-			and buttons.any(func(b): return b.text.contains("Practice")),
-			"desktop keeps the modes the web build hides")
+	_check(buttons.size() == 6, "menu has 6 buttons (3 modes, Tutorial & Controls, Sandbox, Quit)")
+	_check(buttons.any(func(b): return b.text.contains("Player vs. AI"))
+			and buttons.any(func(b): return b.text.contains("Practice"))
+			and not buttons.any(func(b): return b.text.contains("Single player"))
+			and not buttons.any(func(b): return b.text.contains("4 AIs")),
+			"the menu keeps versus, watch and practice; the parked modes are gone")
 	var tut: Button = null
 	for b in buttons:
 		if b.text == "Tutorial & Controls":
@@ -57,7 +58,7 @@ func _ready() -> void:
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	await _frames(3)
 	menu = get_tree().current_scene
-	_check(menu.find_children("*", "Button", true, false).size() == 8,
+	_check(menu.find_children("*", "Button", true, false).size() == 6,
 			"menu builds with a corrupt input_remap.cfg")
 	tut = null
 	for b in menu.find_children("*", "Button", true, false):

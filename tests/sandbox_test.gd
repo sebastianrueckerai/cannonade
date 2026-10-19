@@ -126,7 +126,7 @@ func structure_id(xz: Vector2i) -> String:
 # --------------------------------------------------------------------- run
 func _run() -> void:
 	var map = sb.map
-	check(sb.snapshot().size() == 26, "a new layout has two walled-in bases")
+	check(sb.snapshot().size() == 34, "a new layout has two walled-in castles")
 
 	# drawing walls: drag around a rectangle, corners connect and enclose it
 	await drag(border(3, 3, 7, 6))
@@ -135,7 +135,7 @@ func _run() -> void:
 		for z in range(4, 6):
 			enclosed = enclosed and map.is_tile_enclosed(x, z)
 	check(enclosed, "dragging walls around a rectangle encloses it")
-	check(sb.player(0).wallTiles.size() == 12 + 14, "the walls belong to blue")
+	check(sb.player(0).wallTiles.size() == 16 + 14, "the walls belong to blue (the 16-wall ring and the 14 drawn)")
 
 	# buildings: cannons inside and outside the walls both work
 	await ui_click("Tool_cannon")
@@ -187,7 +187,7 @@ func _run() -> void:
 	(sb.ui.find_child("SaveName", true, false) as LineEdit).text = "sandbox_test"
 	await ui_click("Save")
 	await ui_click("New")
-	check(sb.snapshot().size() == 26, "New starts an empty layout")
+	check(sb.snapshot().size() == 34, "New starts an empty layout")
 	var opts: OptionButton = sb.ui.find_child("Scenarios", true, false)
 	for i in opts.item_count:
 		if str(opts.get_item_metadata(i)).ends_with("sandbox_test.tres"):
@@ -280,6 +280,21 @@ func _run() -> void:
 			check(sb.player(0).stats.get("shots", 0) > 0 and sb.player(1).stats.get("shots", 0) > 0,
 					"both sides of %s fire" % path.get_file())
 			await ui_click("Play")
+
+	# a side that holds no castle is out of the battle, its guns notwithstanding
+	await ui_click("New")
+	await ui_click("Tool_cannon")
+	await click_tile(Vector2i(12, 26))  # a gun on the side that is about to lose its castle
+	await key(KEY_2)
+	await click_tile(Vector2i(21, 26))
+	await ui_click("Tool_erase")
+	await click_tile(Vector2i(14, 21))  # one click removes the whole castle
+	(sb.ui.find_child("TimeLimit", true, false) as SpinBox).value = 30
+	await ui_click("Play")
+	await ui_click("Speed4")
+	await seconds(3.0)
+	check(sb.mode == sb.Mode.ENDED and sb.winner == 0,
+			"a side that holds no castle is out of the battle, its guns notwithstanding")
 
 
 func _same(a: Array, b: Array) -> bool:

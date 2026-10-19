@@ -92,9 +92,10 @@ func _run() -> void:
 		"results follow the layout when the sides are swapped")
 	check(mean(fast, "r_intercepted") > mean(slow, "r_intercepted") + 1.0,
 		"a faster flak salvo intercepts more (%.1f vs %.1f)" % [mean(fast, "r_intercepted"), mean(slow, "r_intercepted")])
-	check(mean(rows, "b_guns_lost") > 0 and mean(rows, "b_walls_lost") == 0,
-		"red, set to shoot at guns, destroys guns and no walls")
-	check(rows.all(func(x): return x["winner"] == "red"), "under v3 damage red's flak side beats blue's four cannons (hit guns fire slower), also when played as red")
+	check(rows.all(func(x): return int(x["b_guns_lost"]) == 4),
+		"red, set to shoot at guns, destroys all four guns (then falls back to walls)")
+	check(rows.all(func(x): return int(x["r_guns_lost"]) == 0),
+		"the flak side keeps its guns under return fire (hit guns fire slower), also when played as red")
 	check(rows.all(func(x): return x["winner"] in ["blue", "red", "draw"] and float(x["time"]) > 0), "every battle has a result")
 
 	# everything but the swept value and the seed

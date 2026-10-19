@@ -20,6 +20,9 @@ signal reloaded
 
 ## id -> BuildingDef (only valid ones)
 var defs := {}
+## valid defs parked out of the game (D64): never spawned, drawn or listed,
+## but recipes may still name them
+var parked := {}
 ## ids in a stable (sorted) order
 var ids: Array[String] = []
 ## readable problems found while loading ("<file>: <problem>")
@@ -39,6 +42,7 @@ func _ready() -> void:
 func load_dir(dir: String, replace_cache := false) -> void:
 	_dir = dir
 	defs = {}
+	parked = {}
 	ids = []
 	errors = []
 	_wall_shapes = {}
@@ -60,8 +64,11 @@ func load_dir(dir: String, replace_cache := false) -> void:
 		var problems := _check_def(def)
 		for p in problems:
 			errors.append("%s: %s" % [f, p])
-		if problems.is_empty() and not def.parked:
-			defs[def.id] = def
+		if problems.is_empty():
+			if def.parked:
+				parked[def.id] = def
+			else:
+				defs[def.id] = def
 	ids.assign(defs.keys())
 	ids.sort()
 	_check_catalog()
@@ -108,12 +115,15 @@ func _check_catalog() -> void:
 	for id in ids:
 		var d: BuildingDef = defs[id]
 		for part in d.recipe_pattern:
-			if part != "*" and not defs.has(part):
+			# recipes may name parked buildings (the upgrade blocks live on in
+			# data but out of the game)
+			var pd: BuildingDef = defs.get(part, parked.get(part))
+			if part != "*" and pd == null:
 				errors.append("%s: recipe_pattern uses unknown building '%s'" % [id, part])
-			elif part != "*" and defs[part].size != 1:
+			elif part != "*" and pd.size != 1:
 				errors.append("%s: recipe_pattern part '%s' is not a single tile building" % [id, part])
 		for part in d.recipe_combine:
-			if not defs.has(part):
+			if not defs.has(part) and not parked.has(part):
 				errors.append("%s: recipe_combine uses unknown building '%s'" % [id, part])
 		if d.recipe_default_for_size:
 			if defaults.has(d.size):

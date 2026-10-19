@@ -5,17 +5,15 @@ const Main = preload("res://scripts/Main.gd")
 const Loading = preload("res://scripts/Loading.gd")
 
 const MODES := [
-	["single", "Single player (vs. ships)"],
 	["versus", "Player vs. AI"],
 	["ai2", "Watch: AI vs. AI"],
-	["ai4", "Watch: 4 AIs"],
 	["practice", "Practice (a fort that never fires back)"],
 ]
 ## The five actions the panel remaps; everything else (wheel, middle drag,
 ## Enter, Esc) is hardcoded where it is used and listed as a fixed row.
 const REMAP := [
 	["build_wall", "place the next wall / stack it on one of your walls"],
-	["build_building", "place the next building / combine it with the one below"],
+	["build_building", "place the next building / fuse four cannons in a 2x2 square"],
 	["rotate_cw", "rotate the wall clockwise"],
 	["rotate_ccw", "rotate the wall counter-clockwise"],
 	["fire", "fire the cannons"],
@@ -172,7 +170,7 @@ func _show_help() -> void:
 	title.add_theme_font_size_override("font_size", 32)
 	box.add_child(title)
 	var intro := Label.new()
-	intro.text = "You and an AI opponent build forts on one island. Rounds switch between a green build phase and a red battle phase.\n\nWall your guns in: only cannons inside a fully walled-in area can fire, and supply depots inside keep them fed. Upgrade blocks placed in 2x2 squares merge into heavier guns, flak, shield generators or supply depots.\n\nDestroy the enemy base before yours falls."
+	intro.text = "You and an AI opponent each start with a walled-in castle on one island. Rounds switch between a green build phase and a red battle phase.\n\nBuild out from your castle: ring in neutral castles to claim them and raise your parts cap, place cannons with the right mouse button, fuse four cannons in a 2x2 square into a heavy gun. Buildings outside your walls burn at the end of the build phase. Hit guns reload slower; castles take 12 shells and fall through four damage states.\n\nRuin the enemy's last castle before yours falls."
 	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(intro)
 	var grid := GridContainer.new()

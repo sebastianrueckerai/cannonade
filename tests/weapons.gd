@@ -1,12 +1,11 @@
 extends Node
-## Upgrade patterns and the special structures they produce, built from upgrade
-## blocks through the real merge path (UpgradeCluster + UpgradeSelection):
-## patterns -> structure, cluster bombs, rockets, shield, flak, ships.
+## The special structures and what they do: the four-cannon fusion, cluster
+## bombs, rockets, shield and flak interception, gun damage, ships. The 2x2
+## specials are placed from their files; their upgrade-block recipes are parked
+## out of the game.
 ##   godot --headless --fixed-fps 30 res://tests/weapons.tscn
 
 const Main = preload("res://scripts/Main.gd")
-const BuildingPlan = preload("res://scripts/BuildingPlan.gd")
-const BLOCKS := {0: "upgrade_a", 1: "upgrade_b", 2: "cannon"}
 
 var main: Node
 var game
@@ -46,58 +45,34 @@ func _ready() -> void:
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 
-## Places upgrade blocks (types in x-major, z-minor order) with the square's
-## lower corner at (x, z); the centre of a 3x3 last, like a player would to
-## avoid a 2x2 merging first. Returns the merged structure.
-func build_pattern(p, x: int, z: int, types: Array) -> Node3D:
-	var side := 2 if types.size() == 4 else 3
-	var order: Array = []
-	for i in types.size():
-		if not (side == 3 and i == 4):
-			order.append(i)
-	if side == 3:
-		order.append(4)
-	for i in order:
-		var t = map.tiles[x + i / side][z + i % side]
-		p.build_building(t, Catalog.spawn(BLOCKS[types[i]]))
-	return map.tiles[x + 1][z + 1].structure
-
-
 func _run() -> void:
 	await seconds(0.2)
 	game.buildingAllowed = false
 	game.shootingAllowed = true
 	game.timeLeftInRound = 1e6
 
-	# upgrade patterns -> structures (a = 0, b = 1); flak and shield patterns are rotated.
-	# A 3x3 square without a 3x3 recipe merges one of its 2x2 corners instead, also the pattern
-	# of the parked rocket station.
-	var cases := [
-		[[1, 1, 1, 1, 1, 1, 1, 1, 1], "cannon22b"], [[1, 1, 1, 1, 1, 1, 0, 0, 0], "cannon22b"],
-		[[0, 0, 0, 0], "cannon22a"], [[1, 1, 1, 1], "cannon22b"], [[0, 1, 1, 1], "flak22"],
-		[[1, 0, 0, 0], "shield22"],
-		# an adjacent pair of b blocks: along x a supply depot, along z a cannon22d
-		[[1, 0, 1, 0], "supply22"], [[0, 1, 0, 1], "supply22"],
-		[[1, 1, 0, 0], "cannon22d"], [[0, 0, 1, 1], "cannon22d"]]
-	var spots := [Vector2i(25, 24), Vector2i(3, 8), Vector2i(13, 10), Vector2i(24, 9), Vector2i(23, 19), Vector2i(5, 19),
-		Vector2i(8, 13), Vector2i(20, 13), Vector2i(8, 26), Vector2i(20, 27)]
-	var owners := [p2, p1, p1, p1, p2, p2, p1, p1, p1, p1]
+	# the 2x2 specials placed directly from their files (their upgrade-block
+	# recipes are parked out of the game)
 	var built := {}
-	for i in cases.size():
-		var s := build_pattern(owners[i], spots[i].x, spots[i].y, cases[i][0])
-		var name: String = Catalog.def_of(s).id if U.alive(s) else "nothing"
-		check(name == cases[i][1], "pattern %s merges into %s (got %s)" % [cases[i][0], cases[i][1], name])
-		built[cases[i][1]] = s
+	built["cannon22b"] = p2.place(load("res://data/buildings/cannon22b.tres"), 25, 24)
+	built["flak22"] = p2.place(load("res://data/buildings/flak22.tres"), 23, 17)
+	# the shield stands away from the gun's firing lines: its 7-tile radius would
+	# swallow every shell the checks below fire, and the volley must land
+	built["shield22"] = p2.place(load("res://data/buildings/shield22.tres"), 23, 3)
+	check(built.values().all(func(s): return U.alive(s)), "the specials stand on the map")
 
 	# four basic cannons in a square fuse into the heavy cannon
 	var fspot := Vector2i(3, 22)
-	var fused := build_pattern(p1, fspot.x, fspot.y, [2, 2, 2, 2])
+	for i in 4:
+		p1.build_building(map.tiles[fspot.x + i / 2][fspot.y + i % 2], Catalog.spawn("cannon"))
+	var fused = map.tiles[fspot.x + 1][fspot.y + 1].structure
 	var fused_def := Catalog.def_of(fused) if U.alive(fused) else null
 	check(fused_def != null and fused_def.id == "cannon22a",
 			"four cannons in a square fuse into the heavy cannon (got %s)" % [fused_def.id if fused_def else "nothing"])
+	built["cannon22a"] = fused
 
 	# cluster bomb: sub munitions set the tiles around the target on fire
-	var target = map.tiles[15][22]
+	var target = map.tiles[15][17]
 	var cluster := U.shooter(built["cannon22b"])
 	check(cluster.try_shoot(target.go.global_position, target), "cannon22b fires")
 	var burning := false
@@ -152,23 +127,6 @@ func _run() -> void:
 	check(U.alive(ftile.structure), "the fused gun survives seven shells")
 	ftile.damage_building_place(10.0)
 	check(not U.alive(ftile.structure), "the eighth shell destroys the fused gun")
-
-	# the AI lays out a supply depot so that it really becomes one, even when a
-	# block already placed forces a turned layout
-	var origin := Vector2i(24, 14)
-	# a b block in this corner also fits the turned (cannon22d) layout
-	p2.build_building(map.tiles[origin.x + 1][origin.y + 1], Catalog.spawn("upgrade_b"))
-	for dx in 2:
-		for dz in 2:
-			p2.mark_buildable_area_line_of_sight(origin.x + dx, origin.y + dz)
-	var plan := BuildingPlan.new(origin.x, origin.y, p2, 1, 1, 2, 2)
-	check(plan.try_initialize_xz_upgrade_tiles("supply22"), "AI finds a supply depot layout")
-	for xz in plan.xz2UpgradeTilesType:
-		if not U.alive(map.tiles[xz.x][xz.y].structure):
-			p2.build_building(map.tiles[xz.x][xz.y], Catalog.spawn(plan.xz2UpgradeTilesType[xz]))
-	var depot = map.tiles[origin.x + 1][origin.y + 1].structure
-	check(U.alive(depot) and Catalog.def_of(depot).id == "supply22",
-			"the AI's layout merges into a supply depot (got %s)" % [Catalog.def_of(depot).id if U.alive(depot) else "nothing"])
 
 	# ships take damage and sink
 	var water = map.tiles[0][map.sizeZ - 1]

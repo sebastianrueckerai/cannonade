@@ -1,5 +1,5 @@
 extends Node
-## Sandbox: set up two bases (blue and red) with walls and buildings, then
+## Sandbox: set up two castles (blue and red) with walls and buildings, then
 ## press Play to watch a battle (no building phase) and compare setups.
 ##
 ## The editor and each battle run in their own game world (a Main node built
@@ -29,7 +29,7 @@ var mode := Mode.EDIT
 ## the layout being edited (also what Reset returns to)
 var scenario := ScenarioDef.new()
 var side := 0
-## "wall", "erase", "base" or a building id
+## "wall", "erase", the base def's id ("castle") or a building id
 var tool := "wall"
 var rot := 0
 var match_index := 0
@@ -93,7 +93,7 @@ func player(s: int):
 	return game.players[s]
 
 
-## A fresh layout: both bases walled in at the usual places.
+## A fresh layout: both castles walled in at the usual places.
 func new_scenario(size: int) -> void:
 	scenario = ScenarioDef.new()
 	scenario.map_size = size
@@ -103,7 +103,7 @@ func new_scenario(size: int) -> void:
 	for s in 2:
 		var x0 := size / 2 - n / 2
 		var z0 := (size / 4 if s == 0 else size - size / 4 - 1) - n / 2
-		items.append({"side": s, "id": "base", "x": x0, "z": z0, "rot": 0})
+		items.append({"side": s, "id": "castle", "x": x0, "z": z0, "rot": 0})
 		for x in range(x0 - 1, x0 + n + 1):
 			for z in range(z0 - 1, z0 + n + 1):
 				if x == x0 - 1 or x == x0 + n or z == z0 - 1 or z == z0 + n:
@@ -427,7 +427,8 @@ func battle_time() -> float:
 func _check_battle_end() -> void:
 	if battle_time() < 1.0:
 		return
-	var alive := [player(0).activeCannons.size() > 0, player(1).activeCannons.size() > 0]
+	# a side lives while it holds a non-ruin castle, its guns notwithstanding
+	var alive := [player(0).castle_count() > 0, player(1).castle_count() > 0]
 	if alive[0] and alive[1] and battle_time() < time_limit:
 		return
 	if alive[0] and not alive[1]:
