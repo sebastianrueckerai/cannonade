@@ -1,7 +1,7 @@
 extends Node
-## The AI's hand while it builds: a drawn shooter it cannot afford (the parts
-## cap) is discarded quietly and redrawn on the usual cooldown; no building
-## ever flies away from the AI's gui while it waits for a piece that fits.
+## The AI's hand while it builds: a gun goes only into a plan's enclosure, a drawn
+## shooter it cannot afford (the parts cap) is discarded quietly and redrawn on the
+## usual cooldown; no building ever flies away from the AI's gui while it waits.
 ##   godot --headless --fixed-fps 30 res://tests/ai_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -72,6 +72,16 @@ func enemy_free_tiles() -> Array:
 
 func _run() -> void:
 	await frames(3)
+	# a gun goes only where a plan walls it: with no plan yet, the drawn cannon stays in hand
+	check(enemy.activePlans.is_empty(), "the dormant enemy has no plan yet")
+	U.destroy(enemy.nextBuilding)
+	enemy.nextBuilding = Catalog.spawn("cannon", enemy.buildingSpawn)
+	var held = enemy.nextBuilding
+	enemy.execute_building_plan()
+	check(U.alive(held) and enemy.nextBuilding == held and enemy.cannons.is_empty(),
+			"with no plan to wall it, the AI keeps the drawn gun in hand")
+	U.destroy(held)
+	enemy.nextBuilding = null
 	# the enemy sits at its parts cap, built the real way
 	var spots := enemy_free_tiles()
 	check(spots.size() >= 6, "the enemy has free tiles in build range")

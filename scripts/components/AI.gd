@@ -123,8 +123,6 @@ func execute_building_plan() -> void:
 		_discard_next_building()
 	var did := try_build_gun_in_plan()
 	if not did:
-		did = try_build_walled_in_gun()
-	if not did:
 		var n_for_max := 25
 		var n := _count_walled_in_tiles_in_finished_plans()
 		var p := 0.05 + 0.75 * (float(n) / float(n_for_max) if n < n_for_max else 1.0)
@@ -387,19 +385,9 @@ func _ring_cover(cells: Array[Vector2i], a: Vector2i, open: Dictionary, inside: 
 	return n
 
 
-## The drawn gun goes on any free tile in reach; the check burns it unless the
-## ring is closed round it by then (guns fire walled in or not).
-func try_build_walled_in_gun() -> bool:
-	if not U.alive(nextBuilding) or U.comp(nextBuilding, "Shooter") == null:
-		return false
-	for ix in map.sizeX:
-		for iz in map.sizeZ:
-			if in_reach(ix, iz) and map.get_mini(ix, iz) == 0:
-				build_next_building(map.tiles[ix][iz])
-				return true
-	return false
-
-
+## A drawn gun goes into a plan's enclosure, the only ground a ring will close round, and waits in
+## hand until a plan has room. (A gun on loose ground at the edge of reach can never be walled in:
+## the ring would stand beyond reach, so the check burns it.)
 func try_build_gun_in_plan() -> bool:
 	if not U.alive(nextBuilding) or U.comp(nextBuilding, "Shooter") == null:
 		return false
