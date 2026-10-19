@@ -1,0 +1,148 @@
+# Session 23: Rampart wall pieces
+
+Sebastian, 2026-10-19: "I now dislike my system of placing 1x1 blocks with
+connectors. I want to radically change it closer to the system in rampart."
+Walls connect wherever a field next to them holds a wall; two diagonal walls
+never connect; any side contact makes the walls one. His sketch sets seven
+pieces, `+` an empty cell, all rotatable:
+
+```
+#    ##   ###   ####   ##+   +#+   +#+
+                           +##   ###   ###
+                                 +#+
+```
+
+Mid-turn he added the reach rule: building stays possible as long as one tile
+of the new piece is within n tiles of an existing wall of a friendly castle,
+n picked here, so nobody builds behind enemy lines at the start.
+
+Locked with him this session: the seven shapes are the pieces the hand deals
+(placement stamps walls, no per-tile model inference anywhere); stacking stays,
+but only the single block stacks; the Sandbox editor keeps per-tile painting;
+the draw is weighted, small pieces common. Today's live game already deals
+shape pieces and the player rotates them — what dies is the connector
+machinery around that draw, not the dealing itself.
+
+## The design
+
+**Pieces and the placed unit.** Seven piece defs in [data/buildings/](../../../data/buildings):
+`wall_1`, `wall_2`, `wall_3`, `wall_4` (1 to 4 tiles in a row), `wall_s` (S/Z),
+`wall_t` (T), `wall_x` (plus). One placed def `wall`, the full-tile wall block:
+its `access` blocks all nine fine cells of its tile, `draw_weight` 0 — never
+drawn, only stamped. Piece defs carry their tile footprint in `access` too
+(false = wall tile, column-major like today), so
+[BuildingBlock.gd](../../../scripts/components/BuildingBlock.gd) rotates pieces
+with its existing grid code and `get_next_wall` keeps its random quarter turn.
+Piece `draw_weight`s, first lab guesses: 30, 25, 15, 10, 10, 6, 4 percent.
+The four old connector defs (`wall_line`, `wall_corner`, `wall_tee`,
+`wall_cross`) park D64-style with `parked = true`.
+
+**Placement.** The held piece node is the ghost: `next_wall_to_map` parents it
+to the hovered tile (the pattern's centre tile), exactly as the single wall
+does today; the piece prefabs are authored with the centre segment at the
+origin. Placing consumes the held node and stamps one fresh `wall` spawn on
+every footprint tile through `build_wall`, so `wallTiles`, `miniMap`,
+`StatesMap`, targeting and damage all keep seeing today's per-tile wall.
+`wall_1` takes the old fast path: the held node itself is placed, as today.
+Every footprint tile must pass today's free check (no structure, dry, not
+disabled, no ship, on the map). Rotation keys work as today, before placement.
+
+**Reach (I45).** A piece, gun or building goes down only when at least one of
+its footprint tiles sits within Chebyshev distance 2 (`map.buildingRange`) of
+an own wall tile or an own castle that is not a ruin. Guns keep the same gate
+with their centre tile. The `inBuildRange` array and its marking machinery
+(`mark_buildable_area_waterflow`, `mark_buildable_area_line_of_sight`,
+`remove_buildable_area`, the AI override) die; the gate is a predicate at
+hover time over `wallTiles` plus live castles. Anchors are walls and castles
+only, Sebastian's "wall of friendly castle"; guns and depots no longer seed
+building ground. The Sandbox editor bypasses the gate, as it bypasses
+placement rules today.
+
+**Stacking.** Only `wall_1` stacks, on an own wall tile with no upper, not
+burning. `_stackable_wall_fits` loses its connector-subset check; the held
+def must be `wall_1`. That tile takes two shells, upper first — the damage
+path (`damage_building_place`, `damage_stacked_wall`) stands unchanged.
+
+**Check and battle.** Unchanged. The ring check floods fine cells; a full-tile
+block closes rings like a thin wall did, diagonals never join; walls matter
+only at the check; shells kill per tile.
+
+**AI.** The connector planner dies: `BuildingPlan`'s
+`xz2upDownLeftRight`, `_score_connection`, `_score_connection_impl`,
+`_update_direction_dict`, the detour paths, `connectionMemo`, and
+`fits_plan_with_clockwise_rotations_of_input`. Plans stay rectangles of ring
+tiles with the castle term. `try_build_next_wall` fits footprints: for each of
+the four rotations it walks the unfinished ring tiles as anchor candidates and
+places the first piece whose every footprint tile is an unfinished ring tile;
+otherwise the piece flies away, as today. `try_stack_next_wall` stacks the
+monomino on any own uncovered wall near a plan. The search gets faster by
+losing the connector scorer.
+
+**Sandbox.** Painting places `wall` monominoes per tile. `_connectors`,
+`_place_wall`'s shape pick, `_reshape_around`, `_reshape_wall` and the bulk
+reshape in `apply_items`/`restore` die. `Catalog.spawn_wall_for` and its
+`_wall_shapes` cache die; loading maps any parked wall id (`wall_line` and
+friends) to `wall`, so shipped scenarios and old saves keep their tiles and
+only lose the cosmetic thin-wall shapes.
+
+**Start rings.** `_wall_in` and `_build_from_random_prefabs` stamp `wall`
+monominoes on the same ring tiles; `Main._place_castles` keeps its geometry.
+
+**Models (C15).** On the D49 painted path: `wall_block`, one full-tile wall
+segment; `wall_block_upper`, its storey; the seven piece models, each built
+from linked copies of the segment so butted pieces read as one continuous
+wall. The untracked `wall_straight.glb` from 2026-10-18 is the candidate
+segment — inspect, adopt or rebuild, then commit it with its sidecar. The
+wrapper scenes point the defs at the models; walls join the normal model path
+(`Catalog.spawn` stops skipping `Art.attach` for walls). [WallModel.gd](../../../scripts/WallModel.gd)
+and its FBX texture fallback die; [Wall.gd](../../../scripts/components/Wall.gd)
+keeps the upper swap (`WallBehaviour` with one upper model). The nine old wall
+glbs, the 34 FBX wrappers and the `Block*` placeholders park. The hand gui
+slot's top-down camera fits the held piece (it was fixed at 1.6).
+
+**Rules doc.** [rules-v3-draft.md](../game/design/rules-v3-draft.md) section 5
+gains: only a single block stacks on a wall tile. Section 9's draw question
+is answered: pieces, weighted. The README's wall text follows.
+
+## The commits
+
+Each rule ships with a test that ran red with the rule broken on purpose.
+
+1. **Art and data.** The segment, its upper and the seven piece models through
+   the pipeline and `godot_sync`; wrapper scenes; the eight defs; parking;
+   legacy-id mapping in the loader. Tests: `tests/catalog_test` (each piece
+   drawable at its weight, `wall` not, a parked id loads as `wall`),
+   `tests/flood_test` (a full-block ring closes, diagonal blocks never join).
+2. **Hand, placement, reach.** Draw, ghost on the anchor tile, rotate,
+   consume-and-stamp, the reach gate, the marking machinery deleted. Tests:
+   `tests/human` (an I3's ghost tiles equal its placed tiles under rotation —
+   the Unity z mirror is the trap here — three walls in `wallTiles`), a reach
+   case (all tiles past n from own walls and castles refused, a chain
+   extends the reach), `tests/preview_test` rewritten around the piece glbs'
+   footprints.
+3. **Stacking.** Monomino-only, no connector check, upper first. Test:
+   `tests/human` stacking case (watched red under the old subset rule).
+4. **AI.** Footprint fitting, connector planner deleted. Tests:
+   `tests/ai_test` (the AI closes a ring from pieces), `tests/sim` (walls
+   placed per battle at least as before).
+5. **Sandbox, rings, bookkeeping.** Per-tile painting, reshapers deleted,
+   start rings, shipped scenarios load, `rules-v3-draft.md`, README, roadmap
+   ticks (I44, I45, C15), K6 struck (the connector search it describes is
+   gone). Tests: `tests/sandbox_test` (paint, erase, an old scenario loads),
+   the full suite green.
+
+## Deliverables
+
+1. C15: the eight models on the painted path, a render sheet before the sync.
+2. I44 and I45 in the game, suite green, played once in the Sandbox and once
+   in Player vs. AI.
+3. The bookkeeping: this doc, the roadmap, the rules and README edits.
+
+## Limits
+
+- No image-model spend planned; the models are local Blender work. Ask before
+  any run that would pass the session window in `art/.env.session`.
+- Numbers are first guesses for the lab: draw weights, n = 2.
+- The reach gate changes gun seeding: after a battle that killed every wall,
+  rebuilding starts from the castle, not from surviving guns. Flagged to
+  Sebastian, his rule as stated.
