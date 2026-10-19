@@ -12,7 +12,8 @@ const C := "res://scripts/components/"
 const ARC := preload("res://prefabs/ArcRenderer.tscn")
 ## components a model scene may carry that are replaced by the def's
 const BUILDING_COMPONENTS := ["BuildingBlock", "Wall", "FlyAndVanish", "Upgrade", "Combinable",
-	"UpgradedStructure", "Shooter", "RocketLauncher", "Flak", "ShieldGenerator", "SupplyBuilding", "Structure"]
+	"UpgradedStructure", "Shooter", "RocketLauncher", "Flak", "ShieldGenerator", "SupplyBuilding",
+	"Castle", "Structure"]
 const PROJECTILE_COMPONENTS := ["Projectile", "ClusterBomb", "ProjectileStraightFlight", "S2SRocket"]
 
 signal reloaded
@@ -275,6 +276,8 @@ func configure(go: Node3D, def: BuildingDef) -> void:
 	var bb := _add(go, "BuildingBlock")
 	bb.accessColFromDownLeft = def.access.duplicate() if def.access.size() == 9 else [true, true, true, true, true, true, true, true, true]
 	bb.health = def.health
+	if def.category == BuildingDef.Category.BASE:
+		_add(go, "Castle")
 	if def.category == BuildingDef.Category.WALL or def.draw_weight > 0:
 		_add(go, "FlyAndVanish")
 	if is_ingredient(def.id):

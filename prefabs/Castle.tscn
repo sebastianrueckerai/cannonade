@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://materials/Base.tres" id="2"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+size = Vector3(1, 1, 1)
+
+[node name="Castle" type="Node3D"]
+
+[node name="Body" type="Node3D" parent="."]
+
+[node name="Cube (2)" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.55, 0, 0, 0, 0.9, 0, 0, 0, 0.55, 0, 1.6, 0)
+mesh = SubResource("BoxMesh_1")
+surface_material_override/0 = ExtResource("2")
+
+[node name="Cube (1)" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.8, 0, 0, 0, 0.55, 0, 0, 0, 0.8, 0, 0.45, 0)
+mesh = SubResource("BoxMesh_2")
+surface_material_override/0 = ExtResource("2")
+
+[node name="Cube" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.95, 0, 0, 0, 0.25, 0, 0, 0, 0.95, 0, -0.05, 0)
+mesh = SubResource("BoxMesh_3")
+surface_material_override/0 = ExtResource("2")

@@ -90,7 +90,12 @@ func build_multifield_upgrade() -> void:
 	tile.un_build()
 	for bp in upgradedTiles:
 		bp.upgradeCluster = self
-		player.upgrades.erase(Vector2i(bp.idxX, bp.idxZ))
+		# the consumed buildings leave every per-kind registry, not only upgrades
+		var k := Vector2i(bp.idxX, bp.idxZ)
+		player.upgrades.erase(k)
+		player.cannons.erase(k)
+		player.supports.erase(k)
+		player.supplies.erase(k)
 		if U.alive(bp.structure) and bp.structure != new_structure:
 			U.destroy(bp.structure)
 		bp.structure = new_structure
@@ -99,8 +104,13 @@ func build_multifield_upgrade() -> void:
 
 
 func damage_structure(damage: float) -> void:
+	var castle := U.comp(tile.structure, "Castle")
+	if castle != null:
+		castle.take_damage(damage)
+		return
 	var bb := U.comp(tile.structure, "BuildingBlock")
 	if bb != null:
+		bb.hits_taken += 1
 		bb.health -= damage
 		if bb.health <= 0:
 			un_build_upgrade()

@@ -137,13 +137,13 @@ func _run() -> void:
 	check(enclosed, "dragging walls around a rectangle encloses it")
 	check(sb.player(0).wallTiles.size() == 12 + 14, "the walls belong to blue")
 
-	# buildings: a cannon inside works, one outside is marked OFF
+	# buildings: cannons inside and outside the walls both work
 	await ui_click("Tool_cannon")
 	await click_tile(Vector2i(5, 4))
 	await click_tile(Vector2i(10, 10))
 	await seconds(0.4)
 	check(structure_id(Vector2i(5, 4)) == "cannon" and structure_id(Vector2i(10, 10)) == "cannon", "click places cannons")
-	check(sb.inactive_count() == 1, "only the cannon outside the walls is marked OFF")
+	check(sb.player(0).activeCannons.size() == 2, "both cannons are active, inside or outside the walls")
 
 	# a 2x2 building takes four tiles; it cannot overlap
 	await ui_click("Tool_flak22")

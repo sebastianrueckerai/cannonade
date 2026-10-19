@@ -29,6 +29,10 @@ func seconds(t: float) -> void:
 
 func _ready() -> void:
 	check(Catalog.errors.is_empty(), "shipped building data has no problems %s" % [Catalog.errors])
+	var castle := Catalog.get_def("castle")
+	check(castle != null and castle.size == 3 and castle.health == 120.0
+			and castle.category == BuildingDef.Category.BASE and castle.draw_weight == 0.0,
+			"the castle is a 3x3 base of 120 health that never draws")
 	_prepare_tmp_catalog()
 	_check_problem_reports()
 	await _check_workflow_in_game()
@@ -106,10 +110,10 @@ func _check_workflow_in_game() -> void:
 	var p1 = game.players[0]
 
 	# change a number and press F5: placed buildings use it at once
-	var tile = map.tiles[4][4]
+	var tile = map.tiles[9][14]
 	p1.build_building(tile, Catalog.spawn("cannon"))
 	var gun := U.shooter(tile.structure)
-	var target = map.tiles[4][14]
+	var target = map.tiles[9][3]
 	check(gun.try_shoot(target.go.global_position, target), "a placed cannon fires")
 	await seconds(0.5)
 	check(not gun.try_shoot(target.go.global_position, target), "it is still reloading after 0.5 s")
@@ -117,10 +121,10 @@ func _check_workflow_in_game() -> void:
 	cannon.behaviour(CannonBehaviour).reload = 0.2
 	ResourceSaver.save(cannon, TMP.path_join("cannon.tres"))
 
-	# a new type: duplicate the 2x2 flak, made from four cannons
+	# a new type: duplicate the 2x2 flak, made from cannons and a supply depot
 	var battery := _duplicate("flak22", "flak_battery")
 	battery.display_name = "Flak battery"
-	battery.recipe_pattern = PackedStringArray(["cannon", "cannon", "cannon", "cannon"])
+	battery.recipe_pattern = PackedStringArray(["cannon", "cannon", "cannon", "supply"])
 	battery.behaviour(FlakBehaviour).shoot_range = 6.0
 	ResourceSaver.save(battery, TMP.path_join("flak_battery.tres"))
 	await _press_f5()
@@ -131,10 +135,11 @@ func _check_workflow_in_game() -> void:
 	check(Catalog.get_def("flak_battery") != null, "the new building type is in the catalog after F5")
 
 	for k in [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]:
-		p1.build_building(map.tiles[10 + k.x][4 + k.y], Catalog.spawn("cannon"))
+		var part := "supply" if k == Vector2i(1, 1) else "cannon"
+		p1.build_building(map.tiles[10 + k.x][4 + k.y], Catalog.spawn(part))
 	var merged = map.tiles[11][5].structure
 	var merged_def := Catalog.def_of(merged)
-	check(merged_def != null and merged_def.id == "flak_battery", "four cannons in a square merge into the new flak battery")
+	check(merged_def != null and merged_def.id == "flak_battery", "three cannons and a depot merge into the new flak battery")
 	var flak := U.comp(merged, "Flak")
 	check(flak != null and flak.shootRange == 6.0, "it got its own flak numbers")
 	main.queue_free()

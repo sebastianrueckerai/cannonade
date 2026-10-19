@@ -93,8 +93,8 @@ func _run() -> void:
 	var ids: Array = start.values()
 	check(ids.has("base") and ids.has("cannon22a") and ids.has("supply22") and ids.count("cannon") == 4,
 			"the fort holds the base, a 2x2 cannon, the depots and four cannons")
-	var base = target.startBase.buildingPlace
-	check(map.is_tile_enclosed(base.idxX, base.idxZ), "the fort is walled in")
+	var base: Vector2i = start.keys().filter(func(k): return start[k] == "base")[0]
+	check(map.is_tile_enclosed(base.x, base.y), "the fort is walled in")
 	check(game.buildingAllowed and not main.get_node("UI/Timer").visible, "practice starts building, without a timer")
 
 	# a wall the fort could aim at (left click), a gun in the player's walls (fixture), then Enter: battle
@@ -102,7 +102,14 @@ func _run() -> void:
 	await point_at_tile(b + Vector2i(0, 3))
 	await click()
 	check(human.wallTiles.size() == 1, "left click builds a wall")
-	map.tiles[b.x][b.y].un_build()
+	for dx in 3:  # clear the start castle's square for the gun
+		for dz in 3:
+			var ct = map.tiles[b.x - 1 + dx][b.y - 1 + dz]
+			ct.upgradeCluster = null
+			ct.player = null
+			map.set_mini(ct.idxX, ct.idxZ, 0)
+			if U.alive(ct.structure):
+				ct.un_build()
 	human.build_building(map.tiles[b.x][b.y], Catalog.spawn("cannon"))
 	await frames(2)
 	check(human.activeCannons.size() == 1, "the player's gun is active")
@@ -112,7 +119,8 @@ func _run() -> void:
 	check(target.activeCannons.size() == 5 and target.stats.get("shots", 0) == 0,
 			"the fort's guns are ready but never fire back")
 
-	var front := Vector2i(map.sizeX / 2, base.idxZ - 3)
+	var front: Vector2i = start.keys().filter(func(k): return map.tiles[k.x][k.y].isWall) \
+			.reduce(func(a, b): return a if a.y < b.y else b)
 	check(start.has(front) and map.tiles[front.x][front.y].isWall, "aimed tile is a wall of the fort")
 	await point_at_tile(front)
 	await press_key(KEY_SPACE)
@@ -128,4 +136,4 @@ func _run() -> void:
 
 	await press_key(KEY_ENTER)
 	check(fort() == start, "the next battle starts with the whole fort again")
-	check(map.is_tile_enclosed(base.idxX, base.idxZ), "the rebuilt fort is walled in")
+	check(map.is_tile_enclosed(base.x, base.y), "the rebuilt fort is walled in")

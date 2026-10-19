@@ -92,8 +92,14 @@ func show_decorations() -> void:
 
 
 func damage_structure(damage: float) -> void:
+	if U.alive(structure):
+		var castle := U.comp(structure, "Castle")
+		if castle != null:
+			castle.take_damage(damage)
+			return
 	var bb = block()
 	if bb != null:
+		bb.hits_taken += 1
 		bb.health -= damage
 		if bb.health <= 0:
 			un_build()
@@ -138,7 +144,13 @@ func build(building: Node3D, p) -> void:
 	U.set_parent(building, go)
 	player = p
 	structure = building
-	map.set_mini(idxX, idxZ, p.playerID)
+	# 255 marks a building no player owns (a neutral castle or a ruin)
+	map.set_mini(idxX, idxZ, p.playerID if p != null else 255)
+	var castle := U.comp(building, "Castle")
+	if castle != null:
+		castle.map = map
+		map.castles.append(castle)
+		castle.repaint()
 	map.statesMap.update_tile(self)
 	destroy_decorations()
 

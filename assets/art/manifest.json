@@ -112,6 +112,21 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-14T23:48:59+02:00"
   },
+  "castle": {
+    "size": [
+      2.5209,
+      3.522,
+      2.9
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "castle"
+    ],
+    "tris": 3121,
+    "source_sha": "8b52cee815ba",
+    "approved_by": "Sebastian",
+    "synced": "2026-10-19T11:50:34+02:00"
+  },
   "castle_d1": {
     "size": [
       2.4841,

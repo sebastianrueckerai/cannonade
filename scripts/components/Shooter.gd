@@ -129,16 +129,23 @@ func _process(_delta: float) -> void:
 		stunned = false
 
 
+## Damaged guns fire slower: every shell survived adds half the reload again.
+func _interval() -> float:
+	var bb := U.comp(go, "BuildingBlock")
+	return secondsBetweenShots * (1.0 + 0.5 * (bb.hits_taken if bb != null else 0))
+
+
 func try_shoot(destination: Vector3, destination_tile) -> bool:
 	var shot := false
 	if not stunned and try_aim(destination) and U.time >= nextBulletTime:
 		shot = true
 		if player != null:
 			player.count("shots")
-		nextBulletTime = U.time + secondsBetweenShots
+		var wait := _interval()
+		nextBulletTime = U.time + wait
 		var cd := get_node_or_null(cooldown)
 		if cd:
-			cd.run(secondsBetweenShots)
+			cd.run(wait)
 		_arc().switch_on_or_off(false)  # the shell is the line now; the next aim draws the arc again
 		var rot := Basis(Vector3.UP, go.global_rotation.y)
 		var shell := Catalog.spawn_projectile(projectile, U.world(), _spawn().global_position, rot)

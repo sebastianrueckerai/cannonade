@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="1_castle"]
+[ext_resource type="PackedScene" path="res://prefabs/Castle.tscn" id="2_castle"]
+
+[resource]
+script = ExtResource("1_castle")
+display_name = "Castle"
+description = "Hold castles to raise your gun limit; lose them all and you are out."
+category = 2
+size = 3
+health = 120.0
+model = ExtResource("2_castle")
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()

@@ -97,7 +97,7 @@ func free_tile_in_range() -> Vector2i:
 func _run() -> void:
 	await frames(3)
 	var b := base_xz()
-	check(map.is_tile_enclosed(b.x, b.y), "player starts with a walled-in base")
+	check(map.is_tile_enclosed(b.x, b.y), "player starts with a walled-in castle")
 
 	# rotating the next wall with X / Y (a corner piece: not rotation symmetric)
 	U.destroy(human.nextWall)
@@ -119,8 +119,8 @@ func _run() -> void:
 	check(map.tiles[free.x][free.y].structure == wall, "left click places the wall")
 	check(U.alive(human.nextWall) and human.nextWall != wall, "a new wall is offered")
 
-	# out of range: nothing is built
-	var far := Vector2i(2, map.sizeZ - 3)
+	# out of range: nothing is built (clear of every neutral castle band)
+	var far := Vector2i(10, 15)
 	await point_at_tile(far)
 	await press("build_wall")
 	check(not U.alive(map.tiles[far.x][far.y].structure), "no building far away from own walls")
@@ -163,7 +163,14 @@ func _run() -> void:
 	check(U.comp(combined, "SupplyBuilding") != null, "upgrade + upgrade block combine into a supply building")
 
 	# a gun inside the walls fires at the enemy in the battle phase
-	map.tiles[b.x][b.y].un_build()
+	for dx in 3:  # clear the start castle's square for the gun
+		for dz in 3:
+			var ct = map.tiles[b.x - 1 + dx][b.y - 1 + dz]
+			ct.upgradeCluster = null
+			ct.player = null
+			map.set_mini(ct.idxX, ct.idxZ, 0)
+			if U.alive(ct.structure):
+				ct.un_build()
 	_offer_building("cannon")
 	await point_at_tile(b)
 	await press("build_building")
@@ -171,8 +178,13 @@ func _run() -> void:
 	check(human.activeCannons.size() == 1, "gun inside the walls is active")
 	game.timeLeftInRound = -1.5  # skip to the battle phase
 	await frames(2)
-	var enemy_base = game.players[1].startBase.buildingPlace
-	var enemy_wall = map.tiles[enemy_base.idxX][enemy_base.idxZ - 1]
+	var enemy = null
+	for c in map.castles:
+		if c.owner() == game.players[1]:
+			enemy = c
+			break
+	var ec: Vector2i = map.tile_index_at(enemy.go.global_position)
+	var enemy_wall = map.tiles[ec.x][ec.y - 2]  # the ring wall south of the 3x3 castle
 	await point_at_tile(Vector2i(enemy_wall.idxX, enemy_wall.idxZ))
 	await press("fire")
 	await seconds(12.0)

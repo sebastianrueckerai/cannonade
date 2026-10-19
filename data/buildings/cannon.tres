@@ -16,6 +16,7 @@ display_name = "Cannon"
 description = "Basic gun. Needs to be inside closed walls."
 model = ExtResource("4_mja7t")
 draw_weight = 1.0
+health = 40.0
 recipe_pattern = PackedStringArray()
 recipe_combine = PackedStringArray()
 behaviours = Array[ExtResource("1_nl7hb")]([SubResource("Resource_cpxy1")])

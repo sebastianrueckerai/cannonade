@@ -94,7 +94,7 @@ func _run() -> void:
 		"a faster flak salvo intercepts more (%.1f vs %.1f)" % [mean(fast, "r_intercepted"), mean(slow, "r_intercepted")])
 	check(mean(rows, "b_guns_lost") > 0 and mean(rows, "b_walls_lost") == 0,
 		"red, set to shoot at guns, destroys guns and no walls")
-	check(slow.all(func(x): return x["winner"] == "blue"), "blue's four cannons beat red's slow flak, also when played as red")
+	check(rows.all(func(x): return x["winner"] == "red"), "under v3 damage red's flak side beats blue's four cannons (hit guns fire slower), also when played as red")
 	check(rows.all(func(x): return x["winner"] in ["blue", "red", "draw"] and float(x["time"]) > 0), "every battle has a result")
 
 	# everything but the swept value and the seed

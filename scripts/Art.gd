@@ -160,6 +160,7 @@ static func attach(go: Node3D, id: String, lift := SLAB_TOP) -> bool:
 		if mi.get_script() == null:
 			mi.visible = false
 	go.add_child(art)
+	art.set_meta("art_id", id)
 	art.scale = Vector3(1.0 / go.scale.x, 1.0 / go.scale.y, 1.0 / go.scale.z)
 	art.position = Vector3(0, lift, 0)
 	# Indicators such as the cooldown ring float above the model and above the reach of a moving part.

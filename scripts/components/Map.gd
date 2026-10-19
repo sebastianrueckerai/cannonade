@@ -39,6 +39,8 @@ var openColorMin: Color
 var openColorMax: Color
 ## tiles[x][z] -> BuildingPlace component
 var tiles: Array = []
+## every Castle component on the map, in build order
+var castles: Array = []
 ## CustomModelMaker components
 var customModelMakers: Array = []
 ## miniMap[x * sizeZ + z]: player id owning the tile (0 = free)
@@ -143,6 +145,33 @@ func tile_position(xi: int, zi: int, y := 0.0) -> Vector3:
 	var xpos := tileSize * xi - (float(sizeX) * tileSize + tileSize) / 2.0
 	var zpos := tileSize * zi - (float(sizeZ) * tileSize + tileSize) / 2.0
 	return Vector3(xpos, y, -zpos)
+
+
+## Places a building no player owns (a neutral castle) with its lower left
+## corner on tile (x, z), the sandbox place() without a player: the square's
+## tiles belong to nobody (mini 255) and share one structure. Returns null
+## when a tile is not free.
+func place_neutral(def: BuildingDef, x: int, z: int) -> Node3D:
+	var square: Array = []
+	for dx in def.size:
+		for dz in def.size:
+			var t = tiles[x + dx][z + dz]
+			if U.alive(t.structure) or t.water or t.disabled or U.alive(t.ship):
+				return null
+			square.append(t)
+	var go: Node3D = Catalog.spawn(def)
+	var main = tiles[x + 1][z + 1]
+	var centre := Vector3.ZERO
+	for t in square:
+		centre += t.go.global_position
+		if t != main:
+			t.structure = go
+			t.player = null
+			set_mini(t.idxX, t.idxZ, 255)
+			t.destroy_decorations()
+	main.build(go, null)
+	go.global_position = Vector3(centre.x / square.size(), 0.0, centre.z / square.size())
+	return go
 
 
 ## Inverse of tile_position(); returns Vector2i(-1, -1) outside of the map.

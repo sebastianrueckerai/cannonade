@@ -21,8 +21,8 @@ var fleet = null
 var timeLeftInRound := 0.0
 var roundNumber := 0
 var started := false
-## false: no start bases (the sandbox places its own)
-var startBases := true
+## false: no castles on the map (the sandbox places its own)
+var castles := true
 
 signal round_changed(round_number: int, building: bool)
 
@@ -81,34 +81,66 @@ func _initialize_players() -> void:
 		p.supplyBar = supplyBars[i] if i < supplyBars.size() else null
 		p.supplyNeededBar = supplyNeededBars[i] if i < supplyNeededBars.size() else null
 		p.setup()
-	if startBases:
-		_set_player_start_bases()
+	if castles:
+		_place_castles()
 
 
-func _set_player_start_bases() -> void:
+## Where the four neutral castles of a side try to sit, before jitter.
+const CASTLE_ANCHORS: Array[Vector2i] = [Vector2i(6, 11), Vector2i(23, 11), Vector2i(4, 4), Vector2i(25, 4)]
+
+
+## Each player starts with a walled-in castle; with two players, four neutral
+## castles a side (mirrored exactly) wait to be ringed and claimed.
+func _place_castles() -> void:
 	var n := players.size()
 	var t: Array = map.tiles
-	if n == 1:
-		players[0].build_start_base(t[map.sizeX / 2][map.sizeZ / 2])
-	elif n == 2:
-		if map.sizeX < 12 or map.sizeZ < 12:
-			push_error("Map too small for %d players!" % n)
-			return
-		var x: int = map.sizeX / 2
-		var dz: int = map.sizeZ / 4
-		players[0].build_start_base(t[x][dz])
-		players[1].build_start_base(t[x][map.sizeZ - dz])
-	else:
-		if map.sizeX < 12 or map.sizeZ < 12:
-			push_error("Map too small for %d players!" % n)
-			return
-		var dx: int = map.sizeX / 4
-		var dz: int = map.sizeZ / 4
-		players[0].build_start_base(t[dx][dz])
-		players[1].build_start_base(t[dx][map.sizeZ - dz])
-		players[2].build_start_base(t[map.sizeX - dx][dz])
-		if n == 4:
-			players[3].build_start_base(t[map.sizeX - dx][map.sizeZ - dz])
+	if map.sizeX < 12 or map.sizeZ < 12:
+		push_error("Map too small for %d players!" % n)
+		return
+	match n:
+		1:
+			players[0].build_start_castle(t[map.sizeX / 2][map.sizeZ / 2])
+		2:
+			players[0].build_start_castle(t[map.sizeX / 2][map.sizeZ / 4])
+			players[1].build_start_castle(t[map.sizeX / 2][map.sizeZ - map.sizeZ / 4])
+		_:
+			var dx: int = map.sizeX / 4
+			var dz: int = map.sizeZ / 4
+			players[0].build_start_castle(t[dx][dz])
+			players[1].build_start_castle(t[dx][map.sizeZ - dz])
+			players[2].build_start_castle(t[map.sizeX - dx][dz])
+			if n == 4:
+				players[3].build_start_castle(t[map.sizeX - dx][map.sizeZ - dz])
+	if n != 2:
+		return
+	var castle := Catalog.get_def("castle")
+	var placed: Array = [Vector2i(map.sizeX / 2, map.sizeZ / 4), Vector2i(map.sizeX / 2, map.sizeZ - map.sizeZ / 4)]
+	for anchor in CASTLE_ANCHORS:
+		var c := _neutral_castle_spot(anchor, placed)
+		map.place_neutral(castle, c.x - 1, c.y - 1)
+		var m := Vector2i(c.x, map.sizeZ - 1 - c.y)
+		map.place_neutral(castle, m.x - 1, m.y - 1)
+		placed.append(c)
+		placed.append(m)
+
+
+## A jittered castle centre: up to 2 tiles off the anchor from the game's
+## random numbers, inside the bottom half, at Chebyshev distance at least 5
+## from every castle already placed. Falls back to the anchor itself.
+func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
+	var max_z: int = map.sizeZ / 2 - 2
+	for i in 25:
+		var c := anchor + Vector2i(U.rint(-2, 3), U.rint(-2, 3))
+		if c.x < 1 or c.y < 1 or c.x > map.sizeX - 2 or c.y > max_z:
+			continue
+		var far_enough := true
+		for q in placed:
+			if max(absi(c.x - q.x), absi(c.y - q.y)) < 5:
+				far_enough = false
+				break
+		if far_enough:
+			return c
+	return anchor
 
 
 func _update_round_time(delta: float) -> void:

@@ -6,7 +6,7 @@ extends Node
 
 const Main = preload("res://scripts/Main.gd")
 const BuildingPlan = preload("res://scripts/BuildingPlan.gd")
-const BLOCKS := {0: "upgrade_a", 1: "upgrade_b"}
+const BLOCKS := {0: "upgrade_a", 1: "upgrade_b", 2: "cannon"}
 
 var main: Node
 var game
@@ -89,6 +89,13 @@ func _run() -> void:
 		check(name == cases[i][1], "pattern %s merges into %s (got %s)" % [cases[i][0], cases[i][1], name])
 		built[cases[i][1]] = s
 
+	# four basic cannons in a square fuse into the heavy cannon
+	var fspot := Vector2i(3, 22)
+	var fused := build_pattern(p1, fspot.x, fspot.y, [2, 2, 2, 2])
+	var fused_def := Catalog.def_of(fused) if U.alive(fused) else null
+	check(fused_def != null and fused_def.id == "cannon22a",
+			"four cannons in a square fuse into the heavy cannon (got %s)" % [fused_def.id if fused_def else "nothing"])
+
 	# cluster bomb: sub munitions set the tiles around the target on fire
 	var target = map.tiles[15][22]
 	var cluster := U.shooter(built["cannon22b"])
@@ -122,13 +129,29 @@ func _run() -> void:
 		await seconds(10.0)
 		check(U.alive(s) and U.projectiles.is_empty(), "%s survives a direct hit (shell intercepted)" % name)
 
-	# the same shell destroys an unprotected structure (control for the two checks above)
+	# the same shells destroy an unprotected structure (control for the two checks above)
 	var plain = map.tiles[15][17]
 	p2.build_building(plain, Catalog.spawn("cannon"))
-	gun.nextBulletTime = 0.0
-	gun.try_shoot(plain.go.global_position, plain)
+	for i in 4:
+		gun.nextBulletTime = 0.0
+		gun.try_shoot(plain.go.global_position, plain)
 	await seconds(10.0)
-	check(not U.alive(plain.structure), "an unprotected structure is destroyed by the same shell")
+	check(not U.alive(plain.structure), "an unprotected structure is destroyed by the same shells")
+
+	# gun health: a basic gun dies on the fourth shell, the fused gun on the eighth
+	var single = map.tiles[12][20]
+	p1.build_building(single, Catalog.spawn("cannon"))
+	for i in 3:
+		single.damage_building_place(10.0)
+	check(U.alive(single.structure), "a basic gun survives three shells")
+	single.damage_building_place(10.0)
+	check(not U.alive(single.structure), "the fourth shell destroys a basic gun")
+	var ftile = map.tiles[fspot.x + 1][fspot.y + 1]
+	for i in 7:
+		ftile.damage_building_place(10.0)
+	check(U.alive(ftile.structure), "the fused gun survives seven shells")
+	ftile.damage_building_place(10.0)
+	check(not U.alive(ftile.structure), "the eighth shell destroys the fused gun")
 
 	# the AI lays out a supply depot so that it really becomes one, even when a
 	# block already placed forces a turned layout

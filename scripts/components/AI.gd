@@ -123,7 +123,8 @@ func _update_double_stack_plan() -> void:
 
 func execute_building_plan() -> void:
 	var did := try_build_upgrade()
-	if U.alive(nextBuilding) and U.comp(nextBuilding, "Upgrade") != null:
+	# cannons carry an Upgrade comp as fusion parts; only real blocks are discarded
+	if U.alive(nextBuilding) and U.comp(nextBuilding, "Upgrade") != null and U.shooter(nextBuilding) == null:
 		drop(nextBuilding, false)
 	if not did:
 		did = try_build_walled_in_gun()

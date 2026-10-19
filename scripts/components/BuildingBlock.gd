@@ -6,6 +6,8 @@ extends "res://scripts/components/Component.gd"
 @export var accessColFromDownLeft: Array = [true, true, true, true, true, true, true, true, true]
 @export var probabilityModifier := 1.0
 @export var health := 10.0
+## Shells survived; each one slows the gun's reload (nothing repairs)
+var hits_taken := 0
 
 var buildingPlace = null
 var player = null

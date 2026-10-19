@@ -31,7 +31,6 @@ var canCombine := false
 var aimPoint := Vector3.ZERO
 var wallSpawn: Node3D = null
 var buildingSpawn: Node3D = null
-var startBase = null
 ## Vector2i -> component
 var cannons := {}
 var supports := {}
@@ -247,6 +246,9 @@ func remove_building_from_player(bb) -> void:
 		if supplies.has(key):
 			count("buildings_lost")
 		supplies.erase(key)
+	var castle = U.comp(bgo, "Castle")
+	if castle != null:
+		map.castles.erase(castle)
 	remove_buildable_area(key.x, key.y)
 
 
@@ -405,14 +407,14 @@ func build_wall(tile, wall: Node3D) -> void:
 	wallTiles.append(tile)
 
 
-## The base covers the square of its size that has `tile` at its centre, or for an even size, `tile` as the
-## corner square with the highest x and z, with a ring of walls round it.
-func build_start_base(tile) -> void:
-	var size: int = Catalog.base_def().size
-	var x0: int = tile.idxX - size / 2
-	var z0: int = tile.idxZ - size / 2
-	place(Catalog.base_def(), x0, z0)
-	_wall_in(x0, z0, x0 + size - 1, z0 + size - 1)
+## The start castle covers the square of its size with `tile` at its centre,
+## walled in by a closed ring.
+func build_start_castle(tile) -> void:
+	var def := Catalog.get_def("castle")
+	var x0: int = tile.idxX - def.size / 2
+	var z0: int = tile.idxZ - def.size / 2
+	place(def, x0, z0)
+	_wall_in(x0, z0, x0 + def.size - 1, z0 + def.size - 1)
 
 
 func _build_from_random_prefabs(tile, plan: Array) -> void:
@@ -468,12 +470,11 @@ func manage_supply_and_active_buildings() -> void:
 		var cannon = cannons[key]
 		if not U.alive(cannon):
 			continue
-		if map.is_tile_enclosed(key.x, key.y):
-			var need: float = cannon.get_supply_needed()
-			supplyNeed += need
-			if need == 0 or running > need:
-				activeCannons.append(cannon)
-				running -= need
+		var need: float = cannon.get_supply_needed()
+		supplyNeed += need
+		if need == 0 or running > need:
+			activeCannons.append(cannon)
+			running -= need
 	for key in supports:
 		var support = supports[key]
 		if not U.alive(support):
@@ -522,7 +523,6 @@ func place(def: BuildingDef, x: int, z: int, node: Node3D = null) -> Node3D:
 			build_wall(tile, go)
 		else:
 			build_building(tile, go)
-		_mark_base(go, def)
 		return go
 	var tiles: Array = []
 	for dx in def.size:
@@ -542,14 +542,7 @@ func place(def: BuildingDef, x: int, z: int, node: Node3D = null) -> Node3D:
 	var cluster = UpgradeCluster.new(main, self, tiles)
 	for t in tiles:
 		t.upgradeCluster = cluster
-	_mark_base(go, def)
 	return go
-
-
-func _mark_base(go: Node3D, def: BuildingDef) -> void:
-	if def.category == BuildingDef.Category.BASE:
-		startBase = U.comp(go, "BuildingBlock")
-		U.set_color(go, mainColor)
 
 
 ## Every tile of the square is on the map, dry, free and usable.
