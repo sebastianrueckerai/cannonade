@@ -225,21 +225,21 @@ func set_tile_color(c: Color) -> void:
 	U.set_color(model(), c)
 
 
-## Puts the targeting marker of a shooter on this tile: the tile and everything
-## on it light up, subtly tinted in the shooter's colour, until the last shot
-## aimed here lands (target_off).
+## Puts the targeting marker of a shooter on this tile: the slab lights up,
+## subtly tinted in the shooter's colour, until the last shot aimed here lands
+## (target_off).
 func target_on(color: Color) -> void:
 	_target_tints += 1
 	if _target_tints > 1:
 		return
-	U.set_emission(go, Color.WHITE.lerp(color, 0.3), 1.2)
+	U.set_emission(model(), Color.WHITE.lerp(color, 0.3), 1.2)
 
 
 func target_off() -> void:
 	_target_tints = maxi(_target_tints - 1, 0)
 	if _target_tints > 0:
 		return
-	U.set_emission(go, Color.WHITE, 0.0)
+	U.set_emission(model(), Color.WHITE, 0.0)
 
 
 func shake(duration: float) -> void:
