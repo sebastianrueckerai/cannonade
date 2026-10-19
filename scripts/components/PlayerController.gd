@@ -125,7 +125,7 @@ func update_point_and_tile_selected() -> void:
 		freeTileSelected = not U.alive(buildableTileSelected.structure) and buildableTileSelected.buildable()
 		if freeTileSelected:
 			next_wall_to_map()
-			next_building_to_map()
+			next_building_to_gui()
 			if ibr(x, z):
 				buildableTileSelected.highlight_on(highlightPosColor)
 				canBuildOnTile = true
@@ -211,15 +211,6 @@ func next_wall_to_map() -> void:
 		switch_casting_shadows(nextWall, true)
 		_lighten_wall()
 		_hide_decorations()
-
-
-## The held building previews on the hovered tile like the wall, so the fade
-## reveals a gun parked behind a castle (and the piece reads before it is placed).
-func next_building_to_map() -> void:
-	if U.alive(nextBuilding):
-		U.set_parent(nextBuilding, buildableTileSelected.go)
-		nextBuilding.position = Vector3.ZERO
-		switch_casting_shadows(nextBuilding, true)
 
 
 func next_building_to_gui() -> void:

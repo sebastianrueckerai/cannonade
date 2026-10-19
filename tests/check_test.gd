@@ -206,8 +206,8 @@ func _run() -> void:
 		check(body_mat != null and is_equal_approx(body_mat.albedo_color.a, 0.35),
 				"the castle behind the cursor piece fades out")
 		check(human.nextWall.get_parent() == map.tiles[hide.x][hide.y].go
-				and human.nextBuilding.get_parent() == map.tiles[hide.x][hide.y].go,
-				"the held wall and the held gun stand on the hidden tile")
+				and human.nextBuilding.get_parent() == human.buildingSpawn,
+				"the wall previews on the hidden tile, the gun stays in its gui slot")
 	# on the castle itself nothing previews, so nothing fades
 	human.mousePosition = cam.unproject_position(
 			map.tile_position(pc.x, pc.y) + Vector3.UP * 0.1)

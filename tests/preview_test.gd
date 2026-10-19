@@ -68,10 +68,11 @@ func _check_slot(kind: String, i: int) -> void:
 			"showing the %s slot %d restores panel and viewport" % [kind, n])
 
 
-## The next wall and the held building rest centred in their slots over void and
-## follow the cursor onto a free tile (across the viewport boundary), like in
-## the game. The tile's trees and stones hide under the preview, so the piece's
-## orientation reads, and they come back when the preview leaves the tile.
+## The next wall rests centred in its slot over void and follows the cursor onto
+## a free tile (across the viewport boundary); the held building stays in its
+## slot, only the wall previews. The tile's trees and stones hide under the
+## preview, so the piece's orientation reads, and they come back when the
+## preview leaves the tile.
 func _check_hovers() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
@@ -106,8 +107,8 @@ func _check_hovers() -> void:
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == map.tiles[free.x][free.y].go,
 			"the wall moves onto the hovered tile as the placement preview")
-	check(human.nextBuilding.get_parent() == map.tiles[free.x][free.y].go,
-			"the building moves onto the hovered tile as the placement preview")
+	check(human.nextBuilding.get_parent() == human.buildingSpawn,
+			"the building stays in its slot; only the wall previews on the tile")
 	check(deco_meshes.all(func(m): return not m.visible),
 			"the tile's trees and stones hide under the placement preview")
 	ev = InputEventMouseMotion.new()
