@@ -9,11 +9,14 @@ const UpgradeCluster = preload("res://scripts/UpgradeCluster.gd")
 @export var highlightNegColorHexCode := "#ad3030"
 @export var discardFlySeconds := 1.0
 @export var secondsBetweenBuildings := 0.3
-@export var maxSupply := 100.0
 
-## ProgressBar controls (0..1)
-var supplyBar: Range = null
-var supplyNeededBar: Range = null
+## Parts cap per castles held: 1 castle 6 parts, 2 castles 10, then 13, 15, 17.
+const PARTS_CAP := [0, 6, 10, 13, 15, 17]
+## Standing limit on gun parts; a cap below the placed guns blocks new placement only.
+var partsCap := 0
+## HUD labels, one pair a player (parts, castles)
+var partsLabel: Label = null
+var castlesLabel: Label = null
 var mainColor := Color.WHITE
 var highlightPosColor := Color.WHITE
 var highlightNegColor := Color.RED
@@ -44,8 +47,6 @@ var map = null
 var inBuildRange := PackedByteArray()
 var secondsLastBuilding := 0.0
 var game = null
-var availableSupply := 0.0
-var supplyNeed := 0.0
 var voidSelected := false
 var wallColor := Color.WHITE
 ## battle statistics (shots, hits, intercepted, absorbed, walls_lost, guns_lost, buildings_lost)
@@ -227,6 +228,37 @@ func count(stat: String, n := 1) -> void:
 	stats[stat] = stats.get(stat, 0) + n
 
 
+# ------------------------------------------------------------------ parts
+## Gun parts in play: the square of each live gun's footprint (a fused 2x2
+## cannon costs the same 4 parts as the four singles it replaced).
+func parts_used() -> int:
+	var total := 0
+	for key in cannons:
+		var c = cannons[key]
+		if U.alive(c):
+			var s: int = Catalog.def_of(c.go).size
+			total += s * s
+	return total
+
+
+func castle_count() -> int:
+	var n := 0
+	for castle in map.castles:
+		if U.alive(castle) and not castle.is_ruin() and castle.owner() == self:
+			n += 1
+	return n
+
+
+func recompute_parts_cap() -> void:
+	partsCap = PARTS_CAP[mini(castle_count(), PARTS_CAP.size() - 1)]
+
+
+## A drawn shooter that would pass the parts cap is not placed; the draw is kept.
+func over_parts_cap(go: Node3D) -> bool:
+	var def := Catalog.def_of(go)
+	return def != null and U.shooter(go) != null and parts_used() + def.size * def.size > partsCap
+
+
 func remove_building_from_player(bb) -> void:
 	var bgo: Node3D = bb.go
 	var key := Vector2i(bb.buildingPlace.idxX, bb.buildingPlace.idxZ)
@@ -356,6 +388,8 @@ func combine_building(tile) -> Node3D:
 func build_next_building(tile = null) -> void:
 	if tile == null:
 		tile = buildableTileSelected
+	if over_parts_cap(nextBuilding):
+		return
 	build_building(tile, nextBuilding)
 	nextBuilding = null
 	secondsLastBuilding += U.time
@@ -453,43 +487,16 @@ func _wall_in(x0: int, z0: int, x1: int, z1: int) -> void:
 		_build_from_random_prefabs(t[x1 + 1][z], verticals)
 
 
-func _get_available_supply() -> float:
-	var total := 0.0
-	for key in supplies:
-		if map.is_tile_enclosed(key.x, key.y):
-			total += supplies[key].supply
-	return total
-
-
-func manage_supply_and_active_buildings() -> void:
-	availableSupply = _get_available_supply()
-	var running := availableSupply
-	supplyNeed = 0.0
+## Rules v3: every live gun fires, walled in or not; nothing is ever unsupplied.
+func refresh_active_cannons() -> void:
 	activeCannons = []
 	for key in cannons:
-		var cannon = cannons[key]
-		if not U.alive(cannon):
-			continue
-		var need: float = cannon.get_supply_needed()
-		supplyNeed += need
-		if need == 0 or running > need:
-			activeCannons.append(cannon)
-			running -= need
+		if U.alive(cannons[key]):
+			activeCannons.append(cannons[key])
 	for key in supports:
 		var support = supports[key]
-		if not U.alive(support):
-			continue
-		if map.is_tile_enclosed(key.x, key.y):
-			var need: float = support.get_supply_needed()
-			supplyNeed += need
-			var supplied: bool = need == 0 or running > need
-			support.switch_on_off(supplied)
-			if supplied:
-				running -= need
-	if supplyNeededBar:
-		supplyNeededBar.value = minf(maxSupply, supplyNeed) / maxSupply
-	if supplyBar:
-		supplyBar.value = minf(maxSupply, availableSupply) / maxSupply
+		if U.alive(support):
+			support.switch_on_off(true)
 
 
 func drop(droppable: Node3D, is_wall := true) -> void:

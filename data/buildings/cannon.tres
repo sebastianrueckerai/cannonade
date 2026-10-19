@@ -13,7 +13,7 @@ projectile = ExtResource("2_gg0o8")
 [resource]
 script = ExtResource("5_atgss")
 display_name = "Cannon"
-description = "Basic gun. Needs to be inside closed walls."
+description = "Basic gun. Costs parts; buildings outside your walls burn at the check."
 model = ExtResource("4_mja7t")
 draw_weight = 1.0
 health = 40.0

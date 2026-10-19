@@ -268,8 +268,12 @@ func _run() -> void:
 			var example: ScenarioDef = load(path)
 			sb.load_scenario(path)
 			await seconds(0.4)
-			check(sb.snapshot().size() == example.items.size() and sb.inactive_count() == 0,
-					"example %s loads with everything placed and working" % path.get_file())
+			var all_guns_active := true
+			for plr in sb.game.players:
+				if plr.cannons.size() != plr.activeCannons.size():
+					all_guns_active = false
+			check(sb.snapshot().size() == example.items.size() and all_guns_active,
+					"example %s loads with everything placed and every gun active" % path.get_file())
 			await select_option("Match", 0)
 			await ui_click("Play")  # and fights without errors
 			await seconds(20.0)

@@ -217,13 +217,13 @@ func _piece_extents(node: Node3D, xform: Transform3D, corners: Array) -> void:
 		_piece_extents(c, world, corners)
 
 
-## Every supply bar and preview panel is fully on screen and clear of the others.
+## Every HUD panel and preview panel is fully on screen and clear of the others.
 func _check_corners() -> void:
 	await get_tree().process_frame
 	var screen := main.get_viewport().get_visible_rect()
 	var bits: Array = []
 	for c in main.ui.get_children():
-		if c is Control and (c.name.begins_with("Supply") or c.name.find("Panel") >= 0):
+		if c is Control and (c.name.begins_with("Hud") or c.name.find("Panel") >= 0):
 			bits.append([c.name, c.get_global_rect()])
 	for a in bits.size():
 		check(screen.encloses(bits[a][1]), "%s is fully on screen" % bits[a][0])

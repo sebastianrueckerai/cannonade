@@ -1,6 +1,7 @@
 extends Node
-## Practice mode through real key input: Enter switches between build and battle, the target fort never
-## fires and never grows, and it stands again, complete, at the start of every battle.
+## Practice mode through real key input on the standard castle map: Enter switches between build
+## and battle, the dormant enemy holds its walled start castle and never fires, wall damage stays
+## across phases, and ruining the enemy castle ends the game with the VICTORY overlay.
 ##   godot --headless --fixed-fps 30 res://tests/practice_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -9,7 +10,7 @@ var main: Node
 var game
 var map
 var human
-var target
+var enemy
 var mouse := Vector2.ZERO
 var failures: Array = []
 
@@ -25,7 +26,7 @@ func _ready() -> void:
 	game = main.game
 	map = game.map
 	human = game.players[0]
-	target = game.players[1]
+	enemy = game.players[1]
 	await _run()
 	print("PRACTICE TEST PASSED" if failures.is_empty() else "PRACTICE TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
@@ -77,63 +78,69 @@ func press_key(key: Key) -> void:
 	await frames(1)
 
 
-## Building id per tile of the target's fort.
-func fort() -> Dictionary:
-	var out := {}
-	for column in map.tiles:
-		for t in column:
-			if t.player == target and U.alive(t.structure):
-				out[Vector2i(t.idxX, t.idxZ)] = Catalog.def_of(t.structure).id
-	return out
+func enemy_castle():
+	for c in map.castles:
+		if U.alive(c) and c.owner() == enemy:
+			return c
+	return null
+
+
+func _find_label(node, text: String) -> bool:
+	if node is Label and node.text == text:
+		return true
+	for child in node.get_children():
+		if _find_label(child, text):
+			return true
+	return false
 
 
 func _run() -> void:
 	await frames(3)
-	var start := fort()
-	var ids: Array = start.values()
-	check(ids.has("base") and ids.has("cannon22a") and ids.has("supply22") and ids.count("cannon") == 4,
-			"the fort holds the base, a 2x2 cannon, the depots and four cannons")
-	var base: Vector2i = start.keys().filter(func(k): return start[k] == "base")[0]
-	check(map.is_tile_enclosed(base.x, base.y), "the fort is walled in")
+	# the standard versus map with a dormant enemy
+	var ec = enemy_castle()
+	check(ec != null and map.is_tile_enclosed(15, 23), "the enemy starts with its castle walled in")
+	var neutral := 0
+	for c in map.castles:
+		if U.alive(c) and c.owner() == null:
+			neutral += 1
+	check(map.castles.size() == 10 and neutral == 8, "ten castles, eight of them neutral")
+	check(human.partsCap == 6, "one castle caps the parts at 6")
 	check(game.buildingAllowed and not main.get_node("UI/Timer").visible, "practice starts building, without a timer")
 
-	# a wall the fort could aim at (left click), a gun in the player's walls (fixture), then Enter: battle
-	var b := Vector2i(map.sizeX / 2, map.sizeZ / 4)
-	await point_at_tile(b + Vector2i(0, 3))
-	await click()
-	check(human.wallTiles.size() == 1, "left click builds a wall")
-	for dx in 3:  # clear the start castle's square for the gun
-		for dz in 3:
-			var ct = map.tiles[b.x - 1 + dx][b.y - 1 + dz]
-			ct.upgradeCluster = null
-			ct.player = null
-			map.set_mini(ct.idxX, ct.idxZ, 0)
-			if U.alive(ct.structure):
-				ct.un_build()
-	human.build_building(map.tiles[b.x][b.y], Catalog.spawn("cannon"))
+	# a pocket on the start ring for a gun (the ring itself has no free tile), then Enter: battle
+	var b := Vector2i(15, 7)  # the player's castle
+	human._build_from_random_prefabs(map.tiles[b.x + 3][b.y - 2], [false, false, true, true])
+	human._build_from_random_prefabs(map.tiles[b.x + 4][b.y - 2], [true, false, true, false])
+	for z in range(b.y - 1, b.y + 2):
+		human._build_from_random_prefabs(map.tiles[b.x + 4][z], [true, true, false, false])
+	human._build_from_random_prefabs(map.tiles[b.x + 4][b.y + 2], [false, true, true, false])
+	human._build_from_random_prefabs(map.tiles[b.x + 3][b.y + 2], [false, false, true, true])
+	check(map.is_tile_enclosed(b.x + 3, b.y), "the pocket is walled in")
+	human.build_building(map.tiles[b.x + 3][b.y], Catalog.spawn("cannon"))
 	await frames(2)
 	check(human.activeCannons.size() == 1, "the player's gun is active")
 	await press_key(KEY_ENTER)
 	check(game.shootingAllowed and not game.buildingAllowed, "Enter starts the battle")
 	await seconds(6.0)
-	check(target.activeCannons.size() == 5 and target.stats.get("shots", 0) == 0,
-			"the fort's guns are ready but never fire back")
+	check(enemy.stats.get("shots", 0) == 0, "the dormant enemy never fires")
 
-	var front: Vector2i = start.keys().filter(func(k): return map.tiles[k.x][k.y].isWall) \
-			.reduce(func(a, b): return a if a.y < b.y else b)
-	check(start.has(front) and map.tiles[front.x][front.y].isWall, "aimed tile is a wall of the fort")
+	# a shell destroys an enemy wall; nothing rebuilds it
+	var front := Vector2i(15, 21)
 	await point_at_tile(front)
 	await press_key(KEY_SPACE)
 	await seconds(12.0)
-	check(not U.alive(map.tiles[front.x][front.y].structure), "a shell destroys the aimed fort wall")
-
+	check(not U.alive(map.tiles[front.x][front.y].structure), "a shell destroys the aimed enemy wall")
 	await press_key(KEY_ENTER)
 	check(game.buildingAllowed and not game.shootingAllowed, "Enter goes back to building")
-	await seconds(8.0)
-	var damaged := fort()
-	check(not damaged.has(front), "the damage stays while building")
-	check(damaged.keys().all(func(k): return start.has(k)), "the fort does not grow")
+	await frames(3)
+	check(not U.alive(map.tiles[front.x][front.y].structure), "the damage stays while building")
+	check(human.cannons.size() == 1 and game.started, "the walled gun survives the check and the game runs on")
 
+	# twelve shells ruin the enemy castle; the next check ends the game
+	for i in 12:
+		map.tiles[15][23].damage_building_place(10.0)
+	check(ec.is_ruin() and U.alive(ec.go) and map.get_mini(15, 23) == 255, "twelve shells leave a ruin")
 	await press_key(KEY_ENTER)
-	check(fort() == start, "the next battle starts with the whole fort again")
-	check(map.is_tile_enclosed(base.x, base.y), "the rebuilt fort is walled in")
+	check(not game.started, "the enemy without a castle is out at the check")
+	var overlay := main.get_node_or_null("GameOver")
+	check(overlay != null and _find_label(overlay, "VICTORY"), "the overlay shows the victory")

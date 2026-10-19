@@ -125,9 +125,9 @@ func _report(g) -> void:
 		for t in p.wallTiles:
 			if U.alive(t.wallStacked):
 				stacked += 1
-		line += " P%d walls=%d stacked=%d guns=%d active=%d sup=%d supply=%.0f/%.0f upg=%d" % [
-			p.playerID, p.wallTiles.size(), stacked, p.cannons.size(), p.activeCannons.size(),
-			p.supports.size(), p.availableSupply, p.supplyNeed, p.upgrades.size()]
+		line += " P%d walls=%d stacked=%d guns=%d parts=%d/%d castles=%d upg=%d" % [
+			p.playerID, p.wallTiles.size(), stacked, p.cannons.size(), p.parts_used(), p.partsCap,
+			p.castle_count(), p.upgrades.size()]
 		if p.has_method("search_best_building_plans"):
 			line += " plans=%d/%d" % [p.activePlans.size(), p.finishedPlans.size()]
 		line += " |"
@@ -147,7 +147,17 @@ func _count_enclosed(g) -> int:
 ## The game actually got played: rounds alternate on time, every AI builds,
 ## arms itself and fights, ships sail and shoot.
 func _check_outcome(g) -> void:
-	var expected_rounds := int(seconds / (g.roundDuration + 1.0))
+	# a phase flips one second past its end (see _update_round_time)
+	var expected_rounds := 0
+	var spent := 0.0
+	var building := true
+	while true:
+		var d: float = (g.roundDuration if building else g.battleDuration) + 1.0
+		if spent + d > seconds:
+			break
+		spent += d
+		expected_rounds += 1
+		building = not building
 	if g.roundNumber != expected_rounds:
 		_fail("expected %d round changes, got %d" % [expected_rounds, g.roundNumber])
 	var battle_happened: bool = g.roundNumber >= 1

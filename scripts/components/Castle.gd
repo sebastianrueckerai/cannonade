@@ -25,6 +25,9 @@ func take_damage(damage: float) -> void:
 
 
 func become_ruin() -> void:
+	var holder = owner()
+	if holder != null:
+		holder.count("castles_lost")
 	set_state(RUIN)
 	hold_tiles(null)
 

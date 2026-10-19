@@ -57,8 +57,7 @@ var _drag_button := 0
 var _ghost: Node3D = null
 var _ghost_tool := ""
 var _footprint: MeshInstance3D = null
-var _markers := {}
-var _marker_timer := 0.0
+var _poll_timer := 0.0
 
 
 func _ready() -> void:
@@ -73,7 +72,6 @@ func _make_world(kinds: Array) -> void:
 	if world != null:
 		remove_child(world)
 		world.queue_free()
-	_markers = {}
 	_ghost = null
 	_ghost_tool = ""
 	_footprint = null
@@ -401,6 +399,9 @@ func play() -> void:
 	game.shootingAllowed = true
 	game.timeLeftInRound = 1e9
 	game.started = true
+	for p in game.players:
+		p.refresh_active_cannons()
+		p.partsCap = 999  # the sandbox places freely: the parts cap does not apply
 	mode = Mode.BATTLE
 	winner = -1
 	battle_start = U.time
@@ -555,67 +556,18 @@ func _process(delta: float) -> void:
 		return
 	if mode == Mode.BATTLE:
 		_check_battle_end()
-	_marker_timer -= delta
-	if _marker_timer <= 0:
-		_marker_timer = 0.25
-		_update_markers()
+	_poll_timer -= delta
+	if _poll_timer <= 0:
+		_poll_timer = 0.25
+		if mode == Mode.EDIT:
+			for p in game.players:
+				p.refresh_active_cannons()
 		_poll_lab()
 	_update_ghost()
 	ui.update_live()
 
 
 # ------------------------------------------------------------- visuals
-## A red X floating above a building.
-func _off_mark() -> Node3D:
-	var root := Node3D.new()
-	root.name = "OffMark"
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.albedo_color = Color(1, 0.2, 0.15)
-	m.no_depth_test = true
-	for a in [PI / 4.0, -PI / 4.0]:
-		var bar := MeshInstance3D.new()
-		var b := BoxMesh.new()
-		b.size = Vector3(0.7, 0.12, 0.12)
-		bar.mesh = b
-		bar.material_override = m
-		bar.rotation = Vector3(0, 0, a)
-		bar.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		root.add_child(bar)
-	return root
-
-
-## A red X above guns and support buildings that do not work (not enclosed or
-## not enough supply).
-func _update_markers() -> void:
-	for p in game.players:
-		if mode == Mode.EDIT:
-			p.manage_supply_and_active_buildings()
-	var off := {}
-	for p in game.players:
-		for k in p.cannons:
-			if not p.activeCannons.has(p.cannons[k]):
-				off[p.cannons[k].go] = true
-		for k in p.supports:
-			if not p.supports[k].on:
-				off[p.supports[k].go] = true
-	for go in _markers.keys():
-		if not off.has(go) or not U.alive(go):
-			if is_instance_valid(_markers[go]):
-				_markers[go].queue_free()
-			_markers.erase(go)
-	for go in off:
-		if not _markers.has(go) and U.alive(go):
-			var mark := _off_mark()
-			world.add_child(mark)
-			mark.global_position = go.global_position + Vector3(0, 1.4, 0)
-			_markers[go] = mark
-
-
-func inactive_count() -> int:
-	return _markers.size()
-
-
 func _update_ghost() -> void:
 	if mode != Mode.EDIT or _hover.x < 0 or _drag_button == MOUSE_BUTTON_RIGHT:
 		if _footprint:

@@ -163,16 +163,9 @@ func _run() -> void:
 	check(U.comp(combined, "SupplyBuilding") != null, "upgrade + upgrade block combine into a supply building")
 
 	# a gun inside the walls fires at the enemy in the battle phase
-	for dx in 3:  # clear the start castle's square for the gun
-		for dz in 3:
-			var ct = map.tiles[b.x - 1 + dx][b.y - 1 + dz]
-			ct.upgradeCluster = null
-			ct.player = null
-			map.set_mini(ct.idxX, ct.idxZ, 0)
-			if U.alive(ct.structure):
-				ct.un_build()
+	_pocket()
 	_offer_building("cannon")
-	await point_at_tile(b)
+	await point_at_tile(b + Vector2i(3, 0))
 	await press("build_building")
 	await frames(2)  # active guns are re-evaluated every frame
 	check(human.activeCannons.size() == 1, "gun inside the walls is active")
@@ -195,3 +188,17 @@ func _run() -> void:
 func _offer_building(id: String) -> void:
 	U.destroy(human.nextBuilding)
 	human.nextBuilding = Catalog.spawn(id, human.buildingSpawn)
+
+
+## A one-tile pocket on the east side of the start ring, so a gun fits inside the walls without
+## touching the castle. The corners take the shapes the ring's own north-east and south-east
+## corners use: the north one bridges the north wall's row and the east wall's column, the
+## south one the east wall's column and the south wall's row.
+func _pocket() -> void:
+	var b := base_xz()
+	human._build_from_random_prefabs(map.tiles[b.x + 3][b.y - 2], [false, false, true, true])
+	human._build_from_random_prefabs(map.tiles[b.x + 4][b.y - 2], [true, false, true, false])
+	for z in range(b.y - 1, b.y + 2):
+		human._build_from_random_prefabs(map.tiles[b.x + 4][z], [true, true, false, false])
+	human._build_from_random_prefabs(map.tiles[b.x + 4][b.y + 2], [false, true, true, false])
+	human._build_from_random_prefabs(map.tiles[b.x + 3][b.y + 2], [false, false, true, true])

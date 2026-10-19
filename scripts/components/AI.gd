@@ -13,9 +13,8 @@ var nextAction := 0.0
 var nActivePlans := 3
 var nFinishedPlans := 12
 var consecutiveShots := 1
-## catalog ids of the structures the AI builds from upgrade blocks
+## catalog id of the structure the AI builds from upgrade blocks
 var preferredUpgrade := "cannon22c"
-var supplyUpgrade := "supply22"
 var activePlans: Array = []
 var finishedPlans: Array = []
 var upgradePlan = null
@@ -122,6 +121,9 @@ func _update_double_stack_plan() -> void:
 
 
 func execute_building_plan() -> void:
+	# a drawn shooter over the parts cap can never be placed; drop it so the hand rotates
+	if U.alive(nextBuilding) and U.shooter(nextBuilding) != null and over_parts_cap(nextBuilding):
+		drop(nextBuilding, false)
 	var did := try_build_upgrade()
 	# cannons carry an Upgrade comp as fusion parts; only real blocks are discarded
 	if U.alive(nextBuilding) and U.comp(nextBuilding, "Upgrade") != null and U.shooter(nextBuilding) == null:
@@ -348,25 +350,9 @@ func _try_set_upgrade_plan(upgrade_name: String) -> void:
 
 
 func try_build_upgrade() -> bool:
-	var available := U.alive(nextBuilding) and U.comp(nextBuilding, "Upgrade") != null
-	if not available:
+	if not (U.alive(nextBuilding) and U.comp(nextBuilding, "Upgrade") != null):
 		return false
-	if availableSupply * 0.85 < supplyNeed:
-		return true if _try_build_supply_on_existing_unbuildable_update() else try_build_upgrade_in_plan(supplyUpgrade)
 	return try_build_upgrade_in_plan(preferredUpgrade)
-
-
-func _try_build_supply_on_existing_unbuildable_update() -> bool:
-	for coords in upgrades.keys():
-		var tile = map.tiles[coords.x][coords.y]
-		if not U.alive(tile.structure):
-			continue
-		var can_build: bool = ibr(coords.x, coords.y) and tile.buildable()
-		var cluster = UpgradeCluster.new(tile, self)
-		if can_build and can_combine_next_building_with_tile(tile) and not cluster.can_be_built():
-			combine_building(tile)
-			return true
-	return false
 
 
 func try_build_upgrade_in_plan(upgrade_name: String) -> bool:
