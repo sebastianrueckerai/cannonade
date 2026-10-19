@@ -1,4 +1,4 @@
-# Session 23: Rampart wall pieces
+# Session 24: Rampart wall pieces
 
 Sebastian, 2026-10-19: "I now dislike my system of placing 1x1 blocks with
 connectors. I want to radically change it closer to the system in rampart."
@@ -29,34 +29,45 @@ machinery around that draw, not the dealing itself.
 `wall_1`, `wall_2`, `wall_3`, `wall_4` (1 to 4 tiles in a row), `wall_s` (S/Z),
 `wall_t` (T), `wall_x` (plus). One placed def `wall`, the full-tile wall block:
 its `access` blocks all nine fine cells of its tile, `draw_weight` 0 — never
-drawn, only stamped. Piece defs carry their tile footprint in `access` too
-(false = wall tile, column-major like today), so
-[BuildingBlock.gd](../../../scripts/components/BuildingBlock.gd) rotates pieces
-with its existing grid code and `get_next_wall` keeps its random quarter turn.
-Piece `draw_weight`s, first lab guesses: 30, 25, 15, 10, 10, 6, 4 percent.
-The four old connector defs (`wall_line`, `wall_corner`, `wall_tee`,
-`wall_cross`) park D64-style with `parked = true`.
+drawn, only stamped. Piece defs carry their footprint in new fields:
+`pattern_w`, `pattern_h` and `pattern` (true = wall tile, column-major from
+the lower left) plus `anchor_x`, `anchor_z`, the one wall tile that sits under
+the cursor. A 4x1 piece cannot live in the 3x3 `access` grid, so pieces never
+touch `access`; [BuildingBlock.gd](../../../scripts/components/BuildingBlock.gd)
+keeps its 9-bool grid for the placed `wall` only, and a small new helper
+rotates pattern and anchor together. `get_next_wall` keeps its random quarter
+turn through that helper. Piece `draw_weight`s, first lab guesses: 30, 25, 15,
+10, 10, 6, 4 percent. The four old connector defs (`wall_line`, `wall_corner`,
+`wall_tee`, `wall_cross`) park D64-style with `parked = true`.
 
 **Placement.** The held piece node is the ghost: `next_wall_to_map` parents it
-to the hovered tile (the pattern's centre tile), exactly as the single wall
-does today; the piece prefabs are authored with the centre segment at the
-origin. Placing consumes the held node and stamps one fresh `wall` spawn on
-every footprint tile through `build_wall`, so `wallTiles`, `miniMap`,
-`StatesMap`, targeting and damage all keep seeing today's per-tile wall.
-`wall_1` takes the old fast path: the held node itself is placed, as today.
-Every footprint tile must pass today's free check (no structure, dry, not
-disabled, no ship, on the map). Rotation keys work as today, before placement.
+to the hovered tile, which carries the pattern's anchor cell, so the ghost
+sits exactly where the piece lands and rotation pivots under the cursor.
+Every pattern names a wall tile as its anchor: the centre tile of `wall_1`,
+`wall_3` and `wall_x`; one middle tile of `wall_2`, `wall_4` and `wall_s`; the
+centre of `wall_t`'s crossbar. (Settled plan-author call after the builder
+check: the alternative — bounding-box centre on the cursor — needs half-tile
+offsets against the tile grid and was rejected; Sebastian can veto.) The
+piece prefabs are authored with the anchor segment at the origin. Placing
+consumes the held node and stamps one fresh `wall` spawn on every footprint
+tile through `build_wall`, so `wallTiles`, `miniMap`, `StatesMap`, targeting
+and damage all keep seeing today's per-tile wall. `wall_1` takes the old fast
+path: the held node itself is placed, as today. Every footprint tile must pass
+today's free check (no structure, dry, not disabled, no ship, on the map).
+Rotation keys work as today, before placement.
 
 **Reach (I45).** A piece, gun or building goes down only when at least one of
 its footprint tiles sits within Chebyshev distance 2 (`map.buildingRange`) of
-an own wall tile or an own castle that is not a ruin. Guns keep the same gate
-with their centre tile. The `inBuildRange` array and its marking machinery
-(`mark_buildable_area_waterflow`, `mark_buildable_area_line_of_sight`,
+an own wall tile or a tile covered by an own castle that is not a ruin. Guns
+keep the same gate with their centre tile. The `inBuildRange` array and its
+marking machinery (`mark_buildable_area_waterflow`, `mark_buildable_area_line_of_sight`,
 `remove_buildable_area`, the AI override) die; the gate is a predicate at
 hover time over `wallTiles` plus live castles. Anchors are walls and castles
 only, Sebastian's "wall of friendly castle"; guns and depots no longer seed
-building ground. The Sandbox editor bypasses the gate, as it bypasses
-placement rules today.
+building ground. The gate is pure distance: water bars nothing by itself,
+only the free-tile check does (the practice map holds the only river; settled
+plan-author call, flagged). The Sandbox editor bypasses the gate, as it
+bypasses placement rules today.
 
 **Stacking.** Only `wall_1` stacks, on an own wall tile with no upper, not
 burning. `_stackable_wall_fits` loses its connector-subset check; the held
@@ -71,7 +82,10 @@ only at the check; shells kill per tile.
 `xz2upDownLeftRight`, `_score_connection`, `_score_connection_impl`,
 `_update_direction_dict`, the detour paths, `connectionMemo`, and
 `fits_plan_with_clockwise_rotations_of_input`. Plans stay rectangles of ring
-tiles with the castle term. `try_build_next_wall` fits footprints: for each of
+tiles with the castle term. With the marking override gone, `inPlanRange`
+seeds at planning time from the same anchor set — own walls and live castles —
+at today's plan radius 3, so the search keeps its geography and budget
+(settled plan-author call). `try_build_next_wall` fits footprints: for each of
 the four rotations it walks the unfinished ring tiles as anchor candidates and
 places the first piece whose every footprint tile is an unfinished ring tile;
 otherwise the piece flies away, as today. `try_stack_next_wall` stacks the
@@ -113,23 +127,25 @@ Each rule ships with a test that ran red with the rule broken on purpose.
    legacy-id mapping in the loader. Tests: `tests/catalog_test` (each piece
    drawable at its weight, `wall` not, a parked id loads as `wall`),
    `tests/flood_test` (a full-block ring closes, diagonal blocks never join).
-2. **Hand, placement, reach.** Draw, ghost on the anchor tile, rotate,
-   consume-and-stamp, the reach gate, the marking machinery deleted. Tests:
-   `tests/human` (an I3's ghost tiles equal its placed tiles under rotation —
-   the Unity z mirror is the trap here — three walls in `wallTiles`), a reach
-   case (all tiles past n from own walls and castles refused, a chain
-   extends the reach), `tests/preview_test` rewritten around the piece glbs'
-   footprints.
+2. **Hand, placement, reach.** Draw, ghost on the anchor tile, pattern
+   rotation, consume-and-stamp, the reach gate, the marking machinery
+   deleted. Tests: `tests/human` (every piece's ghost tiles equal its placed
+   tiles under rotation — the Unity z mirror is the trap here — and an I3
+   leaves three walls in `wallTiles`), a reach case (all tiles past n from own
+   walls and castles refused, a chain extends the reach), `tests/preview_test`
+   rewritten around the piece glbs' footprints.
 3. **Stacking.** Monomino-only, no connector check, upper first. Test:
    `tests/human` stacking case (watched red under the old subset rule).
-4. **AI.** Footprint fitting, connector planner deleted. Tests:
-   `tests/ai_test` (the AI closes a ring from pieces), `tests/sim` (walls
-   placed per battle at least as before).
-5. **Sandbox, rings, bookkeeping.** Per-tile painting, reshapers deleted,
-   start rings, shipped scenarios load, `rules-v3-draft.md`, README, roadmap
-   ticks (I44, I45, C15), K6 struck (the connector search it describes is
-   gone). Tests: `tests/sandbox_test` (paint, erase, an old scenario loads),
-   the full suite green.
+4. **AI.** Footprint fitting, connector planner deleted, plan-range seeding.
+   Tests: `tests/ai_test` (the AI closes a ring from pieces), `tests/sim`
+   (walls placed per battle at least as before).
+5. **Sandbox, rings, tools, bookkeeping.** Per-tile painting, reshapers
+   deleted, start rings, shipped scenarios load, the dying calls in
+   `tools/shoot_battle.gd` (`spawn_wall_for`, `Sandbox._connectors`) and
+   `tools/previews.gd` (`ibr`) rewritten, `rules-v3-draft.md`, README,
+   roadmap ticks (I44, I45, C15), K6 struck (the connector search it
+   describes is gone). Tests: `tests/sandbox_test` (paint, erase, an old
+   scenario loads), the full suite green.
 
 ## Deliverables
 
