@@ -34,7 +34,8 @@ def main():
     spec = json.loads((d / "cleanup.json").read_text())
     out = d / "previews" / ("raw" if raw else "cleanup")
     job = {**spec, "raw": raw, "glb": str(d / "raw" / f"{spec['source']}.glb"), "out_dir": str(out),
-           "export": str(d / "final.glb"), "blend": str(d / "source.blend")}
+           "export": str(d / "final.glb"), "blend": str(d / "source.blend"),
+           "pipeline": str(ROOT / "pipeline")}
     code = f"JOB = {job!r}\n" + (ROOT / "pipeline/blender/cleanup.py").read_text()
     p = subprocess.run(["blx", "-"], input=code, text=True, capture_output=True)
     if p.returncode != 0:

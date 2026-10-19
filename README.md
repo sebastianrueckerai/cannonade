@@ -16,19 +16,17 @@ godot --path .                                        # main menu
 godot --path . res://scenes/game.tscn -- --mode=versus  # straight into a game
 ```
 
-Game modes (they mirror the Unity scenes):
+Game modes:
 
-| mode     | Unity scene         | setup                                         |
-|----------|---------------------|-----------------------------------------------|
-| `single` | `singlePlayer.unity`| you vs. a fleet of 7 ships, 20×20 map, water  |
-| `versus` | `multiPlayer.unity` | you vs. one AI, 30×30 map                     |
-| `ai2`    | –                   | watch two AIs, 30×30 map, 30 s rounds          |
-| `ai4`    | `4ai.unity`         | watch four AIs, 60×60 map, 25 s rounds         |
-| `practice` | –                 | you vs. a fort that never fires and never grows, 30×30 map, no timer |
+| mode     | menu entry      | setup                                          |
+|----------|-----------------|------------------------------------------------|
+| `versus` | Player vs. AI   | you vs. one AI, 30×30 map, ten castles         |
+| `ai2`    | Watch           | watch two AIs, same map                        |
+| `practice` | Practice      | the versus map with a dormant enemy, no timer  |
 
-In `practice`, Enter switches between the build and the battle phase. The fort (base, four
-cannons, a 2×2 cannon, two supply depots, one ring of walls) is cleared and built again at
-the start of every battle, so damage stays visible while you build.
+`single` and `ai4` are parked (D64-style): their mode code and files stay, the menu does
+not offer them. In `practice`, Enter switches between the build and the battle phase, so
+you can try the rules check on your own walls.
 
 Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 `--timescale=F`, `--quit-after=SECONDS`, `--no-decorations`.
@@ -38,7 +36,7 @@ Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 | input             | action                                                   |
 |-------------------|----------------------------------------------------------|
 | left mouse        | place the next wall (or stack it on one of your walls)   |
-| right mouse       | place the next building / combine it with an upgrade      |
+| right mouse       | place the next building (a gun, at a parts cost)          |
 | X                 | rotate the wall clockwise                                |
 | Y or Z            | rotate the wall counter-clockwise                        |
 | mouse wheel       | zoom in / out (towards the cursor; fully out shows the whole map) |
@@ -48,12 +46,23 @@ Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 | click outside map | discard the current wall / building                       |
 | Esc               | back to the menu                                          |
 
-Rounds alternate between a **build phase** (green timer) and a **battle phase** (red timer).
-Areas fully enclosed by walls turn grey; only guns inside enclosed areas can fire, and
-guns that need supply only work with enough supply buildings inside your walls.
-Upgrade blocks placed in 2×2 squares merge into bigger guns, flak, shield generators or
-supply depots depending on their pattern. The 3×3 guns are parked for now, so a full 3×3
-square merges one of its 2×2 squares.
+Rounds alternate between a **build phase** (45 s, green timer) and a **battle phase**
+(30 s, red timer). **Castles are the game**: ten sit on the map, you start with one
+walled in, and a player who holds no castle at a check is out.
+
+At the end of every build phase the **check** runs:
+
+- every owned building standing outside your closed wall ring burns,
+- a castle inside another player's ring changes owner (a ruin never does),
+- your parts cap recomputes from the castles you hold: 1 castle 6 parts, 2 → 10,
+  3 → 13, 4 → 15, 5 → 17; a cap below your placed guns blocks new placement only,
+- a player holding no castle is out; both out in the same check is a draw.
+
+Guns always fire, walled in or not, and every building is a legal target. A gun takes
+4 shells and fires 1.5× slower for each shell it survives; a castle takes 12 shells
+through four damage states and ends as a ruin nobody claims or builds on. Nothing
+repairs. A gun costs parts (1×1 one part, 2×2 four); four basic cannons placed in a
+2×2 fuse into the heavy `cannon22a`. The upgrade blocks are parked with the 3×3 guns.
 
 ## Buildings are data
 
@@ -82,8 +91,8 @@ use the new numbers right away (a reload already running finishes first).
 
 **Park a building:** tick `parked`. The file and its model stay, and the data is still
 checked, but no recipe, draw or Sandbox palette offers the building. The 3×3 guns
-(`cannon33a`, `cannon33b`, `cannon33c`, `rocket_station`) are parked for now, so the game
-has 1×1 and 2×2 guns only.
+(`cannon33a`, `cannon33b`, `cannon33c`, `rocket_station`), the old `base` and the two
+upgrade blocks are parked.
 
 The model (`model`) can be any scene; reuse another building's model while prototyping.
 Behaviours look for parts by node name: `Barrel` and `ProjectileSpawn` (cannons),
@@ -93,7 +102,7 @@ parameter resource in `scripts/data/`.
 
 ## Sandbox (build & test battles)
 
-Main menu → **Sandbox**. Set up two bases, press **Play**, and watch what happens – e.g.
+Main menu → **Sandbox**. Set up two castles, press **Play**, and watch what happens – e.g.
 how many flak guns beat how many cannons.
 
 **Editing**
@@ -101,7 +110,7 @@ how many flak guns beat how many cannons.
 | input | action |
 |---|---|
 | `1` / `2` or the Blue / Red buttons | side you are building for |
-| tool buttons (bottom) | **Wall**, **Erase**, **Base**, one button per catalog building (tooltip: details) |
+| tool buttons (bottom) | **Wall**, **Erase**, **Castle**, one button per catalog building (tooltip: details) |
 | left click / drag | place with the current tool; dragging the Wall tool draws a wall line, corner / T / cross / straight pieces are chosen automatically |
 | right click / drag | erase (a whole multi-tile building at once) |
 | `R` | turn the next building (looks only; patterns are not affected) |
@@ -110,10 +119,9 @@ how many flak guns beat how many cannons.
 | F5 | reload the building data |
 | Esc | back to the menu |
 
-Enclosed areas turn grey as in the game; guns and supply buildings that would not work
-(outside the walls, not enough supply) carry a red **X**. The ghost under the cursor
-turns red where the building does not fit. **Base** moves the side's base. **New** starts
-an empty layout with both bases walled in (map size next to it).
+Enclosed areas turn grey as in the game. The ghost under the cursor turns red where the
+building does not fit. **Castle** places the side's 3×3 castle with its wall ring.
+**New** starts an empty layout with a walled-in castle a side (map size next to it).
 
 Layouts are saved under a name (**Save**) to `user://scenarios/` and loaded from the
 **Scenarios** list; shipped examples (`data/scenarios/`, e.g. *flak_vs_cannons*) are
@@ -122,11 +130,14 @@ text.
 
 **Playing:** pick the match – **AI vs AI** (default), **Player vs AI**, **Player vs
 dormant AI** (red never fires; the player is blue and aims with the mouse, fires with
-Space) or **AI vs dormant AI** – what each AI aims at (walls as in the game, guns, supply or random) and a time
-limit, then **Play**. There is no build phase and no random pieces. Speed: pause, 1×, 2×,
+Space) or **AI vs dormant AI** – what each AI aims at (walls as in the game, guns,
+castles, supply or random) and a time
+limit, then **Play**. There is no build phase and no random pieces; the parts cap does
+not apply. Speed: pause, 1×, 2×,
 4×, 8×. The panel on the right shows shots, hits, shells intercepted by flak, hits
-absorbed by shields and walls / guns / buildings lost per side. The battle ends when a
-side has no working gun left, or at the time limit. **Back to editing** restores the
+absorbed by shields and walls / guns / castles / buildings lost per side. The battle
+ends when a side holds no castle that is not a ruin, or at the time limit. **Back to
+editing** restores the
 layout as it was before Play. The speed buttons are for watching: at 4× and 8× the game
 takes coarser steps (flak misses more), so judge balance with **Run** (below).
 
@@ -203,7 +214,8 @@ geometry). A few things were changed on purpose:
 * There are no 3×3 guns for now. A 3×3 square merges only when a building in the game has
   its pattern. Otherwise one of its 2×2 squares merges. Unity made a 3×3 cannon of any 3×3
   square.
-* The start base is walled in with all four wall shapes (Unity only used three).
+* The start castle is walled in with all four wall shapes (Unity only used three for
+  its base).
 * Splash damage hits each tile in range (Unity damaged the target tile once per splash tile).
 * The shield generator regenerates per second (Unity added `Time.time` every frame) and
   absorbs several hits before it resets.
@@ -226,14 +238,14 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 * `tests/flood_test` – enclosure detection: walls enclose areas, gaps open them, and the
   optimised flood fill matches the original algorithm (kept in the test) on random edits.
 * `tests/human` – the human player through real mouse / key events: placing, rotating,
-  discarding and stacking walls, buildings, combining, and firing from an enclosed gun.
+  discarding and stacking walls, guns by right click at their parts cost, fusion, firing.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
   cluster bombs, rockets, shield, flak and ships behave as in the game.
 * `tests/menu_test` – menu → chosen game mode → Esc → menu. The loading screen shows concept
   art, not the splash, and stays up with a moving bar until the game is built. It keeps
   input away from the game meanwhile.
-* `tests/practice_test` – practice mode: Enter switches the phase, the fort never fires and
-  never grows, and every battle starts with the whole fort again.
+* `tests/practice_test` – practice mode: Enter switches the phase, the dormant enemy
+  never fires, the standard versus map with its castles.
 * `tests/camera_test` – wheel zoom towards the cursor within its limits, middle mouse panning.
 * `tests/catalog_test` – shipped data is valid; data problems are reported, not crashed on;
   duplicate a building, change it, press F5: it works in the running game (incl. recipes).
@@ -243,7 +255,10 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 * `tests/lab_test` – the battle lab command line as a subprocess: sweeps and `--set` change
   what the battles use, swapped battles report per layout, seeds replay exactly, CSV
   output, readable errors.
-* `tests/sim` – full games (`--mode=single|ai2|ai4`): rounds alternate, AIs build, arm
+* `tests/check_test` – the rules check on a fixed seed through the real timer: the castle
+  map layout, burn, claim, the parts cap gate, the ruin, the game-over rule.
+* `tests/sim` – full games (`--mode=versus` with an autobuild stand-in, `--mode=ai2`):
+  rounds alternate, AIs build, arm
   themselves and fight, ships sail and shoot; map invariants hold; frame times are printed.
 
 The runner fails on any engine or script error output and times out hung tests.

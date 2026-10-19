@@ -159,8 +159,10 @@ func _check_outcome(g) -> void:
 	var spent := 0.0
 	var building := true
 	while true:
+		# a flip lands strictly after its phase end, so a boundary seconds value
+		# must not count the flip that happens exactly at it
 		var d: float = (g.roundDuration if building else g.battleDuration) + 1.0
-		if spent + d > seconds:
+		if spent + d >= seconds:
 			break
 		spent += d
 		expected_rounds += 1

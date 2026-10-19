@@ -184,9 +184,12 @@ def paint_texture(params, seed):
     return flat
 
 
-def painted_material(ob, spec):
+def painted_material(ob, spec, keep_slots=False):
     """Paints `spec` {"kind", "seed", optional "over"} onto `ob`, assigns the material, returns it.
-    Keeps existing UVs (the shell's sphere); projects box meshes that have none."""
+    Keeps existing UVs (the shell's sphere); projects box meshes that have none.
+    keep_slots: leave the slot list alone (the caller places the material), for
+    meshes whose first material must stay, like the castle's team slot."""
+    kind = spec["kind"]
     kind = spec["kind"]
     params = dict(PAINTERS[kind])
     params.update(spec.get("over") or {})
@@ -205,8 +208,9 @@ def painted_material(ob, spec):
     mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
     bsdf.inputs["Roughness"].default_value = 1.0
     bsdf.inputs["Metallic"].default_value = 0.0
-    ob.data.materials.clear()
-    ob.data.materials.append(mat)
+    if not keep_slots:
+        ob.data.materials.clear()
+        ob.data.materials.append(mat)
     if not spec.get("smooth"):
         for p in ob.data.polygons:
             p.use_smooth = False

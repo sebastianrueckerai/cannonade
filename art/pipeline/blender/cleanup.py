@@ -227,6 +227,22 @@ if not JOB["raw"]:
         res["team_faces"] = split_team(ob)
     if JOB.get("team_deck"):
         res["deck_faces"] = team_deck(ob, JOB["team_deck"])
+    if JOB.get("paint"):
+        import sys
+        sys.path.insert(0, JOB["pipeline"])
+        import importlib
+        import blender.paint
+        _paint = importlib.reload(blender.paint)
+        pspec = dict(JOB["paint"])
+        # a forced world-metre projection replaces the API's UV islands, so the
+        # D49 bands land by height on the keep as they do on the walls
+        for uv in list(ob.data.uv_layers):
+            ob.data.uv_layers.remove(uv)
+        _paint.cube_uv(ob, top_planar=pspec.pop("top_planar", True))
+        mat = _paint.painted_material(ob, pspec, keep_slots=True)
+        stone = next(i for i, m in enumerate(ob.data.materials) if m.name != "team")
+        ob.data.materials[stone] = mat
+        res["painted"] = mat.name
     ob.name = ob.data.name = JOB["part"]
     lo, hi = box(ob)
     res.update({"dims_m": [round(v, 3) for v in hi - lo], "tris": sum(len(p.vertices) - 2 for p in ob.data.polygons),
