@@ -29,7 +29,7 @@ extends Node
 ## cannon.projectile.splash_range.
 
 const SandboxScene = preload("res://scenes/sandbox.tscn")
-const STATS := ["shots", "hits", "intercepted", "absorbed", "walls_lost", "guns_lost", "buildings_lost"]
+const STATS := ["shots", "hits", "intercepted", "absorbed", "walls_lost", "guns_lost", "castles_lost", "buildings_lost"]
 const RESULTS := ["blue", "red", "draw"]
 
 var args := {}
@@ -145,7 +145,7 @@ func table(field: String, values: Array) -> String:
 	var w := maxi(12, field.length())
 	var head := ("%-" + str(w) + "s %5s %5s %5s %7s | %s | %s") % [
 		field if field != "" else "", "blue", "red", "draw", "time",
-		"blue: shots hits intc absb walls guns", "red: shots hits intc absb walls guns"]
+		"blue: shots hits intc absb walls guns castl", "red: shots hits intc absb walls guns castl"]
 	var lines := [head, "-".repeat(head.length())]
 	for v in values:
 		var sel := rows.filter(func(r): return r["value"] == v)
@@ -156,7 +156,7 @@ func table(field: String, values: Array) -> String:
 		line += " %6.1fs" % (sel.reduce(func(a, r): return a + r["time"], 0.0) / n)
 		for side in "br":
 			line += " |"
-			for k in ["shots", "hits", "intercepted", "absorbed", "walls_lost", "guns_lost"]:
+			for k in ["shots", "hits", "intercepted", "absorbed", "walls_lost", "guns_lost", "castles_lost"]:
 				var mean: float = sel.reduce(func(a, r): return a + r[side + "_" + k], 0.0) / n
 				line += " %4.1f" % mean
 			line += "      " if side == "b" else ""

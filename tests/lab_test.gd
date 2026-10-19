@@ -109,6 +109,16 @@ func _run() -> void:
 	check(again.size() == 2 and key.call(again[0]) == key.call(fast[2]) and key.call(again[1]) == key.call(fast[3]),
 		"a battle replays exactly with the same seed, also as the first battle of a run")
 
+	# castles decide the game now: with both sides set on them, the battle ends
+	# by conquest, not by the time limit
+	var siege_csv := dir.path_join("lab_test_siege.csv")
+	r = lab(["--scenario=flak_vs_cannons", "--runs=2", "--seed=3", "--targets=castles,castles",
+		"--csv=" + siege_csv])
+	var sieges := csv(siege_csv)
+	var conquered := func(x): return x["winner"] != "draw" and int(x["b_castles_lost"]) + int(x["r_castles_lost"]) > 0
+	check(r[0] == 0 and sieges.size() == 4 and sieges.all(conquered),
+		"both sides set on castles: the winner comes from castle attrition, not the clock")
+
 	var set_csv := dir.path_join("lab_test_set.csv")
 	r = lab(["--scenario=res://data/scenarios/flak_vs_cannons.tres", "--runs=1", "--seed=2",
 		"--set=cannon.reload=0.5;flak22.salvo_interval=3", "--swap=false", "--csv=" + set_csv])
@@ -124,3 +134,4 @@ func _run() -> void:
 	DirAccess.remove_absolute(sweep_csv)
 	DirAccess.remove_absolute(set_csv)
 	DirAccess.remove_absolute(again_csv)
+	DirAccess.remove_absolute(siege_csv)

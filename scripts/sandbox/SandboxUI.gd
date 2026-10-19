@@ -324,5 +324,5 @@ func update_live() -> void:
 		if sandbox.mode != sandbox.Mode.EDIT:
 			lines.append("  shots %d   hits %d" % [st.get("shots", 0), st.get("hits", 0)])
 			lines.append("  intercepted %d   absorbed %d" % [st.get("intercepted", 0), st.get("absorbed", 0)])
-			lines.append("  lost: walls %d  guns %d  other %d" % [st.get("walls_lost", 0), st.get("guns_lost", 0), st.get("buildings_lost", 0)])
+			lines.append("  lost: walls %d  guns %d  castles %d  other %d" % [st.get("walls_lost", 0), st.get("guns_lost", 0), st.get("castles_lost", 0), st.get("buildings_lost", 0)])
 	_stats.text = "\n".join(lines)

@@ -1,6 +1,6 @@
 extends "res://scripts/components/PlayerController.gd"
-## Port of AI.cs: computer player. Plans rectangles of walls, builds guns and
-## upgrades inside them and shoots at the walls of its enemies.
+## Port of AI.cs: computer player. Plans rectangles of walls, builds guns
+## inside them and shoots at what the new rules make worth shooting.
 
 const BuildingPlan = preload("res://scripts/BuildingPlan.gd")
 
@@ -13,11 +13,8 @@ var nextAction := 0.0
 var nActivePlans := 3
 var nFinishedPlans := 12
 var consecutiveShots := 1
-## catalog id of the structure the AI builds from upgrade blocks
-var preferredUpgrade := "cannon22c"
 var activePlans: Array = []
 var finishedPlans: Array = []
-var upgradePlan = null
 var doubleStackPlan = null
 var enemyPlayers = null
 var maxUp := 3
@@ -28,8 +25,10 @@ var maxPlanRange := 3
 var inPlanRange := PackedByteArray()
 ## A dormant AI never acts (sandbox: test a build against a stationary enemy).
 var dormant := false
-## What the AI shoots at: "walls" (the original behaviour), "guns", "supply" or "random"
-var targetMode := "walls"
+## What the AI shoots at: "auto" (enemy guns, then castles, then walls),
+## "walls", "guns", "castles", "supply" or "random"; the explicit modes fall
+## back to walls when their pool is empty
+var targetMode := "auto"
 ## Segment memo used by BuildingPlan during one plan search (null otherwise)
 var connectionMemo = null
 var searchStamp := 0
@@ -124,10 +123,10 @@ func execute_building_plan() -> void:
 	# a drawn shooter over the parts cap can never be placed; drop it so the hand rotates
 	if U.alive(nextBuilding) and U.shooter(nextBuilding) != null and over_parts_cap(nextBuilding):
 		drop(nextBuilding, false)
-	var did := try_build_upgrade()
 	# cannons carry an Upgrade comp as fusion parts; only real blocks are discarded
 	if U.alive(nextBuilding) and U.comp(nextBuilding, "Upgrade") != null and U.shooter(nextBuilding) == null:
 		drop(nextBuilding, false)
+	var did := try_build_gun_in_plan()
 	if not did:
 		did = try_build_walled_in_gun()
 	if not did:
@@ -140,8 +139,6 @@ func execute_building_plan() -> void:
 		did = try_build_next_wall()
 	if not did:
 		did = try_stack_next_wall()
-	if not did:
-		did = try_build_gun_in_plan()
 	if not did:
 		drop(nextWall, true)
 	if did:
@@ -194,8 +191,15 @@ func _random_shuffle(arr: Array) -> void:
 
 
 func aquire_targets(enemy, n: int) -> Array:
-	if targetMode != "walls":
-		var pool := _target_pool(enemy)
+	if targetMode == "auto":
+		# guns first (they shoot back), then the castles that decide the game
+		for mode in ["guns", "castles"]:
+			var auto_pool := _target_pool_for(mode, enemy)
+			if not auto_pool.is_empty():
+				_random_shuffle(auto_pool)
+				return auto_pool.slice(0, n)
+	elif targetMode != "walls":
+		var pool := _target_pool_for(targetMode, enemy)
 		if not pool.is_empty():
 			_random_shuffle(pool)
 			return pool.slice(0, n)
@@ -341,34 +345,6 @@ func try_stack_next_wall() -> bool:
 	return rots > -1
 
 
-func _try_set_upgrade_plan(upgrade_name: String) -> void:
-	upgradePlan = null
-	for bp in finishedPlans + activePlans:
-		if bp.try_initialize_xz_upgrade_tiles(upgrade_name):
-			upgradePlan = bp
-			break
-
-
-func try_build_upgrade() -> bool:
-	if not (U.alive(nextBuilding) and U.comp(nextBuilding, "Upgrade") != null):
-		return false
-	return try_build_upgrade_in_plan(preferredUpgrade)
-
-
-func try_build_upgrade_in_plan(upgrade_name: String) -> bool:
-	if upgradePlan != null and not upgradePlan.upgrade_can_be_finished():
-		upgradePlan = null
-	if upgradePlan == null:
-		_try_set_upgrade_plan(upgrade_name)
-	if upgradePlan == null:
-		return false
-	var xz = upgradePlan.get_upgrade_location_for_upgrade_type(U.comp(nextBuilding, "Upgrade").upgradeType)
-	if xz == null:
-		return false
-	build_next_building(map.tiles[xz.x][xz.y])
-	return true
-
-
 func try_build_next_wall() -> bool:
 	if not U.alive(nextWall):
 		return false
@@ -390,14 +366,14 @@ func try_build_next_wall() -> bool:
 	return rots > -1
 
 
+## The drawn gun goes on any free tile in reach; the check burns it unless the
+## ring is closed round it by then (guns fire walled in or not).
 func try_build_walled_in_gun() -> bool:
 	if not U.alive(nextBuilding) or U.comp(nextBuilding, "Shooter") == null:
 		return false
 	for ix in map.sizeX:
 		for iz in map.sizeZ:
-			var in_upgrade_plan: bool = upgradePlan != null and upgradePlan.upgrade_tiles_contain(ix, iz)
-			if map.statesMap.is_closed(ix * 3, iz * 3) and ibr(ix, iz) and map.get_mini(ix, iz) == 0 \
-					and not in_upgrade_plan:
+			if ibr(ix, iz) and map.get_mini(ix, iz) == 0:
 				build_next_building(map.tiles[ix][iz])
 				return true
 	return false
@@ -409,8 +385,7 @@ func try_build_gun_in_plan() -> bool:
 	for plan in activePlans:
 		for xz in plan.xzWalledInTiles:
 			# (sic) the original checks (x, x)
-			var in_upgrade_plan: bool = upgradePlan != null and upgradePlan.upgrade_tiles_contain(xz.x, xz.x)
-			if ibr(xz.x, xz.y) and map.get_mini(xz.x, xz.y) == 0 and not in_upgrade_plan:
+			if ibr(xz.x, xz.y) and map.get_mini(xz.x, xz.y) == 0:
 				build_next_building(map.tiles[xz.x][xz.y])
 				return true
 	return false
@@ -418,11 +393,19 @@ func try_build_gun_in_plan() -> bool:
 
 ## Tiles to shoot at for the target modes other than "walls" (empty = fall
 ## back to walls).
-func _target_pool(enemy) -> Array:
+func _target_pool_for(mode: String, enemy) -> Array:
 	var keys: Array = []
-	match targetMode:
+	match mode:
 		"guns":
 			keys = enemy.cannons.keys() + enemy.supports.keys()
+		"castles":
+			var seats: Array = []
+			for c in map.castles:
+				# enemy and neutral castles; a ruin decides nothing any more
+				if U.alive(c.go) and not c.is_ruin() and c.owner() != self:
+					var centre: Vector2i = map.tile_index_at(c.go.global_position)
+					seats.append(map.tiles[centre.x][centre.y])
+			return seats
 		"supply":
 			keys = enemy.supplies.keys()
 		"random":

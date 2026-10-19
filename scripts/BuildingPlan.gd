@@ -24,6 +24,8 @@ var desiredSignature: Array = []
 ## Array of Vector2i
 var xzWalledInTiles: Array = []
 var bonusForWallingInBuildings := 15
+## Claiming a castle is the point of the game: worth several free tiles
+var bonusForWallingInCastles := 40
 var bonusPerUnoccupiedTile := 3
 var minX = null
 var minZ = null
@@ -375,6 +377,19 @@ func _count_walled_in_buildings() -> int:
 	return _count_free_tiles_by_player_id(player.playerID)
 
 
+## Enemy and neutral castles the ring would enclose (a ruin claims nothing).
+func _count_walled_in_castles() -> int:
+	var n := 0
+	for c in map.castles:
+		if not (U.alive(c.go) and not c.is_ruin() and c.owner() != player):
+			continue
+		for t in c.my_tiles():
+			if xzWalledInTiles.has(Vector2i(t.idxX, t.idxZ)):
+				n += 1
+				break
+	return n
+
+
 func get_unfinished_buildable_walls() -> Dictionary:
 	var out := {}
 	for k in xz2upDownLeftRight:
@@ -398,7 +413,9 @@ func calculate_score(start_exp_wall_costs: int) -> int:
 
 
 func score_benefit() -> int:
-	return count_unoccupied_free_tiles() * bonusPerUnoccupiedTile + _count_walled_in_buildings() * bonusForWallingInBuildings
+	return count_unoccupied_free_tiles() * bonusPerUnoccupiedTile \
+			+ _count_walled_in_buildings() * bonusForWallingInBuildings \
+			+ _count_walled_in_castles() * bonusForWallingInCastles
 
 
 func _score_cost(start_exp_wall_costs: int) -> int:

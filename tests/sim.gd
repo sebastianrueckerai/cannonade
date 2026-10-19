@@ -17,6 +17,8 @@ var _last_proj_ids := {}
 var autobuild := false
 var _walls_last := {}
 var _walls_lost := {}
+var _guns_last := {}
+var _guns_lost := {}
 var _max_walls := {}
 var _max_active := {}
 var _next_autobuild := 1.0
@@ -67,6 +69,10 @@ func _process(_delta: float) -> void:
 		if walls < _walls_last.get(k, 0):
 			_walls_lost[k] = true
 		_walls_last[k] = walls
+		var guns: int = p.cannons.size()
+		if guns < _guns_last.get(k, 0):
+			_guns_lost[k] = true
+		_guns_last[k] = guns
 		_max_walls[k] = maxi(_max_walls.get(k, 0), walls)
 		_max_active[k] = maxi(_max_active.get(k, 0), p.activeCannons.size())
 	if autobuild and U.time >= _next_autobuild:
@@ -147,7 +153,8 @@ func _count_enclosed(g) -> int:
 ## The game actually got played: rounds alternate on time, every AI builds,
 ## arms itself and fights, ships sail and shoot.
 func _check_outcome(g) -> void:
-	# a phase flips one second past its end (see _update_round_time)
+	# a phase flips one second past its end (see _update_round_time); a game
+	# decided by conquest stops the phase clock where it stands
 	var expected_rounds := 0
 	var spent := 0.0
 	var building := true
@@ -158,9 +165,13 @@ func _check_outcome(g) -> void:
 		spent += d
 		expected_rounds += 1
 		building = not building
-	if g.roundNumber != expected_rounds:
+	if g.started and g.roundNumber != expected_rounds:
 		_fail("expected %d round changes, got %d" % [expected_rounds, g.roundNumber])
 	var battle_happened: bool = g.roundNumber >= 1
+	var n_ais := 0
+	for p in g.players:
+		if p.has_method("search_best_building_plans"):
+			n_ais += 1
 	for p in g.players:
 		var k: int = p.playerID
 		if not p.has_method("search_best_building_plans"):
@@ -169,8 +180,11 @@ func _check_outcome(g) -> void:
 			_fail("AI %d built only %d walls" % [k, _max_walls.get(k, 0)])
 		if _max_active.get(k, 0) < 1:
 			_fail("AI %d never had an active gun" % k)
-		if battle_happened and not _walls_lost.get(k, false):
-			_fail("AI %d never lost a wall in battle" % k)
+		# only an AI enemy shoots back (the versus human stands still), and the
+		# AI aims at guns and castles before walls now
+		if battle_happened and n_ais > 1 \
+				and not (_walls_lost.get(k, false) or _guns_lost.get(k, false)):
+			_fail("AI %d never lost a wall or a gun in battle" % k)
 	if battle_happened and stats["shots"] == 0:
 		_fail("nobody fired")
 	if battle_happened and not stats.get("marked"):
