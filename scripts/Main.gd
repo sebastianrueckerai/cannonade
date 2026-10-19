@@ -260,7 +260,7 @@ func _make_preview_slot(kind: String, i: int, right: bool, top: bool) -> Node3D:
 	var cam := Camera3D.new()
 	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
 	if wall:
-		cam.size = 1.6
+		cam.size = 4.4  # a four-long piece fits
 		cam.position = Vector3(0, 6, 0)
 		# looks down; map up (-z) is screen up
 		cam.basis = Basis(Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
@@ -346,7 +346,7 @@ func _setup_ui() -> void:
 	ui.add_child(phase_label)
 	var help := Label.new()
 	help.name = "Help"
-	help.text = "LMB: place wall   RMB: place gun (costs parts) / combine   X / Y: rotate wall   Space: fire   Wheel: zoom   MMB drag: pan   Esc: menu"
+	help.text = "LMB: place wall piece / stack a block   RMB: place gun (costs parts) / combine   X / Y: rotate piece   Space: fire   Wheel: zoom   MMB drag: pan   Esc: menu"
 	help.add_theme_font_size_override("font_size", 14)
 	help.add_theme_color_override("font_outline_color", Color.BLACK)
 	help.add_theme_constant_override("outline_size", 4)

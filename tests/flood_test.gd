@@ -7,7 +7,7 @@ extends Node
 const Main = preload("res://scripts/Main.gd")
 const StatesMap = preload("res://scripts/StatesMap.gd")
 const Ring = preload("res://tests/ring.gd")
-const OTHER := ["wall_line", "wall_corner", "cannon"]
+const OTHER := ["wall", "cannon"]
 
 
 ## The original cell by cell flood fill (Unity StatesMap.Waterflow), as reference.
@@ -144,10 +144,7 @@ func _ready() -> void:
 		if U.alive(tile.structure):
 			tile.un_build()
 		elif not tile.water:
-			var w: Node3D = Catalog.spawn(OTHER[randi() % OTHER.size()])
-			for r in randi() % 4:
-				w.get_node("BuildingBlock").rotate_clockwise()
-			player.build_building(tile, w)
+			player.build_building(tile, Catalog.spawn(OTHER[randi() % OTHER.size()]))
 		_compare(tile)
 	_check(peak > 0, "random edits produced enclosed areas (%d closed cells at the peak)" % peak)
 	_check(mismatches == 0, "optimised flood fill equals the original (%d mismatches)" % mismatches)

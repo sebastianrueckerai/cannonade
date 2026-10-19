@@ -29,8 +29,8 @@ var dormant := false
 ## "walls", "guns", "castles", "supply" or "random"; the explicit modes fall
 ## back to walls when their pool is empty
 var targetMode := "auto"
-## Segment memo used by BuildingPlan during one plan search (null otherwise)
-var connectionMemo = null
+## True within one slice of a plan search, while the map cannot change (BuildingPlan's count cache)
+var slicing := false
 var searchStamp := 0
 var sliceBudgetUsec := 4000
 var _searching := false
@@ -96,7 +96,7 @@ func _run_search() -> void:
 func _yield_if_needed() -> void:
 	if Time.get_ticks_usec() - _slice_start > sliceBudgetUsec:
 		# caches are only valid while the map cannot change, i.e. within one slice
-		connectionMemo = null
+		slicing = false
 		await (Engine.get_main_loop() as SceneTree).process_frame
 		if not is_instance_valid(self) or not is_inside_tree():
 			_abort_search = true
@@ -106,7 +106,7 @@ func _yield_if_needed() -> void:
 
 func _begin_slice() -> void:
 	_slice_start = Time.get_ticks_usec()
-	connectionMemo = {}
+	slicing = true
 	searchStamp += 1
 
 
@@ -296,7 +296,6 @@ func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 					return plans
 		scored.sort_custom(func(a, b): return a[0] > b[0])
 		var best = scored[0][1]
-		best.ensure_compatibility_all(plans)
 		plans.append(best)
 		var rest: Array = []
 		for i in range(1, scored.size()):
@@ -326,49 +325,66 @@ func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 		if candidate != null and candidate_score > plan_score:
 			plans[i] = candidate
 			additions.remove_at(candidate_idx)
-	connectionMemo = null
+	slicing = false
 	return plans
 
 
 func try_stack_next_wall() -> bool:
 	_update_double_stack_plan()
-	if not U.alive(nextWall):
+	if doubleStackPlan == null:
 		return false
-	var nbb := U.comp(nextWall, "BuildingBlock")
-	if doubleStackPlan == null or nbb == null:
-		return false
-	var rots := -1
-	var stackable: Dictionary = doubleStackPlan.get_stackable_walls()
-	for k in stackable:
-		var old_bb := U.comp(map.tiles[k.x][k.y].structure, "BuildingBlock")
-		rots = old_bb.fits_plan_with_clockwise_rotations_of_input(nbb.connects_up_down_left_right())
-		if rots > -1:
-			for r in rots:
-				nbb.rotate_clockwise()
-			stack_wall(map.tiles[k.x][k.y])
-			break
-	return rots > -1
+	for k in doubleStackPlan.stackable_walls():
+		var t = map.tiles[k.x][k.y]
+		if can_stack_on(t):
+			stack_wall(t)
+			return true
+	return false
 
 
+## Places the held piece where it covers the most unfinished ring tiles of a plan, no cell inside the
+## plan's enclosure, turned to that rotation first.
 func try_build_next_wall() -> bool:
 	if not U.alive(nextWall):
 		return false
 	var bb := U.comp(nextWall, "BuildingBlock")
-	var rots := -1
+	var best_tile = null
+	var best_turns := 0
+	var best_cover := 0
 	for plan in activePlans:
-		var walls: Dictionary = plan.get_unfinished_buildable_walls()
-		for k in walls:
-			if ibr(k.x, k.y):
-				rots = bb.fits_plan_with_clockwise_rotations_of_input(walls[k])
-				if rots > -1:
-					for r in rots:
-						bb.rotate_counter_clockwise()
-					var tile = map.tiles[k.x][k.y]
-					build_next_wall(tile)
-					break
-		if rots > -1:
-			break
-	return rots > -1
+		var open: Dictionary = plan.unfinished_ring()
+		var inside := {}
+		for xz in plan.xzWalledInTiles:
+			inside[xz] = true
+		for turns in 4:
+			for k in open:
+				for c in bb.cells:
+					var a: Vector2i = k - c
+					if a.x < 0 or a.y < 0 or a.x >= map.sizeX or a.y >= map.sizeZ:
+						continue
+					var cover := _ring_cover(bb.cells, a, open, inside)
+					if cover > best_cover and can_place_piece(map.tiles[a.x][a.y]):
+						best_cover = cover
+						best_tile = map.tiles[a.x][a.y]
+						best_turns = turns
+			bb.rotate_clockwise()
+	if best_tile == null:
+		return false
+	for i in best_turns:
+		bb.rotate_clockwise()
+	build_next_wall(best_tile)
+	return true
+
+
+## Unfinished ring tiles the cells cover anchored on `a`; 0 when a cell lands inside the enclosure.
+func _ring_cover(cells: Array[Vector2i], a: Vector2i, open: Dictionary, inside: Dictionary) -> int:
+	var n := 0
+	for c in cells:
+		var t: Vector2i = a + c
+		if inside.has(t):
+			return 0
+		if open.has(t):
+			n += 1
+	return n
 
 
 ## The drawn gun goes on any free tile in reach; the check burns it unless the

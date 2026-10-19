@@ -93,12 +93,15 @@ func _ready() -> void:
 
 	# wheel up zooms in towards the point under the cursor
 	var under := ground(cursor)
-	var wall = U.comp(main.game.players[0].nextWall, "BuildingBlock")
-	var connectors: Array = wall.connects_up_down_left_right()
+	var human = main.game.players[0]
+	U.destroy(human.nextWall)
+	human.nextWall = Catalog.spawn("wall_t", human.wallSpawn)  # no quarter turn maps a T onto itself
+	var wall = U.comp(human.nextWall, "BuildingBlock")
+	var cells: Array[Vector2i] = wall.cells.duplicate()
 	await wheel(cursor, true)
 	check(cam.global_position.y < home.y, "wheel up zooms in")
 	check(ground(cursor).distance_to(under) < 0.05, "the point under the cursor stays under the cursor")
-	check(wall.connects_up_down_left_right() == connectors, "the wheel no longer rotates the wall")
+	check(wall.cells == cells, "the wheel no longer rotates the wall piece")
 
 	# zooming in stops at a sane distance
 	await wheel(cursor, true, 40)

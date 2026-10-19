@@ -117,25 +117,44 @@ func _run() -> void:
 	var b := base_xz()
 	check(map.is_tile_enclosed(b.x, b.y), "player starts with a walled-in castle")
 
-	# rotating the next wall with X / Y (a corner piece: not rotation symmetric)
-	U.destroy(human.nextWall)
-	human.nextWall = Catalog.spawn("wall_corner", human.wallSpawn)
+	# rotating the held piece with X / Y (a T: no quarter turn maps it onto itself)
+	_hold("wall_t")
 	var bb = U.comp(human.nextWall, "BuildingBlock")
-	var before: Array = bb.connects_up_down_left_right()
 	await point_at_tile(b)
 	await press("rotate_cw")
-	var after: Array = bb.connects_up_down_left_right()
-	check(after == [before[2], before[3], before[1], before[0]], "X turns the wall clockwise %s -> %s" % [before, after])
+	check(bb.cells == _v([[0, 1], [0, 0], [0, -1], [1, 0]]), "X turns the T clockwise, its stem to the right %s" % [bb.cells])
 	await press("rotate_ccw")
-	check(bb.connects_up_down_left_right() == before, "Y turns it back")
+	check(bb.cells == _v([[-1, 0], [0, 0], [1, 0], [0, 1]]), "Y turns it back %s" % [bb.cells])
 
-	# left click places the wall on a free tile in range, a new one is offered
-	var free := free_tile_in_range()
-	var wall = human.nextWall
-	await point_at_tile(free)
+	# left click stamps one block per cell, on the tiles the ghost covered; the piece is used up.
+	# Upright three west of the ring: its tiles sit two from the ring's west side.
+	var w := Vector2i(b.x - 4, b.y)
+	var want := [w + Vector2i(0, 1), w, w + Vector2i(0, -1)]
+	check(_all_free(want), "the three tiles west of the ring are free")
+	_hold("wall_3")
+	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()
+	await point_at_tile(w)
+	var ghost: Array = []
+	for n in human.nextWall.get_children():
+		if n is Node3D:
+			ghost.append(map.tile_index_at(n.global_position))
+	check(ghost == want, "the ghost of the upright three covers %s (got %s)" % [want, ghost])
+	var piece = human.nextWall
+	var walls_before: int = human.wallTiles.size()
 	await press("build_wall")
-	check(map.tiles[free.x][free.y].structure == wall, "left click places the wall")
-	check(U.alive(human.nextWall) and human.nextWall != wall, "a new wall is offered")
+	check(_all_blocks(want), "left click stamps a wall block on every tile the ghost covered")
+	check(human.wallTiles.size() == walls_before + 3, "the three blocks count as the player's walls")
+	check(not U.alive(piece) and U.alive(human.nextWall), "the piece is used up and a new one is offered")
+
+	# a piece hanging off the map edge places nothing, even with its other cells in reach
+	var edge := Vector2i(0, b.y)
+	check(_all_free([Vector2i(0, b.y), Vector2i(1, b.y), Vector2i(2, b.y)]), "the row at the west edge is free")
+	human.build_wall(map.tiles[2][b.y], Catalog.spawn("wall"))
+	_hold("wall_3")
+	await point_at_tile(edge)
+	await press("build_wall")
+	check(not U.alive(map.tiles[0][b.y].structure) and not U.alive(map.tiles[1][b.y].structure),
+			"a piece hanging off the map edge places nothing")
 
 	# out of range: nothing is built (clear of every neutral castle band)
 	var far := Vector2i(10, 15)
@@ -143,32 +162,31 @@ func _run() -> void:
 	await press("build_wall")
 	check(not U.alive(map.tiles[far.x][far.y].structure), "no building far away from own walls")
 
-	# clicking outside the map discards the wall; a new one comes after it flew away
+	# clicking outside the map discards the piece; a new one comes after it flew away
 	var dropped = human.nextWall
 	await point_at(map.tile_position(-6, -6))
 	await press("build_wall")
 	await seconds(3.3)
-	check(not U.alive(dropped) and U.alive(human.nextWall), "click outside the map discards the wall")
+	check(not U.alive(dropped) and U.alive(human.nextWall), "click outside the map discards the piece")
 
-	# stacking: click an own wall with a piece of the same shape, rotated until it fits. The wall on `free` is
-	# the corner of the rotation check, a random draw would make the result depend on the random sequence.
-	var target = map.tiles[free.x][free.y]
-	U.destroy(human.nextWall)
-	human.nextWall = Catalog.spawn("wall_corner", human.wallSpawn)
-	await point_at_tile(free)
-	for attempt in 4:
-		await press("build_wall")
-		if U.alive(target.wallStacked):
-			break
-		await press("rotate_cw")
-	check(U.alive(target.wallStacked), "a fitting wall stacks on an own wall")
+	# stacking: a single block stacks on an own wall, a longer piece never does
+	var target = map.tiles[w.x][w.y]
+	_hold("wall_3")
+	await point_at_tile(w)
+	await press("build_wall")
+	check(not U.alive(target.wallStacked), "a three-block piece does not stack")
+	_hold("wall_1")
+	await point_at_tile(w)
+	await press("build_wall")
+	check(U.alive(target.wallStacked) and Catalog.def_of(target.wallStacked).id == "wall",
+			"a single block stacks on an own wall")
 
 	# right click places the next building (a fixed piece: a drawn gun here would
 	# also count as active below)
 	await seconds(0.5)
 	_offer_building("supply")
 	var building = human.nextBuilding
-	free = free_tile_in_range()
+	var free := free_tile_in_range()
 	await point_at_tile(free)
 	await press("build_building")
 	check(U.alive(building) and map.tiles[free.x][free.y].structure == building, "right click places the building")
@@ -207,6 +225,36 @@ func _run() -> void:
 	await press("fire")
 	await seconds(12.0)
 	check(not U.alive(enemy_wall.structure), "space fires a shell that destroys the aimed enemy wall")
+
+
+## Replaces the randomly drawn wall piece (fixture for a specific piece).
+func _hold(id: String) -> void:
+	U.destroy(human.nextWall)
+	human.nextWall = Catalog.spawn(id, human.wallSpawn)
+
+
+func _all_free(tiles: Array) -> bool:
+	for t in tiles:
+		if not map.tiles[t.x][t.y].is_free():
+			return false
+	return true
+
+
+## Every tile holds a wall block.
+func _all_blocks(tiles: Array) -> bool:
+	for t in tiles:
+		var s = map.tiles[t.x][t.y].structure
+		if not U.alive(s) or Catalog.def_of(s).id != "wall":
+			return false
+	return true
+
+
+## Cells from [x, z] pairs.
+func _v(pairs: Array) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	for p in pairs:
+		out.append(Vector2i(p[0], p[1]))
+	return out
 
 
 ## Replaces the randomly drawn next building (fixture for a specific piece).

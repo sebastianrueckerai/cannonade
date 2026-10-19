@@ -28,6 +28,9 @@ enum Category { BUILDING, WALL, BASE, HIDDEN }
 @export var draw_weight := 0.0
 ## Kept in the files but out of the game: no recipe, draw or Sandbox palette offers it
 @export var parked := false
+## Cells of a hand wall piece, (x, z) offsets from its anchor cell (0, 0) that rides the cursor; x right,
+## z up the map. Empty for every other def.
+@export var piece: Array[Vector2i] = []
 
 @export_group("Recipe")
 ## Upgrade pattern: building ids of a size x size square of single tile

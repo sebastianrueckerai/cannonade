@@ -25,9 +25,12 @@ var nextWall: Node3D = null
 var nextBuilding: Node3D = null
 ## BuildingPlace component of the tile under the cursor
 var buildableTileSelected = null
-## tile whose trees and stones are hidden under the placement preview
-var decorHiddenTile = null
-var canBuildOnTile := false
+## tiles whose trees and stones are hidden under the placement preview
+var decorHiddenTiles: Array = []
+## tiles carrying the placement highlight
+var litTiles: Array = []
+var canPlaceWall := false
+var canPlaceBuilding := false
 var freeTileSelected := false
 var canStackWall := false
 var canCombine := false
@@ -103,10 +106,13 @@ func _pick() -> Array:
 
 func update_point_and_tile_selected() -> void:
 	_restore_decorations()
-	if U.alive(buildableTileSelected):
-		buildableTileSelected.highlight_off()
+	for t in litTiles:
+		if U.alive(t):
+			t.highlight_off()
+	litTiles = []
 	canStackWall = false
-	canBuildOnTile = false
+	canPlaceWall = false
+	canPlaceBuilding = false
 	freeTileSelected = false
 	voidSelected = false
 	buildableTileSelected = null
@@ -122,22 +128,20 @@ func update_point_and_tile_selected() -> void:
 	if buildableTileSelected != null:
 		var x: int = buildableTileSelected.idxX
 		var z: int = buildableTileSelected.idxZ
-		freeTileSelected = not U.alive(buildableTileSelected.structure) and buildableTileSelected.buildable()
+		freeTileSelected = buildableTileSelected.is_free()
 		if freeTileSelected:
 			next_wall_to_map()
 			next_building_to_gui()
-			if ibr(x, z):
-				buildableTileSelected.highlight_on(highlightPosColor)
-				canBuildOnTile = true
-			else:
-				buildableTileSelected.highlight_on(highlightNegColor)
+			canPlaceBuilding = ibr(x, z)
+			canPlaceWall = can_place_piece(buildableTileSelected)
+			var lit: Array = piece_tiles(buildableTileSelected) if U.alive(nextWall) else []
+			if lit.is_empty():
+				lit = [buildableTileSelected]
+			_light(lit, canPlaceWall if U.alive(nextWall) else canPlaceBuilding)
 		else:
 			if U.alive(buildableTileSelected.structure) and U.alive(nextBuilding):
 				canCombine = can_combine_next_building_with_tile(buildableTileSelected)
-			canStackWall = U.alive(nextWall) and map.get_mini(x, z) == playerID \
-					and buildableTileSelected.isWall and not U.alive(buildableTileSelected.wallStacked) \
-					and not buildableTileSelected.burning \
-					and _stackable_wall_fits(buildableTileSelected.structure, nextWall)
+			canStackWall = can_stack_on(buildableTileSelected)
 			if canStackWall:
 				next_wall_to_wall()
 			else:
@@ -171,6 +175,45 @@ func _fade_blocking_castles() -> void:
 	fadedCastles = blocking
 
 
+func _light(tiles: Array, ok: bool) -> void:
+	for t in tiles:
+		t.highlight_on(highlightPosColor if ok else highlightNegColor)
+	litTiles = tiles
+
+
+## The tiles under the held piece with its anchor cell on `tile`, the cells on the map only.
+func piece_tiles(tile) -> Array:
+	var out: Array = []
+	for c in U.comp(nextWall, "BuildingBlock").cells:
+		var x: int = tile.idxX + c.x
+		var z: int = tile.idxZ + c.y
+		if x >= 0 and z >= 0 and x < map.sizeX and z < map.sizeZ:
+			out.append(map.tiles[x][z])
+	return out
+
+
+## The held piece fits with its anchor on `tile`: every cell on the map and free, one of them in reach.
+func can_place_piece(tile) -> bool:
+	if not U.alive(nextWall):
+		return false
+	var tiles := piece_tiles(tile)
+	if tiles.size() != U.comp(nextWall, "BuildingBlock").cells.size():
+		return false
+	var reached := false
+	for t in tiles:
+		if not t.is_free():
+			return false
+		reached = reached or ibr(t.idxX, t.idxZ)
+	return reached
+
+
+## The held piece is a single block and `tile` an own wall with room on top.
+func can_stack_on(tile) -> bool:
+	return U.alive(nextWall) and U.comp(nextWall, "BuildingBlock").cells.size() == 1 \
+			and tile.isWall and map.get_mini(tile.idxX, tile.idxZ) == playerID \
+			and not U.alive(tile.wallStacked) and not tile.burning
+
+
 func can_combine_next_building_with_tile(tile) -> bool:
 	return tile.buildable() and _combination(nextBuilding, tile) != null
 
@@ -199,7 +242,7 @@ func try_get_next_building() -> void:
 func next_wall_to_gui() -> void:
 	if U.alive(nextWall) and wallSpawn != null:
 		U.set_parent(nextWall, wallSpawn)
-		nextWall.position = Vector3.ZERO
+		nextWall.position = -_piece_centre()
 		switch_casting_shadows(nextWall, false)
 		_restore_wall_color()
 
@@ -208,9 +251,32 @@ func next_wall_to_map() -> void:
 	if U.alive(nextWall):
 		U.set_parent(nextWall, buildableTileSelected.go)
 		nextWall.position = Vector3.ZERO
+		_settle_cells()
 		switch_casting_shadows(nextWall, true)
 		_lighten_wall()
 		_hide_decorations()
+
+
+## Centre of the held piece's cell box in its parent's space; a cell (x, z) sits at (x, 0, -z).
+func _piece_centre() -> Vector3:
+	var cells: Array[Vector2i] = U.comp(nextWall, "BuildingBlock").cells
+	var lo := cells[0]
+	var hi := cells[0]
+	for c in cells:
+		lo = Vector2i(mini(lo.x, c.x), mini(lo.y, c.y))
+		hi = Vector2i(maxi(hi.x, c.x), maxi(hi.y, c.y))
+	return Vector3((lo.x + hi.x) / 2.0, 0.0, -(lo.y + hi.y) / 2.0)
+
+
+## Each cell of the held piece sits on its own tile's slab, as the block it places will.
+func _settle_cells() -> void:
+	var cells: Array[Vector2i] = U.comp(nextWall, "BuildingBlock").cells
+	var nodes := nextWall.get_children().filter(func(n): return n is Node3D)
+	for i in cells.size():
+		var x: int = buildableTileSelected.idxX + cells[i].x
+		var z: int = buildableTileSelected.idxZ + cells[i].y
+		if x >= 0 and z >= 0 and x < map.sizeX and z < map.sizeZ:
+			nodes[i].global_position.y = map.tiles[x][z].go.global_position.y
 
 
 func next_building_to_gui() -> void:
@@ -237,31 +303,21 @@ func switch_casting_shadows(n: Node3D, on := true) -> void:
 func next_wall_to_wall() -> void:
 	U.set_parent(nextWall, buildableTileSelected.go)
 	switch_casting_shadows(nextWall, true)
-	nextWall.position = Vector3(0, 1, 0)
+	nextWall.position = Vector3(0, 0.75, 0)  # the upper storey's body starts on the block's top
 	_lighten_wall()
 
 
 func _hide_decorations() -> void:
-	buildableTileSelected.hide_decorations()
-	decorHiddenTile = buildableTileSelected
+	for t in piece_tiles(buildableTileSelected):
+		t.hide_decorations()
+		decorHiddenTiles.append(t)
 
 
 func _restore_decorations() -> void:
-	if U.alive(decorHiddenTile):
-		decorHiddenTile.show_decorations()
-	decorHiddenTile = null
-
-
-func _stackable_wall_fits(old_wall: Node3D, _new_wall: Node3D) -> bool:
-	var old_bb := U.comp(old_wall, "BuildingBlock")
-	if old_bb.player != self:
-		return false
-	var old_c: Array = old_bb.connects_up_down_left_right()
-	var new_c: Array = U.comp(nextWall, "BuildingBlock").connects_up_down_left_right()
-	for i in 4:
-		if new_c[i] and not old_c[i]:
-			return false
-	return true
+	for t in decorHiddenTiles:
+		if U.alive(t):
+			t.show_decorations()
+	decorHiddenTiles = []
 
 
 func count(stat: String, n := 1) -> void:
@@ -373,15 +429,16 @@ func manage_player_actions() -> void:
 		if button_down("debug_shake"):
 			buildableTileSelected.shake(2.0)
 		if game.buildingAllowed:
-			if canBuildOnTile:
-				if button_down("build_wall") and U.alive(nextWall):
+			if button_down("build_wall") and U.alive(nextWall):
+				if canPlaceWall:
 					build_next_wall(buildableTileSelected)
-				elif button_down("build_building") and U.alive(nextBuilding):
+				elif canStackWall:
+					stack_wall(buildableTileSelected)
+			elif button_down("build_building") and U.alive(nextBuilding):
+				if canPlaceBuilding:
 					build_next_building()
-			elif canStackWall and button_down("build_wall") and U.alive(nextWall):
-				stack_wall(buildableTileSelected)
-			elif canCombine and button_down("build_building"):
-				_combine_next_building_with_selected_tile()
+				elif canCombine:
+					_combine_next_building_with_selected_tile()
 		if game.shootingAllowed:
 			if button_down("fire"):
 				for cannon in activeCannons:
@@ -463,16 +520,22 @@ func build_upgrade(tile) -> void:
 		cluster.build_multifield_upgrade()
 
 
+## A fresh block stacks on the own wall on `tile`; the held single block is used up.
 func stack_wall(tile) -> void:
-	_restore_wall_color()
-	U.comp(nextWall, "BuildingBlock").player = self
-	tile.stack_wall(nextWall)
+	var block := Catalog.spawn("wall")
+	U.comp(block, "BuildingBlock").player = self
+	tile.stack_wall(block)
+	U.destroy(nextWall)
+	nextWall = null
 	get_next_wall()
 
 
+## Stamps a wall block on every tile of the held piece anchored on `tile`; the piece is used up.
 func build_next_wall(tile) -> void:
-	_restore_wall_color()
-	build_wall(tile, nextWall)
+	for t in piece_tiles(tile):
+		build_wall(t, Catalog.spawn("wall"))
+	U.destroy(nextWall)
+	nextWall = null
 	get_next_wall()
 
 

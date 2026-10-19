@@ -42,6 +42,23 @@ func _ready() -> void:
 	check(block != null and block.category == BuildingDef.Category.WALL and block.draw_weight == 0.0
 			and block.access.size() == 9 and not block.access.has(true),
 			"the wall block is a WALL that never draws and blocks all nine cells of its tile")
+	var shapes := {
+		"wall_1": [[0, 0]], "wall_2": [[0, 0], [1, 0]], "wall_3": [[-1, 0], [0, 0], [1, 0]],
+		"wall_4": [[-1, 0], [0, 0], [1, 0], [2, 0]], "wall_s": [[-1, 1], [0, 1], [0, 0], [1, 0]],
+		"wall_t": [[-1, 0], [0, 0], [1, 0], [0, 1]], "wall_x": [[0, 1], [-1, 0], [0, 0], [1, 0], [0, -1]]}
+	var weights := {"wall_1": 30.0, "wall_2": 25.0, "wall_3": 15.0, "wall_4": 10.0, "wall_s": 10.0,
+		"wall_t": 6.0, "wall_x": 4.0}
+	var drawn := {}
+	for d in Catalog.drawable(BuildingDef.Category.WALL):
+		drawn[d.id] = d.draw_weight
+	check(drawn == weights, "the hand draws the seven pieces at their weights %s" % [drawn])
+	for id in shapes:
+		var cells: Array = []
+		for c in Catalog.get_def(id).piece:
+			cells.append([c.x, c.y])
+		check(cells == shapes[id], "%s has the cells of the sketch %s" % [id, cells])
+	check(["wall_line", "wall_corner", "wall_tee", "wall_cross"].all(func(id): return Catalog.parked.has(id)),
+			"the four connector walls are parked")
 	_prepare_tmp_catalog()
 	_check_problem_reports()
 	await _check_workflow_in_game()

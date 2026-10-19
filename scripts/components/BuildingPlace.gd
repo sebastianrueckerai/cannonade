@@ -57,10 +57,9 @@ func buildable() -> bool:
 	return not burning and not water and not shaking and not disabled
 
 
-func connects_up_down_left_right(direction: int) -> bool:
-	if not U.alive(structure):
-		return false
-	return block().connects(direction)
+## Nothing stands here and a piece may go down now.
+func is_free() -> bool:
+	return not U.alive(structure) and buildable()
 
 
 func damage_building_place(damage: float) -> void:
@@ -135,10 +134,7 @@ func un_build() -> void:
 
 func build(building: Node3D, p) -> void:
 	var bb = U.comp(building, "BuildingBlock")
-	var wall := U.comp(building, "Wall")
-	isWall = wall != null
-	if isWall:
-		wall.show_lower()
+	isWall = U.comp(building, "Wall") != null
 	bb.player = p
 	bb.buildingPlace = self
 	U.set_parent(building, go)

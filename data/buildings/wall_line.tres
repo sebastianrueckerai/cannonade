@@ -25,6 +25,7 @@ upper_models = Array[PackedScene]([ExtResource("9_gan2l"), ExtResource("10_tdg5h
 script = ExtResource("15_hfkec")
 display_name = "Wall"
 category = 1
+parked = true
 model = ExtResource("14_fxfr3")
 access = Array[bool]([true, false, true, true, false, true, true, false, true])
 draw_weight = 1.0

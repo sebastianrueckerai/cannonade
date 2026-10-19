@@ -26,6 +26,7 @@ upper_models = Array[PackedScene]([ExtResource("8_s4bio"), ExtResource("9_1ohwp"
 script = ExtResource("16_0iga3")
 display_name = "Wall cross"
 category = 1
+parked = true
 model = ExtResource("15_i0631")
 access = Array[bool]([true, false, true, false, false, false, true, false, true])
 draw_weight = 1.0

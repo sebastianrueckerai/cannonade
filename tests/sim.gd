@@ -20,6 +20,8 @@ var _walls_lost := {}
 var _guns_last := {}
 var _guns_lost := {}
 var _max_walls := {}
+## walls each player holds at the first sample: the start ring
+var _start_walls := {}
 var _max_active := {}
 var _next_autobuild := 1.0
 var _ship_start := {}
@@ -73,6 +75,8 @@ func _process(_delta: float) -> void:
 		if guns < _guns_last.get(k, 0):
 			_guns_lost[k] = true
 		_guns_last[k] = guns
+		if not _start_walls.has(k):
+			_start_walls[k] = walls
 		_max_walls[k] = maxi(_max_walls.get(k, 0), walls)
 		_max_active[k] = maxi(_max_active.get(k, 0), p.activeCannons.size())
 	if autobuild and U.time >= _next_autobuild:
@@ -103,7 +107,7 @@ func _scan_marked(g) -> void:
 				return
 
 
-## Very simple stand-in for a human: places walls on free tiles in range.
+## Very simple stand-in for a human: places the held piece where it fits.
 func _autobuild(g) -> void:
 	for p in g.players:
 		if p.has_method("search_best_building_plans") or not g.buildingAllowed or not U.alive(p.nextWall):
@@ -112,7 +116,7 @@ func _autobuild(g) -> void:
 		for x in g.map.sizeX:
 			for z in g.map.sizeZ:
 				var t = g.map.tiles[x][z]
-				if p.ibr(x, z) and not U.alive(t.structure) and t.buildable():
+				if p.can_place_piece(t):
 					cands.append(t)
 		if not cands.is_empty():
 			p.build_next_wall(cands[U.rint(0, cands.size())])
@@ -178,8 +182,9 @@ func _check_outcome(g) -> void:
 		var k: int = p.playerID
 		if not p.has_method("search_best_building_plans"):
 			continue
-		if _max_walls.get(k, 0) < 5:
-			_fail("AI %d built only %d walls" % [k, _max_walls.get(k, 0)])
+		var built: int = _max_walls.get(k, 0) - _start_walls.get(k, 0)
+		if built < 5:
+			_fail("AI %d built only %d walls beyond its start ring" % [k, built])
 		if _max_active.get(k, 0) < 1:
 			_fail("AI %d never had an active gun" % k)
 		# only an AI enemy shoots back (the versus human stands still), and the

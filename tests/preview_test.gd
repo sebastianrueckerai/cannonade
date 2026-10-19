@@ -19,7 +19,7 @@ func _ready() -> void:
 		for kind in ["wall", "building"]:
 			_check_slot(kind, i)
 	await _check_hovers()
-	await _check_wall_shapes()
+	_check_pieces()
 	await _check_corners()
 	main.free()
 	await get_tree().process_frame
@@ -76,8 +76,9 @@ func _check_slot(kind: String, i: int) -> void:
 func _check_hovers() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
-	check(human.nextWall.get_parent() == human.wallSpawn and human.nextWall.position == Vector3.ZERO,
-			"the offered wall rests centred in the gui slot")
+	var rest := _slot_box(human.nextWall)
+	check(human.nextWall.get_parent() == human.wallSpawn and absf(rest.get_center().x) < 0.01
+			and absf(rest.get_center().z) < 0.01, "the offered piece rests centred in the gui slot")
 	var wait := 0.0
 	while not U.alive(human.nextBuilding) and wait < 2.0:
 		await get_tree().process_frame
@@ -106,7 +107,7 @@ func _check_hovers() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == map.tiles[free.x][free.y].go,
-			"the wall moves onto the hovered tile as the placement preview")
+			"the piece moves onto the hovered tile as the placement preview")
 	check(human.nextBuilding.get_parent() == human.buildingSpawn,
 			"the building stays in its slot; only the wall previews on the tile")
 	check(deco_meshes.all(func(m): return not m.visible),
@@ -124,95 +125,44 @@ func _check_hovers() -> void:
 			"the tile's trees and stones come back when the preview leaves")
 
 
-## A wall piece's placeholder model spans the footprint its access grid blocks, so the
-## slot icon and the placement preview read as the piece's shape. Every model the placed
-## wall can show instead — the wrapper's FBX, the art layer's glb files, the model the
-## swap actually installs — must span that footprint and reach the tile edges its access
-## grid connects, or the wall lands rotated (K4).
-func _check_wall_shapes() -> void:
+## Every drawn piece at every rotation: its ghost cells land on the anchor tile plus its cells, and in
+## the gui slot the piece sits centred and inside the slot camera's view.
+func _check_pieces() -> void:
+	var anchor := Vector2i(map.sizeX / 2, map.sizeZ / 2)
+	var cam: Camera3D = human.wallSpawn.get_viewport().get_camera_3d()
 	for def in Catalog.drawable(BuildingDef.Category.WALL):
-		var want := _footprint_aspect(def)
-		var conn := _connectors(def)
-		_check_model(def.model.instantiate(), want, conn, "%s placeholder" % def.id)
-		for b in def.behaviours:
-			for key in ["lower_models", "upper_models"]:
-				var models: Array = b.get(key)
-				for i in models.size():
-					_check_model(models[i].instantiate(), want, conn, "%s %s[%d]" % [def.id, key, i])
-		await _check_wall_art(def, want, conn)
+		U.destroy(human.nextWall)
+		human.nextWall = Catalog.spawn(def, human.wallSpawn)
+		var bb = U.comp(human.nextWall, "BuildingBlock")
+		for r in 4:
+			human.buildableTileSelected = map.tiles[anchor.x][anchor.y]
+			human.next_wall_to_map()
+			var got: Array = []
+			for n in human.nextWall.get_children():
+				if n is Node3D:
+					got.append(map.tile_index_at(n.global_position))
+			var want: Array = []
+			for c in bb.cells:
+				want.append(anchor + c)
+			check(got == want, "%s turned %d: the ghost covers anchor + cells %s (got %s)" % [def.id, r, want, got])
+			human.next_wall_to_gui()
+			var box := _slot_box(human.nextWall)
+			check(absf(box.get_center().x) < 0.01 and absf(box.get_center().z) < 0.01,
+					"%s turned %d sits centred in the gui slot" % [def.id, r])
+			check(maxf(box.size.x, box.size.z) <= cam.size,
+					"%s turned %d fits the slot camera's view (%.2f m in %.2f m)" % [def.id, r, maxf(box.size.x, box.size.z), cam.size])
+			bb.rotate_clockwise()
+		human._restore_decorations()
 
 
-## The art files the game loads for this def (the FBX names of its wrappers are the art ids)
-## and one swap through a live wrapper, as WallModel does it when a wall is placed.
-func _check_wall_art(def, want: float, conn: Array) -> void:
-	var ids := {}
-	for b in def.behaviours:
-		for key in ["lower_models", "upper_models"]:
-			for ps in b.get(key):
-				var wrapper: Node3D = (ps as PackedScene).instantiate()
-				var model := wrapper.get_node("Model") as Node3D
-				ids["wall_" + model.scene_file_path.get_file().get_basename().rstrip("0123456789")] = key
-				wrapper.free()
-	for id in ids:
-		var n := 1
-		while true:
-			var path := "res://assets/art/3d/%s.glb" % id if n == 1 else "res://assets/art/3d/%s.%d.glb" % [id, n]
-			if not ResourceLoader.exists(path):
-				break
-			_check_model((load(path) as PackedScene).instantiate(), want, conn, "%s art %s" % [def.id, id])
-			n += 1
-	var live: Node3D = (def.behaviours[0].get("lower_models")[0] as PackedScene).instantiate()
-	get_tree().root.add_child(live)
-	await get_tree().process_frame
-	_check_model(live.get_node("Model"), want, conn, "%s swapped-in model" % def.id, false)
-	live.free()
-
-
-## The sides the def's access grid blocks, [up, down, left, right]; up is -z, right is +x.
-func _connectors(def) -> Array:
-	var a: Array = def.access
-	return [not a[5], not a[3], not a[1], not a[7]]
-
-
-## The aspect (x over z) of the 3x3 area of cells the piece blocks: below 0.75 a bar
-## along z, above 1.33 a bar along x, else roughly square. The access array is
-## column-major, so cell (x, z) sits at 3 * x + z.
-func _footprint_aspect(def) -> float:
-	var xs: Array = []
-	var zs: Array = []
-	for z in 3:
-		for x in 3:
-			if not def.access[3 * x + z]:
-				xs.append(x)
-				zs.append(z)
-	if xs.is_empty():
-		return 1.0
-	return float(xs.max() - xs.min() + 1) / float(zs.max() - zs.min() + 1)
-
-
-const EDGE_REACH := 0.4
-const SIDES := ["up", "down", "left", "right"]
-
-
-func _check_model(piece: Node3D, want: float, conn: Array, what: String, free_after := true) -> void:
+## Bounds of the piece's meshes in its slot's space.
+func _slot_box(piece: Node3D) -> AABB:
 	var corners: Array = []
 	_piece_extents(piece, Transform3D(), corners)
-	if free_after:
-		piece.free()
 	var box := AABB(corners[0], Vector3.ZERO)
 	for p in corners:
 		box = box.expand(p)
-	var aspect := box.size.x / box.size.z
-	# A turned piece inverts its aspect (1 / aspect), so the bands only have to sit on the
-	# right side of 1 with room for the modelled variance of the FBX variants (tee uppers
-	# run to 0.93); the edge checks below are the exact discriminator.
-	var ok := (aspect < 0.95) if want < 0.75 else ((aspect > 1.05) if want > 1.33 else (aspect >= 0.7 and aspect <= 1.4))
-	check(ok, "%s spans its footprint (aspect %.2f, want %.2f)" % [what, aspect, want])
-	# How far the geometry stays inside the 0.4 m line per side; negative means it reaches the edge.
-	var inside := [box.position.z + EDGE_REACH, EDGE_REACH - box.end.z,
-			box.position.x + EDGE_REACH, EDGE_REACH - box.end.x]
-	for i in 4:
-		check((inside[i] < 0.0) == conn[i], "%s reaches the %s edge exactly when the piece connects it" % [what, SIDES[i]])
+	return box
 
 
 func _piece_extents(node: Node3D, xform: Transform3D, corners: Array) -> void:
@@ -224,7 +174,8 @@ func _piece_extents(node: Node3D, xform: Transform3D, corners: Array) -> void:
 				for cz in [part.position.z, part.end.z]:
 					corners.append(world * Vector3(cx, cy, cz))
 	for c in node.get_children():
-		_piece_extents(c, world, corners)
+		if c is Node3D:
+			_piece_extents(c, world, corners)
 
 
 ## Every HUD panel and preview panel is fully on screen and clear of the others.

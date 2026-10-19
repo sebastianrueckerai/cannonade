@@ -94,6 +94,8 @@ func _check_def(d: BuildingDef) -> Array[String]:
 		p.append("access needs 9 entries (or none)")
 	if not (d.recipe_pattern.is_empty() or d.recipe_pattern.size() == d.size * d.size):
 		p.append("recipe_pattern needs %d entries for size %d" % [d.size * d.size, d.size])
+	if d.category == BuildingDef.Category.WALL and d.draw_weight > 0 and d.piece.is_empty() and not d.parked:
+		p.append("a drawn wall needs piece cells")
 	if not (d.recipe_combine.is_empty() or d.recipe_combine.size() == 2):
 		p.append("recipe_combine needs 2 entries: [placed building, building it is placed on]")
 	for b in d.behaviours:
@@ -265,6 +267,8 @@ func spawn(def_or_id, parent: Node = null) -> Node3D:
 		return null
 	var go: Node3D = def.model.instantiate()
 	Art.attach(go, def.id)
+	if not def.piece.is_empty():
+		_add_piece_cells(go, def)
 	configure(go, def)
 	if parent != null:
 		parent.add_child(go)
@@ -284,6 +288,7 @@ func configure(go: Node3D, def: BuildingDef) -> void:
 	var bb := _add(go, "BuildingBlock")
 	bb.accessColFromDownLeft = def.access.duplicate() if def.access.size() == 9 else [true, true, true, true, true, true, true, true, true]
 	bb.health = def.health
+	bb.cells = def.piece.duplicate()
 	if def.category == BuildingDef.Category.BASE:
 		_add(go, "Castle")
 	if def.category == BuildingDef.Category.WALL or def.draw_weight > 0:
@@ -310,8 +315,7 @@ func configure(go: Node3D, def: BuildingDef) -> void:
 			var sh := _add(go, "ShieldGenerator")
 			sh.shieldMeshRenderer = _anchor_path(go, sh, "Shield")
 		elif b is WallBehaviour:
-			var w := _add(go, "Wall")
-			w.placeholderModel = _placeholder_path(go, w)
+			_add(go, "Wall")
 	_apply_params(go, def)
 
 
@@ -360,12 +364,6 @@ func _apply_params(go: Node3D, def: BuildingDef) -> void:
 			sh.secondsToReset = b.reset_time
 			sh.supplyNeeded = def.supply_needed()
 			sh.refresh()
-		elif b is WallBehaviour:
-			var w := U.comp(go, "Wall")
-			if w == null:
-				continue
-			w.lowerPrefabs = b.lower_models
-			w.upperPrefabs = b.upper_models
 	var sup := U.comp(go, "SupplyBuilding")
 	if sup != null:
 		sup.supply = def.produces.get("supply", 0.0)
@@ -424,10 +422,14 @@ func _anchor_path(go: Node3D, c: Node, anchor_name: String, fallback = null) -> 
 	return NodePath(str(c.get_path_to(a)))
 
 
-## The wall placeholder is the first model node (replaced by the wall model).
-func _placeholder_path(go: Node3D, c: Node) -> NodePath:
-	var p := _first_model_child(go)
-	return NodePath(str(c.get_path_to(p))) if p else NodePath()
+## A hand piece shows the wall block at each of its cells, so the piece looks like what it places.
+func _add_piece_cells(go: Node3D, def: BuildingDef) -> void:
+	var block: BuildingDef = get_def("wall")
+	for c in def.piece:
+		var cell: Node3D = block.model.instantiate()
+		Art.attach(cell, "wall")
+		cell.position = Vector3(c.x, 0.0, -c.y)
+		go.add_child(cell)
 
 
 func _first_model_child(go: Node3D) -> Node3D:
