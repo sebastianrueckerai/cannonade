@@ -2,6 +2,7 @@ extends Node
 ## The AI's hand while it builds: a gun goes only into a plan's enclosure, a drawn
 ## shooter it cannot afford (the parts cap) is discarded quietly and redrawn on the
 ## usual cooldown; no building ever flies away from the AI's gui while it waits.
+## Its reaction time: every build action and every shot waits secondsBetweenActions.
 ##   godot --headless --fixed-fps 30 res://tests/ai_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -57,6 +58,46 @@ func flying_buildings() -> Array:
 	return out
 
 
+## Game times over `t` seconds at which the enemy acted: its held piece or gun left
+## its hand (placed, stacked, dropped, discarded), or one of its guns fired.
+func action_times(t: float) -> Array:
+	var out: Array = []
+	var held := [_id(enemy.nextWall), _id(enemy.nextBuilding)]
+	var shots: int = enemy.stats.get("shots", 0)
+	var end: float = U.time + t
+	while U.time < end:
+		await get_tree().process_frame
+		var now := [_id(enemy.nextWall), _id(enemy.nextBuilding)]
+		var fired: int = enemy.stats.get("shots", 0)
+		for i in 2:
+			if held[i] != 0 and now[i] != held[i]:
+				out.append(U.time)
+		for i in fired - shots:
+			out.append(U.time)
+		held = now
+		shots = fired
+	return out
+
+
+func _id(n) -> int:
+	return n.get_instance_id() if U.alive(n) else 0
+
+
+## Each gap between two actions is at least the reaction time; with `slack`, while the
+## AI always has an action at hand, at most that much longer.
+func check_pace(times: Array, pace: float, phase: String, slack := INF) -> void:
+	var gaps: Array = []
+	for i in range(1, times.size()):
+		gaps.append(snappedf(times[i] - times[i - 1], 0.001))
+	print("%s gaps: %s" % [phase, gaps])
+	check(times.size() >= 4, "%s: the AI acts (%d actions)" % [phase, times.size()])
+	check(gaps.all(func(g): return g >= pace),
+			"%s: every action waits the %.1f s reaction time %s" % [phase, pace, gaps])
+	if slack < INF:
+		check(gaps.all(func(g): return g <= pace + slack),
+				"%s: the next action follows the reaction time within %.1f s %s" % [phase, slack, gaps])
+
+
 ## Free, dry, buildable tiles in the enemy's build range.
 func enemy_free_tiles() -> Array:
 	var b := Vector2i(map.sizeX / 2, map.sizeZ - map.sizeZ / 4)
@@ -77,10 +118,31 @@ func _run() -> void:
 	U.destroy(enemy.nextBuilding)
 	enemy.nextBuilding = Catalog.spawn("cannon", enemy.buildingSpawn)
 	var held = enemy.nextBuilding
+	var piece = enemy.nextWall
 	enemy.execute_building_plan()
 	check(U.alive(held) and enemy.nextBuilding == held and enemy.cannons.is_empty(),
 			"with no plan to wall it, the AI keeps the drawn gun in hand")
+	# no plan and no search running: the piece is dropped, and the drop is an action
+	check(enemy.nextWall == null and U.comp(piece, "FlyAndVanish").fly,
+			"with no plan and no search, the AI drops its piece")
+	check(enemy.nextAction >= U.time + enemy.secondsBetweenActions,
+			"the drop waits the reaction time like any action")
 	U.destroy(held)
+	enemy.nextBuilding = null
+
+	# while a plan search runs, the AI keeps the redrawn piece (a search that yields at once
+	# stands in for the first search of a game, which spans several frames)
+	await seconds(3.2)
+	piece = enemy.nextWall
+	check(U.alive(piece), "the dropped piece is redrawn")
+	var budget: int = enemy.sliceBudgetUsec
+	enemy.sliceBudgetUsec = 0
+	enemy.update_plans()
+	enemy.execute_building_plan()
+	enemy.sliceBudgetUsec = budget
+	check(enemy.activePlans.is_empty() and enemy.nextWall == piece and not U.comp(piece, "FlyAndVanish").fly,
+			"while the plans are still being searched, the AI keeps its piece")
+	U.destroy(enemy.nextBuilding)
 	enemy.nextBuilding = null
 	# the enemy sits at its parts cap, built the real way
 	var spots := enemy_free_tiles()
@@ -96,10 +158,20 @@ func _run() -> void:
 	check(not U.alive(enemy.nextBuilding), "the over-cap shooter is discarded")
 	check(flying_buildings().is_empty(), "the discard flies nothing away")
 
-	# live build phase: the AI churns through draws, no building ever flies
+	# live build phase: the AI churns through draws, no building ever flies, and it takes its
+	# reaction time (set to a value of the test's own) after every action
+	check(enemy.secondsBetweenActions > 0.0, "the AI pauses between actions by default")
+	enemy.secondsBetweenActions = 0.8
 	enemy.dormant = false
 	enemy.nextAction = 0.0
-	await seconds(5.0)
+	var built := await action_times(5.0)
 	check(flying_buildings().is_empty(),
 			"five seconds of building phase fly no building away")
+	check_pace(built, 0.8, "build")
+
+	# battle: the six loaded guns fire one shot per action, never two at once
+	game.buildingAllowed = false
+	game.shootingAllowed = true
+	game.timeLeftInRound = 1e6
+	check_pace(await action_times(6.0), 0.8, "battle", 0.1)
 	await frames(2)

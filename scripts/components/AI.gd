@@ -4,15 +4,15 @@ extends "res://scripts/components/PlayerController.gd"
 
 const BuildingPlan = preload("res://scripts/BuildingPlan.gd")
 
-var secondsBetweenBuilds := 0.5
-var secondsBetweenShotSalvos := 0.1
+## Reaction time: the pause after every action (a placed piece or gun, a stacked block, a dropped
+## piece, a discarded gun, a shot), the time a human needs to move the mouse and click. Must stay above 0.
+var secondsBetweenActions := 0.5
 ## When nothing could be done, wait this long before planning again (the Unity
 ## version re-planned every frame, which is too expensive in GDScript).
 var secondsIdleRetry := 0.15
 var nextAction := 0.0
 var nActivePlans := 3
 var nFinishedPlans := 12
-var consecutiveShots := 1
 var activePlans: Array = []
 var finishedPlans: Array = []
 var doubleStackPlan = null
@@ -118,10 +118,13 @@ func _update_double_stack_plan() -> void:
 
 
 func execute_building_plan() -> void:
+	var did := false
 	# a drawn shooter over the parts cap can never be placed; discard it so the hand rotates
 	if U.alive(nextBuilding) and U.shooter(nextBuilding) != null and over_parts_cap(nextBuilding):
 		_discard_next_building()
-	var did := try_build_gun_in_plan()
+		did = true
+	if not did:
+		did = try_build_gun_in_plan()
 	if not did:
 		var n_for_max := 25
 		var n := _count_walled_in_tiles_in_finished_plans()
@@ -132,12 +135,12 @@ func execute_building_plan() -> void:
 		did = try_build_next_wall()
 	if not did:
 		did = try_stack_next_wall()
-	if not did:
+	# a piece no plan takes is dropped, but only once the search is done: the first one at game
+	# start would fly away while the first plans are still being found
+	if not did and U.alive(nextWall) and not _searching:
 		drop(nextWall, true)
-	if did:
-		nextAction = U.time + secondsBetweenBuilds
-	else:
-		nextAction = U.time + secondsIdleRetry
+		did = true
+	nextAction = U.time + (secondsBetweenActions if did else secondsIdleRetry)
 
 
 ## Discards the held building without the fly-away; the next draw follows the
@@ -155,7 +158,9 @@ func _count_walled_in_tiles_in_finished_plans() -> int:
 	return count
 
 
+## One shot per action: the first loaded gun that can aim at a target fires.
 func search_and_fire_at_targets() -> void:
+	nextAction = U.time + secondsIdleRetry
 	if enemyPlayers == null:
 		enemyPlayers = []
 		for p in game.players:
@@ -166,20 +171,14 @@ func search_and_fire_at_targets() -> void:
 	_random_shuffle(activeCannons)
 	var enemy = enemyPlayers[U.rint(0, enemyPlayers.size())]
 	var targets := aquire_targets(enemy, activeCannons.size())
+	if targets.is_empty():
+		return
 	_random_shuffle(targets)
-	if targets.size() > 0:
-		var shots := 0
-		var next_cannon := 0
-		var next_target := 0
-		while next_cannon < activeCannons.size() and shots < consecutiveShots:
-			var t = targets[next_target]
-			if activeCannons[next_cannon].try_shoot(t.go.global_position, t):
-				shots += 1
-			next_cannon += 1
-			next_target += 1
-			if next_target >= targets.size():
-				next_target = 0
-		nextAction = U.time + secondsBetweenShotSalvos
+	for i in activeCannons.size():
+		var t = targets[i % targets.size()]
+		if activeCannons[i].try_shoot(t.go.global_position, t):
+			nextAction = U.time + secondsBetweenActions
+			return
 
 
 func _random_shuffle(arr: Array) -> void:

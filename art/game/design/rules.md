@@ -89,13 +89,13 @@ Why counts and not shapes: a 2x2 has six patterns, a 3x3 has 140. Nobody learns 
 ## 8. The AI plays the human's game
 
 - The same draws, the same hold slots, the same queue and skip.
-- Two parameters in seconds, both 0 by default: `reaction`, the wait between a gun becoming ready and the press, and `switch`, the wait per aim move, scaled by the distance moved. A human lands about one shot per 0.5 to 0.8 s including the aim move, so the sweep starts there. 0 stays as the perfect AI for stress tests.
+- One reaction time in seconds, `secondsBetweenActions` in [AI.gd](/home/womb/repos/grid-cannons/scripts/components/AI.gd), 0.5 by default and never 0: the wait after every action, whether a placed piece or gun, a stacked block, a dropped piece, a discarded gun or a shot. It stands for the mouse move and the click. A human lands about one shot per 0.5 to 0.8 s including the aim move. It replaces the two waits planned here, `reaction` and `switch` (D76).
 - It knows every recipe of section 7 and can lay a 3x3. Today its integer square root returns 4 for 9.
 - Personalities: swarm, heavy, mortar, flak, siege, mixed. Each defends with small guns and spends the rest of its land on its kind. Mixed may build everything.
 
 ## 9. The lab decides the numbers
 
-[tools/lab.tscn](/home/womb/repos/grid-cannons/tools/lab.tscn) runs AI against AI with `--set` and `--sweep`. The personalities and the two AI parameters become `--set` values.
+[tools/lab.tscn](/home/womb/repos/grid-cannons/tools/lab.tscn) runs AI against AI with `--set` and `--sweep`. The personalities and the AI's reaction time become `--set` values.
 
 - Round robin: every personality against every other, 100 matches per pair, both seats. The win matrix must show no personality above 60 of 100 against the field, and flak over swarm.
 - Targets per 30 s battle, for a fort that was intact at its start:
