@@ -1,6 +1,6 @@
 extends Node
-## A sandbox battle between two walled forts that hold every building of the art kit: the four guns (small, heavy,
-## mortar, flak), the base, the depots of every size (enough supply for every big gun) and the two blocks.
+## A sandbox battle between two walled forts that hold every building of the art kit in play: the four guns (small,
+## heavy, mortar, flak), the castle and the depots of every size (enough supply for every big gun).
 ## Saves screenshots at the given battle times (needs a display, run it through tools/godot_render.sh).
 ##   tools/godot_render.sh res://tools/shoot_battle.tscn -- --at=4,6 --out=/tmp/battle
 ##   --look=x,z   camera close to that tile, as in tools/screenshot.gd
@@ -74,9 +74,8 @@ func _fort(side: int, z0: int) -> Array:
 		for z in range(z0, z0 + 8):
 			if x == 2 or x == 27 or z == z0 or z == z0 + 7:
 				items.append({"side": side, "id": "wall", "x": x, "z": z, "rot": 0})
-	var inside := [["cannon22a", 12, 2], ["cannon", 15, 3], ["base", 17, 2],
+	var inside := [["cannon22a", 12, 2], ["cannon", 15, 3], ["castle", 17, 2],
 		["supply", 21, 2], ["supply", 22, 2], ["supply", 21, 4], ["supply", 22, 4],
-		["upgrade_a", 15, 5], ["upgrade_b", 13, 5],
 		["supply33", 3, 2], ["cannon22b", 23, 2], ["flak22", 25, 2], ["supply22", 23, 4]]
 	for b in inside:
 		var size: int = Catalog.get_def(b[0]).size

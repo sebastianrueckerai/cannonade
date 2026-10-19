@@ -69,7 +69,9 @@ Guns always fire, walled in or not, and every building is a legal target. A gun 
 4 shells and fires 1.5× slower for each shell it survives; a castle takes 12 shells
 through four damage states and ends as a ruin nobody claims or builds on. Nothing
 repairs. A gun costs parts (1×1 one part, 2×2 four); four basic cannons placed in a
-2×2 fuse into the heavy `cannon22a`. The upgrade blocks are parked with the 3×3 guns.
+2×2 fuse into the heavy `cannon22a`, which takes 8 shells and fires a pointed heavy shell
+worth four (40 damage against the cannon's 10) at the cannon's 2 s reload. The upgrade
+blocks are parked with the 3×3 guns.
 
 ## Buildings are data
 
@@ -172,6 +174,10 @@ godot --headless --fixed-fps 30 res://tools/lab.tscn -- --scenario=flak_vs_canno
 # sweep one catalog value, write every battle to a CSV
 godot --headless --fixed-fps 30 res://tools/lab.tscn -- --scenario=mirror_forts --runs=10 \
     --sweep=flak22.salvo_interval=0.5:3:0.5 --csv=flak.csv
+
+# four cannons against the heavy they fuse into, the heavy shell's damage swept
+godot --headless --fixed-fps 30 res://tools/lab.tscn -- --scenario=heavy_vs_cannons --runs=10 \
+    --targets=auto,auto --sweep=cannon22a.damage=10,20,30,40,60,80
 
 # change values first (several with ";"), red aims at guns, red's layout never fires
 godot --headless --fixed-fps 30 res://tools/lab.tscn -- --scenario=my_test \

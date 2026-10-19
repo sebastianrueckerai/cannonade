@@ -113,6 +113,37 @@ func _run() -> void:
 	await seconds(10.0)
 	check(not U.alive(plain.structure), "an unprotected structure is destroyed by the same shells")
 
+	# the fused gun's heavy shell hits like the four cannons it was made of, and
+	# the pointed shell flies nose first: up while it climbs, down while it falls
+	p2.build_building(plain, Catalog.spawn("cannon"))
+	gun.nextBulletTime = 0.0
+	check(gun.try_shoot(plain.go.global_position, plain), "the fused gun fires at a basic gun")
+	var heavy = U.projectiles.back()
+	var meshes: Array = (heavy.get_node(heavy.body) as Node3D).find_children("*", "MeshInstance3D", true, false)
+	check(meshes.size() == 1 and meshes[0].visible and meshes[0].mesh != null,
+			"the heavy shell's model rides on the body that pitches with the arc")
+	var nose_up := -1.0
+	var nose_down := 1.0
+	var heading := 1.0
+	var last: Vector3 = heavy.go.global_position
+	while U.alive(heavy):
+		await get_tree().process_frame
+		if not U.alive(heavy) or meshes.is_empty():
+			break
+		var step: Vector3 = heavy.go.global_position - last
+		last = heavy.go.global_position
+		var nose: Vector3 = -(meshes[0] as Node3D).global_basis.z.normalized()
+		if step.y > 0.0:
+			nose_up = maxf(nose_up, nose.y)
+		elif step.y < 0.0:
+			nose_down = minf(nose_down, nose.y)
+		var flat := Vector2(step.x, step.z).normalized()
+		heading = minf(heading, flat.dot(Vector2(nose.x, nose.z).normalized()))
+	check(nose_up > 0.3 and nose_down < -0.3, "the nose climbs and dips with the arc (up %.2f, down %.2f)" % [nose_up, nose_down])
+	check(heading > 0.9, "the nose points along the flight, not back (%.2f)" % heading)
+	await seconds(0.5)
+	check(not U.alive(plain.structure), "one heavy shell destroys a basic gun, four cannon shells' worth")
+
 	# gun health: a basic gun dies on the fourth shell, the fused gun on the eighth
 	var single = map.tiles[12][20]
 	p1.build_building(single, Catalog.spawn("cannon"))

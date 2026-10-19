@@ -38,6 +38,7 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 - Four basic guns in a 2x2 square fuse during the build phase into one bigger building. The pattern names the result: four A the heavy cannon, two A and two B the flak. Further patterns are for the lab.
 - A fused building counts its four parts against the cap. Fusing is one way.
 - A basic gun takes 4 shells, a fused 2x2 building 8. Starting values.
+- The heavy cannon fires a pointed heavy shell worth four shells, 40 against 10, at the basic gun's reload. One heavy shell kills a basic gun, three ruin a castle. A wall dies to any shell, so against walls the heavy opens a quarter of what its four cannons would (session 25, D77).
 - A damaged gun smokes and fires slower. Every hit it survives makes its reload longer. The numbers are for the lab.
 - Nothing repairs, ever. A damaged gun stays damaged until it dies.
 - The upgrade blocks are parked, the way D64 parks a building. The two basic guns are the merge material now.

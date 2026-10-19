@@ -1,0 +1,16 @@
+asset_id: heavy_shell
+route: procedural
+class: prop
+dimensions:            # metres, Blender axes, Z up. The 2x2 cannon's pointed shell, nose along +Y: 0.32 wide and 0.64 long against the 0.28 m ball
+  max_x: 0.33
+  max_y: 0.65
+  max_z: 0.33
+budget:
+  max_tris: 400
+  max_materials: 1
+parts:
+  - heavy_shell
+pivots:
+  origin: centre       # the projectile flies about its centre, so the build's origin stays
+paint:
+  heavy_shell: {kind: iron, seed: 84}
