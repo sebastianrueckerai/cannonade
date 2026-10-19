@@ -74,7 +74,7 @@ func hold_tiles(p) -> void:
 		map.set_mini(t.idxX, t.idxZ, 255 if p == null else p.playerID)
 	for q in [before, p]:
 		if U.alive(q):
-			q.refresh_reach()
+			q.reach_changed()
 
 
 func my_tiles() -> Array:

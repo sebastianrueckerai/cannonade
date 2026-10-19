@@ -49,6 +49,8 @@ var map = null
 ## reach[x * map.sizeZ + z] = 1 where a placement may touch: within map.buildingRange (Chebyshev) of an own
 ## wall tile or of a tile of an own castle that is not a ruin
 var reach := PackedByteArray()
+## set by reach_changed(); the next read rebuilds `reach`
+var _reachStale := true
 var secondsLastBuilding := 0.0
 var game = null
 var voidSelected := false
@@ -65,15 +67,27 @@ func setup() -> void:
 	mainColor = Color.html(mainColorHexCode)
 	highlightPosColor = Color.html(highlightPosColorHexCode)
 	highlightNegColor = Color.html(highlightNegColorHexCode)
-	refresh_reach()
+	reach_changed()
 
 
 func in_reach(x: int, z: int) -> bool:
+	_fresh_reach()
 	return reach[x * map.sizeZ + z] != 0
 
 
-## Rebuilds `reach`; runs on every own placement and loss and whenever a castle changes hands.
-func refresh_reach() -> void:
+## The anchors moved: every own placement and loss and every castle changing hands call it. The next read
+## rebuilds the reach once, however many blocks a piece stamped or a splash took.
+func reach_changed() -> void:
+	_reachStale = true
+
+
+func _fresh_reach() -> void:
+	if _reachStale:
+		_reachStale = false
+		_rebuild_reach()
+
+
+func _rebuild_reach() -> void:
 	reach = _anchor_mask(map.buildingRange)
 
 
@@ -399,7 +413,7 @@ func remove_building_from_player(bb) -> void:
 	var castle = U.comp(bgo, "Castle")
 	if castle != null:
 		map.castles.erase(castle)
-	refresh_reach()
+	reach_changed()
 
 
 func manage_player_actions() -> void:
@@ -439,7 +453,7 @@ func manage_player_actions() -> void:
 
 func _build(tile, n: Node3D) -> Node3D:
 	tile.build(n, self)
-	refresh_reach()
+	reach_changed()
 	return n
 
 
@@ -510,8 +524,11 @@ func stack_wall(tile) -> void:
 
 ## Stamps a wall block on every tile of the held piece anchored on `tile`; the piece is used up.
 func build_next_wall(tile) -> void:
-	for t in piece_tiles(tile):
+	var tiles := piece_tiles(tile)
+	map.statesMap.begin_batch()
+	for t in tiles:
 		build_wall(t, Catalog.spawn("wall"))
+	map.statesMap.end_batch(tiles)
 	U.destroy(nextWall)
 	nextWall = null
 	get_next_wall()

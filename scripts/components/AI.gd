@@ -253,8 +253,8 @@ func _start_expotential_wall_costs() -> int:
 
 
 ## Plans start within maxPlanRange of the same anchors that set the reach.
-func refresh_reach() -> void:
-	super.refresh_reach()
+func _rebuild_reach() -> void:
+	super._rebuild_reach()
 	inPlanRange = _anchor_mask(maxPlanRange)
 
 
@@ -262,6 +262,7 @@ func search_best_building_plans(plans = null, max_plans := 3) -> Array:
 	if plans == null:
 		plans = []
 	_begin_slice()
+	_fresh_reach()
 	var potential: Array = []
 	for ix in map.sizeX:
 		for iz in map.sizeZ:

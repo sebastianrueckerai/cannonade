@@ -84,16 +84,30 @@ func _reset_open_closed() -> void:
 func update_tile(bp) -> void:
 	if batching:
 		return
-	_update_tile_in_accessible_grid(bp)
+	update_tiles([bp])
+
+
+## update_tile for several tiles at once: one flood over the area around all of them (a wall piece).
+func update_tiles(tiles: Array) -> void:
 	_reset_visited_will_visit()
-	var x: int = bp.idxX * 3
-	var z: int = bp.idxZ * 3
-	var x_to := mini(x + 3, sizeFineX - 1)
-	var x_from := maxi(x - 1, 0)
-	var z_to := mini(z + 3, sizeFineZ - 1)
-	var z_from := maxi(z - 1, 0)
-	_set_subgrid_false(open, x_from, z_from, x_to, z_to)
-	_set_subgrid_false(closed, x_from, z_from, x_to, z_to)
+	var x_from := sizeFineX
+	var z_from := sizeFineZ
+	var x_to := 0
+	var z_to := 0
+	for bp in tiles:
+		_update_tile_in_accessible_grid(bp)
+		var x: int = bp.idxX * 3
+		var z: int = bp.idxZ * 3
+		var xa := maxi(x - 1, 0)
+		var za := maxi(z - 1, 0)
+		var xb := mini(x + 3, sizeFineX - 1)
+		var zb := mini(z + 3, sizeFineZ - 1)
+		_set_subgrid_false(open, xa, za, xb, zb)
+		_set_subgrid_false(closed, xa, za, xb, zb)
+		x_from = mini(x_from, xa)
+		z_from = mini(z_from, za)
+		x_to = maxi(x_to, xb)
+		z_to = maxi(z_to, zb)
 	update_open_closed_spaces_in(x_from, z_from, x_to, z_to, true)
 
 
@@ -101,9 +115,13 @@ func begin_batch() -> void:
 	batching = true
 
 
-func end_batch() -> void:
+## Ends a batch: recomputes the areas around `tiles` in one flood, or the whole map when none are given.
+func end_batch(tiles: Array = []) -> void:
 	batching = false
-	update_open_closed_spaces()
+	if tiles.is_empty():
+		update_open_closed_spaces()
+	else:
+		update_tiles(tiles)
 
 
 func _set_subgrid_false(grid: PackedByteArray, x_from: int, z_from: int, x_to: int, z_to: int) -> void:
