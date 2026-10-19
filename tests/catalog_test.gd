@@ -38,6 +38,10 @@ func _ready() -> void:
 			"the old base and the upgrade blocks are parked out of the game")
 	check(Catalog.ids.has("upgrade_a") == false and Catalog.is_ingredient("cannon"),
 			"parked defs never draw; the cannon is the ingredient of the fusion")
+	var block := Catalog.get_def("wall")
+	check(block != null and block.category == BuildingDef.Category.WALL and block.draw_weight == 0.0
+			and block.access.size() == 9 and not block.access.has(true),
+			"the wall block is a WALL that never draws and blocks all nine cells of its tile")
 	_prepare_tmp_catalog()
 	_check_problem_reports()
 	await _check_workflow_in_game()

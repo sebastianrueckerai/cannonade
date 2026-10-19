@@ -148,7 +148,7 @@ func _run() -> void:
 	var gun_spot: Vector2i = open[0]
 	var wall_spot: Vector2i = open[1]
 	human.build_building(map.tiles[gun_spot.x][gun_spot.y], Catalog.spawn("cannon"))
-	human._build_from_random_prefabs(map.tiles[wall_spot.x][wall_spot.y], [true, true, false, false])
+	human.build_wall(map.tiles[wall_spot.x][wall_spot.y], Catalog.spawn("wall"))
 	check(human.parts_used() == 1, "the open gun costs a part")
 	run_check()
 	await frames(2)

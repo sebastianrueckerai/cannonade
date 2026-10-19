@@ -137,20 +137,15 @@ func snapshot() -> Array:
 			var owner_side: int = game.players.find(t.player)
 			if def == null or owner_side < 0:
 				continue
-			var id := "wall" if def.category == BuildingDef.Category.WALL else def.id
-			items.append({"side": owner_side, "id": id, "x": x, "z": z, "rot": int(s.get_meta("rot", 0))})
+			items.append({"side": owner_side, "id": def.id, "x": x, "z": z, "rot": int(s.get_meta("rot", 0))})
 	return items
 
 
 func apply_items(items: Array) -> void:
 	map.statesMap.begin_batch()
-	var walls := [{}, {}]
 	for it in items:
 		if it["id"] == "wall":
-			walls[it["side"]][Vector2i(it["x"], it["z"])] = true
-	for it in items:
-		if it["id"] == "wall":
-			_place_wall(it["side"], Vector2i(it["x"], it["z"]), walls[it["side"]])
+			_place_wall(it["side"], Vector2i(it["x"], it["z"]))
 		else:
 			place_building(it["side"], Catalog.get_def(it["id"]), it["x"], it["z"], it.get("rot", 0))
 	map.statesMap.end_batch()
@@ -172,62 +167,18 @@ func restore(items: Array) -> void:
 	for k in have:
 		if not want.has(k):
 			_erase_tile(Vector2i(have[k]["x"], have[k]["z"]))
-	var walls := [{}, {}]
-	for it in items:
-		if it["id"] == "wall":
-			walls[it["side"]][Vector2i(it["x"], it["z"])] = true
 	for k in want:
 		if not have.has(k):
 			var it: Dictionary = want[k]
 			if it["id"] == "wall":
-				_place_wall(it["side"], Vector2i(it["x"], it["z"]), walls[it["side"]])
+				_place_wall(it["side"], Vector2i(it["x"], it["z"]))
 			else:
 				place_building(it["side"], Catalog.get_def(it["id"]), it["x"], it["z"], it.get("rot", 0))
-	for x in map.sizeX:
-		for z in map.sizeZ:
-			_reshape_wall(Vector2i(x, z))
 	map.statesMap.end_batch()
 
 
-func _is_wall_of(xz: Vector2i, s: int, walls = null) -> bool:
-	if xz.x < 0 or xz.y < 0 or xz.x >= map.sizeX or xz.y >= map.sizeZ:
-		return false
-	if walls != null:
-		return walls.has(xz)
-	var t = map.tiles[xz.x][xz.y]
-	return U.alive(t.structure) and t.isWall and t.player == player(s)
-
-
-func _connectors(xz: Vector2i, s: int, walls = null) -> Array:
-	return [_is_wall_of(xz + Vector2i(0, 1), s, walls), _is_wall_of(xz + Vector2i(0, -1), s, walls),
-		_is_wall_of(xz + Vector2i(-1, 0), s, walls), _is_wall_of(xz + Vector2i(1, 0), s, walls)]
-
-
-func _place_wall(s: int, xz: Vector2i, walls = null) -> bool:
-	var go := Catalog.spawn_wall_for(_connectors(xz, s, walls))
-	return go != null and player(s).place(Catalog.def_of(go), xz.x, xz.y, go) != null
-
-
-## Swaps the wall piece on xz for the one matching its neighbours.
-func _reshape_wall(xz: Vector2i) -> void:
-	if xz.x < 0 or xz.y < 0 or xz.x >= map.sizeX or xz.y >= map.sizeZ:
-		return
-	var t = map.tiles[xz.x][xz.y]
-	if not U.alive(t.structure) or not t.isWall:
-		return
-	var s: int = game.players.find(t.player)
-	var want := _connectors(xz, s)
-	if want.count(true) < 2:  # end of a line or a lone wall: a straight piece
-		want = [true, true, false, false] if (want[0] or want[1]) else [false, false, true, true]
-	if U.comp(t.structure, "BuildingBlock").connects_up_down_left_right() == want:
-		return
-	t.un_build()
-	_place_wall(s, xz)
-
-
-func _reshape_around(xz: Vector2i) -> void:
-	for d in [Vector2i.ZERO, Vector2i(0, 1), Vector2i(0, -1), Vector2i(-1, 0), Vector2i(1, 0)]:
-		_reshape_wall(xz + d)
+func _place_wall(s: int, xz: Vector2i) -> bool:
+	return player(s).place(Catalog.get_def("wall"), xz.x, xz.y) != null
 
 
 func place_building(s: int, def: BuildingDef, x: int, z: int, r := 0) -> Node3D:
@@ -282,8 +233,8 @@ func use_tool(xz: Vector2i) -> void:
 			erase(xz)
 		"wall":
 			var t = map.tiles[xz.x][xz.y]
-			if not U.alive(t.structure) and not t.water and _place_wall(side, xz):
-				_reshape_around(xz)
+			if not U.alive(t.structure) and not t.water:
+				_place_wall(side, xz)
 		_:
 			var def := Catalog.get_def(tool)
 			if def != null:
@@ -294,9 +245,7 @@ func use_tool(xz: Vector2i) -> void:
 func erase(xz: Vector2i) -> void:
 	if mode != Mode.EDIT or xz.x < 0:
 		return
-	var was_wall: bool = map.tiles[xz.x][xz.y].isWall
-	if _erase_tile(xz) and was_wall:
-		_reshape_around(xz)
+	_erase_tile(xz)
 
 
 ## Lower left tile of a building of `def` centred on the cursor tile.
@@ -583,7 +532,7 @@ func _update_ghost() -> void:
 	if tool == "erase":
 		ok = U.alive(map.tiles[_hover.x][_hover.y].structure)
 	elif tool == "wall":
-		ok = player(side).can_place(Catalog.get_def("wall_line"), _hover.x, _hover.y)
+		ok = player(side).can_place(Catalog.get_def("wall"), _hover.x, _hover.y)
 	else:
 		ok = def != null and player(side).can_place(def, a.x, a.y)
 	if _footprint == null:

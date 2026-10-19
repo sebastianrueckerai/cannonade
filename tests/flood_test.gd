@@ -107,12 +107,24 @@ func _ready() -> void:
 	_compare(gap)
 	_check(not map.is_tile_enclosed(c.x, c.y), "breaking one wall opens the area")
 	# a larger area: every inner tile is enclosed, a gap in the side opens all of them
-	Ring.build_rect(player, map, 9, 4, 14, 8, _compare)
-	_check(_inner(map, 9, 4, 14, 8).all(func(t): return map.is_tile_enclosed(t.x, t.y)), "4x3 area inside a wall rectangle is enclosed")
-	gap = map.tiles[9][6]
+	var q := _free_rect(map, 6, 5)
+	_check(q.x >= 0, "a free 6x5 rectangle exists for the larger ring")
+	Ring.build_rect(player, map, q.x, q.y, q.x + 5, q.y + 4, _compare)
+	_check(_inner(map, q.x, q.y, q.x + 5, q.y + 4).all(func(t): return map.is_tile_enclosed(t.x, t.y)), "4x3 area inside a wall rectangle is enclosed")
+	gap = map.tiles[q.x][q.y + 2]
 	gap.un_build()
 	_compare(gap)
-	_check(_inner(map, 9, 4, 14, 8).all(func(t): return not map.is_tile_enclosed(t.x, t.y)), "a gap in the side opens the whole area")
+	_check(_inner(map, q.x, q.y, q.x + 5, q.y + 4).all(func(t): return not map.is_tile_enclosed(t.x, t.y)), "a gap in the side opens the whole area")
+	# full blocks: side contact closes a ring, a corner contact alone never joins
+	var r0 := _free_rect(map, 5, 5)
+	_check(r0.x >= 0, "a free 5x5 square exists for the block ring")
+	Ring.build_rect(player, map, r0.x, r0.y, r0.x + 4, r0.y + 4, _compare)
+	_check(map.is_tile_enclosed(r0.x + 2, r0.y + 2), "a ring of full blocks encloses its inside")
+	var corner = map.tiles[r0.x][r0.y]
+	corner.un_build()
+	_compare(corner)
+	_check(not map.is_tile_enclosed(r0.x + 2, r0.y + 2),
+			"a ring missing one corner block stays open: diagonal blocks do not join")
 
 	# equivalence with the original algorithm over random edits
 	seed(5)
@@ -150,6 +162,15 @@ func _rect_free(map, x0: int, z0: int, x1: int, z1: int) -> bool:
 			if U.alive(t.structure) or t.water:
 				return false
 	return true
+
+
+## Lower left tile of the first free w x h rectangle, scanning from (1, 1); (-1, -1) when none.
+func _free_rect(map, w: int, h: int) -> Vector2i:
+	for x in range(1, map.sizeX - w):
+		for z in range(1, map.sizeZ - h):
+			if _rect_free(map, x, z, x + w - 1, z + h - 1):
+				return Vector2i(x, z)
+	return Vector2i(-1, -1)
 
 
 func _inner(_map, x0: int, z0: int, x1: int, z1: int) -> Array:

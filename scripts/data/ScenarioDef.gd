@@ -10,6 +10,6 @@ extends Resource
 @export_multiline var description := ""
 ## Placed things, in placement order:
 ## {"side": 0 (blue) / 1 (red), "id": building id, "x": int, "z": int, "rot": int}
-## (x, z) is the lower left tile; rot = quarter turns (buildings only; walls get
-## their shape from their neighbours).
+## (x, z) is the lower left tile; rot = quarter turns (buildings only; a wall is
+## one full-tile block).
 @export var items: Array[Dictionary] = []

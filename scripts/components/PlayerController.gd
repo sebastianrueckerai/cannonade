@@ -491,40 +491,12 @@ func build_start_castle(tile) -> void:
 	_wall_in(x0, z0, x0 + def.size - 1, z0 + def.size - 1)
 
 
-func _build_from_random_prefabs(tile, plan: Array) -> void:
-	var walls := Catalog.drawable(BuildingDef.Category.WALL)
-	for i in U.shuffle_index(walls.size()):
-		var new_go := Catalog.spawn(walls[i])
-		var bb := U.comp(new_go, "BuildingBlock")
-		bb.setup()
-		var rotations: int = bb.fits_plan_with_clockwise_rotations_of_input(plan)
-		if rotations >= 0:
-			for r in rotations:
-				bb.rotate_counter_clockwise()
-			build_building(tile, new_go)
-			return
-		new_go.free()
-
-
-## A closed ring of walls round the square x0..x1, z0..z1.
+## A closed ring of wall blocks round the square x0..x1, z0..z1.
 func _wall_in(x0: int, z0: int, x1: int, z1: int) -> void:
-	var upper_left := [false, true, false, true]
-	var upper_right := [false, true, true, false]
-	var lower_left := [true, false, false, true]
-	var lower_right := [true, false, true, false]
-	var horizontals := [false, false, true, true]
-	var verticals := [true, true, false, false]
-	var t: Array = map.tiles
-	_build_from_random_prefabs(t[x0 - 1][z1 + 1], upper_left)
-	_build_from_random_prefabs(t[x1 + 1][z1 + 1], upper_right)
-	_build_from_random_prefabs(t[x0 - 1][z0 - 1], lower_left)
-	_build_from_random_prefabs(t[x1 + 1][z0 - 1], lower_right)
-	for x in range(x0, x1 + 1):
-		_build_from_random_prefabs(t[x][z0 - 1], horizontals)
-		_build_from_random_prefabs(t[x][z1 + 1], horizontals)
-	for z in range(z0, z1 + 1):
-		_build_from_random_prefabs(t[x0 - 1][z], verticals)
-		_build_from_random_prefabs(t[x1 + 1][z], verticals)
+	for x in range(x0 - 1, x1 + 2):
+		for z in range(z0 - 1, z1 + 2):
+			if x < x0 or x > x1 or z < z0 or z > z1:
+				build_wall(map.tiles[x][z], Catalog.spawn("wall"))
 
 
 ## Rules v3: every live gun fires, walled in or not; nothing is ever unsupplied.

@@ -164,7 +164,7 @@ func _build_bottom() -> void:
 		b.add_theme_color_override("font_color", Color.html(sandbox.SIDE_COLORS[s]).lightened(0.35))
 		b.add_theme_color_override("font_pressed_color", Color.html(sandbox.SIDE_COLORS[s]).lightened(0.6))
 		_side_buttons.append(b)
-	_tool("wall", "Wall", "Click and drag to draw walls; corners connect automatically", bar)
+	_tool("wall", "Wall", "Click and drag to draw walls", bar)
 	_tool("erase", "Erase", "Remove what is under the cursor (right mouse button erases too)", bar)
 	_edit_controls.append(_button(bar, "Mirror", "Mirror", "Copy this side's layout to the other side, " +
 			"mirrored top to bottom (replaces the other side; Ctrl+Z undoes)", func(): sandbox.mirror(sandbox.side)))

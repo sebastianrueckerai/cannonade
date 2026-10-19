@@ -216,14 +216,12 @@ func _offer_building(id: String) -> void:
 
 
 ## A one-tile pocket on the east side of the start ring, so a gun fits inside the walls without
-## touching the castle. The corners take the shapes the ring's own north-east and south-east
-## corners use: the north one bridges the north wall's row and the east wall's column, the
-## south one the east wall's column and the south wall's row.
+## touching the castle.
 func _pocket() -> void:
 	var b := base_xz()
-	human._build_from_random_prefabs(map.tiles[b.x + 3][b.y - 2], [false, false, true, true])
-	human._build_from_random_prefabs(map.tiles[b.x + 4][b.y - 2], [true, false, true, false])
+	human.build_wall(map.tiles[b.x + 3][b.y - 2], Catalog.spawn("wall"))
+	human.build_wall(map.tiles[b.x + 4][b.y - 2], Catalog.spawn("wall"))
 	for z in range(b.y - 1, b.y + 2):
-		human._build_from_random_prefabs(map.tiles[b.x + 4][z], [true, true, false, false])
-	human._build_from_random_prefabs(map.tiles[b.x + 4][b.y + 2], [false, true, true, false])
-	human._build_from_random_prefabs(map.tiles[b.x + 3][b.y + 2], [false, false, true, true])
+		human.build_wall(map.tiles[b.x + 4][z], Catalog.spawn("wall"))
+	human.build_wall(map.tiles[b.x + 4][b.y + 2], Catalog.spawn("wall"))
+	human.build_wall(map.tiles[b.x + 3][b.y + 2], Catalog.spawn("wall"))

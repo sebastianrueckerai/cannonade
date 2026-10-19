@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/BuildingBehaviour.gd" id="1_beh"]
+[ext_resource type="Script" path="res://scripts/data/WallBehaviour.gd" id="2_wall"]
+[ext_resource type="PackedScene" path="res://prefabs/WallBlock.tscn" id="3_model"]
+[ext_resource type="Script" path="res://scripts/data/BuildingDef.gd" id="4_def"]
+
+[sub_resource type="Resource" id="Resource_wall"]
+script = ExtResource("2_wall")
+
+[resource]
+script = ExtResource("4_def")
+display_name = "Wall"
+description = "A full-tile wall block. Blocks that share a side are one wall; corners alone do not join."
+category = 1
+model = ExtResource("3_model")
+access = Array[bool]([false, false, false, false, false, false, false, false, false])
+recipe_pattern = PackedStringArray()
+recipe_combine = PackedStringArray()
+behaviours = Array[ExtResource("1_beh")]([SubResource("Resource_wall")])

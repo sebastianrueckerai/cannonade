@@ -90,7 +90,7 @@ func _stack_row(side: int, z: int) -> void:
 		var t = sb.map.tiles[x][z]
 		if not U.alive(t.structure) or not t.isWall:
 			continue
-		var go: Node3D = Catalog.spawn_wall_for(sb._connectors(Vector2i(x, z), side))
+		var go: Node3D = Catalog.spawn("wall")
 		U.comp(go, "BuildingBlock").player = sb.player(side)
 		t.stack_wall(go)
 

@@ -1,6 +1,5 @@
 extends RefCounted
-## Shared test helper: walls along the border of a rectangle, each piece
-## shaped to connect to its neighbours (Catalog.spawn_wall_for).
+## Shared test helper: a full-tile wall block on every border tile of a rectangle.
 
 
 ## Builds the ring around (x, z); `after_each(tile)` is called after every wall.
@@ -14,11 +13,7 @@ static func build_rect(player, map, x0: int, z0: int, x1: int, z1: int, after_ea
 		for z in range(z0, z1 + 1):
 			if x != x0 and x != x1 and z != z0 and z != z1:
 				continue
-			var up := z < z1 and (x == x0 or x == x1)
-			var down := z > z0 and (x == x0 or x == x1)
-			var left := x > x0 and (z == z0 or z == z1)
-			var right := x < x1 and (z == z0 or z == z1)
 			var t = map.tiles[x][z]
-			player.build_wall(t, Catalog.spawn_wall_for([up, down, left, right]))
+			player.build_wall(t, Catalog.spawn("wall"))
 			if after_each.is_valid():
 				after_each.call(t)

@@ -109,12 +109,12 @@ func _run() -> void:
 
 	# a pocket on the start ring for a gun (the ring itself has no free tile), then Enter: battle
 	var b := Vector2i(15, 7)  # the player's castle
-	human._build_from_random_prefabs(map.tiles[b.x + 3][b.y - 2], [false, false, true, true])
-	human._build_from_random_prefabs(map.tiles[b.x + 4][b.y - 2], [true, false, true, false])
+	human.build_wall(map.tiles[b.x + 3][b.y - 2], Catalog.spawn("wall"))
+	human.build_wall(map.tiles[b.x + 4][b.y - 2], Catalog.spawn("wall"))
 	for z in range(b.y - 1, b.y + 2):
-		human._build_from_random_prefabs(map.tiles[b.x + 4][z], [true, true, false, false])
-	human._build_from_random_prefabs(map.tiles[b.x + 4][b.y + 2], [false, true, true, false])
-	human._build_from_random_prefabs(map.tiles[b.x + 3][b.y + 2], [false, false, true, true])
+		human.build_wall(map.tiles[b.x + 4][z], Catalog.spawn("wall"))
+	human.build_wall(map.tiles[b.x + 4][b.y + 2], Catalog.spawn("wall"))
+	human.build_wall(map.tiles[b.x + 3][b.y + 2], Catalog.spawn("wall"))
 	check(map.is_tile_enclosed(b.x + 3, b.y), "the pocket is walled in")
 	human.build_building(map.tiles[b.x + 3][b.y], Catalog.spawn("cannon"))
 	await frames(2)
