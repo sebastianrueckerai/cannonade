@@ -17,10 +17,14 @@ Sebastian plays the game from the main checkout, so its master must always be th
 edit the checkout by hand and does not run merges: the session that finished the work merges it itself.
 Do new work in a worktree off the latest master; when it is done, merge it into the local master and
 push. The harness blocks a worktree session's git against the main checkout, and master is checked out
-there, so merge by push: set `receive.denyCurrentBranch = updateInstead` in the main checkout's
-`.git/config`, `git push /home/womb/repos/grid-cannons <branch>:master`, then remove the setting again.
-Git refuses that push while the checkout holds uncommitted changes, which is the guard for Sebastian's
-edits; if it refuses, stop and report. Then push master to origin. A session cannot remove the
+there, so merge by push: `receive.denyCurrentBranch = updateInstead` stays set in the main checkout's
+`.git/config` (if missing, `git config --file /home/womb/repos/grid-cannons/.git/config
+receive.denyCurrentBranch updateInstead`), then `git push /home/womb/repos/grid-cannons <branch>:master`.
+Sebastian never hand-edits the checkout, so a refusal for uncommitted changes there is machine noise
+(Godot re-serializations, regenerated files), never his work: restore each differing tracked file to
+its committed content (a `git archive master` extract makes the reference copy), delete untracked
+files the push would overwrite, and push again. Never leave master behind over such files; say what
+was discarded in the report. Then push master to origin. A session cannot remove the
 worktree it lives in: the next session prunes dangling worktrees (`git worktree remove`,
 `git worktree prune`); leave the locked worktrees of live sessions alone.
 
