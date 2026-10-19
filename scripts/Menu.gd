@@ -12,16 +12,16 @@ const MODES := [
 ## The five actions the panel remaps; everything else (wheel, middle drag,
 ## Enter, Esc) is hardcoded where it is used and listed as a fixed row.
 const REMAP := [
-	["build_wall", "place the next wall / stack it on one of your walls"],
+	["build_wall", "place the wall piece / stack a single block on one of your walls"],
 	["build_building", "place the next building / fuse four cannons in a 2x2 square"],
-	["rotate_cw", "rotate the wall clockwise"],
-	["rotate_ccw", "rotate the wall counter-clockwise"],
+	["rotate_cw", "rotate the wall piece clockwise"],
+	["rotate_ccw", "rotate the wall piece counter-clockwise"],
 	["fire", "fire the cannons"],
 ]
 const FIXED := [
 	["zoom in / out towards the cursor", "Mouse wheel"],
 	["pan the view while zoomed in", "Middle mouse drag"],
-	["discard the wall / building in hand", "Click outside the map"],
+	["discard the piece / building in hand", "Click outside the map"],
 ]
 const REMAP_PATH := "user://input_remap.cfg"
 
@@ -161,7 +161,7 @@ func _show_help() -> void:
 	title.add_theme_font_size_override("font_size", 32)
 	box.add_child(title)
 	var intro := Label.new()
-	intro.text = "You and an AI opponent each start with a walled-in castle on one island. Rounds switch between a green build phase and a red battle phase.\n\nBuild out from your castle: ring in neutral castles to claim them and raise your parts cap, place cannons with the right mouse button, fuse four cannons in a 2x2 square into a heavy gun. Buildings outside your walls burn at the end of the build phase. Hit guns reload slower; castles take 12 shells and fall through four damage states.\n\nRuin the enemy's last castle before yours falls."
+	intro.text = "You and an AI opponent each start with a walled-in castle on one island. Rounds switch between a green build phase and a red battle phase.\n\nWalls come as pieces you turn and drop. Pieces that share a side form one wall; touching corners do not join. Everything you place needs one tile within two tiles of your walls or of a castle you hold.\n\nBuild out from your castle: ring in neutral castles to claim them and raise your parts cap, place cannons with the right mouse button, fuse four cannons in a 2x2 square into a heavy gun. Buildings outside your walls burn at the end of the build phase. Hit guns reload slower; castles take 12 shells and fall through four damage states.\n\nRuin the enemy's last castle before yours falls."
 	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(intro)
 	var grid := GridContainer.new()

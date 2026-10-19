@@ -56,7 +56,7 @@ path: the held node itself is placed, as today. Every footprint tile must pass
 today's free check (no structure, dry, not disabled, no ship, on the map).
 Rotation keys work as today, before placement.
 
-**Reach (I45).** A piece, gun or building goes down only when at least one of
+**Reach (I47).** A piece, gun or building goes down only when at least one of
 its footprint tiles sits within Chebyshev distance 2 (`map.buildingRange`) of
 an own wall tile or a tile covered by an own castle that is not a ruin. Guns
 keep the same gate with their centre tile. The `inBuildRange` array and its
@@ -143,14 +143,14 @@ Each rule ships with a test that ran red with the rule broken on purpose.
    deleted, start rings, shipped scenarios load, the dying calls in
    `tools/shoot_battle.gd` (`spawn_wall_for`, `Sandbox._connectors`) and
    `tools/previews.gd` (`ibr`) rewritten, `rules-v3-draft.md`, README,
-   roadmap ticks (I44, I45, C15), K6 struck (the connector search it
+   roadmap ticks (I46, I47, C15), K6 struck (the connector search it
    describes is gone). Tests: `tests/sandbox_test` (paint, erase, an old
    scenario loads), the full suite green.
 
 ## Deliverables
 
 1. C15: the eight models on the painted path, a render sheet before the sync.
-2. I44 and I45 in the game, suite green, played once in the Sandbox and once
+2. I46 and I47 in the game, suite green, played once in the Sandbox and once
    in Player vs. AI.
 3. The bookkeeping: this doc, the roadmap, the rules and README edits.
 
@@ -162,3 +162,48 @@ Each rule ships with a test that ran red with the rule broken on purpose.
 - The reach gate changes gun seeding: after a battle that killed every wall,
   rebuilding starts from the castle, not from surviving guns. Flagged to
   Sebastian, his rule as stated.
+
+## As built
+
+The design above is the approved one. [24-wall-pieces-impl.md](24-wall-pieces-impl.md) holds the task plan. These parts were built differently:
+
+- **No piece models, no pattern fields.** A piece def lists its cells as offsets from the anchor (`BuildingDef.piece`), and its node shows the block's model at each cell. The ghost is exactly what the piece places. C15 is two models, `wall` and `wall_upper`.
+- **No `wall_1` fast path.** Every placement and every stack consumes the held piece and spawns fresh blocks.
+- **No legacy id mapping.** Scenarios have always stored walls as id `wall`, which is now the block's own id.
+- **Start rings go through `build_wall`.** Their tiles enter `wallTiles`, so the AI can target start rings and reach can anchor on them. Once rings counted as walls, the sim's check that each AI builds walls passed by itself. It now counts walls built beyond the start ring.
+- **Reach is a lazy mask.** It is marked stale on every own placement and loss and on every castle hand-over, and rebuilt at the next read. Before that change, every block rebuilt both masks.
+- **A piece's blocks share one flood.** `StatesMap.update_tiles` replaces one flood per block.
+- **The dead upgrade search is deleted.** BuildingPlan's upgrade-tile search had no caller since session 18.
+- **The AI's loose-gun path is gone.** Session 18 let the AI drop a gun on any free tile in reach when no plan had room. Then the guns seeded reach and spread outward, and the old planner wrapped them. Under the new rule guns anchor nothing, so all six loose guns stacked two tiles from the start ring. Walling them in needs walls three tiles out, beyond reach, and the check burned them. Five or six of six burned, where the old AI lost at most one on the same seed. Now a gun goes only into a plan's enclosure and waits in hand until a plan has room: none of six burned in six runs.
+- **The slot colour comes from the visible mesh.** `U.get_color` read the hidden placeholder box's brown and tinted the held piece with it. It now skips hidden meshes.
+- **`wall_straight.glb` was not adopted.** The untracked file in the main checkout is session 01's thin plumbing slab, not a full tile.
+
+## Result
+
+The pieces, the reach rule and the block ship on master. The suite runs green, 18 entries.
+
+**The AI builds well.** In 130 s of ai2, each AI built over 200 walls and held three castles.
+
+**Every new rule was watched red.** I broke each one on purpose before its commit:
+
+- the AI keeping a gun that no plan can wall
+- the slot colour
+- the diagonal rule, under a 4-connected flood
+- the clockwise cell turn
+- single-block stacking
+- an AI that never builds
+- reach requiring every tile
+- reach seeded from every own tile
+- the castle hand-over
+
+**Frame times rose, then partly fell back.**
+
+| run | p99 frame | worst frame |
+|---|---|---|
+| baseline, old walls | 16.5 ms | 28.2 ms |
+| pieces, before fix | 24.0 ms | 62.7 ms |
+| pieces, after fix | 21.0 ms | 44.8 ms |
+
+The fix gave a piece's blocks one shared flood and made the reach rebuild lazily. The rest is spawn cost: each building's art attach takes about 3 ms, and an action now places 3 to 5 tiles instead of one. K7 holds the idea for cutting it.
+
+**Open:** Sebastian's pass on the block's look (C15). The same view and seed before and after, magnified 3x: [the start ring](24-walls-ring-before-after.png) and [the hand slot](24-walls-slot-before-after.png).

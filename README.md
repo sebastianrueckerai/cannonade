@@ -35,16 +35,23 @@ Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 
 | input             | action                                                   |
 |-------------------|----------------------------------------------------------|
-| left mouse        | place the next wall (or stack it on one of your walls)   |
+| left mouse        | place the wall piece (a single block also stacks on one of your walls) |
 | right mouse       | place the next building (a gun, at a parts cost)          |
-| X                 | rotate the wall clockwise                                |
-| Y or Z            | rotate the wall counter-clockwise                        |
+| X                 | rotate the wall piece clockwise                          |
+| Y or Z            | rotate the wall piece counter-clockwise                  |
 | mouse wheel       | zoom in / out (towards the cursor; fully out shows the whole map) |
 | middle mouse drag | pan the view while zoomed in                              |
 | Space             | fire (battle phase)                                       |
 | Enter             | switch between build and battle (`practice` only)        |
-| click outside map | discard the current wall / building                       |
+| click outside map | discard the current piece / building                      |
 | Esc               | back to the menu                                          |
+
+Walls come as **pieces**, Rampart style: one block, two, three or four in a row, an S, a T
+or a cross, drawn at random (small pieces more often) and turned with X / Y. A piece stamps
+a full-tile wall block on each of its cells. Blocks that share a side are one wall; blocks
+that touch only at a corner do not join, so a ring must close side to side. Everything you
+place needs one tile within two tiles of your own walls or of a castle you hold, so nobody
+builds behind enemy lines. Only a single block stacks: a stacked tile takes two shells.
 
 Rounds alternate between a **build phase** (45 s, green timer) and a **battle phase**
 (30 s, red timer). **Castles are the game**: ten sit on the map, you start with one
@@ -111,7 +118,7 @@ how many flak guns beat how many cannons.
 |---|---|
 | `1` / `2` or the Blue / Red buttons | side you are building for |
 | tool buttons (bottom) | **Wall**, **Erase**, **Castle**, one button per catalog building (tooltip: details) |
-| left click / drag | place with the current tool; dragging the Wall tool draws a wall line, corner / T / cross / straight pieces are chosen automatically |
+| left click / drag | place with the current tool; dragging the Wall tool draws wall blocks tile by tile |
 | right click / drag | erase (a whole multi-tile building at once) |
 | `R` | turn the next building (looks only; patterns are not affected) |
 | `Ctrl+Z` / `Ctrl+Y` (or `Ctrl+Shift+Z`) | undo / redo |
@@ -193,8 +200,8 @@ can be repeated and compared.
   replaces the physics layer used by flak and shields.
 * Mouse picking intersects the camera ray with the ground plane instead of raycasting
   colliders; MEC coroutines became small time based state machines.
-* Wall models are the original FBX files in `assets/` (textures re-applied by
-  `scripts/WallModel.gd`); the decorations use the boulders, bushes and leaf trees of the
+* A wall is one full-tile block, `assets/art/3d/wall.glb`, with `wall_upper.glb` as its
+  stacked storey; the original FBX connector walls stay with their parked defs. The decorations use the boulders, bushes and leaf trees of the
   art layer (`assets/art/3d/nature_*.glb`). Each one stays inside its tile and is shrunk
   until it fits, so it never reaches into a neighbouring building.
 * `scripts/Main.gd` builds a game from a mode (camera, light, UI, players).
@@ -214,8 +221,8 @@ geometry). A few things were changed on purpose:
 * There are no 3×3 guns for now. A 3×3 square merges only when a building in the game has
   its pattern. Otherwise one of its 2×2 squares merges. Unity made a 3×3 cannon of any 3×3
   square.
-* The start castle is walled in with all four wall shapes (Unity only used three for
-  its base).
+* Walls are Rampart pieces stamping full-tile blocks, not the connector tiles of the Unity
+  game; the start castle is walled in with 16 blocks.
 * Splash damage hits each tile in range (Unity damaged the target tile once per splash tile).
 * The shield generator regenerates per second (Unity added `Time.time` every frame) and
   absorbs several hits before it resets.

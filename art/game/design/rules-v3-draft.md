@@ -8,6 +8,8 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 
 - A round is a build phase, then a battle phase. Build 45 s, battle 30 s, the values from [rules.md](rules.md) section 2.
 - In the build phase you close your walls, place guns and replace what died.
+- Walls come as Rampart pieces (session 24, D75): one block, two, three or four in a row, S, T and cross, drawn at weights 30/25/15/10/10/6/4. A piece stamps a full-tile block on each cell. Blocks sharing a side are one wall; a corner contact does not join.
+- You build only near your own: every piece, gun and building needs one tile within 2 tiles of your walls or of a castle you hold that is not a ruin. Guns anchor nothing. The 2 is a first lab value.
 - At the end of the build phase the check runs, section 6. Then the battle.
 - Shells fly arcs over walls, so walls block no shot. Every building is a legal target at all times, walled in or not.
 - A breach during the battle changes nothing. Walls matter only at the check. This is the Rampart rule of [rules.md](rules.md) section 1, unchanged.
@@ -43,6 +45,7 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 ## 5. Walls
 
 - A wall tile dies to one shell. A double wall takes two, the upper storey first.
+- Only a single block stacks on a wall tile.
 - Walls have no damage states. A hit wall is a gone wall.
 - Walls do nothing during the battle. They block no shell and switch off no gun. Their whole job is the check.
 - The check never destroys a wall. Only shells destroy walls.
@@ -78,7 +81,7 @@ A castle that burns in step 1 cannot be claimed in step 2, so the order matters.
 - Supply depots: remove them outright, or keep them as buildings that only take hits?
 - The ships and single player. Ships that shell walls still press the check, but their role and the fleet ending are undecided.
 - A backstop against two players who never engage: a round cap, or the flood of [rules.md](rules.md) section 1.
-- How the draw system meets the parts cap: walls stay random draws, and a placed gun draw costs a part. Whether you draw your gun sort or pick it is open.
+- How the draw system meets the parts cap: walls stay random draws, and a placed gun draw costs a part. Whether you draw your gun sort or pick it is open. Answered for walls in session 24: walls are drawn pieces, weighted towards the small ones (D75).
 - A visible damage state for castles. They are big enough for one, unlike walls.
 
 ## 10. Defaults taken without a pick

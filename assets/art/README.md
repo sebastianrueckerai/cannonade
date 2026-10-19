@@ -9,7 +9,7 @@ Drop a file here with the right name and the game uses it. Nothing else to wire.
 | `3d/<projectile id>.glb` | every shot of the projectile with that file name in `data/projectiles/`, for example `shell`. Origin at its centre |
 | `3d/ship.glb` | the fleet ships |
 | `3d/tile.glb` | every map tile, its first mesh replaces the slab box and gets repainted by the game |
-| `3d/wall_<shape>_<level>.glb` | every slot of one wall shape and level: `wall_line_base`, `wall_line_upper`, `wall_curve_base`, ... `wall_cross_upper`. Origin at the tile centre on the ground, the upper model starts 1 m up |
+| `3d/wall.glb`, `3d/wall_upper.glb` | the full-tile wall block and its stacked storey; hand pieces show `wall` per cell. Origin at the tile centre on the ground, the storey starts 0.75 m up. The `wall_<shape>_<level>` files belong to the parked connector walls |
 | `ui/splash.png` | the splash screen |
 | `ui/loading.jpg`, `ui/loading.2.jpg`, ... | the loading screen, one look at random behind the bar, numbered from 2 without a gap. Made from the twenty pictures of [round 29](../../art/game/art-direction/rounds/29-loading-art/PICKS.md) by `art/pipeline/storeset.py loading`, imported as lossy WebP at quality 0.8 |
 | `ui/logo.png` | the menu title |

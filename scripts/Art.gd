@@ -1,8 +1,8 @@
 class_name Art
 ## The art layer. Drop files into res://assets/art/ and the game uses them, nothing else to wire.
 ##
-##   3d/<id>.glb            a model for building id, "ship", "tile", projectile id ("shell") or wall shape and
-##                          level ("wall_line_base", "wall_curve_upper"), origin at the ground centre, Y up,
+##   3d/<id>.glb            a model for building id ("wall" the full-tile block, "wall_upper" its stacked storey),
+##                          "ship", "tile" or projectile id ("shell"), origin at the ground centre, Y up,
 ##                          metres, one tile = 1 m. Walls keep the tile centre as origin, projectiles their centre
 ##   3d/<id>.2.glb, .3.glb  more looks of the same id, one picked at random for each instance
 ##   ui/splash.png          splash screen image

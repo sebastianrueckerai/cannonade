@@ -43,7 +43,7 @@ Camera, tile and pixel numbers are in [gameplay_contract.yaml](../game/art-direc
 | `3d/<projectile id>.glb` | `Catalog.spawn_projectile`, by the file name of the projectile in `data/projectiles/`: `shell` for the cannonball, `cluster_bomb` and `cluster_shard` for the mortar. Origin at its centre |
 | `3d/ship.glb` | `ShipFleet` for every fleet ship |
 | `3d/tile.glb` | `Map` for every tile, the first mesh replaces the slab box and the game keeps repainting it |
-| `3d/wall_<shape>_<level>.glb` | `WallModel` for every slot of one wall shape and level: `wall_line_base` for `line_base1` to `line_base7`, then `wall_line_upper`, `wall_curve_*`, `wall_tri_*`, `wall_cross_*`. The origin is the tile centre on the ground, an upper model starts 1 m up on the same tile. Without a file the FBX with the PNG mapping stays |
+| `3d/wall.glb`, `3d/wall_upper.glb` | `Catalog.spawn` for the full-tile wall block (D75), and `Wall.show_upper` for a stacked block's storey; a hand piece shows `wall` at each of its cells. The origin is the tile centre on the ground, the storey's geometry starts 0.75 m up. The `wall_<shape>_<level>` files of the parked connector walls stay with their FBX wrappers |
 | `ui/splash.png`, `ui/logo.png`, `ui/menu_background.png` | splash and menu |
 | `ui/theme.tres` | splash, menu and loading screens. The HUD and the sandbox panel keep the default theme until roadmap D2 styles them, a project-wide theme moved the sandbox layout |
 | `ui/button.png`, `ui/button_hover.png`, `ui/button_pressed.png` | 9-slice button images on top of the theme. Without hover and pressed files the normal image is lightened and darkened |
