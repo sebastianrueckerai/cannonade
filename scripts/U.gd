@@ -184,9 +184,10 @@ func set_emission(root: Node, c: Color, energy: float) -> void:
 		m.emission_energy_multiplier = energy
 
 
+## Colour of the first visible mesh (a placeholder the art layer hid does not count).
 func get_color(root: Node) -> Color:
 	for mi in meshes(root):
-		if mi.get_script() != null:
+		if mi.get_script() != null or not mi.visible:
 			continue
 		var m: Material = mi.get_surface_override_material(0)
 		if m == null and mi.mesh != null and mi.mesh.get_surface_count() > 0:

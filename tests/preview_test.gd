@@ -76,6 +76,10 @@ func _check_slot(kind: String, i: int) -> void:
 func _check_hovers() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
+	var block := Catalog.spawn("wall")
+	check(_visible_albedo(human.nextWall) == _visible_albedo(block),
+			"the piece in the gui slot wears the placed block's colour, not its hidden placeholder's")
+	block.free()
 	var rest := _slot_box(human.nextWall)
 	check(human.nextWall.get_parent() == human.wallSpawn and absf(rest.get_center().x) < 0.01
 			and absf(rest.get_center().z) < 0.01, "the offered piece rests centred in the gui slot")
@@ -153,6 +157,18 @@ func _check_pieces() -> void:
 					"%s turned %d fits the slot camera's view (%.2f m in %.2f m)" % [def.id, r, maxf(box.size.x, box.size.z), cam.size])
 			bb.rotate_clockwise()
 		human._restore_decorations()
+
+
+## Albedo of the first visible mesh: its override, else its mesh's own material.
+func _visible_albedo(root: Node) -> Color:
+	for mi in U.meshes(root):
+		if mi.get_script() != null or not mi.visible:
+			continue
+		var m: Material = mi.get_surface_override_material(0)
+		if m == null:
+			m = mi.mesh.surface_get_material(0)
+		return m.albedo_color if m is BaseMaterial3D else Color.WHITE
+	return Color.BLACK
 
 
 ## Bounds of the piece's meshes in its slot's space.
