@@ -1,0 +1,13 @@
+{
+  "source": "game/art-direction/rounds/37-sfx-probe/rubble-crumble--mirelo-1.wav",
+  "bus": "sfx",
+  "target": {
+    "m_max": -16.0
+  },
+  "created": "2026-10-20T22:54:54",
+  "seconds": 1.8,
+  "lufs": -26.1,
+  "m_max": -17.8,
+  "range_lu": 0.0,
+  "peak_dbtp": -0.9
+}

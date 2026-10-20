@@ -88,9 +88,8 @@
  {
   "id": "castle_ruin",
   "title": "Castle becomes a ruin",
-  "what": "a big collapse of stone",
-  "wants": 1,
-  "from": "crumble"
+  "what": "a big collapse of stone, the keep goes",
+  "wants": 3
  },
  {
   "id": "shot_cannon",
@@ -151,8 +150,14 @@
  },
  {
   "id": "crumble",
-  "title": "Wall or gun crumbles",
+  "title": "Wall crumbles",
   "what": "stone blocks tumble and clatter",
+  "wants": 3
+ },
+ {
+  "id": "gun_destroyed",
+  "title": "Gun destroyed",
+  "what": "iron parts clang and clatter, the carriage cracks",
   "wants": 3
  },
  {

@@ -1,0 +1,21 @@
+{
+  "source": "game/art-direction/rounds/37-sfx-probe/metal-gun-destroyed-b--eleven.mp3",
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a cast-iron cannon barrel is knocked off its carriage and tumbles: a deep iron clunk, two metallic bounces with a ring, splintering wood, short.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.6
+  },
+  "seed": null,
+  "bus": "sfx",
+  "target": {
+    "m_max": -16.0
+  },
+  "created": "2026-10-20T22:54:55",
+  "seconds": 0.6,
+  "lufs": -19.4,
+  "m_max": -16.0,
+  "range_lu": 0.0,
+  "peak_dbtp": -4.5
+}

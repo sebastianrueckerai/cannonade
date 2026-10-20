@@ -1,0 +1,46 @@
+{
+  "models": {
+    "eleven": {
+      "id": "fal-ai/elevenlabs/sound-effects/v2",
+      "prompt_field": "text",
+      "params": {
+        "prompt_influence": 0.6,
+        "output_format": "mp3_44100_192"
+      }
+    }
+  },
+  "directions": [
+    {
+      "slug": "metal"
+    }
+  ],
+  "tracks": {
+    "gun-destroyed-a": {
+      "cue": "gun_destroyed",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a small iron cannon is smashed and falls apart: a hard metallic clang, iron parts clattering onto stone, a wooden carriage cracking, a short ring, over in a second and a half.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.6
+        }
+      }
+    },
+    "gun-destroyed-b": {
+      "cue": "gun_destroyed",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a cast-iron cannon barrel is knocked off its carriage and tumbles: a deep iron clunk, two metallic bounces with a ring, splintering wood, short.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.6
+        }
+      }
+    },
+    "gun-destroyed-c": {
+      "cue": "gun_destroyed",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron gun breaks: a sharp metallic crack and crunch, iron fragments scattering on stone with a ringing tail, wooden wheels collapsing, short.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.6
+        }
+      }
+    }
+  }
+}

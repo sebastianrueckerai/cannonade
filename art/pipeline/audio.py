@@ -290,7 +290,7 @@ def cue_map(rd):
 
 
 def card(m, check=None):
-    box = f'<input type="checkbox" data-cue="{check[0]}" data-stem="{m["label"]}"{" checked" if check[1] else ""}> ' if check else ""
+    box = f'<input type="checkbox" data-cue="{check[0]}" data-stem="{m["label"]}"{" checked" if check[1] else ""}><span class="m"></span>' if check else ""
     return (f'<div class="c"><label>{box}<b>{html.escape(m["label"])}</b></label> <small>{html.escape(m["model"])} · {m["seconds"]} s · '
             f'{m["lufs"]} LUFS · {m.get("vocal_words", "?")} words · ~${m["est_cost_usd"]:.3f}</small>'
             f'<audio controls preload="none" src="{html.escape(m["file"])}"></audio>'
@@ -300,7 +300,7 @@ def card(m, check=None):
 STYLE = ('<style>body{font:14px system-ui;margin:20px;max-width:900px}.c{border-bottom:1px solid #ddd;padding:8px 0}'
          'audio{width:100%;display:block;margin:4px 0}pre{white-space:pre-wrap;font-size:12px}h2{margin:28px 0 4px}'
          'h2 small{font-weight:normal;color:#666}.bar{position:sticky;top:0;background:#fff;padding:8px 0;border-bottom:2px solid #333}'
-         'textarea{width:100%;height:90px;font:12px monospace}.none{color:#888}</style>')
+         '#picks{font:12px monospace;max-height:120px;overflow:auto;margin:6px 0 0;user-select:all}.m{font-family:monospace}.none{color:#888}</style>')
 
 PICKS_JS = """<script>
 const key = 'picks:' + document.title;
@@ -308,9 +308,19 @@ const boxes = [...document.querySelectorAll('input[type=checkbox]')];
 const saved = localStorage.getItem(key);
 if (saved) { const on = new Set(JSON.parse(saved)); boxes.forEach(b => b.checked = on.has(b.dataset.cue + ': ' + b.dataset.stem)); }
 function lines() { return boxes.filter(b => b.checked).map(b => b.dataset.cue + ': ' + b.dataset.stem); }
-function refresh() { document.getElementById('picks').value = lines().join('\n'); localStorage.setItem(key, JSON.stringify(lines())); }
+function refresh() {
+  document.getElementById('picks').textContent = lines().join('\\n') || '(nothing ticked)';
+  boxes.forEach(b => b.nextElementSibling.textContent = b.checked ? '[x] ' : '[ ] ');
+  localStorage.setItem(key, JSON.stringify(lines()));
+}
 boxes.forEach(b => b.addEventListener('change', refresh));
-document.getElementById('copy').onclick = () => navigator.clipboard.writeText(lines().join('\n'));
+document.getElementById('copy').onclick = () => {
+  const text = lines().join('\\n');
+  const done = () => { document.getElementById('copied').textContent = 'copied ' + lines().length + ' lines'; };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(document.getElementById('picks'));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); document.execCommand('copy'); done(); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+};
 document.getElementById('reset').onclick = () => { localStorage.removeItem(key); location.reload(); };
 refresh();
 </script>"""
@@ -338,8 +348,9 @@ def cmd_page(a):
             cue = next((c for pre, c in prefixes.items() if m["label"].startswith(pre)), None)
             by_cue.setdefault(cue, []).append(m)
         parts = [f'<h1>{html.escape(rd.name)}</h1><div class="bar">{len(metas)} clips, ~${total:.2f}. Tick the clips to use, then '
-                 f'<button id="copy">copy the list</button> and paste it to me. <button id="reset">Reset to the saved picks</button>'
-                 f'<textarea id="picks" readonly></textarea></div>']
+                 f'<button id="copy">copy the list</button> <span id="copied"></span> and paste it to me, or select the list below and copy it, '
+                 f'or copy the whole page: every ticked clip shows [x]. <button id="reset">Reset to the saved picks</button>'
+                 f'<pre id="picks"></pre></div>']
         for c in cues:
             clips = by_cue.pop(c["id"], [])
             chosen = picks.get(c["id"], [])

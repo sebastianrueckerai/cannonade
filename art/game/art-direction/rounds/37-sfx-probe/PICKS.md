@@ -21,7 +21,9 @@ Sebastian, 2026-10-20, on the page, the page open in his tabs:
 | sfx-phase-horn--eleven | "use" | `horn_battle` |
 | sfx-hit-water--eleven | "use" | `hit_water_1` |
 | the first crumbles | "most sound more like stone blocks crumbling" wanted, so four stone angles came in `crumble-place.json` | out |
-| crunch-crumble--eleven, crunch-crumble--mirelo-1, -2 | "Those 3 can be used for things crumbling (walls, castle)" | `crumble_1`, `crumble_2`, `crumble_3` |
+| crunch-crumble--eleven, crunch-crumble--mirelo-1, -2 | "Those 3 can be used for things crumbling (walls, castle)", then "the others for wall crumble" | `crumble_1`, `crumble_2`, `crumble_3` |
+| rubble-crumble--eleven, rubble-crumble--mirelo-1, -2 | "Use these 3 for castle crumble" | `castle_ruin_1` to `_3` |
+| metal-gun-destroyed-a, -b, -c--eleven | "Make some more metallic versions for cannon crumble. I don't need to test them, just use them!" | `gun_destroyed_1` to `_3`, untested |
 | the first cannon shots | "not great", wanted umpf: `cannons.json` with four angles, a normal and a big gun | picked above |
 
 "Eleven seems to be the best so far."

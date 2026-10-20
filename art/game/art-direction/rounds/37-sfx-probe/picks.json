@@ -37,5 +37,15 @@
   "crunch-crumble--eleven",
   "crunch-crumble--mirelo-1",
   "crunch-crumble--mirelo-2"
+ ],
+ "castle_ruin": [
+  "rubble-crumble--eleven",
+  "rubble-crumble--mirelo-1",
+  "rubble-crumble--mirelo-2"
+ ],
+ "gun_destroyed": [
+  "metal-gun-destroyed-a--eleven",
+  "metal-gun-destroyed-b--eleven",
+  "metal-gun-destroyed-c--eleven"
  ]
 }

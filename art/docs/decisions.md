@@ -491,8 +491,11 @@ are similar, they seem to have differing volume." So `audio.py final` sets every
 [assets/audio/](/home/womb/repos/grid-cannons/assets/audio). The first heavy shot ("sounds like a faint
 drum beat") and the first crumbles (wanted: stone blocks crumbling) are out. "Eleven seems to be the best
 so far." Then, from the stone sets: "Those 3 can be used for things crumbling (walls, castle)", the crunch
-angle from ElevenLabs and both Mirelo takes, `crumble_1` to `crumble_3`.
-[PICKS.md](../game/art-direction/rounds/37-sfx-probe/PICKS.md).
+angle from ElevenLabs and both Mirelo takes, `crumble_1` to `crumble_3`. And: "Use these 3 for castle
+crumble and the others for wall crumble, make some more metallic versions for cannon crumble. I don't need
+to test them, just use them!" The rubble angle, ElevenLabs and both Mirelo takes, is `castle_ruin_1` to `_3`,
+the crunch angle stays the wall crumble, and three metallic ElevenLabs clips are `gun_destroyed_1` to `_3`
+on his word, untested. [PICKS.md](../game/art-direction/rounds/37-sfx-probe/PICKS.md).
 
 ## D84. The age-of-sail chiptune from ACE-Step is the music (2026-10-20, Sebastian)
 

@@ -78,6 +78,9 @@
 | fill-stack-block-a--mirelo | mirelo-ai/sfx2.0/text-to-audio | 1.0 | -33.1 | 0.0 | -3.7 |  | 0.010 |
 | fill-stack-block-b--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.0 | -55.3 | 0.0 | -41.7 |  | 0.002 |
 | fill-stack-block-b--mirelo | mirelo-ai/sfx2.0/text-to-audio | 1.0 | -24.8 | 0.0 | -1.0 |  | 0.010 |
+| metal-gun-destroyed-a--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.6 | -10.8 | 0.0 | 1.1 |  | 0.003 |
+| metal-gun-destroyed-b--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.6 | -42.6 | 0.0 | -26.6 |  | 0.003 |
+| metal-gun-destroyed-c--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.6 | -13.3 | 0.0 | 1.1 |  | 0.003 |
 | punch-big--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -11.3 | 20.0 | 0.7 |  | 0.006 |
 | punch-big--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -22.4 | 20.0 | -1.0 |  | 0.030 |
 | punch-big--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -25.2 | 20.0 | -1.0 |  | 0.030 |
@@ -121,4 +124,4 @@
 | thump-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -19.7 | 0.0 | -1.0 |  | 0.015 |
 | thump-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -18.4 | 0.0 | -1.0 |  | 0.015 |
 
-120 clips, ~$1.13
+123 clips, ~$1.14

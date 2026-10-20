@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a cast-iron cannon barrel is knocked off its carriage and tumbles: a deep iron clunk, two metallic bounces with a ring, splintering wood, short.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.6
+  },
+  "seed": null,
+  "duration": null,
+  "label": "metal-gun-destroyed-b--eleven",
+  "est_cost_usd": 0.0032,
+  "created": "2026-10-20T22:54:29",
+  "outputs": [
+    "metal-gun-destroyed-b--eleven.mp3"
+  ]
+}

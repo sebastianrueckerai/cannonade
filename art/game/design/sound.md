@@ -98,7 +98,8 @@ script and function that fires it. "Hook" means the code is silent today and nee
 | hit_castle | a heavy stone crack, cracks appear | `Castle.take_damage` (32) | often | A |
 | hit_water x2 | a round plop and a splash | `impact` on a sea tile | constant | A |
 | hit_ship | a wooden crack and a creak | `Ship.damage` (180) | often | A |
-| crumble x2 | a wall block or a gun is destroyed: blocks clatter onto the board | `BuildingPlace.un_build` (124) from a hit | very frequent, every wall hit kills a block | A |
+| crumble x3 | a wall block is destroyed: stone blocks tumble and clatter | `BuildingPlace.un_build` (124) from a hit on a wall | very frequent, every wall hit kills a block | A |
+| gun_destroyed x3 | a gun is destroyed: iron parts clang and clatter, the carriage cracks | `un_build` on a gun | several a game | A |
 | ship_sink | the ship tips over: creak, splash, bubbles | `Ship._sink` (187) | 7 a game at most | A |
 | target_blip | a short warning blip on the tile an enemy shell will hit | `BuildingPlace.target_on` (257) | per incoming shell | B |
 | reload_ready | a soft click when the gun can fire again | `Cooldown`, ring at ready | per shot | B |
@@ -154,8 +155,9 @@ Counts: 33 clip sets in A, 21 in B, about 70 files with the variations.
 The assets are named after their cue id, numbered when a cue has several: `shot_cannon_1`. The picks
 live in the round's `picks.json`, the page of round 37 shows them ticked, and `audio.py finals` makes
 the assets from it. D83, from round 37: shot_cannon x3, shot_heavy x3, castle_claimed, draw_piece,
-ship_sink, place_piece, place_invalid, horn_battle, hit_water, ui_click and crumble x3. Open from the
-A list: the rest, with candidates on the page.
+ship_sink, place_piece, place_invalid, horn_battle, hit_water, ui_click, crumble x3, castle_ruin x3 and
+gun_destroyed x3 (the metallic set, used untested on his word). Open from the A list: the rest, with
+candidates on the page.
 
 D84, from round 36: the build and the battle theme are the age-of-sail chiptune from ACE-Step,
 `build.ogg` and `battle.ogg`, full clips not yet cut to loops. Menu, win and lose are open, as versions
