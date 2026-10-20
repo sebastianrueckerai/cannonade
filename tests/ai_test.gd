@@ -174,6 +174,20 @@ func _run() -> void:
 		plan.refresh()
 		check(plan.cost == 24 and plan.gaps.size() == 24 and plan.inside.size() == 25,
 				"a free castle's ring is the 24 tiles two out, 25 inside (cost %d, gaps %d, inside %d)" % [plan.cost, plan.gaps.size(), plan.inside.size()])
+		# the human walls in one tile of that ring: the AI may not build there, so its ring goes round it
+		var hole: Vector2i = centre(free) + Vector2i(3, 0)
+		var walls: Array = []
+		for dx in range(-1, 2):
+			for dz in range(-1, 2):
+				if dx != 0 or dz != 0:
+					walls.append(map.tiles[hole.x + dx][hole.y + dz])
+		check(walls.all(func(t): return t.is_free()), "the 3 x 3 round the ring tile east of the free castle is free")
+		game.players[0]._wall_in(hole.x, hole.y, hole.x, hole.y)
+		plan.refresh()
+		check(map.tiles[hole.x][hole.y].ringOwner == game.players[0] and plan.possible() and not plan.ring.has(hole),
+				"a ring never runs through ground the human's ring closes (possible %s, through it %s)" % [plan.possible(), plan.ring.has(hole)])
+		for t in walls:
+			t.un_build()
 
 	# a breach of one block: the plan's gap is that block, cost 1
 	var breach: Vector2i = own_plan.ring.keys()[0]

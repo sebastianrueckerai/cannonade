@@ -348,7 +348,7 @@ func _setup_ui() -> void:
 	ui.add_child(phase_label)
 	var help := Label.new()
 	help.name = "Help"
-	help.text = "LMB: place wall piece / stack a block   RMB: place gun (costs parts) / combine   X / Y: rotate piece   Space: fire   Wheel: zoom   MMB drag: pan   Esc: menu"
+	help.text = "LMB: place / stack wall piece   RMB: place gun (costs parts) / combine   X / Y: rotate piece   Space: fire   Wheel: zoom   MMB drag: pan   Esc: menu"
 	help.add_theme_font_size_override("font_size", 14)
 	help.add_theme_color_override("font_outline_color", Color.BLACK)
 	help.add_theme_constant_override("outline_size", 4)

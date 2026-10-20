@@ -60,6 +60,11 @@ func point_at_tile(xz: Vector2i) -> void:
 	await point_at(map.tile_position(xz.x, xz.y, 0.1))
 
 
+## Moves the mouse over the walkway's centre of the wall block on tile xz.
+func point_at_wall(xz: Vector2i) -> void:
+	await point_at(map.tiles[xz.x][xz.y].go.global_position + Vector3(0, 0.85, 0))
+
+
 ## Turns the mouse wheel n notches toward the world position p, away from it for n < 0.
 func zoom(n: int, p: Vector3) -> void:
 	for i in absi(n):
@@ -193,17 +198,62 @@ func _run() -> void:
 	await seconds(3.3)
 	check(not U.alive(dropped) and U.alive(human.nextWall), "click outside the map discards the piece")
 
-	# stacking: a single block stacks on an own wall, a longer piece never does
+	# stacking: a piece stacks when every cell lies on an own wall, a storey ghost on each cell first; a piece
+	# with cells off the walls does not
 	var target = map.tiles[w.x][w.y]
+	var storey: String = Catalog.wall_look(human) + "_upper"
 	_hold("wall_3")
-	await point_at_tile(w)
+	await point_at_wall(w)
 	await press("build_wall")
-	check(not U.alive(target.wallStacked), "a three-block piece does not stack")
+	check(not U.alive(target.wallStacked), "a piece with cells off the walls does not stack")
+	_hold("wall_3")
+	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()  # upright, on the upright three placed above
+	var three: Array = human.nextWall.get_children().filter(func(n): return n is Node3D)
+	await point_at_wall(w)
+	check(three.all(func(n): return n.get_node("Art").get_meta("art_id") == storey and _shade(n) < 1.0),
+			"the upright three shows a darkened storey on each cell (%s)" % [three.map(func(n): return n.get_node("Art").get_meta("art_id"))])
+	var spots: Array = three.map(func(n): return n.get_node("Art").global_transform)
+	await point_at_tile(w + Vector2i(-2, 0))
+	check(three.all(func(n): return n.basis.is_equal_approx(Basis()) and n.get_node("Art").get_meta("art_id") == Catalog.wall_look(human)),
+			"off the walls the turned three is blocks again, turned with the piece")
+	await point_at_wall(w)
+	await press("build_wall")
+	var stacked: Array = want.map(func(k): return map.tiles[k.x][k.y].wallStacked)
+	check(stacked.all(func(n): return U.alive(n) and Catalog.def_of(n).id == "wall"),
+			"the upright three stacks a storey on each of its walls")
+	check(range(3).all(func(i): return U.alive(stacked[i]) and stacked[i].get_node("Art").global_transform.is_equal_approx(spots[i])),
+			"each storey stands where its ghost stood")
+
+	# nobody builds on ground another player's closed ring holds, reach or not: a 1 x 1 ring of the enemy's two
+	# tiles north of the castle's ring
+	var hole := Vector2i(b.x - 2, b.y + 4)
+	var enemy_ring: Array = []
+	for dx in range(-1, 2):
+		for dz in range(-1, 2):
+			if dx != 0 or dz != 0:
+				enemy_ring.append(hole + Vector2i(dx, dz))
+	check(_all_free(enemy_ring + [hole]), "the 3 x 3 north of the ring's west corner is free")
+	game.players[1]._wall_in(hole.x, hole.y, hole.x, hole.y)
+	var hole_tile = map.tiles[hole.x][hole.y]
+	check(map.is_tile_enclosed(hole.x, hole.y) and hole_tile.ringOwner == game.players[1] and human.in_reach(hole.x, hole.y),
+			"the enemy's ring closes a tile in the player's reach")
+	var hole_far: Vector3 = map.tile_position(hole.x, hole.y, 0.1) + Vector3(0, 0, -0.35)  # the enemy's wall hides the near half
 	_hold("wall_1")
-	await point_at_tile(w)
+	await point_at(hole_far)
+	check(human.buildableTileSelected == hole_tile, "the cursor picks the tile inside the enemy's ring")
 	await press("build_wall")
-	check(U.alive(target.wallStacked) and Catalog.def_of(target.wallStacked).id == "wall",
-			"a single block stacks on an own wall")
+	check(not U.alive(hole_tile.structure), "a block inside the enemy's ring is refused")
+	_offer_building("cannon")
+	await point_at(hole_far)
+	await press("build_building")
+	check(not U.alive(hole_tile.structure), "a gun inside the enemy's ring is refused")
+	for k in enemy_ring:
+		map.tiles[k.x][k.y].un_build()
+	_hold("wall_1")
+	await point_at(hole_far)
+	await press("build_wall")
+	check(U.alive(hole_tile.structure), "with the enemy's ring gone the block places")
+	hole_tile.un_build()  # it would reach the column the reach checks below walk
 
 	# zoomed in, the cursor on a wall's walkway picks that wall, not the ground behind it, and the held block shows
 	# there the storey it stacks as. The east side's middle has own walls north and south of it; the cursor sits on
@@ -217,7 +267,6 @@ func _run() -> void:
 	await point_at(east.go.global_position + Vector3(0, 0.85, -0.3))
 	check(human.buildableTileSelected == east, "the cursor on a wall's walkway picks that wall (got %d, %d)"
 			% [human.buildableTileSelected.idxX, human.buildableTileSelected.idxZ])
-	var storey: String = Catalog.wall_look(human) + "_upper"
 	check(cell.get_node("Art").get_meta("art_id") == storey and _shade(cell) < 1.0,
 			"the held block shows the darkened storey (%s, shade %s)" % [cell.get_node("Art").get_meta("art_id"), _shade(cell)])
 	var ghost_at: Transform3D = cell.get_node("Art").global_transform

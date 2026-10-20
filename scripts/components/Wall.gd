@@ -121,6 +121,7 @@ static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0) -> voi
 static func paint_piece(piece: Node3D, owner, cells: Array, shade := 1.0) -> void:
 	var nodes := piece.get_children().filter(func(n): return n is Node3D)
 	for i in mini(cells.size(), nodes.size()):
+		nodes[i].basis = Basis()
 		put_on(nodes[i], Catalog.wall_look(owner))
 		var open := {}
 		for r in DIRS:

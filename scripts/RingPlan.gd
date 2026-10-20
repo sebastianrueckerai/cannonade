@@ -2,8 +2,9 @@ extends RefCounted
 ## A region the AI wants inside a closed wall ring: a castle with the free ground one tile round
 ## it, or a 3x3 yard of free ground for guns. The ring is the cheapest 4-connected closed loop round
 ## the target on the board as it stands (own walls free, free ground 1, enemy walls 2, own enclosed
-## ground 3; water, castles and guns cannot carry a wall). A target already inside own closed ground
-## is done whatever its loop says. Coordinates are Vector2i(x, z).
+## ground 3; water, castles, guns and ground another player's ring closes cannot carry a wall). A
+## target already inside own closed ground is done whatever its loop says. Coordinates are
+## Vector2i(x, z).
 
 const INF := 1 << 30
 const WINDOW := 4
@@ -74,7 +75,7 @@ func _tile_cost(x: int, z: int) -> int:
 	var t = map.tiles[x][z]
 	if t.isWall:
 		return 0 if map.get_mini(x, z) == player.playerID else 2
-	if U.alive(t.structure) or t.water or t.disabled:
+	if U.alive(t.structure) or t.water or t.disabled or player.enemy_ground(t):
 		return -1
 	if map.is_tile_enclosed(x, z) and t.ringOwner == player:
 		return 3

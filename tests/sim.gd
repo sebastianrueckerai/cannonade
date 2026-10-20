@@ -25,6 +25,11 @@ var _start_walls := {}
 var _max_active := {}
 var _next_autobuild := 1.0
 var _ship_start := {}
+## per AI player as the last frame ended: what it had placed, the tiles in its reach, the ground other
+## players' rings closed
+var _rules_last := {}
+## microseconds the rules check took since the last frame tick, kept out of the frame times
+var _rules_usec := 0
 
 
 func _ready() -> void:
@@ -51,8 +56,9 @@ var _last_tick := 0
 func _process(_delta: float) -> void:
 	var now := Time.get_ticks_usec()
 	if _last_tick > 0 and U.time > 1.0:
-		frame_times.append(now - _last_tick)
+		frame_times.append(now - _last_tick - _rules_usec)
 	_last_tick = now
+	_rules_usec = 0
 	if main == null or main.game == null:
 		return
 	var g = main.game
@@ -79,6 +85,9 @@ func _process(_delta: float) -> void:
 			_start_walls[k] = walls
 		_max_walls[k] = maxi(_max_walls.get(k, 0), walls)
 		_max_active[k] = maxi(_max_active.get(k, 0), p.activeCannons.size())
+	var t0 := Time.get_ticks_usec()
+	_check_ai_rules(g)
+	_rules_usec = Time.get_ticks_usec() - t0
 	if autobuild and U.time >= _next_autobuild:
 		_next_autobuild = U.time + 0.5
 		_autobuild(g)
@@ -245,6 +254,46 @@ func _check_invariants(g) -> void:
 		for k in p.cannons:
 			if not U.alive(p.cannons[k]):
 				_fail("player %d has a dead cannon at %s" % [p.playerID, k])
+
+
+## An AI places by the human's rules: every wall piece and gun it adds this frame has a tile within
+## map.buildingRange of its walls and held castles, and none on ground another player's ring closed, as the
+## last frame ended. Derived here, not read from the player's own checks.
+func _check_ai_rules(g) -> void:
+	var m = g.map
+	for p in g.players:
+		if not p.is_ai():
+			continue
+		var tiles: Array = p.wallTiles.map(func(t): return Vector2i(t.idxX, t.idxZ))
+		tiles.append_array(p.cannons.keys())
+		var last = _rules_last.get(p)
+		if last != null:
+			var added: Array = tiles.filter(func(k): return not last["placed"].has(k))
+			if not added.is_empty() and not added.any(func(k): return last["reach"].has(k)):
+				_fail("player %d placed %s more than %d tiles from its walls and castles" % [p.playerID, added, m.buildingRange])
+			var inside: Array = added.filter(func(k): return last["enemy"].has(k))
+			if not inside.is_empty():
+				_fail("player %d placed %s on ground another player's ring closed" % [p.playerID, inside])
+		var placed := {}
+		for k in tiles:
+			placed[k] = true
+		var anchors: Array = p.wallTiles.map(func(t): return Vector2i(t.idxX, t.idxZ))
+		for c in m.castles:
+			if U.alive(c) and not c.is_ruin() and c.owner() == p:
+				anchors.append_array(c.my_tiles().map(func(t): return Vector2i(t.idxX, t.idxZ)))
+		var reach := {}
+		var r: int = m.buildingRange
+		for a in anchors:
+			for dx in range(-r, r + 1):
+				for dz in range(-r, r + 1):
+					reach[a + Vector2i(dx, dz)] = true
+		var enemy := {}
+		for x in m.sizeX:
+			for z in m.sizeZ:
+				var t = m.tiles[x][z]
+				if m.is_tile_enclosed(x, z) and t.ringOwner != null and t.ringOwner != p:
+					enemy[Vector2i(x, z)] = true
+		_rules_last[p] = {"placed": placed, "reach": reach, "enemy": enemy}
 
 
 func _finish() -> void:

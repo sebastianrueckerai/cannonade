@@ -12,7 +12,7 @@ const MODES := [
 ## The five actions the panel remaps; everything else (wheel, middle drag,
 ## Enter, Esc) is hardcoded where it is used and listed as a fixed row.
 const REMAP := [
-	["build_wall", "place the wall piece / stack a single block on one of your walls"],
+	["build_wall", "place the wall piece, or stack it on your walls"],
 	["build_building", "place the next building / fuse four cannons in a 2x2 square"],
 	["rotate_cw", "rotate the wall piece clockwise"],
 	["rotate_ccw", "rotate the wall piece counter-clockwise"],

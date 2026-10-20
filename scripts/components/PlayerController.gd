@@ -190,7 +190,7 @@ func update_point_and_tile_selected() -> void:
 		if freeTileSelected:
 			next_wall_to_map()
 			next_building_to_gui()
-			canPlaceBuilding = in_reach(x, z)
+			canPlaceBuilding = in_reach(x, z) and not enemy_ground(buildableTileSelected)
 			canPlaceWall = can_place_piece(buildableTileSelected)
 			var lit: Array = piece_tiles(buildableTileSelected) if U.alive(nextWall) else []
 			if lit.is_empty():
@@ -250,7 +250,8 @@ func piece_tiles(tile) -> Array:
 	return out
 
 
-## The held piece fits with its anchor on `tile`: every cell on the map and free, one of them in reach.
+## The held piece fits with its anchor on `tile`: every cell on the map, free and off enemy ground, one of
+## them in reach.
 func can_place_piece(tile) -> bool:
 	if not U.alive(nextWall):
 		return false
@@ -259,17 +260,27 @@ func can_place_piece(tile) -> bool:
 		return false
 	var reached := false
 	for t in tiles:
-		if not t.is_free():
+		if not t.is_free() or enemy_ground(t):
 			return false
 		reached = reached or in_reach(t.idxX, t.idxZ)
 	return reached
 
 
-## The held piece is a single block and `tile` an own wall with room on top.
+## Ground another player's closed ring holds (Map.ring_owner): nobody else builds there.
+func enemy_ground(t) -> bool:
+	return t.ringOwner != null and t.ringOwner != self
+
+
+## The held piece with its anchor on `tile` lies wholly on own walls with room on top.
 func can_stack_on(tile) -> bool:
-	return U.alive(nextWall) and U.comp(nextWall, "BuildingBlock").cells.size() == 1 \
-			and tile.isWall and map.get_mini(tile.idxX, tile.idxZ) == playerID \
-			and not U.alive(tile.wallStacked) and not tile.burning
+	if not U.alive(nextWall):
+		return false
+	var tiles := piece_tiles(tile)
+	return tiles.size() == U.comp(nextWall, "BuildingBlock").cells.size() and tiles.all(_room_on_top)
+
+
+func _room_on_top(t) -> bool:
+	return t.isWall and map.get_mini(t.idxX, t.idxZ) == playerID and not U.alive(t.wallStacked) and not t.burning
 
 
 func can_combine_next_building_with_tile(tile) -> bool:
@@ -362,15 +373,19 @@ func switch_casting_shadows(n: Node3D, on := true) -> void:
 	U.set_shadows(n, on)
 
 
-## The held single block over an own wall shows the storey it stacks as, darkened like every ghost: the look's
-## upper storey where the placed one stands, its walkway following the tile's neighbours.
+## The held piece over own walls shows the storeys it stacks as, darkened like every ghost: on each cell the
+## look's upper storey where the placed one stands, its walkway following that tile's neighbours.
 func next_wall_to_wall() -> void:
 	U.set_parent(nextWall, buildableTileSelected.go)
 	switch_casting_shadows(nextWall, true)
 	nextWall.position = Vector3.ZERO
-	var cell: Node3D = nextWall.get_children().filter(func(n): return n is Node3D)[0]
-	WallComp.put_on(cell, WallComp.storey(Catalog.wall_look(self)))
-	WallComp.paint_art(cell.get_node("Art"), self, WallComp.open_sides(buildableTileSelected, self), 0.7)
+	_settle_cells()
+	var nodes := nextWall.get_children().filter(func(n): return n is Node3D)
+	var tiles := piece_tiles(buildableTileSelected)
+	for i in tiles.size():
+		nodes[i].global_basis = Basis()  # square to the map like the placed storey, however the piece is turned
+		WallComp.put_on(nodes[i], WallComp.storey(Catalog.wall_look(self)))
+		WallComp.paint_art(nodes[i].get_node("Art"), self, WallComp.open_sides(tiles[i], self), 0.7)
 
 
 func _hide_decorations() -> void:
@@ -542,11 +557,13 @@ func build_upgrade(tile) -> void:
 		cluster.build_multifield_upgrade()
 
 
-## A fresh block stacks on the own wall on `tile`; the held single block is used up.
+## A fresh block stacks on the own wall under every cell of the held piece anchored on `tile`; the piece is
+## used up.
 func stack_wall(tile) -> void:
-	var block := Catalog.spawn("wall", null, self)
-	U.comp(block, "BuildingBlock").player = self
-	tile.stack_wall(block)
+	for t in piece_tiles(tile):
+		var block := Catalog.spawn("wall", null, self)
+		U.comp(block, "BuildingBlock").player = self
+		t.stack_wall(block)
 	U.destroy(nextWall)
 	nextWall = null
 	get_next_wall()

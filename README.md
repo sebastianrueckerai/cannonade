@@ -35,7 +35,7 @@ Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 
 | input             | action                                                   |
 |-------------------|----------------------------------------------------------|
-| left mouse        | place the wall piece (a single block also stacks on one of your walls) |
+| left mouse        | place the wall piece, or stack it on your walls            |
 | right mouse       | place the next building (a gun, at a parts cost)          |
 | X                 | rotate the wall piece clockwise                          |
 | Y or Z            | rotate the wall piece counter-clockwise                  |
@@ -52,9 +52,10 @@ or a cross, drawn at random (small pieces more often) and turned with X / Y. A p
 a full-tile wall block on each of its cells. Blocks that share a side are one wall; blocks
 that touch only at a corner do not join, so a ring must close side to side. Everything you
 place needs one tile within two tiles of your own walls or of a castle you hold, so nobody
-builds behind enemy lines. Only a single block stacks: a stacked tile takes two shells. Held
-over one of your walls, the single block shows the storey it adds, and the cursor on a block
-picks that block, not the ground hidden behind it.
+builds behind enemy lines, and nobody builds on ground another player's closed ring holds. The
+AI keeps the same rules. Any piece stacks when every cell lies on one of your walls with no
+storey yet, and a stacked tile takes two shells. Held over your walls, the piece shows the
+storeys it adds, and the cursor on a block picks that block, not the ground hidden behind it.
 Every game deals each player a different wall look of four. The walkway along the top of a wall carries the
 owner's colour, running toward the neighbouring blocks of the same wall, and the ground inside
 a closed ring takes a wash of the colour of the player whose walls surround it most, so a
@@ -263,7 +264,8 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 * `tests/flood_test` – enclosure detection: walls enclose areas, gaps open them, and the
   optimised flood fill matches the original algorithm (kept in the test) on random edits.
 * `tests/human` – the human player through real mouse / key events: placing, rotating,
-  discarding and stacking walls (zoomed in, the cursor on a wall's top, the storey ghost),
+  discarding and stacking walls (a turned three on three walls, zoomed in, the cursor on a
+  wall's top, the storey ghosts), no building inside the enemy's closed ring,
   guns by right click at their parts cost, fusion, firing. K and L end the game and the end
   screen fits the window.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;

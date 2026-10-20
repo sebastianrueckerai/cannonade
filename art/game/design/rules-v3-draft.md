@@ -10,6 +10,7 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 - In the build phase you close your walls, place guns and replace what died.
 - Walls come as Rampart pieces (session 24, D75): one block, two, three or four in a row, S, T and cross, drawn at weights 30/25/15/10/10/6/4. A piece stamps a full-tile block on each cell. Blocks sharing a side are one wall; a corner contact does not join.
 - You build only near your own: every piece, gun and building needs one tile within 2 tiles of your walls or of a castle you hold that is not a ruin. Guns anchor nothing. The 2 is a first lab value.
+- Nobody builds on ground another player's closed ring holds, reach or not (D82). The AI keeps the same rules.
 - At the end of the build phase the check runs, section 6. Then the battle.
 - Shells fly arcs over walls, so walls block no shot. Every building is a legal target at all times, walled in or not.
 - A breach during the battle changes nothing. Walls matter only at the check. This is the Rampart rule of [rules.md](rules.md) section 1, unchanged.
@@ -46,7 +47,7 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 ## 5. Walls
 
 - A wall tile dies to one shell. A double wall takes two, the upper storey first.
-- Only a single block stacks on a wall tile.
+- Any piece stacks when every cell lies on one of your walls with no storey yet (D82). Each cell adds a storey.
 - Walls have no damage states. A hit wall is a gone wall.
 - Walls do nothing during the battle. They block no shell and switch off no gun. Their whole job is the check.
 - The check never destroys a wall. Only shells destroy walls.
