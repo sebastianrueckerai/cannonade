@@ -19,6 +19,7 @@ func _ready() -> void:
 		for kind in ["wall", "building"]:
 			_check_slot(kind, i)
 	await _check_hovers()
+	await _check_plates()
 	_check_pieces()
 	await _check_corners()
 	main.free()
@@ -85,15 +86,7 @@ func _check_hovers() -> void:
 		await get_tree().process_frame
 		wait += 1.0 / 30.0
 	check(U.alive(human.nextBuilding), "a building is offered beside the wall")
-	var base := Vector2i(map.sizeX / 2, map.sizeZ / 4)
-	var free := Vector2i(-1, -1)
-	for r in range(2, 6):
-		for dx in range(-r, r + 1):
-			for dz in range(-r, r + 1):
-				var t = map.tiles[base.x + dx][base.y + dz]
-				if human.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable() \
-						and not t.decorations.is_empty():
-					free = Vector2i(t.idxX, t.idxZ)
+	var free := _free_tile(true)
 	check(free.x >= 0, "a free tile with trees or stones on it exists in range")
 	if free.x < 0:
 		return
@@ -126,6 +119,82 @@ func _check_hovers() -> void:
 			"the building returns to its slot off the board")
 	check(deco_meshes.all(func(m): return m.visible),
 			"the tile's trees and stones come back when the preview leaves")
+
+
+## A free tile in the human's build range, with trees or stones on it when `decorated`; (-1, -1) when none.
+func _free_tile(decorated: bool) -> Vector2i:
+	var base := Vector2i(map.sizeX / 2, map.sizeZ / 4)
+	var free := Vector2i(-1, -1)
+	for r in range(2, 6):
+		for dx in range(-r, r + 1):
+			for dz in range(-r, r + 1):
+				var t = map.tiles[base.x + dx][base.y + dz]
+				if human.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable() \
+						and (not decorated or not t.decorations.is_empty()):
+					free = Vector2i(t.idxX, t.idxZ)
+	return free
+
+
+## A gun's plate stays square to the grid while the gun turns, and goes wherever the gun goes: from its slot onto
+## the board, and up with it when a discard flies out of the slot. The gun waits in its slot first, as a player's does.
+func _check_plates() -> void:
+	var gun: Node3D = await _offered_gun()
+	var plate := gun.find_child("plate", true, false) as Node3D
+	var rest := plate.global_position - gun.global_position
+	var square := plate.global_basis
+	var xz := _free_tile(false)
+	await _right_click(main.camera.unproject_position(map.tile_position(xz.x, xz.y, 0.1)))
+	check(gun.get_parent() == map.tiles[xz.x][xz.y].go, "a right click places the held gun on the hovered tile")
+	_check_plate(gun, plate, rest, "placed from its slot")
+	var gun_basis := gun.global_basis
+	U.shooter(gun).try_aim(map.tile_position(xz.x + 3, xz.y + 5))
+	await get_tree().process_frame
+	check(not gun.global_basis.is_equal_approx(gun_basis), "aiming turns the placed gun")
+	check(plate.global_basis.is_equal_approx(square), "the plate stays square to the grid while the gun turns")
+	_check_plate(gun, plate, rest, "turned to aim")
+	gun = await _offered_gun()
+	plate = gun.find_child("plate", true, false) as Node3D
+	var start := gun.global_position
+	await _right_click(Vector2(2, 2))
+	for i in 10:
+		await get_tree().process_frame
+	check(gun.global_position.y > start.y + 0.5, "a right click off the board sends the held gun flying")
+	_check_plate(gun, plate, rest, "flying off as a discard")
+
+
+## The next gun the human is offered, once it has rested a few frames in its slot.
+func _offered_gun() -> Node3D:
+	var wait := 0.0
+	while not (U.alive(human.nextBuilding) and U.shooter(human.nextBuilding) != null) and wait < 5.0:
+		if U.alive(human.nextBuilding):
+			U.destroy(human.nextBuilding)
+			human.nextBuilding = null
+		await get_tree().process_frame
+		wait += 1.0 / 30.0
+	for i in 5:
+		await get_tree().process_frame
+	return human.nextBuilding
+
+
+func _right_click(at: Vector2) -> void:
+	var ev := InputEventMouseMotion.new()
+	ev.position = at
+	Input.parse_input_event(ev)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	for pressed in [true, false]:
+		var mb := InputEventMouseButton.new()
+		mb.button_index = MOUSE_BUTTON_RIGHT
+		mb.position = at
+		mb.pressed = pressed
+		Input.parse_input_event(mb)
+		await get_tree().process_frame
+
+
+func _check_plate(gun: Node3D, plate: Node3D, rest: Vector3, when: String) -> void:
+	var off := plate.global_position - gun.global_position
+	check(off.is_equal_approx(rest), "%s, the gun keeps its plate under it (plate %s off the gun, %s in the slot)"
+			% [when, off, rest])
 
 
 ## Every drawn piece at every rotation: its ghost cells land on the anchor tile plus its cells, and in
