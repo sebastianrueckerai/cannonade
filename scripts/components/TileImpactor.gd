@@ -10,6 +10,8 @@ extends "res://scripts/components/Component.gd"
 
 var player = null
 var damage := 0.0
+## Where the shot was fired from; a wall it kills crumbles away from it.
+var start := Vector3.INF
 ## BuildingPlace component of the target tile
 var destinationTile = null
 
@@ -55,7 +57,7 @@ func impact() -> void:
 func _effect_tile(tile) -> void:
 	# The Unity version damaged destinationTile once per splash tile; damage the
 	# splash tile itself instead.
-	tile.damage_building_place(damage)
+	tile.damage_building_place(damage, start)
 	if burnTime > 0:
 		tile.set_on_fire(burnTime)
 	if stunTime > 0:

@@ -3,7 +3,6 @@ extends "res://scripts/components/TileImpactor.gd"
 
 @export var body: NodePath
 
-var start: Vector3
 var destination: Vector3
 var point1: Vector3
 var point2: Vector3
@@ -83,7 +82,7 @@ func _process(delta: float) -> void:
 			phase = -1
 			if U.alive(destinationTile):
 				count_hit()
-				destinationTile.damage_building_place(damage)
+				destinationTile.damage_building_place(damage, start)
 				if tileDestroyer:
 					disable_tile(destinationTile)
 			U.destroy(go)

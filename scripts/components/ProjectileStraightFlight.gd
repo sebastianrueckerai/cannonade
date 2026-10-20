@@ -5,7 +5,6 @@ var expiredTime := 0.0
 var flyTime := 1.0
 var percentFinished := 0.0
 var started := false
-var start: Vector3
 
 
 func fly_towards(dest_tile, dmg: float) -> void:

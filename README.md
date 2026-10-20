@@ -56,6 +56,8 @@ builds behind enemy lines, and nobody builds on ground another player's closed r
 AI keeps the same rules. Any piece stacks when every cell lies on one of your walls with no
 storey yet, and a stacked tile takes two shells. Held over your walls, the piece shows the
 storeys it adds, and the cursor on a block picks that block, not the ground hidden behind it.
+A wall shot down breaks into pieces that fly from the shot, land on the walls around and sink
+into the ground.
 Every game deals each player a different wall look of four. The walkway along the top of a wall carries the
 owner's colour, running toward the neighbouring blocks of the same wall, and the ground inside
 a closed ring takes a wash of the colour of the player whose walls surround it most, so a
@@ -215,7 +217,9 @@ can be repeated and compared.
 * Mouse picking intersects the camera ray with the ground plane instead of raycasting
   colliders; MEC coroutines became small time based state machines.
 * A wall is one full-tile block, `assets/art/3d/wall.glb`, with `wall_upper.glb` as its
-  stacked storey; the original FBX connector walls stay with their parked defs. The decorations use the boulders, bushes and leaf trees of the
+  stacked storey; the original FBX connector walls stay with their parked defs. `wall_rubble.glb`
+  and `wall_rubble_upper.glb` are the block and the storey cut into pieces, which
+  `scripts/Crumble.gd` throws as rigid bodies when a shot kills a wall. The decorations use the boulders, bushes and leaf trees of the
   art layer (`assets/art/3d/nature_*.glb`). Each one stays inside its tile and is shrunk
   until it fits, so it never reaches into a neighbouring building.
 * `scripts/Main.gd` builds a game from a mode (camera, light, UI, players).

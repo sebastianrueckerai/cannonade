@@ -3,6 +3,8 @@ extends Node
 ##   tools/godot_render.sh res://tools/screenshot.tscn -- --mode=ai2 --at=5,40 --out=/tmp/shot
 ##   --look=x,z     the camera close to that tile; --castle=N instead looks at player N's first castle
 ##   --eye=Y,Z      with --look or --castle: the camera Y up and Z back from the target instead of 9,6
+##   --kill         at the first --at time, a shot from the camera kills the wall nearest the --look or --castle
+##                  target (the whole stack); the later times show its rubble
 
 const Main = preload("res://scripts/Main.gd")
 
@@ -10,6 +12,7 @@ var main: Node
 var shots: Array = []
 var out := "user://shot"
 var aim = null
+var kill = null
 
 
 func _ready() -> void:
@@ -55,6 +58,13 @@ func _ready() -> void:
 		var eye: PackedStringArray = str(args.get("eye", "9,6")).split(",")
 		main.camera.global_position = target + Vector3(0, float(eye[0]), float(eye[1]))
 		main.camera.look_at(target)
+		if args.has("kill"):
+			for col in main.game.map.tiles:
+				for t in col:
+					if t.isWall and U.alive(t.structure) and (kill == null
+							or t.go.global_position.distance_to(target) < kill.go.global_position.distance_to(target)):
+						kill = t
+			print("kill: the wall at %d, %d" % [kill.idxX, kill.idxZ] if kill != null else "kill: no wall stands")
 	if args.has("aim"):
 		var p: PackedStringArray = str(args["aim"]).split(",")
 		aim = Vector2i(int(p[0]), int(p[1]))
@@ -73,9 +83,12 @@ func _process(_delta: float) -> void:
 		return
 	if U.time >= shots[0]:
 		var t: float = shots.pop_front()
+		if kill != null:
+			kill.damage_building_place(1e6, main.camera.global_position)
+			kill = null
 		await RenderingServer.frame_post_draw
 		var img := get_viewport().get_texture().get_image()
-		var path := "%s_%03d.png" % [out, int(t)]
+		var path := "%s_%03d.png" % [out, int(t)] if t == floorf(t) else "%s_%05.2f.png" % [out, t]
 		img.save_png(path)
 		print("saved ", path)
 		if shots.is_empty():

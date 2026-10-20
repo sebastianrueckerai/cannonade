@@ -14,7 +14,6 @@ var angleRads := 0.0
 var angleDegrees := 0.0
 var maxY := 0.0
 var destination: Vector3
-var start: Vector3
 var started := false
 
 

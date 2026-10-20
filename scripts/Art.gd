@@ -5,7 +5,9 @@ class_name Art
 ##                          centre, Y up, metres, one tile = 1 m. Walls keep the tile centre as origin, projectiles
 ##                          their centre. The wall block has one model per look (Catalog.WALL_LOOKS: "wall",
 ##                          "wall_corbel", ..., dealt one per player each game) and each a storey, "<look>_upper";
-##                          Wall.gd puts its shader on them
+##                          Wall.gd puts its shader on them. 3d/wall_rubble.glb and 3d/wall_rubble_upper.glb are the
+##                          plain block and its storey in pieces, one mesh each with the origin at the piece's centre;
+##                          Crumble.gd makes rigid bodies of them when a shot kills a block
 ##   3d/<id>.2.glb, .3.glb  more looks of the same id, one picked at random for each instance
 ##   ui/splash.png          splash screen image
 ##   ui/logo.png            title image on the menu

@@ -34,9 +34,16 @@ func _ready() -> void:
 	_check_storey()
 	_check_piece()
 	_check_ground()
+	await _check_crumble()
 	await _check_deal()
 	print("WALLS TEST PASSED" if failures.is_empty() else "WALLS TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
+
+
+func seconds(t: float) -> void:
+	var end: float = U.time + t
+	while U.time < end:
+		await get_tree().process_frame
 
 
 func check(cond: bool, msg: String) -> void:
@@ -198,6 +205,53 @@ func _check_ground() -> void:
 
 ## The deal: five art seeds give five permutations of the four looks, not all alike, and a four-player game hands
 ## them out, every player another. The versus game's AI is idle, so freeing it resumes no coroutine.
+## A wall shot down crumbles (I58): a storey alone, leaving its block, then the block; the pieces wear the block's
+## material, fly away from the shot, lie on the walls and not in them, stay on the slab and are gone after Crumble.LIFE.
+func _check_crumble() -> void:
+	Art._rng.seed = 11
+	var tile = _tile(19, 2)
+	var east_tile = _tile(20, 2)
+	var block := Catalog.spawn("wall", null, p1)
+	p1.build_wall(tile, block)
+	p1.build_wall(east_tile, Catalog.spawn("wall", null, p1))
+	var storey := Catalog.spawn("wall", null, p1)
+	tile.stack_wall(storey)
+	var m := WallComp.material(storey.get_node("Art"))
+	var from: Vector3 = tile.go.global_position + Vector3(-6, 0.5, 0)
+	tile.damage_building_place(100.0, from)
+	var heaps: Array = tile.go.get_children().filter(func(n): return n is Crumble)
+	check(heaps.size() == 1 and U.alive(tile.structure) and not U.alive(tile.wallStacked),
+			"a shot storey crumbles and leaves its block (%d heaps)" % heaps.size())
+	var pieces: Array = heaps[0].get_children().filter(func(n): return n is RigidBody3D) if not heaps.is_empty() else []
+	check(pieces.size() >= 10, "the storey breaks into %d pieces (want 10 or more)" % pieces.size())
+	check(not pieces.is_empty() and pieces.all(func(b): return b.get_child(0).material_override == m),
+			"the pieces wear the storey's material")
+	await seconds(1.5)
+	var east: int = pieces.filter(func(b): return b.global_position.x > tile.go.global_position.x).size()
+	check(east > pieces.size() / 2, "the pieces fly away from the shot (%d of %d east of the tile)" % [east, pieces.size()])
+	var inside := 0
+	for t in [tile, east_tile]:
+		var box := AABB(t.go.global_position + Vector3(-0.5, Art.SLAB_TOP, -0.5), Vector3(1, 1, 1))
+		inside += pieces.filter(func(b): return box.has_point(b.global_position)).size()
+	check(inside == 0, "the pieces lie on the walls, none inside one (%d inside)" % inside)
+	tile.damage_building_place(100.0, from)
+	heaps = tile.go.get_children().filter(func(n): return n is Crumble)
+	check(heaps.size() == 2 and not U.alive(tile.structure), "the shot block crumbles too (%d heaps)" % heaps.size())
+	await seconds(1.5)
+	var slab: float = tile.go.global_position.y + Art.SLAB_TOP
+	for heap in heaps:
+		var low := INF  # the lowest vertex of any piece; the collision is the mesh shrunk 0.95 about its origin
+		for b in heap.get_children():
+			if b is RigidBody3D:
+				var mi: MeshInstance3D = b.get_child(0)
+				for v in mi.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]:
+					low = minf(low, mi.to_global(v).y - slab)
+		check(low > -0.1, "no piece of the heap sinks through the slab (lowest vertex %.2f m over it)" % low)
+	await seconds(Crumble.LIFE - 1.2)
+	check(tile.go.get_children().filter(func(n): return n is Crumble).is_empty(),
+			"the rubble is gone after %.0f s" % Crumble.LIFE)
+
+
 func _check_deal() -> void:
 	var deals: Array = []
 	for seed in [1, 2, 3, 4, 5]:

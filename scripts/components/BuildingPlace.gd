@@ -66,15 +66,16 @@ func is_free() -> bool:
 	return not U.alive(structure) and buildable()
 
 
-func damage_building_place(damage: float) -> void:
+## `from` is where the shot came from (Vector3.INF: nowhere); a wall killed here crumbles away from it.
+func damage_building_place(damage: float, from := Vector3.INF) -> void:
 	if U.alive(ship):
 		ship.damage(damage)
 	elif U.alive(wallStacked):
-		damage_stacked_wall(damage)
+		damage_stacked_wall(damage, from)
 	elif upgradeCluster != null:
 		upgradeCluster.damage_structure(damage)
 	elif U.alive(structure):
-		damage_structure(damage)
+		damage_structure(damage, from)
 
 
 func destroy_decorations() -> void:
@@ -94,7 +95,7 @@ func show_decorations() -> void:
 			U.set_visible_meshes(d, true)
 
 
-func damage_structure(damage: float) -> void:
+func damage_structure(damage: float, from := Vector3.INF) -> void:
 	if U.alive(structure):
 		var castle := U.comp(structure, "Castle")
 		if castle != null:
@@ -105,15 +106,32 @@ func damage_structure(damage: float) -> void:
 		bb.hits_taken += 1
 		bb.health -= damage
 		if bb.health <= 0:
+			if isWall:
+				Crumble.crumble(structure, from)
+				if U.alive(wallStacked):
+					Crumble.crumble(wallStacked, from)
 			un_build()
 
 
-func damage_stacked_wall(damage: float) -> void:
+func damage_stacked_wall(damage: float, from := Vector3.INF) -> void:
 	var bb = U.comp(wallStacked, "BuildingBlock")
 	if bb != null:
 		bb.health -= damage
 		if bb.health <= 0:
+			Crumble.crumble(wallStacked, from)
 			_destroy_stacked_wall()
+
+
+## A standing wall is an obstacle the rubble lands on (Crumble): a box of its art's bounds, gone with the block.
+static func _wall_body(block: Node3D) -> void:
+	var body := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	shape.shape = BoxShape3D.new()
+	var b := Art.bounds(block)
+	shape.shape.size = b.size
+	shape.position = b.get_center()
+	body.add_child(shape)
+	block.add_child(body)
 
 
 func _destroy_stacked_wall() -> void:
@@ -145,6 +163,8 @@ func build(building: Node3D, p) -> void:
 	U.set_parent(building, go)
 	player = p
 	structure = building
+	if isWall:
+		_wall_body(building)
 	# 255 marks a building no player owns (a neutral castle or a ruin)
 	map.set_mini(idxX, idxZ, p.playerID if p != null else 255)
 	var castle := U.comp(building, "Castle")
@@ -166,6 +186,7 @@ func stack_wall(wall_go: Node3D) -> void:
 	bb.buildingPlace = self
 	wallStacked = wall_go
 	U.comp(wall_go, "Wall").show_upper()
+	_wall_body(wall_go)
 
 
 ## World height of the top of the wall standing here, of its storey when stacked.
