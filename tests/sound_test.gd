@@ -83,9 +83,17 @@ func _check_build() -> void:
 	check(not Sound.playing("castle_ruin"), "nothing ruined yet")
 
 
+## A voice of the battle horn plays at `db`.
+func _horn_at(db: float) -> bool:
+	return Sound._voices.any(func(v): return Sound._live(v) and v.get_meta("cue") == "horn_battle" and v.volume_db == db)
+
+
 func _check_battle() -> void:
 	game.next_phase()
-	check(Sound.playing("horn_battle"), "the battle phase blows horn_battle")
+	check(_horn_at(-6.0) and Sound.music_cue() == "build",
+			"the cannon phase blows the battle horn softer, through horn_guns, and keeps the build music")
+	game.next_phase()
+	check(_horn_at(0.0), "the battle phase blows horn_battle at full level")
 	check(Sound.music_cue() == "battle", "the battle music plays, plays %s" % Sound.music_cue())
 	var wall = _tile(3, 2)
 	wall.damage_structure(10.0)

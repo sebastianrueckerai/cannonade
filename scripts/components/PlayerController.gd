@@ -21,9 +21,6 @@ const NO_STACK := Color(1.0, 0.4, 0.4)
 const PARTS_CAP := [0, 6, 10, 13, 15, 17]
 ## Standing limit on gun parts; a cap below the placed guns blocks new placement only.
 var partsCap := 0
-## HUD labels, one pair a player (parts, castles)
-var partsLabel: Label = null
-var castlesLabel: Label = null
 var mainColor := Color.WHITE
 ## The wall look this game dealt the player (Catalog.WALL_LOOKS, D81), empty for the first look
 var wallLook := ""
@@ -32,6 +29,8 @@ var highlightNegColor := Color.RED
 ## GameObject (Node3D) of the next wall / building to place
 var nextWall: Node3D = null
 var nextBuilding: Node3D = null
+## The hand: an invisible node that keeps the held piece while it is not previewing on the board
+var hand: Node3D = null
 ## BuildingPlace component of the tile under the cursor
 var buildableTileSelected = null
 ## tiles whose trees and stones are hidden under the placement preview
@@ -46,8 +45,6 @@ var canStackWall := false
 var overOwnWall := false
 var canCombine := false
 var aimPoint := Vector3.ZERO
-var wallSpawn: Node3D = null
-var buildingSpawn: Node3D = null
 ## Vector2i -> component
 var cannons := {}
 var supports := {}
@@ -74,6 +71,10 @@ var fadedCastles: Array = []
 
 
 func setup() -> void:
+	hand = Node3D.new()
+	hand.name = "Hand"
+	hand.visible = false
+	go.add_child(hand)
 	mainColor = Color.html(mainColorHexCode)
 	highlightPosColor = Color.html(highlightPosColorHexCode)
 	highlightNegColor = Color.html(highlightNegColorHexCode)
@@ -193,21 +194,26 @@ func update_point_and_tile_selected() -> void:
 		buildableTileSelected = hit[2]
 		voidSelected = hit[2] == null
 	if voidSelected:
-		next_wall_to_gui()
-		next_building_to_gui()
+		next_wall_to_hand()
+		next_building_to_hand()
 	if buildableTileSelected != null:
 		var x: int = buildableTileSelected.idxX
 		var z: int = buildableTileSelected.idxZ
 		freeTileSelected = buildableTileSelected.is_free()
 		if freeTileSelected:
-			next_wall_to_map()
-			next_building_to_gui()
-			canPlaceBuilding = in_reach(x, z) and not enemy_ground(buildableTileSelected)
 			canPlaceWall = can_place_piece(buildableTileSelected)
+			canPlaceBuilding = U.alive(nextBuilding) and in_reach(x, z) and not enemy_ground(buildableTileSelected) \
+					and not over_parts_cap(nextBuilding)
 			var lit: Array = piece_tiles(buildableTileSelected) if U.alive(nextWall) else []
 			if lit.is_empty():
 				lit = [buildableTileSelected]
-			_light(lit, canPlaceWall if U.alive(nextWall) else canPlaceBuilding)
+			if U.alive(nextWall):
+				next_wall_to_map()
+				next_building_to_hand()
+				_light(lit, canPlaceWall)
+			else:
+				next_building_to_map()
+				_light(lit, canPlaceBuilding)
 		else:
 			if U.alive(buildableTileSelected.structure) and U.alive(nextBuilding):
 				canCombine = can_combine_next_building_with_tile(buildableTileSelected)
@@ -216,8 +222,8 @@ func update_point_and_tile_selected() -> void:
 			if overOwnWall:
 				next_wall_to_wall()
 			else:
-				next_wall_to_gui()
-			next_building_to_gui()
+				next_wall_to_hand()
+			next_building_to_hand()
 	_fade_blocking_castles()
 
 
@@ -313,24 +319,22 @@ func _combination(placed: Node3D, tile) -> BuildingDef:
 	return Catalog.combination(a.id, b.id)
 
 
+## The gun phase deals a gun, the next one 0.3 s after a placement.
 func try_get_next_building() -> void:
-	if game != null and not game.buildingAllowed:
+	if game != null and game.phase != game.Phase.GUNS:
 		return
 	if not U.alive(nextBuilding) and secondsLastBuilding + secondsBetweenBuildings < U.time:
 		secondsLastBuilding = 0.0
 		var def := Catalog.draw(BuildingDef.Category.BUILDING)
 		if def == null:
 			return
-		nextBuilding = Catalog.spawn(def, buildingSpawn)
-		switch_casting_shadows(nextBuilding, false)
+		nextBuilding = Catalog.spawn(def, hand)
 
 
-func next_wall_to_gui() -> void:
-	if U.alive(nextWall) and wallSpawn != null:
-		U.set_parent(nextWall, wallSpawn)
-		nextWall.position = -_piece_centre()
+func next_wall_to_hand() -> void:
+	if U.alive(nextWall) and nextWall.get_parent() != hand:
+		U.set_parent(nextWall, hand)
 		_restore_wall_color()
-		switch_casting_shadows(nextWall, false)
 
 
 func next_wall_to_map() -> void:
@@ -338,20 +342,8 @@ func next_wall_to_map() -> void:
 		U.set_parent(nextWall, buildableTileSelected.go)
 		nextWall.position = Vector3.ZERO
 		_settle_cells()
-		switch_casting_shadows(nextWall, true)
 		_darken_wall()
-		_hide_decorations()
-
-
-## Centre of the held piece's cell box in its parent's space; a cell (x, z) sits at (x, 0, -z).
-func _piece_centre() -> Vector3:
-	var cells: Array[Vector2i] = U.comp(nextWall, "BuildingBlock").cells
-	var lo := cells[0]
-	var hi := cells[0]
-	for c in cells:
-		lo = Vector2i(mini(lo.x, c.x), mini(lo.y, c.y))
-		hi = Vector2i(maxi(hi.x, c.x), maxi(hi.y, c.y))
-	return Vector3((lo.x + hi.x) / 2.0, 0.0, -(lo.y + hi.y) / 2.0)
+		_hide_decorations(piece_tiles(buildableTileSelected))
 
 
 ## Each cell of the held piece sits on its own tile's slab, as the block it places will.
@@ -365,11 +357,17 @@ func _settle_cells() -> void:
 			nodes[i].global_position.y = map.tiles[x][z].go.global_position.y
 
 
-func next_building_to_gui() -> void:
-	if U.alive(nextBuilding) and buildingSpawn != null:
-		U.set_parent(nextBuilding, buildingSpawn)
+func next_building_to_hand() -> void:
+	if U.alive(nextBuilding) and nextBuilding.get_parent() != hand:
+		U.set_parent(nextBuilding, hand)
+
+
+## The held gun previews on the hovered free tile, where it would stand.
+func next_building_to_map() -> void:
+	if U.alive(nextBuilding):
+		U.set_parent(nextBuilding, buildableTileSelected.go)
 		nextBuilding.position = Vector3.ZERO
-		switch_casting_shadows(nextBuilding, false)
+		_hide_decorations([buildableTileSelected])
 
 
 func _restore_wall_color() -> void:
@@ -386,16 +384,11 @@ func _shade_wall(shade: float) -> void:
 		WallComp.paint_piece(nextWall, self, U.comp(nextWall, "Structure").def.piece, shade)
 
 
-func switch_casting_shadows(n: Node3D, on := true) -> void:
-	U.set_shadows(n, on)
-
-
 ## The held piece over own walls shows the storeys it stacks as, darkened like every ghost and red when it cannot
 ## stack: on each cell the look's upper storey square to the map, where the placed one stands (a storey higher on a
 ## tile that has one), its walkway following that tile's neighbours.
 func next_wall_to_wall() -> void:
 	U.set_parent(nextWall, buildableTileSelected.go)
-	switch_casting_shadows(nextWall, true)
 	nextWall.position = Vector3.ZERO
 	_settle_cells()
 	var nodes := nextWall.get_children().filter(func(n): return n is Node3D)
@@ -412,8 +405,8 @@ func next_wall_to_wall() -> void:
 				Color.WHITE if canStackWall else NO_STACK)
 
 
-func _hide_decorations() -> void:
-	for t in piece_tiles(buildableTileSelected):
+func _hide_decorations(tiles: Array) -> void:
+	for t in tiles:
 		t.hide_decorations()
 		decorHiddenTiles.append(t)
 
@@ -489,29 +482,31 @@ func manage_player_actions() -> void:
 	if buildableTileSelected != null:
 		if button_down("debug_shake"):
 			buildableTileSelected.shake(2.0)
-		if game.buildingAllowed:
-			if button_down("build_wall") and U.alive(nextWall):
-				if canPlaceWall:
-					build_next_wall(buildableTileSelected)
-				elif canStackWall:
-					stack_wall(buildableTileSelected)
+		match game.phase:
+			game.Phase.WALLS:
+				if button_down("build_wall") and U.alive(nextWall):
+					if canPlaceWall:
+						build_next_wall(buildableTileSelected)
+					elif canStackWall:
+						stack_wall(buildableTileSelected)
+					else:
+						Sound.play("place_invalid")
+			game.Phase.GUNS:
+				if button_down("build_building") and U.alive(nextBuilding):
+					if canPlaceBuilding:
+						build_next_building()
+					elif canCombine:
+						_combine_next_building_with_selected_tile()
+					else:
+						Sound.play("place_invalid")
+			game.Phase.BATTLE:
+				if button_down("fire"):
+					for cannon in activeCannons:
+						if cannon.try_shoot(aimPoint, buildableTileSelected):
+							break
 				else:
-					Sound.play("place_invalid")
-			elif button_down("build_building") and U.alive(nextBuilding):
-				if canPlaceBuilding:
-					build_next_building()
-				elif canCombine:
-					_combine_next_building_with_selected_tile()
-				else:
-					Sound.play("place_invalid")
-		if game.shootingAllowed:
-			if button_down("fire"):
-				for cannon in activeCannons:
-					if cannon.try_shoot(aimPoint, buildableTileSelected):
-						break
-			else:
-				for cannon in activeCannons:
-					cannon.try_aim(aimPoint)
+					for cannon in activeCannons:
+						cannon.try_aim(aimPoint)
 		if U.alive(nextWall):
 			if button_down("rotate_cw"):
 				U.comp(nextWall, "BuildingBlock").rotate_clockwise()
@@ -564,7 +559,6 @@ func build_next_building(tile = null) -> void:
 
 func build_building(tile, building: Node3D) -> void:
 	_build(tile, building)
-	switch_casting_shadows(building, true)
 	var key := Vector2i(tile.idxX, tile.idxZ)
 	var shooter := U.shooter(building)
 	var support := U.support(building)
@@ -670,12 +664,11 @@ func drop(droppable: Node3D, is_wall := true) -> void:
 
 
 func get_next_wall() -> void:
-	var wall := Catalog.spawn(Catalog.draw(BuildingDef.Category.WALL), wallSpawn, self)
+	var wall := Catalog.spawn(Catalog.draw(BuildingDef.Category.WALL), hand, self)
 	var rotations := U.rint(0, 4)
 	for i in rotations:
 		U.comp(wall, "BuildingBlock").rotate_counter_clockwise()
 	nextWall = wall
-	switch_casting_shadows(nextWall, false)
 	if not is_ai():
 		Sound.play("draw_piece")
 

@@ -82,12 +82,12 @@ func ruins() -> int:
 	return n
 
 
-## Runs one check: to battle (the check fires there) and straight back to building.
+## Runs one check: through the cannons to the battle (the check fires there) and straight back to the walls.
 func run_check() -> void:
-	if not game.buildingAllowed:
+	while game.phase != game.Phase.WALLS:
 		game.next_phase()
-	game.next_phase()
-	game.next_phase()
+	for i in 3:
+		game.next_phase()
 
 
 ## Free, open (never enclosed) tiles at Chebyshev distance at least 8 from both start castles.
@@ -164,15 +164,23 @@ func _run() -> void:
 	check(map.tiles[wall_spot.x][wall_spot.y].isWall, "an open wall never burns")
 	check(neutrals().size() == 8 and ruins() == 0, "no neutral burns or ruins")
 
-	# 2b: the hand follows the phase (there is nothing to place while the guns fire)
+	# 2b: the hand follows the phase: the piece flies when the cannons come and a gun is dealt, the gun flies
+	# when the battle starts, and a wall returns with the walls
+	await seconds(0.5)  # past the gun draw's cooldown
+	check(U.alive(human.nextWall) and not U.alive(human.nextBuilding), "the wall phase deals a piece and no gun")
+	game.next_phase()  # to the cannons
+	check(not U.alive(human.nextWall), "the held piece flies away when the cannon phase starts")
+	await seconds(0.5)  # the gun comes after its draw cooldown
+	check(U.alive(human.nextBuilding) and U.shooter(human.nextBuilding) != null, "the cannon phase deals a gun")
 	game.next_phase()  # to battle
 	check(not U.alive(human.nextWall) and not U.alive(human.nextBuilding),
-			"the held pieces fly away when the battle starts")
+			"the held gun flies away when the battle starts")
 	await frames(95)  # the fly-away (3 s) ends without drawing a new wall
 	check(not U.alive(human.nextWall) and not U.alive(human.nextBuilding),
 			"nothing returns to the hand while the battle runs")
-	game.next_phase()  # back to building
-	check(U.alive(human.nextWall), "a fresh wall is drawn when building returns")
+	game.next_phase()  # back to the walls
+	check(U.alive(human.nextWall) and not U.alive(human.nextBuilding),
+			"a fresh wall is drawn when the walls return, and no gun")
 
 	# 2c: a neutral castle wears brown, and it fades only while a piece previews behind it
 	var neutral0 = neutrals()[0]
@@ -205,16 +213,14 @@ func _run() -> void:
 					hide = q
 	check(hide.x >= 0, "a free tile behind the castle exists")
 	if hide.x >= 0:
-		await seconds(0.4)  # the wall is drawn at once, the gun after its cooldown
 		human.mousePosition = cam.unproject_position(
 				map.tile_position(hide.x, hide.y) + Vector3.UP * 0.1)
 		human.update_point_and_tile_selected()
 		body_mat = U.meshes(neutral0.go)[0].get_surface_override_material(0)
 		check(body_mat != null and is_equal_approx(body_mat.albedo_color.a, 0.35),
 				"the castle behind the cursor piece fades out")
-		check(human.nextWall.get_parent() == map.tiles[hide.x][hide.y].go
-				and human.nextBuilding.get_parent() == human.buildingSpawn,
-				"the wall previews on the hidden tile, the gun stays in its gui slot")
+		check(human.nextWall.get_parent() == map.tiles[hide.x][hide.y].go and not U.alive(human.nextBuilding),
+				"the wall previews on the hidden tile, and no gun is held in the wall phase")
 	# on the castle itself nothing previews, so nothing fades
 	human.mousePosition = cam.unproject_position(
 			map.tile_position(pc.x, pc.y) + Vector3.UP * 0.1)
@@ -315,9 +321,10 @@ func _run() -> void:
 	# 6: the end at the check: the enemy's ring opened, its castle burns and nobody is left to beat
 	# (the shell that ruins a last castle ends the game at once: tests/finish_test)
 	var ec := Vector2i(map.sizeX / 2, map.sizeZ - 1 - map.sizeZ / 4)
-	map.tiles[ec.x - 2][ec.y].un_build()
+	map.tiles[ec.x][ec.y + 2].un_build()  # the north side, toward the open edge: the rings round the neutrals sit west and east
 	check(enemy.castle_count() == 1 and game.started, "an opened ring alone costs nothing")
-	game.next_phase()
+	game.next_phase()  # the cannons
+	game.next_phase()  # the battle: the check
 	check(enemy.castle_count() == 0 and not game.started,
 			"the castle outside a closed ring burns at the check, and its holder is out")
 	var overlay := main.get_node_or_null("GameOver")

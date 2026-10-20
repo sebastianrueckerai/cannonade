@@ -517,3 +517,15 @@ both routes. `menu.ogg`, `win.ogg` and `lose.ogg` in the game's
 [assets/audio/music/](/home/womb/repos/grid-cannons/assets/audio/music), full length.
 [PICKS.md](../game/art-direction/rounds/38-theme-versions/PICKS.md).
 
+## D86. A round is walls, cannons, battle, on a board the window's shape, and the hand is unseen (2026-10-20, Sebastian)
+
+"Get rid of the menus showing the next piece anbd the next gun. Make two phases: One longer to place walls then a
+short one to place cannons. make the playing field wieder so it has the same dimensions as the game window. This
+should also give more space to arrange the castles horizontally with maybe a bit of space between the two palayers
+domains. But there should still be random palcement. Also overhaul the ugly gont color and general appearance of the
+text overlay elements in game, the countdon and such!" The build splits into a wall phase of 45 s and a cannon phase
+of 15 s, the battle stays 30 s, and the check stays where the build ends. The corner previews of the next piece and
+the next gun go: a player holds one piece at a time and sees it only on the board. The board is 52 by 34, the window's
+16:9 near enough once the HUD takes its strips, with each side's neutrals spread over the width and five free rows
+off the middle line on each side. The HUD takes the menu's font and the palette's ink and parchment (D7). The
+numbers (15 s, 52 wide, the anchors, the plaque style) are the session's calls for his review. Session 38, roadmap I67.

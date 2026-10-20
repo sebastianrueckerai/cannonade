@@ -47,24 +47,23 @@ func _ready() -> void:
 
 func _run() -> void:
 	await seconds(0.2)
-	game.buildingAllowed = false
-	game.shootingAllowed = true
+	game.phase = game.Phase.BATTLE
 	game.timeLeftInRound = 1e6
 
 	# the 2x2 specials placed directly from their files (their upgrade-block
 	# recipes are parked out of the game)
 	var built := {}
-	# the spots are off every castle whatever the jitter: the east margin, the middle columns
-	# clear of the start rings and the free rows between the castle bands
-	built["cannon22b"] = p2.place(load("res://data/buildings/cannon22b.tres"), 31, 24)
-	built["flak22"] = p2.place(load("res://data/buildings/flak22.tres"), 20, 11)
+	# the spots are off every castle whatever the jitter: the rows between the two sides (14 to 19 on the 52 x 34
+	# map) and the three rows under the castles' margin
+	built["cannon22b"] = p2.place(load("res://data/buildings/cannon22b.tres"), 31, 15)
+	built["flak22"] = p2.place(load("res://data/buildings/flak22.tres"), 20, 15)
 	# the shield stands away from the gun's firing lines: its 7-tile radius would
 	# swallow every shell the checks below fire, and the volley must land
 	built["shield22"] = p2.place(load("res://data/buildings/shield22.tres"), 20, 2)
 	check(built.values().all(func(s): return U.alive(s)), "the specials stand on the map")
 
 	# four basic cannons in a square fuse into the heavy cannon
-	var fspot := Vector2i(3, 22)
+	var fspot := Vector2i(3, 18)
 	for i in 4:
 		p1.build_building(map.tiles[fspot.x + i / 2][fspot.y + i % 2], Catalog.spawn("cannon"))
 	var fused = map.tiles[fspot.x + 1][fspot.y + 1].structure
@@ -147,7 +146,7 @@ func _run() -> void:
 	check(not U.alive(plain.structure), "one heavy shell destroys a basic gun, four cannon shells' worth")
 
 	# gun health: a basic gun dies on the fourth shell, the fused gun on the eighth
-	var single = map.tiles[12][20]
+	var single = map.tiles[12][14]
 	p1.build_building(single, Catalog.spawn("cannon"))
 	for i in 3:
 		single.damage_building_place(10.0)

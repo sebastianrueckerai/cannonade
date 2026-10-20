@@ -14,7 +14,7 @@ The game is released as Cannonade (D26). Every player-facing string says Cannona
 
 ## What the game is
 
-A Godot port of a Unity game in the spirit of Rampart. Turns alternate between a build phase, where the player places rotatable wall pieces and buildings on a tile grid to enclose areas, and a battle phase, where cannons inside closed walls fire. Upgrade blocks in 2 by 2 or 3 by 3 patterns merge into bigger guns, flak, rocket stations, shield generators or supply depots. Modes: single player against a ship fleet, player against AI, AI against AI with 2 or 4 sides.
+A Godot port of a Unity game in the spirit of Rampart. A round is a wall phase, a cannon phase and a battle (session 38); before that, turns alternated between a build phase, where the player places rotatable wall pieces and buildings on a tile grid to enclose areas, and a battle phase, where cannons inside closed walls fire. Upgrade blocks in 2 by 2 or 3 by 3 patterns merge into bigger guns, flak, rocket stations, shield generators or supply depots. Modes: single player against a ship fleet, player against AI, AI against AI with 2 or 4 sides.
 
 ## Engine facts that matter for art
 
@@ -47,7 +47,7 @@ Camera, tile and pixel numbers are in [gameplay_contract.yaml](../game/art-direc
 | `3d/wall_rubble.glb`, `3d/wall_rubble_upper.glb` | the plain block and its storey cut into 16 and 14 Voronoi pieces by [wall_fracture.py](../game/assets/3d/wall_fracture.py), one mesh each with the origin at the piece's centre, no materials. When a shot kills a wall block or a storey, `Crumble.crumble` (from `BuildingPlace.damage_structure` and `damage_stacked_wall`) makes a rigid body of every piece in the block's shader material, thrown away from where the shot was fired (`TileImpactor.start`), which lands on the slab top and on the standing walls, each a static box of its bounds from `BuildingPlace._wall_body` since it was built or stacked, freezes after 3 s and sinks away in 1 s. Every look wears the plain block's pieces (I62) |
 | `ui/splash.png`, `ui/logo.png`, `ui/menu_background.png` | splash and menu |
 | `ui/win.png`, `ui/lose.png` | the end screen: the human's victory or defeat, covering the window like the menu background, the title over its sky and Retry / Menu in a themed panel in the bottom right |
-| `ui/theme.tres` | splash, menu, loading and end screens. The HUD and the sandbox panel keep the default theme until roadmap D2 styles them, a project-wide theme moved the sandbox layout |
+| `ui/theme.tres` | splash, menu, loading and end screens. The in-game HUD takes its font, Alegreya, and the palette's ink `#3a2e28` on parchment `#fbefd9` in plaques of its own (`Main._plaque`, session 38): the countdown with the phase in its colour at the top, a plaque a player in the top corners, the phase's controls at the bottom. The camera fits the board between the timer and the help line. The sandbox panel keeps the default theme until roadmap D2 styles it, a project-wide theme moved the sandbox layout |
 | `ui/button.png`, `ui/button_hover.png`, `ui/button_pressed.png` | 9-slice button images on top of the theme. Without hover and pressed files the normal image is lightened and darkened |
 | `ui/panel.png` | 9-slice panel behind the menu and the loading bar |
 | `ui/font.ttf` | the default font of those screens |

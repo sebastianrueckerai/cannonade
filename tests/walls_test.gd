@@ -152,7 +152,7 @@ func _check_storey() -> void:
 
 
 func _check_piece() -> void:
-	var piece := Catalog.spawn("wall_3", p1.wallSpawn, p1)
+	var piece := Catalog.spawn("wall_3", p1.hand, p1)
 	var cells: Array = piece.get_children().filter(func(n): return n is Node3D)
 	check(cells.size() == 3, "the three-in-a-row piece shows three blocks")
 	var want := [[true, false, false, false], [true, true, false, false], [false, true, false, false]]
@@ -166,7 +166,7 @@ func _check_piece() -> void:
 	check(shade == 0.7 and cells.map(func(c): return _open(c, p1)) == want,
 			"shading the piece keeps its corridors (shade %s)" % shade)
 	check(_look(cells[0]) == p1.wallLook, "the cells wear the owner's look")
-	var piece2 := Catalog.spawn("wall_3", p2.wallSpawn, p2)
+	var piece2 := Catalog.spawn("wall_3", p2.hand, p2)
 	check(_look(piece2.get_children().filter(func(n): return n is Node3D)[0]) == p2.wallLook,
 			"player 2's piece shows player 2's look")
 	piece.free()

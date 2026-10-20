@@ -79,9 +79,9 @@ func _make_world(kinds: Array) -> void:
 	world = Main.new()
 	world.name = "World"
 	world.config = {
-		"players": kinds, "size": scenario.map_size, "round": 1e9, "pitch": 60.0, "fov": 30.0,
-		"ships": 0, "seed": scenario.seed, "decorate": false, "colors": SIDE_COLORS,
-		"hud": false, "previews": false, "castles": false}
+		"players": kinds, "size": scenario.map_size, "walls": 1e9, "guns": 1e9, "battle": 1e9, "pitch": 60.0,
+		"fov": 30.0, "ships": 0, "seed": scenario.seed, "decorate": false, "colors": SIDE_COLORS,
+		"hud": false, "castles": false, "band": ui.bands()}
 	add_child(world)
 	world.ui.visible = false  # the sandbox panels show the same information
 	game = world.game
@@ -344,8 +344,7 @@ func play() -> void:
 		if p.is_ai():
 			p.targetMode = targets[s]
 			p.dormant = match_index in [2, 3] and s == dormant_side
-	game.buildingAllowed = false
-	game.shootingAllowed = true
+	game.phase = game.Phase.BATTLE
 	game.timeLeftInRound = 1e9
 	game.started = true
 	for p in game.players:

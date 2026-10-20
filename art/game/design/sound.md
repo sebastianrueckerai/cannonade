@@ -20,7 +20,7 @@ clip is cut to a bar line and the join is checked by ear.
 
 | cue | where it plays | length | character | source |
 |---|---|---|---|---|
-| build | the build phase, 45 s, from `next_phase` | a 60 to 90 s loop | calm, bouncy, playful, 100 to 110 BPM, constant energy, no intro, no ending | the build theme, generated |
+| build | the wall and cannon phases, 45 s and 15 s, from `next_phase` | a 60 to 90 s loop | calm, bouncy, playful, 100 to 110 BPM, constant energy, no intro, no ending | the build theme, generated |
 | battle | the battle phase, 30 s | a 60 to 90 s loop | driving march, 140 to 150 BPM, snare pattern, fanfare lead, playful not grim | the battle theme, generated |
 | menu | the main menu and the tutorial overlay, from `Menu._ready` | a 60 to 90 s loop | the build theme slower and lighter, fewer parts, the melody on one instrument | a version of the build theme |
 | win | the win screen, from `Main._on_game_over` | 8 to 15 s, once | the battle theme's fanfare as a triumphant sting, then silence | a version of the battle theme |
@@ -172,7 +172,7 @@ variants from the `_n` suffix, and plays a cue with `Sound.play(cue, db)`: a ran
 same twice in a row, at most three voices per cue with the oldest stolen, on the clip's bus. A cue with no
 clip plays nothing, so every hook of the cue list is in the code and a new clip only needs its file. A
 cue in `Sound.ALIAS` borrows another's clip until it has one: ui_hover, countdown, shot_ship, stack_block,
-hit_gun and hit_castle. `Sound.music(cue)` loops `music/<cue>.ogg` on the Music bus. The buses are
+hit_gun, hit_castle, and horn_guns, the cannon phase's horn, which blows the battle horn 6 dB down (session 38). `Sound.music(cue)` loops `music/<cue>.ogg` on the Music bus. The buses are
 Master, Music, SFX and UI in [default_bus_layout.tres](/home/womb/repos/grid-cannons/default_bus_layout.tres).
 Another player's action plays 6 dB down. The clips draw their randomness from the autoload's own
 generator, so seeded battles and the lab stay as they were.

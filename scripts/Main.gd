@@ -3,7 +3,8 @@ extends Node3D
 ## (singlePlayer, multiPlayer, 4ai) and wires up camera, light and UI.
 ##
 ## Command line (after "--"): --mode=single|versus|ai2|ai4|practice --seed=N
-##   --round=SECONDS --size=TILES --timescale=F --quit-after=SECONDS --no-decorations
+##   --walls=SECONDS --guns=SECONDS --battle=SECONDS --size=TILES --width=TILES --timescale=F
+##   --quit-after=SECONDS --no-decorations
 
 const GameController = preload("res://scripts/components/GameController.gd")
 const MapScript = preload("res://scripts/components/Map.gd")
@@ -12,19 +13,38 @@ const PlayerController = preload("res://scripts/components/PlayerController.gd")
 const AIScript = preload("res://scripts/components/AI.gd")
 const CameraRig = preload("res://scripts/CameraRig.gd")
 
+## "size" is the board's depth and its width unless "width" says otherwise; a round is "walls", "guns" and
+## "battle" seconds. The 52 by 34 board fills the 16:9 window at the home view (session 38).
 const MODES := {
 	# Assets/Scenes/singlePlayer.unity: one human against the ship fleet
-	"single": {"players": ["human"], "size": 20, "round": 250.0, "pitch": 71.42, "fov": 37.44, "ships": 7},
-	# Assets/Scenes/multiPlayer.unity: human against one AI; rules v3: 45 s build, 30 s battle
-	"versus": {"players": ["human", "ai"], "size": 34, "round": 45.0, "battle": 30.0, "pitch": 60.0, "fov": 30.0, "ships": 7},
+	"single": {"players": ["human"], "size": 20, "walls": 200.0, "guns": 50.0, "battle": 250.0, "pitch": 71.42,
+		"fov": 37.44, "ships": 7},
+	# Assets/Scenes/multiPlayer.unity: human against one AI; rules v3: 45 s walls, 15 s cannons, 30 s battle
+	"versus": {"players": ["human", "ai"], "size": 34, "width": 52, "walls": 45.0, "guns": 15.0, "battle": 30.0,
+		"pitch": 60.0, "fov": 30.0, "ships": 7},
 	# two AIs (handy to watch / for tests)
-	"ai2": {"players": ["ai", "ai"], "size": 34, "round": 45.0, "battle": 30.0, "pitch": 60.0, "fov": 30.0, "ships": 7},
+	"ai2": {"players": ["ai", "ai"], "size": 34, "width": 52, "walls": 45.0, "guns": 15.0, "battle": 30.0,
+		"pitch": 60.0, "fov": 30.0, "ships": 7},
 	# Assets/Scenes/4ai.unity: four AIs
-	"ai4": {"players": ["ai", "ai", "ai", "ai"], "size": 60, "round": 25.0, "pitch": 71.42, "fov": 37.44, "ships": 7},
-	# practice: you against a dormant AI on the standard map; Enter switches between build and battle, no timer
-	"practice": {"players": ["human", "ai"], "size": 34, "round": 1e9, "battle": 1e9, "pitch": 60.0, "fov": 30.0, "ships": 0,
-		"practice": true},
+	"ai4": {"players": ["ai", "ai", "ai", "ai"], "size": 60, "walls": 20.0, "guns": 5.0, "battle": 25.0,
+		"pitch": 71.42, "fov": 37.44, "ships": 7},
+	# practice: you against a dormant AI on the standard map; Enter steps to the next phase, no timer
+	"practice": {"players": ["human", "ai"], "size": 34, "width": 52, "walls": 1e9, "guns": 1e9, "battle": 1e9,
+		"pitch": 60.0, "fov": 30.0, "ships": 0, "practice": true},
 }
+## The HUD's parchment, from palette.json: ink on parchment, the accent red, and a colour a phase.
+const INK := Color("#3a2e28")
+const PARCHMENT := Color("#fbefd9")
+const ACCENT := Color("#c8322d")
+const PHASE_COLORS := [Color("#3d7f34"), Color("#7a4a2e"), ACCENT]
+const PHASE_NAMES := ["BUILD WALLS", "PLACE CANNONS", "BATTLE"]
+## Space between a plaque and the window's edge
+const HUD_GAP := 6.0
+const HELP := [
+	"LMB: place the piece, or stack it on your walls   X / Y: rotate   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: menu",
+	"RMB: place the cannon (costs parts), on a cannon: fuse   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: menu",
+	"Space: fire at the cursor   Wheel: zoom   MMB drag: pan   Esc: menu",
+]
 # The team set of the art kit, game/art-direction/palette.json in the blender-ai repo (D21): main, highlight plus, highlight minus.
 const PLAYER_COLORS := [
 	["#2d55c4", "#aaaadd", "#ad3030"],
@@ -40,16 +60,19 @@ var mode := "versus"
 var game = null
 var camera: Camera3D
 var ui: CanvasLayer
-var phase_label: Label
 var quit_after := -1.0
 var practice := false
 ## The seed this game runs on, captured wherever it is set, so Retry replays the same map
 var _used_seed := 1
-var _preview_env: Environment = null
+## The HUD: the countdown, the phase word, the help line, and a parts / castles pair a player
+var _count: Label
+var _phase: Label
+var _help: Label
+var _huds: Array = []
 ## Set before adding the node to build from this config instead of a mode
 ## (used by the sandbox). Extra keys: "seed", "decorate", "colors" (hex per
-## player), "hud" (timer / phase / help, default true), "previews" (next piece
-## previews, default true).
+## player), "hud" (timer / phase / help, default true), "band" (the share of the
+## view's height kept clear of the board at the top and the bottom, Vector2).
 var config := {}
 ## Set by the loading screen before the node enters the tree: the map is then built over many frames, `progress`
 ## says how far (0..1) and `built` follows once the game runs.
@@ -84,10 +107,12 @@ func _ready() -> void:
 	if args.has("quit-after"):
 		quit_after = float(args["quit-after"])
 	var cfg: Dictionary = MODES[mode].duplicate()
-	if args.has("round"):
-		cfg["round"] = float(args["round"])
-	if args.has("size"):
-		cfg["size"] = int(args["size"])
+	for key in ["walls", "guns", "battle"]:
+		if args.has(key):
+			cfg[key] = float(args[key])
+	for key in ["size", "width"]:
+		if args.has(key):
+			cfg[key] = int(args[key])
 	build(cfg, not args.has("no-decorations"))
 
 
@@ -116,19 +141,20 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	_setup_environment(cfg)
 	_setup_ui()
 	var map = _component("Map", MapScript)
-	map.sizeX = cfg["size"]
+	map.sizeX = cfg.get("width", cfg["size"])
 	map.sizeZ = cfg["size"]
 	map.decorate = decorate
 	map.staged = staged
 	var fleet = _component("FleetControll", ShipFleet)
 	game = _component("Game", GameController)
-	game.roundDuration = cfg["round"]
-	game.battleDuration = cfg.get("battle", cfg["round"])
+	game.wallDuration = cfg["walls"]
+	game.gunDuration = cfg["guns"]
+	game.battleDuration = cfg["battle"]
 	game.initialShips = cfg["ships"]
 	game.castles = cfg.get("castles", true)
 	game.map = map
 	game.fleet = fleet
-	game.roundTimer = ui.get_node("Timer")
+	game.hudBand = cfg.get("band", _hud_band() if cfg.get("hud", true) else Vector2.ZERO)
 	var kinds: Array = cfg["players"]
 	Indicators.own_player = null  # static: reset every game, then the human owns the aim arcs
 	var looks: Array = Catalog.deal_wall_looks()  # every player another look, no look twice (D81)
@@ -145,32 +171,25 @@ func build(cfg: Dictionary, decorate := true) -> void:
 		p.highlightPosColorHexCode = colors[1]
 		p.highlightNegColorHexCode = colors[2]
 		game.players.append(p)
-		var spawns := _make_spawns(i, kinds.size())
-		game.wallSpawns.append(spawns[0])
-		game.buildingSpawns.append(spawns[1])
-		for s in spawns:
-			s.visible = cfg.get("previews", true)
-		var hud := _make_player_hud(i, kinds[i] == "ai", Color.html(colors[0]))
-		game.partsLabels.append(hud[0])
-		game.castlesLabels.append(hud[1])
+		_huds.append(_make_player_hud(i, kinds[i] == "ai", Color.html(colors[0])))
 	fleet.enemyPlayers = game.players.duplicate()
-	game.round_changed.connect(_on_round_changed)
+	game.phase_changed.connect(_on_phase_changed)
 	game.game_over.connect(_on_game_over)
 	await game.start_game()
 	if practice:
 		game.players[1].dormant = true
-		for n in [game.wallSpawns[1], game.buildingSpawns[1], ui.get_node("Hud2"), ui.get_node("Timer")]:
-			n.visible = false
-	camera.capture_home_view(map.sizeX * map.tileSize / 2.0)
+		ui.get_node("Hud2").visible = false
+		_count.visible = false
+	camera.capture_home_view(Vector2(map.sizeX, map.sizeZ) * map.tileSize / 2.0)
 	# The fog starts at the far edge of the board and is full at 1.8 times that distance from the camera, so it
 	# never covers a tile the player builds on.
 	var far_edge := camera.global_position.distance_to(Vector3(0, 0, -map.sizeZ * map.tileSize / 2.0))
 	var env: Environment = $WorldEnvironment.environment
 	env.fog_depth_begin = far_edge
 	env.fog_depth_end = far_edge * 1.8
-	_on_round_changed(0, true)
+	_on_phase_changed(game.phase)
 	if not cfg.get("hud", true):
-		for n in ["Timer", "Phase", "Help"]:
+		for n in ["Timer", "Help"]:
 			ui.get_node(n).visible = false
 	built.emit()
 
@@ -231,176 +250,111 @@ func _setup_environment(cfg: Dictionary) -> void:
 	add_child(we)
 
 
-## Next wall / next building previews (Unity: wallSpawnN / upgradeSpawnN on the camera
-## overlay canvas). Each piece sits in its own orthogonal SubViewport, shown as a
-## TextureRect in a screen corner: the wall icon is the piece seen from above (its
-## tetris footprint, square to the screen), the building icon its front. Pieces placed
-## on the camera itself came out skewed by the corner perspective.
-func _make_spawns(i: int, _n: int) -> Array:
-	var right := i % 2 == 1
-	var top := i >= 2
-	return [
-		_make_preview_slot("wall", i, right, top),
-		_make_preview_slot("building", i, right, top),
-	]
-
-
-func _make_preview_slot(kind: String, i: int, right: bool, top: bool) -> Node3D:
-	var wall := kind == "wall"
-	var size := Vector2i(120, 120) if wall else Vector2i(150, 100)
-	# distance of the icon from its screen corner (the panel adds 8 px all round); the
-	# building sits above the wall. In ai4 the top corners also carry the supply bars,
-	# so players 3 / 4's icons start below those.
-	var margin_y := (16 if wall else 162) if not top else (262 if wall else 136)
-	var vp := SubViewport.new()
-	vp.name = "%sPreview%d" % [kind, i + 1]
-	vp.size = size
-	vp.transparent_bg = true
-	vp.world_3d = World3D.new()
-	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	add_child(vp)
-	var cam := Camera3D.new()
-	cam.projection = Camera3D.PROJECTION_ORTHOGONAL
-	if wall:
-		cam.size = 4.4  # a four-long piece fits
-		cam.position = Vector3(0, 6, 0)
-		# looks down; map up (-z) is screen up
-		cam.basis = Basis(Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
-	else:
-		cam.size = 3.2
-		cam.position = Vector3(0, 1.3, 6)  # default orientation: front view
-	vp.add_child(cam)
-	var light := DirectionalLight3D.new()
-	light.light_color = Color("#ffd29d")
-	light.basis = Basis.looking_at(-Vector3(0.44, 0.62, 0.65), Vector3.UP)  # the board's sun
-	vp.add_child(light)
-	if _preview_env == null:
-		_preview_env = Environment.new()
-		_preview_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		_preview_env.ambient_light_color = Color("#bec3c4")
-		_preview_env.ambient_light_energy = 0.46
-	var we := WorldEnvironment.new()
-	we.environment = _preview_env
-	vp.add_child(we)
-	var spawn := Node3D.new()
-	spawn.name = "%sSpawn%d" % [kind, i + 1]
-	vp.add_child(spawn)
-	var panel := PanelContainer.new()
-	panel.name = "%sPanel%d" % [kind, i + 1]
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.05, 0.07, 0.09, 0.45)
-	sb.set_corner_radius_all(10)
-	sb.set_content_margin_all(8)
-	panel.add_theme_stylebox_override("panel", sb)
-	var rect := TextureRect.new()
-	rect.name = "%sRect%d" % [kind, i + 1]
-	rect.texture = vp.get_texture()
-	rect.custom_minimum_size = size
-	panel.add_child(rect)
-	panel.anchor_left = 1.0 if right else 0.0
-	panel.anchor_right = panel.anchor_left
-	panel.anchor_top = 0.0 if top else 1.0
-	panel.anchor_bottom = panel.anchor_top
-	var w := float(size.x + 16)
-	var h := float(size.y + 16)
-	var mx := 16.0
-	var my := float(margin_y)
-	panel.offset_left = -mx - w if right else mx
-	panel.offset_right = -mx if right else mx + w
-	panel.offset_top = my if top else -my - h
-	panel.offset_bottom = my + h if top else -my
-	ui.add_child(panel)
-	spawn.visibility_changed.connect(_slot_visibility_changed.bind(spawn, vp, panel))
-	return spawn
-
-
-## The "previews" config flag and the practice mode toggle the spawns; the icons follow.
-func _slot_visibility_changed(spawn: Node3D, vp: SubViewport, panel: Control) -> void:
-	panel.visible = spawn.visible
-	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if spawn.visible else SubViewport.UPDATE_DISABLED
-
-
+## The HUD wears the menu's parchment (D7): ink on parchment plaques in the Alegreya of Art.theme(). The
+## countdown with the phase word under it at the top, a parts / castles plaque a player in the top corners, the
+## help line for the phase at the bottom.
 func _setup_ui() -> void:
 	ui = CanvasLayer.new()
 	ui.name = "UI"
 	add_child(ui)
-	var timer := Label.new()
-	timer.name = "Timer"
-	timer.add_theme_font_size_override("font_size", 40)
-	timer.add_theme_color_override("font_outline_color", Color.BLACK)
-	timer.add_theme_constant_override("outline_size", 8)
-	timer.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	timer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	timer.offset_left = -60
-	timer.offset_right = 60
-	timer.offset_top = 8
-	ui.add_child(timer)
-	phase_label = Label.new()
-	phase_label.name = "Phase"
-	phase_label.add_theme_font_size_override("font_size", 20)
-	phase_label.add_theme_color_override("font_outline_color", Color.BLACK)
-	phase_label.add_theme_constant_override("outline_size", 6)
-	phase_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	phase_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	phase_label.offset_left = -200
-	phase_label.offset_right = 200
-	phase_label.offset_top = 58
-	ui.add_child(phase_label)
-	var help := Label.new()
-	help.name = "Help"
-	help.text = "LMB: place / stack wall piece   RMB: place gun (costs parts) / combine   X / Y: rotate piece   Space: fire   Wheel: zoom   MMB drag: pan   Esc: menu"
-	help.add_theme_font_size_override("font_size", 14)
-	help.add_theme_color_override("font_outline_color", Color.BLACK)
-	help.add_theme_constant_override("outline_size", 4)
-	help.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	help.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	help.offset_left = -400
-	help.offset_right = 400
-	help.offset_top = -28
-	ui.add_child(help)
+	var timer := _plaque("Timer")
+	timer.anchor_left = 0.5
+	timer.anchor_right = 0.5
+	timer.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	timer.offset_top = HUD_GAP
+	timer.offset_bottom = HUD_GAP
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	timer.add_child(row)
+	_count = _label("Count", 30)
+	_count.custom_minimum_size.x = 44
+	row.add_child(_count)
+	_phase = _label("Phase", 15)
+	_phase.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(_phase)
+	var help := _plaque("Help")
+	help.anchor_left = 0.5
+	help.anchor_right = 0.5
+	help.anchor_top = 1.0
+	help.anchor_bottom = 1.0
+	help.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	help.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	help.offset_top = -HUD_GAP
+	help.offset_bottom = -HUD_GAP
+	_help = _label("Text", 12)
+	help.add_child(_help)
 
 
-## One HUD panel a player: parts used over cap and castles held, [parts, castles] labels.
-func _make_player_hud(i: int, is_ai: bool, color: Color) -> Array:
-	var box := VBoxContainer.new()
-	box.name = "Hud%d" % (i + 1)
+## The board fits between the timer and the help line: the share of the view's height each takes, with a gap.
+func _hud_band() -> Vector2:
+	var h: float = get_viewport().get_visible_rect().size.y
+	var top: float = ui.get_node("Timer").get_combined_minimum_size().y + 2.0 * HUD_GAP
+	var bottom: float = ui.get_node("Help").get_combined_minimum_size().y + 2.0 * HUD_GAP
+	return Vector2(top, bottom) / h
+
+
+## One parchment plaque, themed like the menu.
+func _plaque(name: String) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.name = name
+	panel.theme = Art.theme()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(PARCHMENT, 0.92)
+	sb.border_color = INK
+	sb.set_border_width_all(2)
+	sb.set_corner_radius_all(6)
+	sb.content_margin_left = 14
+	sb.content_margin_right = 14
+	sb.content_margin_top = 2
+	sb.content_margin_bottom = 3
+	sb.shadow_color = Color(0, 0, 0, 0.3)
+	sb.shadow_size = 5
+	sb.shadow_offset = Vector2(0, 2)
+	panel.add_theme_stylebox_override("panel", sb)
+	ui.add_child(panel)
+	return panel
+
+
+func _label(name: String, size: int, color := INK) -> Label:
+	var l := Label.new()
+	l.name = name
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", color)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	return l
+
+
+## One plaque a player: the name in the player's colour, parts used over cap and castles held. Players 1 and 2
+## take the top corners, 3 and 4 the plaques under them.
+func _make_player_hud(i: int, is_ai: bool, color: Color) -> Dictionary:
+	var panel := _plaque("Hud%d" % (i + 1))
 	var right := i % 2 == 1
-	var x := 10.0  # ai4: players 3 / 4's panels sit beside players 1 / 2's, above their icons
-	if i >= 2:
-		x = 200.0
-	box.set_anchors_preset(Control.PRESET_TOP_RIGHT if right else Control.PRESET_TOP_LEFT)
-	box.position = Vector2(-x - 180.0 if right else x, 10.0)
-	if right:
-		box.anchor_left = 1.0
-		box.anchor_right = 1.0
-		box.offset_left = -x - 180.0
-		box.offset_right = -x
-		box.offset_top = 10.0
-	box.custom_minimum_size = Vector2(180, 0)
-	ui.add_child(box)
-	var title := Label.new()
-	title.text = "%s %d" % ["AI" if is_ai else "Player", i + 1]
-	title.add_theme_color_override("font_color", color.lightened(0.4))
-	title.add_theme_color_override("font_outline_color", Color.BLACK)
-	title.add_theme_constant_override("outline_size", 4)
-	box.add_child(title)
-	var labels: Array = []
-	for text in ["parts 0 / 0", "castles 0"]:
-		var l := Label.new()
-		l.text = text
-		l.add_theme_color_override("font_outline_color", Color.BLACK)
-		l.add_theme_constant_override("outline_size", 4)
+	var y := HUD_GAP + (i / 2) * 84.0
+	panel.anchor_left = 1.0 if right else 0.0
+	panel.anchor_right = panel.anchor_left
+	panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN if right else Control.GROW_DIRECTION_END
+	panel.offset_left = -HUD_GAP if right else HUD_GAP
+	panel.offset_right = panel.offset_left
+	panel.offset_top = y
+	panel.offset_bottom = y
+	panel.custom_minimum_size.x = 136
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", -2)
+	panel.add_child(box)
+	box.add_child(_label("Name", 17, color))
+	box.get_child(0).text = "%s %d" % ["AI" if is_ai else "Player", i + 1]
+	var parts := _label("Parts", 14)
+	var castles := _label("Castles", 14)
+	for l in [parts, castles]:
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		box.add_child(l)
-		labels.append(l)
-	return labels
+	return {"parts": parts, "castles": castles}
 
 
-func _on_round_changed(_n: int, building: bool) -> void:
-	if phase_label:
-		phase_label.text = "BUILD PHASE" if building else "BATTLE PHASE"
-		if practice:
-			phase_label.text += "   Enter: " + ("battle" if building else "build")
-		phase_label.modulate = Color.GREEN if building else Color.RED
+func _on_phase_changed(phase: int) -> void:
+	_phase.text = PHASE_NAMES[phase] + ("   Enter: next" if practice else "")
+	_phase.add_theme_color_override("font_color", PHASE_COLORS[phase])
+	_help.text = HELP[phase]
 
 
 func _process(_delta: float) -> void:
@@ -410,20 +364,20 @@ func _process(_delta: float) -> void:
 	_update_hud()
 
 
+## The countdown, red in its last seconds, and every player's parts and castles.
 func _update_hud() -> void:
-	if game == null or game.players.is_empty():
+	if game == null or not game.started:
 		return
-	for p in game.players:
-		if p.partsLabel != null:
-			var used: int = p.parts_used()
-			p.partsLabel.text = "parts %d / %d" % [used, p.partsCap]
-			# the cap drops with a lost castle; the guns already placed can then exceed it
-			if used > p.partsCap:
-				p.partsLabel.add_theme_color_override("font_color", Color.RED)
-			else:
-				p.partsLabel.remove_theme_color_override("font_color")
-		if p.castlesLabel != null:
-			p.castlesLabel.text = "castles %d" % p.castle_count()
+	var left := int(ceilf(game.timeLeftInRound))
+	_count.text = "%d" % left
+	_count.add_theme_color_override("font_color", ACCENT if left <= game.COUNTDOWN else INK)
+	for i in game.players.size():
+		var p = game.players[i]
+		var used: int = p.parts_used()
+		_huds[i]["parts"].text = "parts %d / %d" % [used, p.partsCap]
+		# the cap drops with a lost castle; the guns already placed can then exceed it
+		_huds[i]["parts"].add_theme_color_override("font_color", ACCENT if used > p.partsCap else INK)
+		_huds[i]["castles"].text = "castles %d" % p.castle_count()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -527,14 +481,11 @@ func _to_menu() -> void:
 
 ## Short message in the middle of the screen.
 func _toast(text: String) -> void:
-	var l := Label.new()
+	var panel := _plaque("Toast")
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	var l := _label("Text", 18)
 	l.text = text
-	l.add_theme_font_size_override("font_size", 18)
-	l.add_theme_color_override("font_outline_color", Color.BLACK)
-	l.add_theme_constant_override("outline_size", 6)
-	l.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	l.grow_vertical = Control.GROW_DIRECTION_BOTH
-	ui.add_child(l)
-	get_tree().create_timer(4.0 if Catalog.errors.is_empty() else 10.0).timeout.connect(l.queue_free)
+	panel.add_child(l)
+	get_tree().create_timer(4.0 if Catalog.errors.is_empty() else 10.0).timeout.connect(panel.queue_free)

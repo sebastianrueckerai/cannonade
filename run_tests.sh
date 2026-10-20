@@ -39,6 +39,6 @@ run finish       --fixed-fps 30 res://tests/finish_test.tscn
 run catalog      --fixed-fps 30 res://tests/catalog_test.tscn
 run sandbox      --fixed-fps 30 res://tests/sandbox_test.tscn
 run lab          res://tests/lab_test.tscn
-run sim-versus   --fixed-fps 30 res://tests/sim.tscn -- --mode=versus --seconds=60 --seed=2 --autobuild --report=1000
+run sim-versus   --fixed-fps 30 res://tests/sim.tscn -- --mode=versus --seconds=60 --seed=2 --walls=20 --guns=8 --battle=25 --autobuild --report=1000
 run sim-ai2      --fixed-fps 30 res://tests/sim.tscn -- --mode=ai2 --seconds=130 --seed=1 --report=1000
 exit $fail
