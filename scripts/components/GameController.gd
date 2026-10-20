@@ -30,6 +30,10 @@ signal round_changed(round_number: int, building: bool)
 ## rules v3 end: the winning player, or null on a draw
 signal game_over(winner)
 
+## The last seconds of a phase tick, once a second.
+const COUNTDOWN := 5
+var _ticked := 0
+
 
 func start_game() -> void:
 	if useRandomSeed:
@@ -48,6 +52,7 @@ func start_game() -> void:
 		p.next_wall_to_gui()
 	position_camera()
 	started = true
+	Sound.music("build")
 
 
 func position_camera() -> void:
@@ -159,6 +164,10 @@ func _update_round_time(delta: float) -> void:
 	timeLeftInRound -= delta
 	if timeLeftInRound < -1:
 		next_phase()
+	var s := int(ceilf(timeLeftInRound))
+	if s != _ticked and s >= 1 and s <= COUNTDOWN:
+		_ticked = s
+		Sound.play("countdown")
 	if roundTimer:
 		roundTimer.modulate = Color.RED if shootingAllowed else Color.GREEN
 		roundTimer.text = "%d" % int(ceilf(timeLeftInRound))
@@ -181,6 +190,9 @@ func next_phase() -> void:
 			p.drop(p.nextWall, true)
 			p.drop(p.nextBuilding, false)
 	round_changed.emit(roundNumber, buildingAllowed)
+	if started:
+		Sound.play("horn_build" if buildingAllowed else "horn_battle")
+		Sound.music("build" if buildingAllowed else "battle")
 
 
 # ------------------------------------------------------------- the check

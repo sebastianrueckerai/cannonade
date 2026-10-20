@@ -87,7 +87,7 @@ func build_multifield_upgrade() -> void:
 	iz /= upgradedTiles.size()
 	var upgrade_position := Vector3(ix, 0.0, iz)
 	var new_structure := Catalog.spawn(def)
-	tile.un_build()
+	tile.un_build(true)
 	for bp in upgradedTiles:
 		bp.upgradeCluster = self
 		# the consumed buildings leave every per-kind registry, not only upgrades
@@ -116,10 +116,13 @@ func damage_structure(damage: float) -> void:
 			un_build_upgrade()
 
 
+## One structure, one sound: the first tile's un_build plays it.
 func un_build_upgrade() -> void:
+	var heard := false
 	for bp in upgradedTiles:
 		if U.alive(bp.structure):
-			bp.un_build()
+			bp.un_build(heard)
+			heard = true
 		else:
 			bp.structure = null
 			bp.player = null

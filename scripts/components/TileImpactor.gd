@@ -50,6 +50,10 @@ func count_hit() -> void:
 func impact() -> void:
 	count_hit()
 	if U.alive(destinationTile):
+		if destinationTile.water:
+			Sound.play("hit_water")
+		elif not U.alive(destinationTile.structure) and not U.alive(destinationTile.ship):
+			Sound.play("hit_ground")
 		for tile in destinationTile.get_surrounding_tiles(splashRange):
 			_effect_tile(tile)
 		if tileDestroyer:

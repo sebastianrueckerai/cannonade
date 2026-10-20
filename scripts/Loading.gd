@@ -80,6 +80,7 @@ func _process(_delta: float) -> void:
 		if staged:
 			_scene.staged = true
 			_scene.built.connect(queue_free)
+			_scene.built.connect(Sound.play.bind("loading_ready"))
 		get_tree().root.add_child(_scene)
 		get_tree().current_scene = _scene
 		if not staged:

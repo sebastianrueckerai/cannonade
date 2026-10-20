@@ -182,9 +182,11 @@ func damage(amount: float) -> void:
 		_sink()
 	else:
 		health -= amount
+		Sound.play("hit_ship")
 
 
 func _sink() -> void:
+	Sound.play("ship_sink")
 	if targetTile != null:
 		targetTile.commingShip = null
 	if currentTile != null and currentTile.ship == self:

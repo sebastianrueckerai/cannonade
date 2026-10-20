@@ -125,6 +125,13 @@ func _process(_delta: float) -> void:
 
 
 ## Damaged guns fire slower: every shell survived adds half the reload again.
+## The shot's cue: the heavy shell has its own boom, a ship's gun is further away.
+func shot_cue() -> String:
+	if go.get_parent() != null and U.comp(go.get_parent(), "Ship") != null:
+		return "shot_ship"
+	return "shot_heavy" if projectile.resource_path.get_file().get_basename() == "heavy_shell" else "shot_cannon"
+
+
 func _interval() -> float:
 	var bb := U.comp(go, "BuildingBlock")
 	return secondsBetweenShots * (1.0 + 0.5 * (bb.hits_taken if bb != null else 0))
@@ -145,6 +152,7 @@ func try_shoot(destination: Vector3, destination_tile) -> bool:
 		var rot := Basis(Vector3.UP, go.global_rotation.y)
 		var shell := Catalog.spawn_projectile(projectile, U.world(), _spawn().global_position, rot)
 		shell.player = player
+		Sound.play(shot_cue(), 0.0 if player == null or not player.is_ai() else Sound.OTHER_DB)
 		shell.fly_towards(destination, destination_tile, distance, vOpt, angleRads, flyTime, gravity,
 				ascendingPart, damage)
 	return shot

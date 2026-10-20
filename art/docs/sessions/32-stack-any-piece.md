@@ -63,3 +63,27 @@ and `RingPlan` for the sim (the AI then built at (7, 11) inside the human's ring
 - Suite green, 19 entries.
 - [32-stack.jpg](32-stack.jpg): a turned three over the east side of the start ring, the three
   storey ghosts, then the three placed storeys.
+
+## Follow-up: the stacking rule in Sebastian's words, and a red preview (I64)
+
+Sebastian: "Walls should stack as long as there is a wall tile under every tile of the piece I want
+to place. So I cant just pkace a curve piece on a curve piece but I can place it whereecer all tiles
+under it are filles by some wall!"
+
+That is the rule as built. An S on two blocks of the start ring and a two-block piece south of it
+stacked on all four. The report's wording, "every cell sits on one of your walls", read like one
+wall piece, and the test only stacked a three on a three. A ring one block thick takes only straight
+pieces, and a piece that did not fit went back to the hand slot without a word, so stacking looked
+like shape on shape.
+
+- Over an own wall the held piece now always shows its storeys: darkened where it stacks, red where
+  it cannot. A cell over a tile that has a storey shows one storey higher. A click on red storeys
+  stacks nothing.
+- [materials/wall.gdshader](/home/womb/repos/grid-cannons/materials/wall.gdshader) has a `tint`,
+  `Wall.paint_art` sets it, white by default.
+- [tests/human.gd](/home/womb/repos/grid-cannons/tests/human.gd): an S stacks on two ring blocks
+  and a two-block piece. A T with its stem on the castle shows red storeys and a click stacks nothing.
+  Broken on purpose, each went red: the red preview off, the tint left white, the single-block rule
+  back.
+- [32-stack-fit.jpg](32-stack-fit.jpg): the red T on the ring's south row, the S on mixed walls, the
+  placed S.

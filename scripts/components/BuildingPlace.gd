@@ -99,6 +99,7 @@ func damage_structure(damage: float, from := Vector3.INF) -> void:
 	if U.alive(structure):
 		var castle := U.comp(structure, "Castle")
 		if castle != null:
+			Sound.play("hit_castle")
 			castle.take_damage(damage)
 			return
 	var bb = block()
@@ -111,6 +112,8 @@ func damage_structure(damage: float, from := Vector3.INF) -> void:
 				if U.alive(wallStacked):
 					Crumble.crumble(wallStacked, from)
 			un_build()
+		else:
+			Sound.play("hit_gun" if U.shooter(structure) != null else "hit_wall")
 
 
 func damage_stacked_wall(damage: float, from := Vector3.INF) -> void:
@@ -119,6 +122,7 @@ func damage_stacked_wall(damage: float, from := Vector3.INF) -> void:
 		bb.health -= damage
 		if bb.health <= 0:
 			Crumble.crumble(wallStacked, from)
+			Sound.play("crumble")
 			_destroy_stacked_wall()
 
 
@@ -139,7 +143,10 @@ func _destroy_stacked_wall() -> void:
 	wallStacked = null
 
 
-func un_build() -> void:
+## `quiet` when the structure is replaced, not destroyed (a fusion, an upgrade).
+func un_build(quiet := false) -> void:
+	if not quiet and U.alive(structure):
+		Sound.play("crumble" if isWall or U.shooter(structure) == null else "gun_destroyed")
 	map.set_mini(idxX, idxZ, 0)
 	var bb = block()
 	if bb != null and U.alive(bb.player):

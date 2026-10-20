@@ -53,9 +53,10 @@ a full-tile wall block on each of its cells. Blocks that share a side are one wa
 that touch only at a corner do not join, so a ring must close side to side. Everything you
 place needs one tile within two tiles of your own walls or of a castle you hold, so nobody
 builds behind enemy lines, and nobody builds on ground another player's closed ring holds. The
-AI keeps the same rules. Any piece stacks when every cell lies on one of your walls with no
-storey yet, and a stacked tile takes two shells. Held over your walls, the piece shows the
-storeys it adds, and the cursor on a block picks that block, not the ground hidden behind it.
+AI keeps the same rules. A piece stacks wherever your walls fill every tile under it, whichever
+pieces placed them, as long as none of those tiles has a storey yet. A stacked tile takes two
+shells. Held over your walls, the piece shows the storeys it adds, red where it cannot stack,
+and the cursor on a block picks that block, not the ground hidden behind it.
 A wall shot down breaks into pieces that fly from the shot, land on the walls around and sink
 into the ground.
 Every game deals each player a different wall look of four. The walkway along the top of a wall carries the
@@ -224,6 +225,11 @@ can be repeated and compared.
   art layer (`assets/art/3d/nature_*.glb`). Each one stays inside its tile and is shrunk
   until it fits, so it never reaches into a neighbouring building.
 * `scripts/Main.gd` builds a game from a mode (camera, light, UI, players).
+* `scripts/Sound.gd` (autoload) plays the clips of `assets/audio/`: `sfx/` and `ui/` by cue, a cue's
+  variants from a `_1`, `_2` suffix, one at random and never the same twice, three voices a cue; the music
+  of `music/` loops per phase and screen. The buses are Master, Music, SFX and UI
+  (`default_bus_layout.tres`). A cue with no clip plays nothing, so a new sound is a file dropped into the
+  folder under its cue's name. The cue list is `art/game/design/sound.md`.
 
 ### Behaviour changes compared to the Unity code
 
@@ -266,6 +272,9 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 `./run_tests.sh` runs everything headless (set `GODOT=/path/to/godot` if needed):
 
 * `tests/check_scripts` – every script and generated scene loads.
+* `tests/sound_test` – the buses, the clips by cue with their variants and voice cap, and a voice at every
+  hook: a piece built, a gun refused, the horns and the music per phase, a shot, a hit, a wall and a gun
+  destroyed, a castle claimed, lost and ruined, the win music, the end buttons.
 * `tests/flood_test` – enclosure detection: walls enclose areas, gaps open them, and the
   optimised flood fill matches the original algorithm (kept in the test) on random edits.
 * `tests/human` – the human player through real mouse / key events: placing, rotating,

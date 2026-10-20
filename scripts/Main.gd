@@ -453,6 +453,7 @@ func _test_end(win: bool) -> void:
 ## Retry replays the seed.
 func _on_game_over(winner) -> void:
 	var own = Indicators.own_player
+	Sound.music("win" if winner != null and (own == null or winner == own) else "lose")
 	var title := "DRAW"
 	if winner != null:
 		if own == null:
@@ -509,6 +510,7 @@ func _on_game_over(winner) -> void:
 		b.custom_minimum_size = Vector2(160, 44)
 		b.pressed.connect(_retry if text == "Retry" else _to_menu)
 		buttons.add_child(b)
+	Sound.buttons(buttons)
 
 
 func _retry() -> void:

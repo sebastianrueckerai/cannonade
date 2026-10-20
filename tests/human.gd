@@ -210,7 +210,7 @@ func _run() -> void:
 	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()  # upright, on the upright three placed above
 	var three: Array = human.nextWall.get_children().filter(func(n): return n is Node3D)
 	await point_at_wall(w)
-	check(three.all(func(n): return n.get_node("Art").get_meta("art_id") == storey and _shade(n) < 1.0),
+	check(three.all(func(n): return n.get_node("Art").get_meta("art_id") == storey and _shade(n) < 1.0 and _tint(n) == Color.WHITE),
 			"the upright three shows a darkened storey on each cell (%s)" % [three.map(func(n): return n.get_node("Art").get_meta("art_id"))])
 	var spots: Array = three.map(func(n): return n.get_node("Art").global_transform)
 	await point_at_tile(w + Vector2i(-2, 0))
@@ -223,6 +223,32 @@ func _run() -> void:
 			"the upright three stacks a storey on each of its walls")
 	check(range(3).all(func(i): return U.alive(stacked[i]) and stacked[i].get_node("Art").global_transform.is_equal_approx(spots[i])),
 			"each storey stands where its ghost stood")
+
+	# over own walls a piece that cannot stack shows its storeys red, and a click stacks nothing: a T on the ring's
+	# south row with its stem on the castle
+	_hold("wall_t")
+	var tee: Array = human.nextWall.get_children().filter(func(n): return n is Node3D)
+	var tee_at := Vector2i(b.x - 1, b.y - 2)
+	await point_at_wall(tee_at)
+	check(not human.canStackWall and human.nextWall.get_parent() == map.tiles[tee_at.x][tee_at.y].go
+			and tee.all(func(n): return _tint(n) == human.NO_STACK), "a T with its stem on the castle shows red storeys")
+	await press("build_wall")
+	check(not U.alive(map.tiles[tee_at.x][tee_at.y].wallStacked), "a click on the red storeys stacks nothing")
+
+	# a piece stacks wherever walls fill every tile under it, whichever pieces placed them: an S on two blocks of the
+	# ring and a two-block piece south of it
+	var below := [Vector2i(b.x + 1, b.y - 3), Vector2i(b.x + 2, b.y - 3)]
+	check(_all_free(below), "the two tiles south of the ring's east half are free")
+	for k in below:
+		human.build_wall(map.tiles[k.x][k.y], Catalog.spawn("wall", null, human))
+	_hold("wall_s")
+	await point_at_wall(below[0])
+	check(human.canStackWall, "the S fits on blocks of the ring and of another piece")
+	await press("build_wall")
+	check(([Vector2i(b.x, b.y - 2), Vector2i(b.x + 1, b.y - 2)] + below).all(func(k): return U.alive(map.tiles[k.x][k.y].wallStacked)),
+			"the S stacks a storey on each of the four")
+	for k in below:
+		map.tiles[k.x][k.y].un_build()  # they would reach the column the gun checks below walk
 
 	# nobody builds on ground another player's closed ring holds, reach or not: a 1 x 1 ring of the enemy's two
 	# tiles north of the castle's ring
@@ -431,6 +457,12 @@ func _hold(id: String) -> void:
 func _shade(node: Node) -> float:
 	var mi := node.find_child("wall", true, false) as MeshInstance3D
 	return mi.material_override.get_shader_parameter("shade") if mi != null else -1.0
+
+
+## The wall shader's tint of the first block under node: white, or the red of a piece that cannot stack.
+func _tint(node: Node) -> Color:
+	var mi := node.find_child("wall", true, false) as MeshInstance3D
+	return mi.material_override.get_shader_parameter("tint") if mi != null else Color.BLACK
 
 
 func _all_free(tiles: Array) -> bool:

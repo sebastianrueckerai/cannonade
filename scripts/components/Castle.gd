@@ -47,13 +47,18 @@ func become_ruin() -> void:
 	var holder = owner()
 	if holder != null:
 		holder.count("castles_lost")
+	Sound.play("castle_ruin")
 	set_state(RUIN)
 	hold_tiles(null)
 
 
+## The own player hears a claim as a chime up, a loss as the chime down; others' claims are quieter.
 func claim(p) -> void:
+	var own = Indicators.own_player
+	var lost: bool = own != null and owner() == own
 	hold_tiles(p)
 	repaint()
+	Sound.play("castle_lost" if lost else "castle_claimed", 0.0 if lost or own == null or p == own else Sound.OTHER_DB)
 
 
 func is_ruin() -> bool:
