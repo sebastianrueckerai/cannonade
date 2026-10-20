@@ -60,6 +60,27 @@ func point_at_tile(xz: Vector2i) -> void:
 	await point_at(map.tile_position(xz.x, xz.y, 0.1))
 
 
+## Turns the mouse wheel n notches toward the world position p, away from it for n < 0.
+func zoom(n: int, p: Vector3) -> void:
+	for i in absi(n):
+		for pressed in [true, false]:
+			var ev := InputEventMouseButton.new()
+			ev.button_index = MOUSE_BUTTON_WHEEL_UP if n > 0 else MOUSE_BUTTON_WHEEL_DOWN
+			ev.position = main.camera.unproject_position(p)
+			ev.pressed = pressed
+			Input.parse_input_event(ev)
+		await frames(1)
+
+
+func press_key(key: Key) -> void:
+	for pressed in [true, false]:
+		var k := InputEventKey.new()
+		k.keycode = key
+		k.pressed = pressed
+		Input.parse_input_event(k)
+		await frames(1)
+
+
 ## Presses and releases the input bound to action.
 func press(action: String) -> void:
 	for pressed in [true, false]:
@@ -184,6 +205,41 @@ func _run() -> void:
 	check(U.alive(target.wallStacked) and Catalog.def_of(target.wallStacked).id == "wall",
 			"a single block stacks on an own wall")
 
+	# zoomed in, the cursor on a wall's walkway picks that wall, not the ground behind it, and the held block shows
+	# there the storey it stacks as. The east side's middle has own walls north and south of it; the cursor sits on
+	# the walkway's far half, whose ground point lies on the tile behind.
+	var e := Vector2i(b.x + 2, b.y)
+	var east = map.tiles[e.x][e.y]
+	await zoom(12, map.tile_position(e.x, e.y))
+	check(main.camera.zoom_level() < 0.5, "the wheel zoomed in (%.2f)" % main.camera.zoom_level())
+	_hold("wall_1")
+	var cell: Node3D = human.nextWall.get_child(0)
+	await point_at(east.go.global_position + Vector3(0, 0.85, -0.3))
+	check(human.buildableTileSelected == east, "the cursor on a wall's walkway picks that wall (got %d, %d)"
+			% [human.buildableTileSelected.idxX, human.buildableTileSelected.idxZ])
+	var storey: String = Catalog.wall_look(human) + "_upper"
+	check(cell.get_node("Art").get_meta("art_id") == storey and _shade(cell) < 1.0,
+			"the held block shows the darkened storey (%s, shade %s)" % [cell.get_node("Art").get_meta("art_id"), _shade(cell)])
+	var ghost_at: Transform3D = cell.get_node("Art").global_transform
+	await press("build_wall")
+	check(U.alive(east.wallStacked) and not U.alive(map.tiles[e.x][e.y + 1].wallStacked),
+			"the block stacks on the wall under the cursor, not on the one behind it")
+	check(U.alive(east.wallStacked) and east.wallStacked.get_node("Art").global_transform.is_equal_approx(ghost_at),
+			"the storey stands where its ghost stood")
+	_hold("wall_1")
+	cell = human.nextWall.get_child(0)
+	await point_at(map.tiles[e.x][e.y - 1].go.global_position + Vector3(0, 0.85, 0))
+	check(cell.get_node("Art").get_meta("art_id") == storey, "the next wall south shows the storey too")
+	await point_at_tile(b)  # the castle takes no block: the piece goes back to the hand
+	check(human.nextWall.get_parent() == human.wallSpawn and cell.get_node("Art").get_meta("art_id") == Catalog.wall_look(human)
+			and U.meshes(cell).all(func(mi): return mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF),
+			"back in the hand the held block is a block again and casts no shadow")
+	await point_at(map.tiles[e.x][e.y - 1].go.global_position + Vector3(0, 0.85, 0))
+	await point_at_tile(e + Vector2i(1, 0))
+	check(cell.get_node("Art").get_meta("art_id") == Catalog.wall_look(human),
+			"off the wall the held block is a block again (%s)" % cell.get_node("Art").get_meta("art_id"))
+	await zoom(-12, map.tile_position(e.x, e.y))
+
 	# reach: a placement needs one tile within two of an own wall or castle. Walls walk the castle's column
 	# north from the ring's top row, guns south from its bottom row; d counts tiles out from the ring.
 	var top := b.y + 2
@@ -280,6 +336,40 @@ func _run() -> void:
 			"the castle alone reaches two tiles past its edge, not three")
 	own.become_ruin()
 	check(not human.in_reach(b.x + 2, b.y), "a ruined castle anchors nothing")
+
+	# testing keys: L loses the game to the other player, a key after the end does nothing, K wins a fresh game;
+	# the end screen fits the window
+	await press_key(KEY_L)
+	var overlay := main.get_node_or_null("GameOver")
+	check(not game.started and overlay != null and _has_label(overlay, "DEFEAT"), "L loses the game")
+	await _check_end_screen(overlay)
+	await press_key(KEY_K)
+	check(not _has_label(main, "VICTORY"), "K after the end changes nothing")
+	main.free()
+	main = Main.new()
+	get_tree().root.add_child(main)
+	get_tree().current_scene = main
+	main.game.players[1].nextAction = 1e9
+	await press_key(KEY_K)
+	overlay = main.get_node_or_null("GameOver")
+	check(not main.game.started and overlay != null and _has_label(overlay, "VICTORY"), "K wins the game")
+	await _check_end_screen(overlay)
+
+
+## The end screen fits the window: its art covers it exactly and Retry and Menu lie inside it.
+func _check_end_screen(overlay: Node) -> void:
+	await frames(2)
+	var view := Rect2(Vector2.ZERO, get_viewport().get_visible_rect().size)
+	var art: Array = overlay.find_children("*", "TextureRect", true, false)
+	check(art.size() == 1 and art[0].get_global_rect().is_equal_approx(view),
+			"the end art covers the window %s (%s)" % [view, art.map(func(a): return a.get_global_rect())])
+	var buttons: Array = overlay.find_children("*", "Button", true, false)
+	check(buttons.size() == 2 and buttons.all(func(bt): return view.encloses(bt.get_global_rect())),
+			"Retry and Menu lie inside the window (%s)" % [buttons.map(func(bt): return bt.get_global_rect())])
+
+
+func _has_label(node: Node, text: String) -> bool:
+	return node.find_children("*", "Label", true, false).any(func(l): return l.text == text)
 
 
 ## Replaces the randomly drawn wall piece (fixture for a specific piece).

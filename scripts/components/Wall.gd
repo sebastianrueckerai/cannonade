@@ -24,36 +24,46 @@ static var band_tint := 0.0
 
 ## The owner's look on the block; the art is only replaced when the block wears another.
 func wear(owner) -> void:
-	var id: String = Catalog.wall_look(owner)
-	var art: Node = go.get_node_or_null("Art")
-	if art != null and art.get_meta("art_id", "") == id:
-		return
-	if art != null:
-		go.remove_child(art)
-		art.free()
-	Art.attach(go, id)
-	dress(go.get_node_or_null("Art"))
+	put_on(go, Catalog.wall_look(owner))
 
 
 ## Stacked on another block, the art turns into the storey of the same look.
 func show_upper() -> void:
 	var art: Node = go.get_node_or_null("Art")
-	var look: String = art.get_meta("art_id", "wall") if art != null else Catalog.wall_look(null)
-	if art != null:
-		go.remove_child(art)
-		art.free()
-	Art.attach(go, look.trim_suffix("_upper") + "_upper")
-	dress(go.get_node_or_null("Art"))
+	put_on(go, storey(art.get_meta("art_id", "wall") if art != null else Catalog.wall_look(null)))
 	repaint()
 
 
 ## The block's colours from its tile's neighbours; `shade` darkens the whole block (the placement preview).
 func repaint(shade := 1.0) -> void:
 	var bb = U.comp(go, "BuildingBlock")
+	paint_art(go.get_node_or_null("Art"), bb.player, open_sides(bb.buildingPlace, bb.player) if bb.buildingPlace != null else {},
+			shade)
+
+
+## The corridors of a block of `owner` on `tile`: open toward every side where an own wall stands.
+static func open_sides(tile, owner) -> Dictionary:
 	var open := {}
 	for r in DIRS:
-		open[r] = bb.buildingPlace != null and own_wall_beside(bb.buildingPlace, DIRS[r], bb.player)
-	paint_art(go.get_node_or_null("Art"), bb.player, open, shade)
+		open[r] = own_wall_beside(tile, DIRS[r], owner)
+	return open
+
+
+## `node` wears the block art `id` in the stone colours; the art is only replaced when it is another.
+static func put_on(node: Node3D, id: String) -> void:
+	var art: Node = node.get_node_or_null("Art")
+	if art != null and art.get_meta("art_id", "") == id:
+		return
+	if art != null:
+		node.remove_child(art)
+		art.free()
+	Art.attach(node, id)
+	dress(node.get_node_or_null("Art"))
+
+
+## The upper storey of a wall look.
+static func storey(look: String) -> String:
+	return look.trim_suffix("_upper") + "_upper"
 
 
 static func own_wall_beside(tile, d: Vector2i, owner) -> bool:
@@ -106,11 +116,12 @@ static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0) -> voi
 	m.set_shader_parameter("shade", shade)
 
 
-## A hand piece: each cell's walkway runs toward the piece's other cells, in the piece's own frame, which turns
-## with it. `cells` are the def's, in the order of the cell nodes.
+## A hand piece: each cell wears the owner's block, its walkway running toward the piece's other cells, in the
+## piece's own frame, which turns with it. `cells` are the def's, in the order of the cell nodes.
 static func paint_piece(piece: Node3D, owner, cells: Array, shade := 1.0) -> void:
 	var nodes := piece.get_children().filter(func(n): return n is Node3D)
 	for i in mini(cells.size(), nodes.size()):
+		put_on(nodes[i], Catalog.wall_look(owner))
 		var open := {}
 		for r in DIRS:
 			open[r] = cells.has(cells[i] + DIRS[r])

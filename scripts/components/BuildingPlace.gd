@@ -168,6 +168,12 @@ func stack_wall(wall_go: Node3D) -> void:
 	U.comp(wall_go, "Wall").show_upper()
 
 
+## World height of the top of the wall standing here, of its storey when stacked.
+func wall_top() -> float:
+	var n: Node3D = wallStacked if U.alive(wallStacked) else structure
+	return n.global_position.y + Art.bounds(n).end.y
+
+
 ## The blocks here and on the four neighbouring tiles redraw their walkways (D78).
 func repaint_walls_around() -> void:
 	for d in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:

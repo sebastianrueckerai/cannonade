@@ -11,6 +11,8 @@ const UpgradeCluster = preload("res://scripts/UpgradeCluster.gd")
 @export var discardFlySeconds := 1.0
 @export var secondsBetweenBuildings := 0.3
 
+## Above the top of every wall block and storey: where the view ray starts looking for blocks.
+const RAY_TOP := 2.5
 ## Parts cap per castles held: 1 castle 6 parts, 2 castles 10, then 13, 15, 17.
 const PARTS_CAP := [0, 6, 10, 13, 15, 17]
 ## Standing limit on gun parts; a cap below the placed guns blocks new placement only.
@@ -118,8 +120,8 @@ func button_down(action: String) -> bool:
 	return Input.is_action_just_pressed(action)
 
 
-## Replaces Physics.Raycast from the mouse: intersect the view ray with the
-## ground plane. Returns [hit, point, tile (BuildingPlace or null)].
+## Replaces Physics.Raycast from the mouse: the view ray meets the first wall block it enters, else the ground
+## plane. Returns [hit, point on the ground of the tile, tile (BuildingPlace or null)].
 func _pick() -> Array:
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
@@ -131,7 +133,7 @@ func _pick() -> Array:
 	var t := (0.1 - origin.y) / dir.y
 	if t < 0:
 		return [false, Vector3.ZERO, null]
-	var point := origin + dir * t
+	var point := origin + dir * _wall_hit(origin, dir, t)
 	var xz: Vector2i = map.tile_index_at(point)
 	if xz.x < 0:
 		return [true, point, null]
@@ -140,6 +142,20 @@ func _pick() -> Array:
 		return [true, point, null]
 	point.y = tile.go.global_position.y + 0.1
 	return [true, point, tile]
+
+
+## Where along the view ray it enters the first wall block, so the cursor on a block's top or face picks that block
+## and not the ground hidden behind it; `t_ground` when the ray meets no block.
+func _wall_hit(origin: Vector3, dir: Vector3, t_ground: float) -> float:
+	var t := maxf((RAY_TOP - origin.y) / dir.y, 0.0)
+	while t < t_ground:
+		var xz: Vector2i = map.tile_index_at(origin + dir * t)
+		if xz.x >= 0:
+			var tile = map.tiles[xz.x][xz.y]
+			if tile.isWall and U.alive(tile.structure) and origin.y + dir.y * t <= tile.wall_top():
+				return t
+		t += 0.05
+	return t_ground
 
 
 func update_point_and_tile_selected() -> void:
@@ -281,8 +297,8 @@ func next_wall_to_gui() -> void:
 	if U.alive(nextWall) and wallSpawn != null:
 		U.set_parent(nextWall, wallSpawn)
 		nextWall.position = -_piece_centre()
-		switch_casting_shadows(nextWall, false)
 		_restore_wall_color()
+		switch_casting_shadows(nextWall, false)
 
 
 func next_wall_to_map() -> void:
@@ -342,11 +358,15 @@ func switch_casting_shadows(n: Node3D, on := true) -> void:
 	U.set_shadows(n, on)
 
 
+## The held single block over an own wall shows the storey it stacks as, darkened like every ghost: the look's
+## upper storey where the placed one stands, its walkway following the tile's neighbours.
 func next_wall_to_wall() -> void:
 	U.set_parent(nextWall, buildableTileSelected.go)
 	switch_casting_shadows(nextWall, true)
-	nextWall.position = Vector3(0, 0.75, 0)  # the upper storey's body starts on the block's top
-	_darken_wall()
+	nextWall.position = Vector3.ZERO
+	var cell: Node3D = nextWall.get_children().filter(func(n): return n is Node3D)[0]
+	WallComp.put_on(cell, WallComp.storey(Catalog.wall_look(self)))
+	WallComp.paint_art(cell.get_node("Art"), self, WallComp.open_sides(buildableTileSelected, self), 0.7)
 
 
 func _hide_decorations() -> void:

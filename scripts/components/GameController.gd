@@ -264,8 +264,13 @@ func run_check() -> void:
 		if p.castle_count() > 0:
 			holders.append(p)
 	if players.size() > 1 and holders.size() < 2:
-		started = false
-		game_over.emit(holders[0] if holders.size() == 1 else null)
+		end(holders[0] if holders.size() == 1 else null)
+
+
+## The game stops and the game-over screen names `winner`, null for a draw.
+func end(winner) -> void:
+	started = false
+	game_over.emit(winner)
 
 
 func _process(delta: float) -> void:

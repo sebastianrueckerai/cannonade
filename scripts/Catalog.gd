@@ -288,8 +288,7 @@ func spawn(def_or_id, parent: Node = null, owner = null) -> Node3D:
 		return null
 	var go: Node3D = def.model.instantiate()
 	if def.id == "wall":
-		Art.attach(go, wall_look(owner))
-		WallComp.dress(go.get_node_or_null("Art"))
+		WallComp.put_on(go, wall_look(owner))
 	else:
 		Art.attach(go, def.id)
 	if not def.piece.is_empty():
@@ -453,8 +452,6 @@ func _add_piece_cells(go: Node3D, def: BuildingDef, owner) -> void:
 	var block: BuildingDef = get_def("wall")
 	for c in def.piece:
 		var cell: Node3D = block.model.instantiate()
-		Art.attach(cell, wall_look(owner))
-		WallComp.dress(cell.get_node_or_null("Art"))
 		cell.position = Vector3(c.x, 0.0, -c.y)
 		go.add_child(cell)
 	WallComp.paint_piece(go, owner, def.piece)

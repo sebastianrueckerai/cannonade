@@ -43,6 +43,7 @@ Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
 | middle mouse drag | pan the view while zoomed in                              |
 | Space             | fire (battle phase)                                       |
 | Enter             | switch between build and battle (`practice` only)        |
+| K / L             | testing keys: win / lose the running game at once         |
 | click outside map | discard the current piece / building                      |
 | Esc               | back to the menu                                          |
 
@@ -51,7 +52,9 @@ or a cross, drawn at random (small pieces more often) and turned with X / Y. A p
 a full-tile wall block on each of its cells. Blocks that share a side are one wall; blocks
 that touch only at a corner do not join, so a ring must close side to side. Everything you
 place needs one tile within two tiles of your own walls or of a castle you hold, so nobody
-builds behind enemy lines. Only a single block stacks: a stacked tile takes two shells.
+builds behind enemy lines. Only a single block stacks: a stacked tile takes two shells. Held
+over one of your walls, the single block shows the storey it adds, and the cursor on a block
+picks that block, not the ground hidden behind it.
 Every game deals each player a different wall look of four. The walkway along the top of a wall carries the
 owner's colour, running toward the neighbouring blocks of the same wall, and the ground inside
 a closed ring takes a wash of the colour of the player whose walls surround it most, so a
@@ -255,7 +258,9 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 * `tests/flood_test` – enclosure detection: walls enclose areas, gaps open them, and the
   optimised flood fill matches the original algorithm (kept in the test) on random edits.
 * `tests/human` – the human player through real mouse / key events: placing, rotating,
-  discarding and stacking walls, guns by right click at their parts cost, fusion, firing.
+  discarding and stacking walls (zoomed in, the cursor on a wall's top, the storey ghost),
+  guns by right click at their parts cost, fusion, firing. K and L end the game and the end
+  screen fits the window.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
   cluster bombs, rockets, shield, flak and ships behave as in the game.
 * `tests/menu_test` – menu → chosen game mode → Esc → menu. The loading screen shows concept
