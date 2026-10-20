@@ -227,3 +227,13 @@ each side instead of 2?" The pilaster look, whose pyramid caps read subtlest, ge
 grid without its centre, so a lone block's centre square still shows its colour. The mid-side studs stand on
 the walkway's corridors and the strip shows between them; the build's corridor area check allows a stud's foot
 for this top. 618 triangles. Synced unapproved with its storey; the board is shot again for his pass.
+
+## Seventh pass: the studs follow the docking walls
+
+Sebastian: "Make the granulations change depending on the docking pieces. So were two walls dock, the middle
+granulation should be gone. Or said differently: 3 granulations are only in place, were the wall is overlooking
+open space!" Recorded with the tops as D80. The lego top's four mid-side studs are now closed shells of their own
+on the deck, not unioned, tagged regions 13 to 16, and the shader drops a region whose colour has alpha 0, so
+`Wall.paint_art` clears a side's stud exactly where it opens that side's corridor; the deck stays whole under a
+dropped stud and the walkway shows through. `tests/walls_test` reads the stud with the corridor: a corridor open
+with its stud still standing, or closed with its stud gone, fails. 606 triangles.

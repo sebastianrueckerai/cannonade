@@ -92,3 +92,6 @@ for the full-tile block. Spend: six sketches at 0.25 USD and one critique at 0.0
 - **Three studs a side on the 3rd look.** "Can you change 2 3rd or 2nd one for one were it has 3 granulations /
   lego connectors on each side instead of 2?" The pilaster look's pyramid caps gave way to eight round studs,
   a 3 x 3 without its centre. [looks-in-game.jpg](looks-in-game.jpg) shot again, for his pass.
+- **The studs follow the docking walls (D80).** "3 granulations are only in place, were the wall is overlooking
+  open space!" A mid-side stud goes where that side's walkway opens. [looks-in-game.jpg](looks-in-game.jpg)
+  shot again, for his pass.

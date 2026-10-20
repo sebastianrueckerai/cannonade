@@ -8,7 +8,9 @@
 #   3  walk_nx                              10  deck   the four corner squares the merlons stand on
 #   4  walk_py  (Blender +y is Godot -z)    11  rim    a 0.04 m frame round the corners, a line round the wall
 #   5  walk_ny                              12  band   the top 0.06 m of the body, a line round the wall's faces
-#   6  cap_px
+#   6  cap_px                               13..16  stud_px, stud_nx, stud_py, stud_ny: the lego top's mid-side
+#                                                   studs, own shells on the deck, which the shader drops where
+#                                                   the walkway crosses that side (D80)
 # The corridors and caps split so a rim line stays whole where no walkway crosses the edge.
 #   base:  body z 0..0.75 with the band cut at 0.69, deck 0.75..0.77, merlons 0.77..1.0
 #   upper: everything 0.75 up; the body swallows the lower block's deck and merlons
@@ -118,6 +120,16 @@ def four(make):
     return [turned(make(), q) for q in range(4)]
 
 
+def join(base, other):
+    """`other`'s shells into `base`'s mesh as they are, no boolean."""
+    bm = bmesh.new()
+    bm.from_mesh(base.data)
+    bm.from_mesh(other.data)
+    bm.to_mesh(base.data)
+    bm.free()
+    bpy.data.objects.remove(other, do_unlink=True)
+
+
 def clean(ob):
     bm = bmesh.new()
     bm.from_mesh(ob.data)
@@ -206,19 +218,15 @@ def merlons(z_from, z_to, top):
     """The teeth on the deck's corner squares, one shape per look so the looks differ from above, where the game
     camera looks (Sebastian, 2026-10-20): square, the D75 block; octagon, drums; pyramid, square teeth with a
     pyramid cap; studs, a 2 x 2 of small teeth per corner, sixteen a tile; lego, three round studs a side, his
-    ask of the same day. All but lego stay inside [0.125, 0.46] on x and y so the walkway's corridors stay free;
-    lego's mid-side studs stand on the corridors and the walkway shows between them."""
+    ask of the same day. All stay inside [0.125, 0.46] on x and y so the walkway's corridors stay free; lego's
+    mid-side studs are separate shells on the corridors that vanish where a wall docks (mid_studs)."""
     bm = bmesh.new()
     if top == "lego":
         # three studs a side: the eight places of a 3 x 3 grid without its centre, so a lone block's centre square
-        # still shows; the mid-side studs stand on the corridors, the walkway showing between them
-        r = 0.08
-        for px in (-1, 0, 1):
-            for py in (-1, 0, 1):
-                if px or py:
-                    ret = bmesh.ops.create_cone(bm, cap_ends=True, segments=8, radius1=r, radius2=r, depth=z_to - 0.05 - z_from)
-                    bmesh.ops.rotate(bm, verts=ret["verts"], cent=Vector(), matrix=Matrix.Rotation(math.pi / 8, 3, "Z"))
-                    bmesh.ops.translate(bm, verts=ret["verts"], vec=Vector((px / 3, py / 3, (z_from + z_to - 0.05) / 2)))
+        # still shows. The corners here; the mid-side studs are mid_studs, which the game drops where a wall docks
+        for px in (-1, 1):
+            for py in (-1, 1):
+                _stud(bm, px / 3, py / 3, z_from, z_to - 0.05)
     for x0, x1 in SPANS:
         for y0, y1 in SPANS:
             if top == "lego":
@@ -250,6 +258,27 @@ def merlons(z_from, z_to, top):
     return _object("merlons", bm)
 
 
+def _stud(bm, x, y, z_from, z_to, r=0.08):
+    ret = bmesh.ops.create_cone(bm, cap_ends=True, segments=8, radius1=r, radius2=r, depth=z_to - z_from)
+    bmesh.ops.rotate(bm, verts=ret["verts"], cent=Vector(), matrix=Matrix.Rotation(math.pi / 8, 3, "Z"))
+    bmesh.ops.translate(bm, verts=ret["verts"], vec=Vector((x, y, (z_from + z_to) / 2)))
+    return ret["verts"]
+
+
+def mid_studs(z0):
+    """The lego top's four mid-side studs as closed shells standing on the deck, their feet 5 mm inside it, not
+    unioned: the deck stays whole under them, so the shader can drop a stud where the walkway crosses (D80)."""
+    bm = bmesh.new()
+    z_from, z_to = z0 + DECK_TOP - 0.005, z0 + MERLON_TOP - 0.05
+    for x, y in ((1 / 3, 0), (-1 / 3, 0), (0, 1 / 3), (0, -1 / 3)):
+        _stud(bm, x, y, z_from, z_to)
+    flat_top = lambda e: all(abs(v.co.z - z_to) < EPS for v in e.verts)
+    bmesh.ops.bevel(bm, geom=[e for e in bm.edges if flat_top(e)], offset=CHAMFER, offset_type="OFFSET", segments=1,
+                    affect="EDGES")
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return _object("mid_studs", bm)
+
+
 def _tooth(bm, x0, x1, y0, y1, z_from, z_to, pyramid):
     top = z_to - 0.06 if pyramid else z_to
     geom = bmesh.ops.create_cube(bm, size=1.0)["verts"]
@@ -271,6 +300,11 @@ def region_of(c, z0):
     """The region id of a face by its centre: the deck by its square, the band by height, the rest 0."""
     z = c.z - z0
     if z > DECK_TOP + EPS:
+        ax, ay = abs(c.x), abs(c.y)
+        if ay < 0.1 and 0.2 < ax < 0.45:
+            return 13 if c.x > 0 else 14
+        if ax < 0.1 and 0.2 < ay < 0.45:
+            return 15 if c.y > 0 else 16
         return 0
     if z >= BAND_TOP - EPS:
         ax, ay = abs(c.x), abs(c.y)
@@ -324,9 +358,10 @@ def build(asset):
     wall = BODIES[style](z0)
     clean(wall)
     boolean(wall, [deck_plate(z0), merlons(z0 + DECK_TOP - 0.01, z0 + MERLON_TOP, TOPS[style])], "UNION")
+    if TOPS[style] == "lego":
+        join(wall, mid_studs(z0))
     areas = tag_regions(wall, z0)
-    # the deck's top: the centre square, a corridor of 0.335 by 0.25 (less a lego stud's foot), a cap of 0.04 by 0.25
-    corridor = 0.08375 - (math.pi * 0.08 ** 2 * 0.9 if TOPS[style] == "lego" else 0.0)
-    for rid, want in ((1, 0.0625), (2, corridor), (6, 0.01)):
+    # the deck's top: the centre square, a corridor of 0.335 by 0.25, a cap of 0.04 by 0.25
+    for rid, want in ((1, 0.0625), (2, 0.08375), (6, 0.01)):
         if abs(areas.get(rid, 0.0) - want) > 1e-3:
             raise RuntimeError(f"region {rid} area {areas.get(rid, 0.0):.4f}, want {want}")

@@ -66,13 +66,18 @@ func _walk(p) -> Color:
 	return WallComp.STONE.lerp(p.mainColor, WallComp.walk_tint)
 
 
-## Which of the four corridors (px, nx, py, ny) wear the walkway colour.
+## Which of the four corridors (px, nx, py, ny) wear the walkway colour, their cap with them and their mid-side
+## stud dropped (alpha 0); a closed corridor keeps its stud.
 func _open(go: Node3D, p) -> Array:
 	var c := _colors(go)
 	var w := _walk(p)
 	var out: Array = []
 	for r in [2, 3, 4, 5]:
-		out.append(c[r].is_equal_approx(w) and c[r + WallComp.CAP].is_equal_approx(w))
+		var is_open := c[r].is_equal_approx(w) and c[r + WallComp.CAP].is_equal_approx(w)
+		var stud_gone: bool = c[r + WallComp.STUD].a < 0.5
+		out.append(is_open)
+		if is_open != stud_gone:
+			check(false, "corridor %d open %s but its stud gone %s" % [r, is_open, stud_gone])
 	return out
 
 

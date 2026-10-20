@@ -3,7 +3,7 @@
   "route": "procedural",
   "inputs": {
     "asset_yaml_sha": "b58d0c500de4",
-    "build_py_sha": "dabaf36a3bed"
+    "build_py_sha": "a8a414c36896"
   },
   "steps": [
     {
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 1.04
+      "elapsed_s": 1.02
     },
     {
       "name": "report",
@@ -29,12 +29,12 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.47
+      "elapsed_s": 0.46
     },
     {
       "name": "export",
       "ok": true,
-      "elapsed_s": 0.01
+      "elapsed_s": 0.03
     }
   ],
   "report": "report.json",
@@ -44,5 +44,5 @@
   "approved_by": null,
   "approved": null,
   "cost_usd": 0,
-  "created": "2026-10-20T15:52:40+02:00"
+  "created": "2026-10-20T16:05:28+02:00"
 }

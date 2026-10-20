@@ -800,10 +800,10 @@
     "parts": [
       "wall"
     ],
-    "tris": 618,
-    "source_sha": "15c5cb869dc3",
+    "tris": 606,
+    "source_sha": "2840470e3566",
     "approved_by": null,
-    "synced": "2026-10-20T15:52:55+02:00"
+    "synced": "2026-10-20T16:05:48+02:00"
   },
   "wall_pilaster_upper": {
     "size": [
@@ -815,10 +815,10 @@
     "parts": [
       "wall"
     ],
-    "tris": 618,
-    "source_sha": "0382f9e62b8e",
+    "tris": 606,
+    "source_sha": "28dee2f28d92",
     "approved_by": null,
-    "synced": "2026-10-20T15:52:55+02:00"
+    "synced": "2026-10-20T16:05:48+02:00"
   },
   "wall_tri_base": {
     "size": [

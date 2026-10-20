@@ -13,7 +13,8 @@ const CENTRE := 1
 const CAP := 4  # a corridor's cap region is its own plus 4
 const RIM := 11
 const BAND := 12
-const REGIONS := 13
+const STUD := 11  # a corridor's mid-side stud region (the lego top) is its own plus 11; clear where the corridor is open
+const REGIONS := 17
 ## How far the walkway goes from the stone toward the owner's colour (session 26's call).
 static var walk_tint := 0.6
 ## The rim line round the deck and the band round the body's top, both unpicked (D79), 0 = stone. Tool knobs.
@@ -79,7 +80,8 @@ static func dress(art: Node3D) -> void:
 
 
 ## One colour per region: the walkway (the centre and every open corridor with its cap) in the owner's tint, the
-## deck's corners and the rim stone, the body and merlons their painted stone (factor white).
+## deck's corners and the rim stone, the body and merlons their painted stone (factor white), and a mid-side stud
+## only where no own wall docks on that side (alpha 0 drops it in the shader, D80).
 static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0) -> void:
 	var m := material(art)
 	if m == null:
@@ -92,9 +94,11 @@ static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0) -> voi
 	colors[0] = WHITE
 	colors[CENTRE] = walk
 	for r in DIRS:
+		colors[r + STUD] = WHITE
 		if open.get(r, false):
 			colors[r] = walk
 			colors[r + CAP] = walk
+			colors[r + STUD] = Color(1, 1, 1, 0)
 	colors[RIM] = STONE.lerp(team, rim_tint)
 	var band := STONE.lerp(team, band_tint)  # over the stone texture: the factor that reaches the band colour
 	colors[BAND] = Color(band.r / STONE.r, band.g / STONE.g, band.b / STONE.b)
