@@ -1,4 +1,4 @@
-# Session 31: every piece stacks, and nobody builds inside another player's ring
+# Session 32: every piece stacks, and nobody builds inside another player's ring
 
 Sebastian, 2026-10-20, after session 28: "Hm, seems like stacking is still borken! Also, thje ai
 can seemingly build anywhere... It shopuld be limited by the same ruels as the human player!"
@@ -61,5 +61,5 @@ and `RingPlan` for the sim (the AI then built at (7, 11) inside the human's ring
 ## Verification
 
 - Suite green, 19 entries.
-- [31-stack.jpg](31-stack.jpg): a turned three over the east side of the start ring, the three
+- [32-stack.jpg](32-stack.jpg): a turned three over the east side of the start ring, the three
   storey ghosts, then the three placed storeys.
