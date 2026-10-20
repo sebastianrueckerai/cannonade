@@ -53,9 +53,10 @@ a full-tile wall block on each of its cells. Blocks that share a side are one wa
 that touch only at a corner do not join, so a ring must close side to side. Everything you
 place needs one tile within two tiles of your own walls or of a castle you hold, so nobody
 builds behind enemy lines, and nobody builds on ground another player's closed ring holds. The
-AI keeps the same rules. Any piece stacks when every cell lies on one of your walls with no
-storey yet, and a stacked tile takes two shells. Held over your walls, the piece shows the
-storeys it adds, and the cursor on a block picks that block, not the ground hidden behind it.
+AI keeps the same rules. A piece stacks wherever your walls fill every tile under it, whichever
+pieces placed them, as long as none of those tiles has a storey yet. A stacked tile takes two
+shells. Held over your walls, the piece shows the storeys it adds, red where it cannot stack,
+and the cursor on a block picks that block, not the ground hidden behind it.
 A wall shot down breaks into pieces that fly from the shot, land on the walls around and sink
 into the ground.
 Every game deals each player a different wall look of four. The walkway along the top of a wall carries the

@@ -92,7 +92,7 @@ static func dress(art: Node3D) -> void:
 ## One colour per region: the walkway (the centre and every open corridor with its cap) in the owner's tint, the
 ## deck's corners and the rim stone, the body and merlons their painted stone (factor white), and a mid-side stud
 ## only where no own wall docks on that side (alpha 0 drops it in the shader, D80).
-static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0) -> void:
+static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0, tint := Color.WHITE) -> void:
 	var m := material(art)
 	if m == null:
 		return
@@ -114,6 +114,7 @@ static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0) -> voi
 	colors[BAND] = Color(band.r / STONE.r, band.g / STONE.g, band.b / STONE.b)
 	m.set_shader_parameter("colors", colors)
 	m.set_shader_parameter("shade", shade)
+	m.set_shader_parameter("tint", tint)
 
 
 ## A hand piece: each cell wears the owner's block, its walkway running toward the piece's other cells, in the

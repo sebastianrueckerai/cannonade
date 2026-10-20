@@ -47,7 +47,7 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 ## 5. Walls
 
 - A wall tile dies to one shell. A double wall takes two, the upper storey first.
-- Any piece stacks when every cell lies on one of your walls with no storey yet (D82). Each cell adds a storey.
+- A piece stacks wherever your walls fill every tile under it, whichever pieces placed them, and none of those tiles has a storey yet (D82). Each cell adds a storey.
 - Walls have no damage states. A hit wall is a gone wall.
 - Walls do nothing during the battle. They block no shell and switch off no gun. Their whole job is the check.
 - The check never destroys a wall. Only shells destroy walls.

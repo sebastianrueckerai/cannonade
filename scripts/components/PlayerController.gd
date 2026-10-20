@@ -13,6 +13,10 @@ const UpgradeCluster = preload("res://scripts/UpgradeCluster.gd")
 
 ## Above the top of every wall block and storey: where the view ray starts looking for blocks.
 const RAY_TOP := 2.5
+## How far a storey stands above the block under it
+const STOREY := 0.75
+## The tint of storeys the held piece shows where it cannot stack
+const NO_STACK := Color(1.0, 0.4, 0.4)
 ## Parts cap per castles held: 1 castle 6 parts, 2 castles 10, then 13, 15, 17.
 const PARTS_CAP := [0, 6, 10, 13, 15, 17]
 ## Standing limit on gun parts; a cap below the placed guns blocks new placement only.
@@ -38,6 +42,8 @@ var canPlaceWall := false
 var canPlaceBuilding := false
 var freeTileSelected := false
 var canStackWall := false
+## the cursor is on an own wall with a wall piece in hand: the piece shows storeys there, red when it cannot stack
+var overOwnWall := false
 var canCombine := false
 var aimPoint := Vector3.ZERO
 var wallSpawn: Node3D = null
@@ -169,6 +175,7 @@ func update_point_and_tile_selected() -> void:
 			t.highlight_off()
 	litTiles = []
 	canStackWall = false
+	overOwnWall = false
 	canPlaceWall = false
 	canPlaceBuilding = false
 	freeTileSelected = false
@@ -200,7 +207,8 @@ func update_point_and_tile_selected() -> void:
 			if U.alive(buildableTileSelected.structure) and U.alive(nextBuilding):
 				canCombine = can_combine_next_building_with_tile(buildableTileSelected)
 			canStackWall = can_stack_on(buildableTileSelected)
-			if canStackWall:
+			overOwnWall = U.alive(nextWall) and _own_wall(buildableTileSelected)
+			if overOwnWall:
 				next_wall_to_wall()
 			else:
 				next_wall_to_gui()
@@ -212,7 +220,7 @@ func update_point_and_tile_selected() -> void:
 ## behind them; everything turns solid again once nothing blocks.
 func _fade_blocking_castles() -> void:
 	if (not U.alive(nextWall) and not U.alive(nextBuilding)) \
-			or (not freeTileSelected and not canStackWall):
+			or (not freeTileSelected and not overOwnWall):
 		for c in fadedCastles:
 			U.set_alpha(c.go, 1.0)
 		fadedCastles.clear()
@@ -280,7 +288,11 @@ func can_stack_on(tile) -> bool:
 
 
 func _room_on_top(t) -> bool:
-	return t.isWall and map.get_mini(t.idxX, t.idxZ) == playerID and not U.alive(t.wallStacked) and not t.burning
+	return _own_wall(t) and not U.alive(t.wallStacked) and not t.burning
+
+
+func _own_wall(t) -> bool:
+	return t.isWall and map.get_mini(t.idxX, t.idxZ) == playerID
 
 
 func can_combine_next_building_with_tile(tile) -> bool:
@@ -373,19 +385,26 @@ func switch_casting_shadows(n: Node3D, on := true) -> void:
 	U.set_shadows(n, on)
 
 
-## The held piece over own walls shows the storeys it stacks as, darkened like every ghost: on each cell the
-## look's upper storey where the placed one stands, its walkway following that tile's neighbours.
+## The held piece over own walls shows the storeys it stacks as, darkened like every ghost and red when it cannot
+## stack: on each cell the look's upper storey square to the map, where the placed one stands (a storey higher on a
+## tile that has one), its walkway following that tile's neighbours.
 func next_wall_to_wall() -> void:
 	U.set_parent(nextWall, buildableTileSelected.go)
 	switch_casting_shadows(nextWall, true)
 	nextWall.position = Vector3.ZERO
 	_settle_cells()
 	var nodes := nextWall.get_children().filter(func(n): return n is Node3D)
-	var tiles := piece_tiles(buildableTileSelected)
-	for i in tiles.size():
+	var cells: Array[Vector2i] = U.comp(nextWall, "BuildingBlock").cells
+	for i in cells.size():
+		var x: int = buildableTileSelected.idxX + cells[i].x
+		var z: int = buildableTileSelected.idxZ + cells[i].y
+		var t = map.tiles[x][z] if x >= 0 and z >= 0 and x < map.sizeX and z < map.sizeZ else null
 		nodes[i].global_basis = Basis()  # square to the map like the placed storey, however the piece is turned
+		if t != null and U.alive(t.wallStacked):
+			nodes[i].position.y += STOREY
 		WallComp.put_on(nodes[i], WallComp.storey(Catalog.wall_look(self)))
-		WallComp.paint_art(nodes[i].get_node("Art"), self, WallComp.open_sides(tiles[i], self), 0.7)
+		WallComp.paint_art(nodes[i].get_node("Art"), self, WallComp.open_sides(t, self) if t != null else {}, 0.7,
+				Color.WHITE if canStackWall else NO_STACK)
 
 
 func _hide_decorations() -> void:
