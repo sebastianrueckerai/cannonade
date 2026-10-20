@@ -42,8 +42,8 @@ const PHASE_NAMES := ["BUILD WALLS", "PLACE CANNONS", "BATTLE"]
 const HUD_GAP := 6.0
 const HELP := [
 	"LMB: place the piece, or stack it on your walls   X / Y: rotate   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: menu",
-	"RMB: place the cannon (costs parts), on a cannon: fuse   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: menu",
-	"Space: fire at the cursor   Wheel: zoom   MMB drag: pan   Esc: menu",
+	"LMB: place the cannon (costs parts), on a cannon: fuse   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: menu",
+	"LMB: fire at the cursor   Wheel: zoom   MMB drag: pan   Esc: menu",
 ]
 # The team set of the art kit, game/art-direction/palette.json in the blender-ai repo (D21): main, highlight plus, highlight minus.
 const PLAYER_COLORS := [
@@ -67,6 +67,10 @@ var _used_seed := 1
 ## The HUD: the countdown, the phase word, the help line, and a parts / castles pair a player
 var _count: Label
 var _phase: Label
+## The banner that counts each phase in: its phase word and its seconds
+var _banner: PanelContainer
+var _bannerPhase: Label
+var _bannerCount: Label
 var _help: Label
 var _huds: Array = []
 ## Set before adding the node to build from this config instead of a mode
@@ -107,7 +111,7 @@ func _ready() -> void:
 	if args.has("quit-after"):
 		quit_after = float(args["quit-after"])
 	var cfg: Dictionary = MODES[mode].duplicate()
-	for key in ["walls", "guns", "battle"]:
+	for key in ["walls", "guns", "battle", "ready"]:
 		if args.has(key):
 			cfg[key] = float(args[key])
 	for key in ["size", "width"]:
@@ -150,6 +154,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	game.wallDuration = cfg["walls"]
 	game.gunDuration = cfg["guns"]
 	game.battleDuration = cfg["battle"]
+	game.readyDuration = cfg.get("ready", game.readyDuration)
 	game.initialShips = cfg["ships"]
 	game.castles = cfg.get("castles", true)
 	game.map = map
@@ -252,7 +257,7 @@ func _setup_environment(cfg: Dictionary) -> void:
 
 ## The HUD wears the menu's parchment (D7): ink on parchment plaques in the Alegreya of Art.theme(). The
 ## countdown with the phase word under it at the top, a parts / castles plaque a player in the top corners, the
-## help line for the phase at the bottom.
+## help line for the phase at the bottom, the banner that counts each phase in at the centre.
 func _setup_ui() -> void:
 	ui = CanvasLayer.new()
 	ui.name = "UI"
@@ -283,6 +288,18 @@ func _setup_ui() -> void:
 	help.offset_bottom = -HUD_GAP
 	_help = _label("Text", 12)
 	help.add_child(_help)
+	_banner = _plaque("Banner")
+	_banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	_banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_banner.grow_vertical = Control.GROW_DIRECTION_BOTH
+	_banner.visible = false
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", -6)
+	_banner.add_child(col)
+	_bannerPhase = _label("Word", 26)
+	col.add_child(_bannerPhase)
+	_bannerCount = _label("Seconds", 44, ACCENT)
+	col.add_child(_bannerCount)
 
 
 ## The board fits between the timer and the help line: the share of the view's height each takes, with a gap.
@@ -293,10 +310,11 @@ func _hud_band() -> Vector2:
 	return Vector2(top, bottom) / h
 
 
-## One parchment plaque, themed like the menu.
+## One parchment plaque, themed like the menu. It only shows: the mouse goes through to the board and the camera.
 func _plaque(name: String) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.name = name
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.theme = Art.theme()
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(PARCHMENT, 0.92)
@@ -354,6 +372,8 @@ func _make_player_hud(i: int, is_ai: bool, color: Color) -> Dictionary:
 func _on_phase_changed(phase: int) -> void:
 	_phase.text = PHASE_NAMES[phase] + ("   Enter: next" if practice else "")
 	_phase.add_theme_color_override("font_color", PHASE_COLORS[phase])
+	_bannerPhase.text = PHASE_NAMES[phase]
+	_bannerPhase.add_theme_color_override("font_color", PHASE_COLORS[phase])
 	_help.text = HELP[phase]
 
 
@@ -364,10 +384,12 @@ func _process(_delta: float) -> void:
 	_update_hud()
 
 
-## The countdown, red in its last seconds, and every player's parts and castles.
+## The banner while it counts, the countdown, red in its last seconds, and every player's parts and castles.
 func _update_hud() -> void:
+	_banner.visible = game != null and game.started and game.readyLeft > 0.0
 	if game == null or not game.started:
 		return
+	_bannerCount.text = "%d" % ceili(game.readyLeft)
 	var left := int(ceilf(game.timeLeftInRound))
 	_count.text = "%d" % left
 	_count.add_theme_color_override("font_color", ACCENT if left <= game.COUNTDOWN else INK)
@@ -482,7 +504,7 @@ func _to_menu() -> void:
 ## Short message in the middle of the screen.
 func _toast(text: String) -> void:
 	var panel := _plaque("Toast")
-	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
 	var l := _label("Text", 18)

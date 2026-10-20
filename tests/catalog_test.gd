@@ -154,6 +154,9 @@ func _check_workflow_in_game() -> void:
 	battery.behaviour(FlakBehaviour).shoot_range = 6.0
 	ResourceSaver.save(battery, TMP.path_join("flak_battery.tres"))
 	await _press_f5()
+	var toast: Control = main.ui.get_node("Toast")
+	check(toast.get_global_rect().get_center().distance_to(toast.get_viewport_rect().get_center()) < 2.0,
+			"the F5 toast sits in the window's centre (%s)" % [toast.get_global_rect()])
 	await seconds(1.6)  # the shot fired before F5 finishes its old 2 s reload
 	check(gun.try_shoot(target.go.global_position, target), "fires again once the old reload is over")
 	await seconds(0.3)

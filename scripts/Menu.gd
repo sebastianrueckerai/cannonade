@@ -9,21 +9,19 @@ const MODES := [
 	["ai2", "Watch: AI vs. AI"],
 	["practice", "Practice (a fort that never fires back)"],
 ]
-## The five actions the panel remaps; everything else (wheel, middle drag,
+## The three actions the panel remaps; everything else (wheel, middle drag,
 ## Enter, Esc) is hardcoded where it is used and listed as a fixed row.
 const REMAP := [
-	["build_wall", "place / stack the wall piece"],
-	["build_building", "place the building / fuse four cannons"],
+	["act", "place the piece or the cannon, fuse, fire"],
 	["rotate_cw", "rotate the wall piece clockwise"],
 	["rotate_ccw", "rotate the wall piece counter-clockwise"],
-	["fire", "fire the cannons"],
 ]
 const FIXED := [
 	["zoom in / out towards the cursor", "Mouse wheel"],
 	["pan the view while zoomed in", "Middle mouse drag"],
 	["discard the piece / building in hand", "Click outside the map"],
 ]
-const INTRO := "You and the AI each start with a walled castle. Rounds alternate: green build phase, red battle phase.\n\nTurn and drop wall pieces. Pieces that share a side join; corners do not. Build within two tiles of your walls or a castle you hold.\n\nRing in neutral castles to claim them and raise your parts cap. Place cannons; fuse four in a 2x2 square into a heavy gun. Buildings outside your walls burn at the end of the build phase.\n\nRuin the enemy's last castle before yours falls."
+const INTRO := "You and the AI each start with a walled castle. A round is three phases: build walls, place cannons, battle.\n\nTurn and drop wall pieces. Pieces that share a side join; corners do not. Build within two tiles of your walls or a castle you hold.\n\nRing in neutral castles to claim them and raise your parts cap. Place cannons; fuse four in a 2x2 square into a heavy gun. Buildings outside your walls burn when the battle starts.\n\nRuin the enemy's last castle before yours falls."
 const REMAP_PATH := "user://input_remap.cfg"
 
 ## The help overlay while open, null when closed.
@@ -194,7 +192,7 @@ func _show_help() -> void:
 		grid.add_child(bind)
 	var fixed: Array = FIXED.duplicate()
 	if not OS.has_feature("web"):
-		fixed.append(["switch build and battle (Practice)", "Enter"])
+		fixed.append(["next phase (Practice)", "Enter"])
 	fixed.append(["back to the menu", "Esc"])
 	for row in fixed:
 		var what := Label.new()

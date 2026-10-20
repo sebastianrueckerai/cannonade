@@ -484,7 +484,7 @@ func manage_player_actions() -> void:
 			buildableTileSelected.shake(2.0)
 		match game.phase:
 			game.Phase.WALLS:
-				if button_down("build_wall") and U.alive(nextWall):
+				if button_down("act") and U.alive(nextWall):
 					if canPlaceWall:
 						build_next_wall(buildableTileSelected)
 					elif canStackWall:
@@ -492,7 +492,7 @@ func manage_player_actions() -> void:
 					else:
 						Sound.play("place_invalid")
 			game.Phase.GUNS:
-				if button_down("build_building") and U.alive(nextBuilding):
+				if button_down("act") and U.alive(nextBuilding):
 					if canPlaceBuilding:
 						build_next_building()
 					elif canCombine:
@@ -500,7 +500,7 @@ func manage_player_actions() -> void:
 					else:
 						Sound.play("place_invalid")
 			game.Phase.BATTLE:
-				if button_down("fire"):
+				if button_down("act"):
 					for cannon in activeCannons:
 						if cannon.try_shoot(aimPoint, buildableTileSelected):
 							break
@@ -514,10 +514,10 @@ func manage_player_actions() -> void:
 			if button_down("rotate_ccw"):
 				U.comp(nextWall, "BuildingBlock").rotate_counter_clockwise()
 				Sound.play("rotate")
-	elif voidSelected:
-		if button_down("build_wall") and U.alive(nextWall):
+	elif voidSelected and button_down("act"):
+		if U.alive(nextWall):
 			drop(nextWall, true)
-		elif button_down("build_building") and U.alive(nextBuilding):
+		elif U.alive(nextBuilding):
 			drop(nextBuilding, false)
 
 

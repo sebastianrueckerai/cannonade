@@ -75,8 +75,9 @@ script and function that fires it. "Hook" means the code is silent today and nee
 
 | id | clip | trigger | how often | priority |
 |---|---|---|---|---|
-| horn_battle | a bugle call, two rising notes | `GameController.next_phase` (170), into battle | once a round | A |
-| horn_build | a softer bell or whistle, the shutters open | `next_phase`, into build | once a round | A |
+| horn_battle | a bugle call, two rising notes | `GameController._begin`, the battle's banner run out | once a round | A |
+| horn_build | a softer bell or whistle, the shutters open | `_begin`, the wall phase's banner run out | once a round | A |
+| horn_guns | the cannon phase opens, between the two | `_begin`, the cannon phase's banner run out | once a round | A |
 | countdown x1 | a wooden tick on each of the last 5 s | `GameController` 158, the timer label | 5 a phase | A |
 | burn_outside | a building outside a ring is lost at the check: a short crackle and a puff | `BuildingPlace.un_build` (124) from `run_check` (227) | a few a round | A |
 | castle_claimed | a chime sting with a flag going up | `Castle.claim` (53) | rare | A |
@@ -157,7 +158,9 @@ live in the round's `picks.json`, the page of round 37 shows them ticked, and `a
 the assets from it. D83, from round 37: shot_cannon x3, shot_heavy x3, castle_claimed, draw_piece,
 ship_sink, place_piece, place_invalid, horn_battle, hit_water, ui_click, crumble x3, castle_ruin x3 and
 gun_destroyed x3 (the metallic set, used untested on his word). Open from the A list: the rest, with
-candidates on the page.
+candidates on the page. Session 41 took two of those candidates in unheard, for his ear and not a pick, since
+every phase now starts with a call: horn_build, the harbour bell `fill-horn-build-a--eleven`, and horn_guns,
+the boatswain's whistle `fill-horn-build-b--eleven`, made with `audio.py final`, not in `picks.json`.
 
 D84, from round 36: the build and the battle theme are the age-of-sail chiptune from ACE-Step,
 `build.ogg` and `battle.ogg`, full clips not yet cut to loops. D85, from round 38: `menu.ogg` is the
@@ -172,7 +175,7 @@ variants from the `_n` suffix, and plays a cue with `Sound.play(cue, db)`: a ran
 same twice in a row, at most three voices per cue with the oldest stolen, on the clip's bus. A cue with no
 clip plays nothing, so every hook of the cue list is in the code and a new clip only needs its file. A
 cue in `Sound.ALIAS` borrows another's clip until it has one: ui_hover, countdown, shot_ship, stack_block,
-hit_gun, hit_castle, and horn_guns, the cannon phase's horn, which blows the battle horn 6 dB down (session 38). `Sound.music(cue)` loops `music/<cue>.ogg` on the Music bus. The buses are
+hit_gun and hit_castle. `Sound.music(cue)` loops `music/<cue>.ogg` on the Music bus. The buses are
 Master, Music, SFX and UI in [default_bus_layout.tres](/home/womb/repos/grid-cannons/default_bus_layout.tres).
 Another player's action plays 6 dB down. The clips draw their randomness from the autoload's own
 generator, so seeded battles and the lab stay as they were.

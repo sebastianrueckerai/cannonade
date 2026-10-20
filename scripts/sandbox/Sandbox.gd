@@ -79,8 +79,8 @@ func _make_world(kinds: Array) -> void:
 	world = Main.new()
 	world.name = "World"
 	world.config = {
-		"players": kinds, "size": scenario.map_size, "walls": 1e9, "guns": 1e9, "battle": 1e9, "pitch": 60.0,
-		"fov": 30.0, "ships": 0, "seed": scenario.seed, "decorate": false, "colors": SIDE_COLORS,
+		"players": kinds, "size": scenario.map_size, "walls": 1e9, "guns": 1e9, "battle": 1e9, "ready": 0.0,
+		"pitch": 60.0, "fov": 30.0, "ships": 0, "seed": scenario.seed, "decorate": false, "colors": SIDE_COLORS,
 		"hud": false, "castles": false, "band": ui.bands()}
 	add_child(world)
 	world.ui.visible = false  # the sandbox panels show the same information

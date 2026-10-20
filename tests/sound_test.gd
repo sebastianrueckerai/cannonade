@@ -83,17 +83,26 @@ func _check_build() -> void:
 	check(not Sound.playing("castle_ruin"), "nothing ruined yet")
 
 
-## A voice of the battle horn plays at `db`.
-func _horn_at(db: float) -> bool:
-	return Sound._voices.any(func(v): return Sound._live(v) and v.get_meta("cue") == "horn_battle" and v.volume_db == db)
+## Waits until the banner that counts the phase in has run out.
+func _banner_out() -> void:
+	while game.readyLeft > 0.0:
+		await get_tree().process_frame
 
 
 func _check_battle() -> void:
+	check(not Sound.playing("horn_build"), "the game's first wall phase holds its horn while the banner counts")
+	await _banner_out()
+	check(Sound.playing("horn_build"), "the banner runs out: the wall phase blows horn_build")
 	game.next_phase()
-	check(_horn_at(-6.0) and Sound.music_cue() == "build",
-			"the cannon phase blows the battle horn softer, through horn_guns, and keeps the build music")
+	check(not Sound.playing("horn_guns"), "the cannon phase holds its horn while the banner counts")
+	await _banner_out()
+	check(Sound.playing("horn_guns") and Sound.music_cue() == "build",
+			"the banner runs out: the cannon phase blows horn_guns and keeps the build music")
 	game.next_phase()
-	check(_horn_at(0.0), "the battle phase blows horn_battle at full level")
+	check(not Sound.playing("horn_battle") and Sound.music_cue() == "build",
+			"the battle holds its horn and its music while the banner counts")
+	await _banner_out()
+	check(Sound.playing("horn_battle"), "the banner runs out: the battle blows horn_battle")
 	check(Sound.music_cue() == "battle", "the battle music plays, plays %s" % Sound.music_cue())
 	var wall = _tile(3, 2)
 	wall.damage_structure(10.0)
@@ -124,7 +133,8 @@ func _check_battle() -> void:
 		check(Sound.playing("hit_water"), "a shell in the sea plays hit_water")
 	await get_tree().process_frame
 	game.next_phase()
-	check(Sound.playing("horn_build") or not Sound.has("horn_build"), "the build phase blows horn_build once it has a clip")
+	await _banner_out()
+	check(Sound.playing("horn_build"), "the walls return: horn_build blows when the banner runs out")
 	check(Sound.music_cue() == "build", "the build music returns, plays %s" % Sound.music_cue())
 
 

@@ -529,3 +529,13 @@ the next gun go: a player holds one piece at a time and sees it only on the boar
 16:9 near enough once the HUD takes its strips, with each side's neutrals spread over the width and five free rows
 off the middle line on each side. The HUD takes the menu's font and the palette's ink and parchment (D7). The
 numbers (15 s, 52 wide, the anchors, the plaque style) are the session's calls for his review. Session 38, roadmap I67.
+
+## D87. A banner counts every phase in, and the left mouse does everything (2026-10-21, Sebastian)
+
+"They need a small pop up anouncing them with a 3 sec countdown and a sound when they start. Same for the shhot
+round. NMow that we split it, make placing of everything and shooting happen with LMB." Every phase, the game's
+first wall phase too, opens on a small banner in the window's centre: the phase's name over 3, 2, 1. Nobody acts
+under it and the phase clock stands, so the 45, 15 and 30 s stay whole; the phase starts with its call when the count
+runs out. One button, the left mouse, places the wall piece, places the cannon and fires, the phase deciding which;
+Space and the right mouse lose their jobs. The calls for the wall and the cannon phase, a bell and a whistle from the
+round 37 page, are in unheard for his ear, not picks. Session 41, roadmap I70.

@@ -303,7 +303,7 @@ func refresh() -> void:
 			"Erase: click or drag over things to remove them" if sandbox.tool == "erase" else \
 			"Click to place %s (R rotates)" % Catalog.get_def(sandbox.tool).label()
 	_hint.text = ("Placing for %s – %s · right mouse button erases · Ctrl+Z undo · keys 1 / 2 switch side · wheel zoom, middle mouse pans" % [sandbox.SIDE_NAMES[sandbox.side], tool_text]) if editing else \
-			"Battle – watch, or play blue: aim with the mouse, Space fires · Back to editing restores the layout"
+			"Battle – watch, or play blue: aim with the mouse, the left mouse fires · Back to editing restores the layout"
 
 
 ## Per frame: status line and stats.

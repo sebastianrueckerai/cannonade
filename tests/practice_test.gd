@@ -130,7 +130,7 @@ func _run() -> void:
 	# a shell destroys an enemy wall; nothing rebuilds it
 	var front := Vector2i(b.x, map.sizeZ - 1 - map.sizeZ / 4 - 2)  # the ring wall south of the enemy's castle
 	await point_at_tile(front)
-	await press_key(KEY_SPACE)
+	await click()
 	await seconds(12.0)
 	check(not U.alive(map.tiles[front.x][front.y].structure), "a shell destroys the aimed enemy wall")
 	await press_key(KEY_ENTER)

@@ -231,10 +231,10 @@ func _run() -> void:
 	var red_wall = sb.map.tiles[20][23]
 	await move_to(screen_of(Vector2i(red_wall.idxX, red_wall.idxZ)))
 	await seconds(1.0)
-	await key(KEY_SPACE)
+	await click_tile(Vector2i(red_wall.idxX, red_wall.idxZ))
 	await seconds(6.0)
 	check(sb.player(1).stats.get("shots", 0) == 0, "the dormant AI never fires")
-	check(sb.player(0).stats.get("shots", 0) >= 1, "the player fires with Space")
+	check(sb.player(0).stats.get("shots", 0) >= 1, "the player fires with the left mouse")
 	await ui_click("Play")
 
 	# Mirror: blue's layout replaces red's, mirrored top to bottom; undo brings red's back

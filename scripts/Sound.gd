@@ -12,7 +12,6 @@ const MUSIC_DIR := "res://assets/audio/music"
 const ALIAS := {
 	"ui_hover": ["ui_click", -8.0],
 	"countdown": ["ui_click", -4.0],
-	"horn_guns": ["horn_battle", -6.0],
 	"shot_ship": ["shot_cannon", -6.0],
 	"stack_block": ["place_piece", 2.0],
 	"hit_gun": ["hit_wall", 0.0],

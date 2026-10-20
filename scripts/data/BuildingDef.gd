@@ -8,7 +8,7 @@ enum Category { BUILDING, WALL, BASE, HIDDEN }
 
 @export var display_name := ""
 @export_multiline var description := ""
-## BUILDING: placed with the right mouse button; WALL: offered as next wall;
+## BUILDING: dealt in the cannon phase; WALL: offered as next wall;
 ## BASE: a player's start base; HIDDEN: only used by other things (e.g. ships)
 @export var category := Category.BUILDING
 ## Scene with the visuals. Behaviours find their parts by node name

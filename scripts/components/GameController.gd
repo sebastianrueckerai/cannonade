@@ -7,6 +7,8 @@ enum Phase { WALLS, GUNS, BATTLE }
 @export var wallDuration := 45.0
 @export var gunDuration := 15.0
 @export var battleDuration := 30.0
+## The banner counts every phase in for this long: nobody acts and the phase clock stands.
+@export var readyDuration := 3.0
 @export var randomSeed := 41
 @export var useRandomSeed := false
 @export var initialShips := 7
@@ -17,6 +19,8 @@ var players: Array = []
 var map = null
 var fleet = null
 var timeLeftInRound := 0.0
+## Seconds left on the banner, 0 once the phase runs
+var readyLeft := 0.0
 ## Phase flips so far
 var roundNumber := 0
 var started := false
@@ -48,6 +52,7 @@ func start_game() -> void:
 		p.get_next_wall()
 	position_camera()
 	started = true
+	readyLeft = readyDuration
 	Sound.music("build")
 
 
@@ -200,11 +205,12 @@ func _update_round_time(delta: float) -> void:
 
 ## Ends the current phase: walls turn into cannons, cannons into the battle (through the rules check), the
 ## battle into walls. The hand follows the phase: the wall piece flies away when the cannons come, the gun
-## when the battle starts, and a fresh wall is drawn when the walls return.
+## when the battle starts, and a fresh wall is drawn when the walls return. Then the banner counts the new phase in.
 func next_phase() -> void:
 	roundNumber += 1
 	phase = ((phase + 1) % Phase.size()) as Phase
 	timeLeftInRound = duration()
+	readyLeft = readyDuration
 	if phase == Phase.BATTLE and castles and started:
 		run_check()
 	for p in players:
@@ -216,9 +222,15 @@ func next_phase() -> void:
 			Phase.BATTLE:
 				p.drop(p.nextBuilding, false)
 	phase_changed.emit(phase)
-	if started:
-		Sound.play(HORNS[phase])
-		Sound.music("battle" if phase == Phase.BATTLE else "build")
+	if started and readyLeft <= 0.0:
+		_begin()
+
+
+## The banner ran out: the phase's horn blows and its music plays.
+func _begin() -> void:
+	readyLeft = 0.0
+	Sound.play(HORNS[phase])
+	Sound.music("battle" if phase == Phase.BATTLE else "build")
 
 
 # ------------------------------------------------------------- the check
@@ -319,9 +331,15 @@ func end(winner) -> void:
 func _process(delta: float) -> void:
 	if not started:
 		return
-	_update_round_time(delta)
+	if readyLeft > 0.0:
+		readyLeft -= delta
+		if readyLeft <= 0.0:
+			_begin()
+	else:
+		_update_round_time(delta)
 	for p in players:
 		p.refresh_active_cannons()
 		p.try_get_next_building()
 		p.update_point_and_tile_selected()
-		p.manage_player_actions()
+		if readyLeft <= 0.0:
+			p.manage_player_actions()

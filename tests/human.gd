@@ -16,7 +16,7 @@ var failures: Array = []
 func _ready() -> void:
 	get_tree().root.size = Vector2i(1280, 720)  # headless windows are 64 x 64
 	Main.requested_mode = "versus"
-	Main.requested_args = {"seed": "7", "no-decorations": "true"}
+	Main.requested_args = {"seed": "7", "no-decorations": "true", "ready": "0"}
 	main = Main.new()
 	get_tree().root.add_child.call_deferred(main)
 	await get_tree().process_frame
@@ -91,14 +91,14 @@ func press(action: String) -> void:
 	for pressed in [true, false]:
 		var ev: InputEvent
 		match action:
-			"build_wall", "build_building":
+			"act":
 				var mb := InputEventMouseButton.new()
-				mb.button_index = MOUSE_BUTTON_LEFT if action == "build_wall" else MOUSE_BUTTON_RIGHT
+				mb.button_index = MOUSE_BUTTON_LEFT
 				mb.position = mouse
 				ev = mb
 			_:
 				var k := InputEventKey.new()
-				k.physical_keycode = {"fire": KEY_SPACE, "rotate_cw": KEY_X, "rotate_ccw": KEY_Y}[action]
+				k.physical_keycode = {"rotate_cw": KEY_X, "rotate_ccw": KEY_Y}[action]
 				ev = k
 		ev.pressed = pressed
 		Input.parse_input_event(ev)
@@ -169,7 +169,7 @@ func _run() -> void:
 	var piece = human.nextWall
 	var walls_before: int = human.wallTiles.size()
 	check(_shade(piece) < 1.0, "the ghost is darker than the ring's blocks")
-	await press("build_wall")
+	await press("act")
 	check(_all_blocks(want), "left click stamps a wall block on every tile the ghost covered")
 	check(want.all(func(t): return _shade(map.tiles[t.x][t.y].structure) == 1.0),
 			"the placed blocks wear the ring's colour, not the ghost's tint")
@@ -182,20 +182,20 @@ func _run() -> void:
 	human.build_wall(map.tiles[2][b.y], Catalog.spawn("wall"))
 	_hold("wall_3")
 	await point_at_tile(edge)
-	await press("build_wall")
+	await press("act")
 	check(not U.alive(map.tiles[0][b.y].structure) and not U.alive(map.tiles[1][b.y].structure),
 			"a piece hanging off the map edge places nothing")
 
 	# out of range: nothing is built (clear of every neutral castle band)
 	var far := Vector2i(map.sizeX / 2, map.sizeZ / 2 - 1)
 	await point_at_tile(far)
-	await press("build_wall")
+	await press("act")
 	check(not U.alive(map.tiles[far.x][far.y].structure), "no building far away from own walls")
 
 	# clicking outside the map discards the piece; a new one comes after it flew away
 	var dropped = human.nextWall
 	await point_at(map.tile_position(-6, -6))
-	await press("build_wall")
+	await press("act")
 	await seconds(3.3)
 	check(not U.alive(dropped) and U.alive(human.nextWall), "click outside the map discards the piece")
 
@@ -205,7 +205,7 @@ func _run() -> void:
 	var storey: String = Catalog.wall_look(human) + "_upper"
 	_hold("wall_3")
 	await point_at_wall(w)
-	await press("build_wall")
+	await press("act")
 	check(not U.alive(target.wallStacked), "a piece with cells off the walls does not stack")
 	_hold("wall_3")
 	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()  # upright, on the upright three placed above
@@ -218,7 +218,7 @@ func _run() -> void:
 	check(three.all(func(n): return n.basis.is_equal_approx(Basis()) and n.get_node("Art").get_meta("art_id") == Catalog.wall_look(human)),
 			"off the walls the turned three is blocks again, turned with the piece")
 	await point_at_wall(w)
-	await press("build_wall")
+	await press("act")
 	var stacked: Array = want.map(func(k): return map.tiles[k.x][k.y].wallStacked)
 	check(stacked.all(func(n): return U.alive(n) and Catalog.def_of(n).id == "wall"),
 			"the upright three stacks a storey on each of its walls")
@@ -233,7 +233,7 @@ func _run() -> void:
 	await point_at_wall(tee_at)
 	check(not human.canStackWall and human.nextWall.get_parent() == map.tiles[tee_at.x][tee_at.y].go
 			and tee.all(func(n): return _tint(n) == human.NO_STACK), "a T with its stem on the castle shows red storeys")
-	await press("build_wall")
+	await press("act")
 	check(not U.alive(map.tiles[tee_at.x][tee_at.y].wallStacked), "a click on the red storeys stacks nothing")
 
 	# a piece stacks wherever walls fill every tile under it, whichever pieces placed them: an S on two blocks of the
@@ -245,7 +245,7 @@ func _run() -> void:
 	_hold("wall_s")
 	await point_at_wall(below[0])
 	check(human.canStackWall, "the S fits on blocks of the ring and of another piece")
-	await press("build_wall")
+	await press("act")
 	check(([Vector2i(b.x, b.y - 2), Vector2i(b.x + 1, b.y - 2)] + below).all(func(k): return U.alive(map.tiles[k.x][k.y].wallStacked)),
 			"the S stacks a storey on each of the four")
 	for k in below:
@@ -268,17 +268,17 @@ func _run() -> void:
 	_hold("wall_1")
 	await point_at(hole_far)
 	check(human.buildableTileSelected == hole_tile, "the cursor picks the tile inside the enemy's ring")
-	await press("build_wall")
+	await press("act")
 	check(not U.alive(hole_tile.structure), "a block inside the enemy's ring is refused")
 	_offer_building("cannon")
 	await point_at(hole_far)
-	await press("build_building")
+	await press("act")
 	check(not U.alive(hole_tile.structure), "a gun inside the enemy's ring is refused")
 	for k in enemy_ring:
 		map.tiles[k.x][k.y].un_build()
 	_hold("wall_1")
 	await point_at(hole_far)
-	await press("build_wall")
+	await press("act")
 	check(U.alive(hole_tile.structure), "with the enemy's ring gone the block places")
 	hole_tile.un_build()  # it would reach the column the reach checks below walk
 
@@ -297,7 +297,7 @@ func _run() -> void:
 	check(cell.get_node("Art").get_meta("art_id") == storey and _shade(cell) < 1.0,
 			"the held block shows the darkened storey (%s, shade %s)" % [cell.get_node("Art").get_meta("art_id"), _shade(cell)])
 	var ghost_at: Transform3D = cell.get_node("Art").global_transform
-	await press("build_wall")
+	await press("act")
 	check(U.alive(east.wallStacked) and not U.alive(map.tiles[e.x][e.y + 1].wallStacked),
 			"the block stacks on the wall under the cursor, not on the one behind it")
 	check(U.alive(east.wallStacked) and east.wallStacked.get_node("Art").global_transform.is_equal_approx(ghost_at),
@@ -324,17 +324,17 @@ func _run() -> void:
 	check(_all_free(north), "the column north of the ring is free")
 	_hold("wall_1")
 	await point_at_tile(Vector2i(b.x, top + 3))
-	await press("build_wall")
+	await press("act")
 	check(not U.alive(map.tiles[b.x][top + 3].structure), "a block three tiles from every own wall is refused")
 	_hold("wall_3")
 	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()  # upright: d = 4, 3, 2
 	await point_at_tile(Vector2i(b.x, top + 3))
-	await press("build_wall")
+	await press("act")
 	check(_all_blocks([Vector2i(b.x, top + 2), Vector2i(b.x, top + 3), Vector2i(b.x, top + 4)]),
 			"an upright three places with only its bottom tile in reach")
 	_hold("wall_1")
 	await point_at_tile(Vector2i(b.x, top + 6))
-	await press("build_wall")
+	await press("act")
 	check(_all_blocks([Vector2i(b.x, top + 6)]), "new blocks extend reach: a block two past them places")
 	var bottom := b.y - 2
 	var south: Array = []
@@ -343,35 +343,35 @@ func _run() -> void:
 	check(_all_free(south), "the column south of the ring is free")
 	_offer_building("cannon")
 	await point_at_tile(Vector2i(b.x, bottom - 3))
-	await press("build_building")
+	await press("act")
 	check(not U.alive(map.tiles[b.x][bottom - 3].structure), "a gun three tiles from every own wall is refused")
 	await point_at_tile(Vector2i(b.x, bottom - 2))
-	await press("build_building")
+	await press("act")
 	check(U.alive(map.tiles[b.x][bottom - 2].structure), "a gun two tiles out places")
 	_hold("wall_1")
 	await point_at_tile(Vector2i(b.x, bottom - 4))
-	await press("build_wall")
+	await press("act")
 	check(not U.alive(map.tiles[b.x][bottom - 4].structure), "a gun anchors no reach: a block two past it is refused")
 	map.tiles[b.x][bottom - 2].un_build()  # it would count as an active gun below
 
-	# right click places the next building (a fixed piece: a drawn gun here would
+	# a left click places the next building (a fixed piece: a drawn gun here would
 	# also count as active below)
 	await seconds(0.5)
 	_offer_building("supply")
 	var building = human.nextBuilding
 	var free := free_tile_in_range()
 	await point_at_tile(free)
-	await press("build_building")
-	check(U.alive(building) and map.tiles[free.x][free.y].structure == building, "right click places the building")
+	await press("act")
+	check(U.alive(building) and map.tiles[free.x][free.y].structure == building, "a left click places the building")
 
-	# right click with a cannon on the fourth tile of a 2x2 fuses the heavy gun
+	# a left click with a cannon on the fourth tile of a 2x2 fuses the heavy gun
 	var quad := free_quad_in_range()
 	for i in 3:
 		var q = map.tiles[quad.x + i / 2][quad.y + i % 2]
 		human.build_building(q, Catalog.spawn("cannon"))
 	_offer_building("cannon")
 	await point_at_tile(quad + Vector2i(1, 1))
-	await press("build_building")
+	await press("act")
 	var fused = map.tiles[quad.x][quad.y].structure
 	check(U.alive(fused) and Catalog.def_of(fused).id == "cannon22a",
 			"the fourth cannon fuses the square into the heavy gun (got %s)"
@@ -382,7 +382,7 @@ func _run() -> void:
 	_pocket()
 	_offer_building("cannon")
 	await point_at_tile(b + Vector2i(3, 0))
-	await press("build_building")
+	await press("act")
 	await frames(2)  # active guns are re-evaluated every frame
 	check(human.activeCannons.size() == 1, "gun inside the walls is active")
 	game.timeLeftInRound = -1.5  # the cannon phase ends: the check, then the battle
@@ -395,9 +395,9 @@ func _run() -> void:
 	var ec: Vector2i = map.tile_index_at(enemy.go.global_position)
 	var enemy_wall = map.tiles[ec.x][ec.y - 2]  # the ring wall south of the 3x3 castle
 	await point_at_tile(Vector2i(enemy_wall.idxX, enemy_wall.idxZ))
-	await press("fire")
+	await press("act")
 	await seconds(12.0)
-	check(not U.alive(enemy_wall.structure), "space fires a shell that destroys the aimed enemy wall")
+	check(not U.alive(enemy_wall.structure), "a left click fires a shell that destroys the aimed enemy wall")
 
 	# with every own wall gone the castle alone anchors reach; a ruined castle anchors nothing
 	var own = null

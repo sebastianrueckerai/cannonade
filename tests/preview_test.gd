@@ -34,7 +34,7 @@ func _ready() -> void:
 
 func _build(mode: String, the_seed: String) -> void:
 	Main.requested_mode = mode
-	Main.requested_args = {"seed": the_seed}
+	Main.requested_args = {"seed": the_seed, "ready": "0"}
 	main = Main.new()
 	get_tree().root.add_child.call_deferred(main)
 	await get_tree().process_frame
@@ -154,7 +154,7 @@ func _check_gun_hover() -> void:
 
 
 ## A gun's plate goes wherever the gun goes and stays square to the grid while the gun turns: the gun rests in the
-## hand, previews on one hovered tile, then on the next, and a right click places it.
+## hand, previews on one hovered tile, then on the next, and a left click places it.
 func _check_plates() -> void:
 	var gun: Node3D = human.nextBuilding
 	var plate := gun.find_child("plate", true, false) as Node3D
@@ -170,13 +170,13 @@ func _check_plates() -> void:
 	_check_plate(gun, plate, rest, "previewed on the next tile")
 	for pressed in [true, false]:
 		var mb := InputEventMouseButton.new()
-		mb.button_index = MOUSE_BUTTON_RIGHT
+		mb.button_index = MOUSE_BUTTON_LEFT
 		mb.position = main.camera.unproject_position(map.tile_position(free[1].x, free[1].y, 0.1))
 		mb.pressed = pressed
 		Input.parse_input_event(mb)
 		await get_tree().process_frame
 	check(gun.get_parent() == map.tiles[free[1].x][free[1].y].go and human.nextBuilding != gun,
-			"a right click places the gun on the hovered tile")
+			"a left click places the gun on the hovered tile")
 	_check_plate(gun, plate, rest, "placed")
 	var gun_basis := gun.global_basis
 	U.shooter(gun).try_aim(map.tile_position(free[1].x + 3, free[1].y + 5))

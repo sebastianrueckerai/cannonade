@@ -29,20 +29,18 @@ not offer them. In `practice`, Enter steps to the next phase, so you can try the
 check on your own walls.
 
 Extra options after `--`: `--seed=N`, `--walls=SECONDS`, `--guns=SECONDS`,
-`--battle=SECONDS`, `--size=TILES` (the depth), `--width=TILES`, `--timescale=F`,
+`--battle=SECONDS`, `--ready=SECONDS` (the banner before each phase, 0 for none), `--size=TILES` (the depth), `--width=TILES`, `--timescale=F`,
 `--quit-after=SECONDS`, `--no-decorations`.
 
 ### Controls (same as the Unity input settings for player 1)
 
 | input             | action                                                   |
 |-------------------|----------------------------------------------------------|
-| left mouse        | place the wall piece, or stack it on your walls (wall phase) |
-| right mouse       | place the cannon at a parts cost, or fuse it onto three cannons (cannon phase) |
+| left mouse        | place the wall piece, or stack it on your walls (wall phase); place the cannon at a parts cost, or fuse it onto three cannons (cannon phase); fire (battle) |
 | X                 | rotate the wall piece clockwise                          |
 | Y or Z            | rotate the wall piece counter-clockwise                  |
 | mouse wheel       | zoom in / out (towards the cursor; fully out shows the whole map) |
 | middle mouse drag | pan the view while zoomed in                              |
-| Space             | fire (battle phase)                                       |
 | Enter             | step to the next phase (`practice` only)                 |
 | K / L             | testing keys: win / lose the running game at once         |
 | click outside map | discard the current piece / building                      |
@@ -67,7 +65,9 @@ a closed ring takes a wash of the colour of the player whose walls surround it m
 glance tells whose wall and whose ground is whose.
 
 A round is three phases: **build walls** (45 s), **place cannons** (15 s) and the
-**battle** (30 s). The plaque at the top counts each phase down and names it, its last
+**battle** (30 s). A small banner in the middle counts each phase in for 3 seconds; nobody
+acts while it shows, and the phase starts with its own call: a bell for the walls, a whistle
+for the cannons, a horn for the battle. The plaque at the top counts each phase down and names it, its last
 five seconds in red; the line at the bottom names the controls of the phase. You hold one
 thing at a time and see it only where you point: the wall piece in the wall phase, a drawn
 cannon in the cannon phase, each on the tile under the cursor, red where it cannot go.
@@ -280,15 +280,19 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 
 * `tests/check_scripts` – every script and generated scene loads.
 * `tests/sound_test` – the buses, the clips by cue with their variants and voice cap, and a voice at every
-  hook: a piece built, a gun refused, the horns and the music per phase, a shot, a hit, a wall and a gun
+  hook: a piece built, a gun refused, the horns and the music per phase once its banner runs out, a shot, a hit, a wall and a gun
   destroyed, a castle claimed, lost and ruined, the win music, the end buttons.
 * `tests/flood_test` – enclosure detection: walls enclose areas, gaps open them, and the
   optimised flood fill matches the original algorithm (kept in the test) on random edits.
 * `tests/human` – the human player through real mouse / key events: placing, rotating,
   discarding and stacking walls (a turned three on three walls, zoomed in, the cursor on a
   wall's top, the storey ghosts), no building inside the enemy's closed ring,
-  guns by right click at their parts cost, fusion, firing. K and L end the game and the end
-  screen fits the window.
+  guns by left click at their parts cost, fusion, firing with the left click. K and L end the
+  game and the end screen fits the window.
+* `tests/phase_test` – the banner counts each phase in at the window's centre, small and off
+  the other plaques, and a middle drag on it pans the board; under it a left click places and
+  fires nothing, the AI builds nothing and the clock stands; then the phase's horn blows and
+  the left click places the piece, places the cannon and fires.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
   cluster bombs, rockets, shield, flak and ships behave as in the game.
 * `tests/menu_test` – menu → chosen game mode → Esc → menu. The loading screen shows concept
@@ -301,7 +305,8 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
   wall phase and the cannon in the cannon phase; the HUD plaques stay on screen, apart, and
   off the board, which spans the window's width.
 * `tests/catalog_test` – shipped data is valid; data problems are reported, not crashed on;
-  duplicate a building, change it, press F5: it works in the running game (incl. recipes).
+  duplicate a building, change it, press F5: it works in the running game (incl. recipes), and
+  the F5 toast sits in the window's centre.
 * `tests/sandbox_test` – the sandbox through real mouse / key input: drawing walls, placing,
   erasing, undo / redo, mirror, save / load, battles in the match setups, AI target choice,
   stats and result, back to editing, a background Run; every shipped example loads and fights.

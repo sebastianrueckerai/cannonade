@@ -73,28 +73,28 @@ func _ready() -> void:
 	_check(above, "every label and button of Tutorial & Controls ends above the Close button")
 	# the tutorial reads smaller than the controls and keeps every paragraph to three lines
 	var tutorial: Array = []
-	var fire: Label = null
+	var act_row: Label = null
 	for l in help_panel.find_children("*", "Label", true, false):
 		if l.autowrap_mode != TextServer.AUTOWRAP_OFF and l.text != "":
 			tutorial.append(l)
-		elif l.text == "fire the cannons":
-			fire = l
-	_check(tutorial.size() == 4 and fire != null
-			and tutorial.all(func(l): return l.get_theme_font_size("font_size") < fire.get_theme_font_size("font_size")),
+		elif l.text == "place the piece or the cannon, fuse, fire":
+			act_row = l
+	_check(tutorial.size() == 4 and act_row != null
+			and tutorial.all(func(l): return l.get_theme_font_size("font_size") < act_row.get_theme_font_size("font_size")),
 			"the %d tutorial paragraphs use a smaller font (%s) than the controls (%s)"
 			% [tutorial.size(), tutorial[0].get_theme_font_size("font_size") if not tutorial.is_empty() else 0,
-			fire.get_theme_font_size("font_size") if fire != null else 0])
+			act_row.get_theme_font_size("font_size") if act_row != null else 0])
 	_check(not tutorial.is_empty() and tutorial.all(func(l): return l.get_line_count() <= 3),
 			"no tutorial paragraph runs past three lines (%s)"
 			% str(tutorial.map(func(l): return l.get_line_count())))
 	# a click on the parchment, off every button, keeps the help open
 	_click(help_rect.position + Vector2(8, 8))
 	await _frames(2)
-	_check(_labels_with("fire the cannons", menu) == 1,
+	_check(_labels_with("place the piece or the cannon, fuse, fire", menu) == 1,
 			"a click on the panel itself keeps Tutorial & Controls open")
 	_click(Vector2(8, 8))
 	await _frames(2)
-	_check(_labels_with("fire the cannons", menu) == 0,
+	_check(_labels_with("place the piece or the cannon, fuse, fire", menu) == 0,
 			"a click outside the panel closes Tutorial & Controls")
 	await _frames(2)
 	# a corrupt input_remap.cfg must not stop the menu building or later rows loading
@@ -102,8 +102,8 @@ func _ready() -> void:
 	t_key0.device = -1
 	t_key0.physical_keycode = KEY_T
 	var cfg := ConfigFile.new()
-	cfg.set_value("map", "build_wall", "nonsense")
-	cfg.set_value("map", "fire", var_to_str([t_key0]))
+	cfg.set_value("map", "act", "nonsense")
+	cfg.set_value("map", "rotate_cw", var_to_str([t_key0]))
 	cfg.save("user://input_remap.cfg")
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	await _frames(3)
@@ -116,17 +116,17 @@ func _ready() -> void:
 			tut = b
 	tut.pressed.emit()
 	await _frames(2)
-	var fire0: Button = menu.find_children("fire", "Button", true, false)[0]
-	_check(fire0.text.contains("T"), "a corrupt row does not stop later rows loading")
-	_check(not fire0.text.contains("Space"), "the corrupt row's action keeps no stale binding")
+	var cw0: Button = menu.find_children("rotate_cw", "Button", true, false)[0]
+	_check(cw0.text.contains("T"), "a corrupt row does not stop later rows loading")
+	_check(not cw0.text.contains("X"), "the corrupt row's action keeps no stale binding")
 	_esc()
 	await _frames(2)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://input_remap.cfg"))
-	InputMap.action_erase_events("fire")
-	var space0 := InputEventKey.new()
-	space0.device = -1
-	space0.physical_keycode = KEY_SPACE
-	InputMap.action_add_event("fire", space0)
+	InputMap.action_erase_events("rotate_cw")
+	var x0 := InputEventKey.new()
+	x0.device = -1
+	x0.physical_keycode = KEY_X
+	InputMap.action_add_event("rotate_cw", x0)
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	await _frames(3)
 	menu = get_tree().current_scene
@@ -140,24 +140,24 @@ func _ready() -> void:
 		return
 	tut.pressed.emit()
 	await _frames(2)
-	_check(_labels_with("fire the cannons", menu) == 1, "Tutorial & Controls lists the controls")
-	var fire_btn: Button = menu.find_children("fire", "Button", true, false)[0]
-	_check(fire_btn.text.contains("Space"), "a remappable row shows its current binding")
+	_check(_labels_with("place the piece or the cannon, fuse, fire", menu) == 1, "Tutorial & Controls lists the controls")
+	var cw_btn: Button = menu.find_children("rotate_cw", "Button", true, false)[0]
+	_check(cw_btn.text.contains("X"), "a remappable row shows its current binding")
 	var ccw_btn: Button = menu.find_children("rotate_ccw", "Button", true, false)[0]
 	_check(ccw_btn.text.contains("Y / Z"), "a row with two keys shows both")
-	fire_btn.pressed.emit()
+	cw_btn.pressed.emit()
 	await _frames(2)
-	_check(fire_btn.text.contains("press"), "clicking a binding waits for the next input")
+	_check(cw_btn.text.contains("press"), "clicking a binding waits for the next input")
 	_key(KEY_T)
 	await _frames(2)
-	_check(fire_btn.text.contains("T"), "the next key becomes the binding")
+	_check(cw_btn.text.contains("T"), "the next key becomes the binding")
 	var t_key := InputEventKey.new()
 	t_key.device = -1
 	t_key.physical_keycode = KEY_T
-	_check(InputMap.action_has_event("fire", t_key), "the new binding is in the input map")
+	_check(InputMap.action_has_event("rotate_cw", t_key), "the new binding is in the input map")
 	_esc()
 	await _frames(2)
-	_check(_labels_with("fire the cannons", menu) == 0, "Esc closes Tutorial & Controls")
+	_check(_labels_with("place the piece or the cannon, fuse, fire", menu) == 0, "Esc closes Tutorial & Controls")
 	# a fresh menu load applies the saved bindings
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	await _frames(3)
@@ -168,16 +168,16 @@ func _ready() -> void:
 			tut = b
 	tut.pressed.emit()
 	await _frames(2)
-	fire_btn = menu.find_children("fire", "Button", true, false)[0]
-	_check(fire_btn.text.contains("T"), "a remapped binding survives a menu reload")
-	var wall_btn: Button = menu.find_children("build_wall", "Button", true, false)[0]
-	_check(wall_btn.text.contains("Left"), "an untouched action keeps its default binding")
-	wall_btn.pressed.emit()
+	cw_btn = menu.find_children("rotate_cw", "Button", true, false)[0]
+	_check(cw_btn.text.contains("T"), "a remapped binding survives a menu reload")
+	var act_btn: Button = menu.find_children("act", "Button", true, false)[0]
+	_check(act_btn.text.contains("Left"), "an untouched action keeps its default binding")
+	act_btn.pressed.emit()
 	await _frames(2)
 	_key(KEY_T)
 	await _frames(2)
-	_check(wall_btn.text.contains("Left"), "an input already on another action is rejected")
-	_check(InputMap.action_has_event("fire", t_key), "the rejected input leaves the other binding alone")
+	_check(act_btn.text.contains("Left"), "an input already on another action is rejected")
+	_check(InputMap.action_has_event("rotate_cw", t_key), "the rejected input leaves the other binding alone")
 	var close: Button = null
 	for b in menu.find_children("*", "Button", true, false):
 		if b.text == "Close":
@@ -185,14 +185,14 @@ func _ready() -> void:
 	_check(close != null, "Tutorial & Controls has a Close button")
 	close.pressed.emit()
 	await _frames(2)
-	_check(_labels_with("fire the cannons", menu) == 0, "the Close button closes Tutorial & Controls")
+	_check(_labels_with("place the piece or the cannon, fuse, fire", menu) == 0, "the Close button closes Tutorial & Controls")
 	# hermetic cleanup: drop the saved map and the in-process remap
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://input_remap.cfg"))
-	InputMap.action_erase_event("fire", t_key)
-	var space := InputEventKey.new()
-	space.device = -1
-	space.physical_keycode = KEY_SPACE
-	InputMap.action_add_event("fire", space)
+	InputMap.action_erase_event("rotate_cw", t_key)
+	var x_key := InputEventKey.new()
+	x_key.device = -1
+	x_key.physical_keycode = KEY_X
+	InputMap.action_add_event("rotate_cw", x_key)
 	for b in menu.find_children("*", "Button", true, false):
 		if b.text.contains("AI vs. AI"):
 			b.pressed.emit()

@@ -1,0 +1,21 @@
+{
+  "source": "game/art-direction/rounds/37-sfx-probe/fill-horn-build-b--eleven.mp3",
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a gentle wooden whistle plays two falling notes, like a boatswain's call, calm.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.5
+  },
+  "seed": null,
+  "bus": "sfx",
+  "target": {
+    "m_max": -16.0
+  },
+  "created": "2026-10-21T00:56:16",
+  "seconds": 1.4,
+  "lufs": -18.2,
+  "m_max": -16.0,
+  "range_lu": 0.0,
+  "peak_dbtp": -13.5
+}
