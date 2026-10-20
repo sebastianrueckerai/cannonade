@@ -63,6 +63,10 @@ def rgb(hexstr):
     return tuple(int(hexstr.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
 
 
+def linear(c):
+    return tuple(((v / 255 + 0.055) / 1.055) ** 2.4 if v / 255 > 0.04045 else v / 255 / 12.92 for v in c)
+
+
 def lerp(a, b, k):
     return tuple(a[i] + (b[i] - a[i]) * k for i in range(3))
 
@@ -186,7 +190,8 @@ def paint_texture(params, seed):
 
 def painted_material(ob, spec, keep_slots=False):
     """Paints `spec` {"kind", "seed", optional "over"} onto `ob`, assigns the material, returns it.
-    Keeps existing UVs (the shell's sphere); projects box meshes that have none.
+    Keeps existing UVs (the shell's sphere); projects box meshes that have none. `tint`, a hex, becomes the
+    material's base colour factor over the texture, for a part the game recolours.
     keep_slots: leave the slot list alone (the caller places the material), for
     meshes whose first material must stay, like the castle's team slot."""
     kind = spec["kind"]
@@ -205,7 +210,17 @@ def painted_material(ob, spec, keep_slots=False):
     bsdf = mat.node_tree.nodes["Principled BSDF"]
     tex = mat.node_tree.nodes.new("ShaderNodeTexImage")
     tex.image = img
-    mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
+    if spec.get("tint"):
+        # a multiply with a constant exports as the glTF base colour factor (Godot: albedo_color), so the game
+        # changes the part's colour by writing that one value while the painted grain stays (session 26)
+        mix = mat.node_tree.nodes.new("ShaderNodeMix")
+        mix.data_type, mix.blend_type = "RGBA", "MULTIPLY"
+        mix.inputs[0].default_value = 1.0
+        mix.inputs[6].default_value = (*linear(rgb(spec["tint"])), 1.0)
+        mat.node_tree.links.new(tex.outputs["Color"], mix.inputs[7])
+        mat.node_tree.links.new(mix.outputs[2], bsdf.inputs["Base Color"])
+    else:
+        mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
     bsdf.inputs["Roughness"].default_value = 1.0
     bsdf.inputs["Metallic"].default_value = 0.0
     if not keep_slots:

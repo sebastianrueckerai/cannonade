@@ -1,0 +1,48 @@
+{
+  "asset_id": "wall_plain",
+  "route": "procedural",
+  "inputs": {
+    "asset_yaml_sha": "135b5aa1008b",
+    "build_py_sha": "7dd99ad5e6eb"
+  },
+  "steps": [
+    {
+      "name": "build",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "normalise",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "materials",
+      "ok": true,
+      "elapsed_s": 2.22
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.0
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.9
+    },
+    {
+      "name": "export",
+      "ok": true,
+      "elapsed_s": 0.02
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": null,
+  "approved": null,
+  "cost_usd": 0,
+  "created": "2026-10-20T13:21:34+02:00"
+}

@@ -640,6 +640,74 @@
     "approved_by": null,
     "synced": "2026-10-19T22:05:27+02:00"
   },
+  "wall_arch": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "deck",
+      "merlons",
+      "wall"
+    ],
+    "tris": 344,
+    "source_sha": "2315b1b7e8e0",
+    "approved_by": null,
+    "synced": "2026-10-20T13:25:37+02:00"
+  },
+  "wall_caps": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "deck",
+      "merlons",
+      "wall"
+    ],
+    "tris": 192,
+    "source_sha": "938f16494a32",
+    "approved_by": null,
+    "synced": "2026-10-20T13:25:37+02:00"
+  },
+  "wall_corbel": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "deck",
+      "merlons",
+      "wall"
+    ],
+    "tris": 328,
+    "source_sha": "60b94f779506",
+    "approved_by": null,
+    "synced": "2026-10-20T13:25:37+02:00"
+  },
+  "wall_course": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "deck",
+      "merlons",
+      "wall"
+    ],
+    "tris": 360,
+    "source_sha": "2121123139dd",
+    "approved_by": null,
+    "synced": "2026-10-20T13:25:37+02:00"
+  },
   "wall_cross_base": {
     "size": [
       1.0,
@@ -729,6 +797,40 @@
     "source_sha": "00e4f7d2efdf",
     "approved_by": "Sebastian",
     "synced": "2026-10-14T17:25:45+02:00"
+  },
+  "wall_pilaster": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "deck",
+      "merlons",
+      "wall"
+    ],
+    "tris": 232,
+    "source_sha": "d591a7ad231e",
+    "approved_by": null,
+    "synced": "2026-10-20T13:25:37+02:00"
+  },
+  "wall_plain": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "deck",
+      "merlons",
+      "wall"
+    ],
+    "tris": 168,
+    "source_sha": "872d78a5ec01",
+    "approved_by": null,
+    "synced": "2026-10-20T13:25:37+02:00"
   },
   "wall_tri_base": {
     "size": [

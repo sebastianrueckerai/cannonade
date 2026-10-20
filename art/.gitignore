@@ -116,3 +116,9 @@ game/assets/3d/*/refs/*
 !game/assets/3d/upgrade_b/raw/meshy-b-600.glb
 !game/assets/3d/upgrade_b/refs/a-sketch.png
 !game/assets/3d/upgrade_b/refs/b-view.png
+# session 26: the pick boards of round 35, the six 2K sketches stay on disk (4.5 MB each, the contact sheet shows them)
+!game/art-direction/rounds/35-faction-walls/contact-sheet.jpg
+!game/art-direction/rounds/35-faction-walls/3d-sheet.png
+!game/art-direction/rounds/35-faction-walls/models.jpg
+!game/art-direction/rounds/35-faction-walls/pairs.jpg
+!game/art-direction/rounds/35-faction-walls/colours.jpg

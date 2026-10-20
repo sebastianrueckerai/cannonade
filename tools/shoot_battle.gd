@@ -6,6 +6,8 @@ extends Node
 ##   --look=x,z   camera close to that tile, as in tools/screenshot.gd
 ##   --stack      a second storey on the front walls of both forts
 ##   --top=H      with --look: the camera straight down from H metres, to check what sits on the ground
+##   --eye=Y,Z    with --look: the camera Y up and Z back from the tile instead of 9,6 (a lower angle shows a
+##                wall's faces, which the game's 60-degree pitch never does)
 ##   --reload=K   every gun reloads K times slower, so a screenshot catches a reload in progress
 ##   --seed=N     the map seed, default 1, which draws grass for the open ground
 ##   --paving=min,max,wall   hex colours for the enclosed ground (the lerp ends of the build's
@@ -13,6 +15,10 @@ extends Node
 ##   --tile=id    swap the ground slab model first (e.g. tile_mud), so the colour lands on it
 ##   --align      at the first shot, print each gun's mount centre minus its plate centre in metres, the placed
 ##                gate of assets-3d.md: under 0.02 on both axes
+##   --wall=idA,idB   the wall art of side 0 and side 1 (the session 26 looks, e.g. wall_arch,wall_pilaster)
+##   --team=deck=K,merlons=K,body=K,floor=K   tint the named wall parts toward the owner's team colour by K
+##                (deck and merlons from the stone colour, the body from white) and the enclosed ground by the
+##                ring owner the check computes
 
 const SandboxScene = preload("res://scenes/sandbox.tscn")
 const SIZE := 30
@@ -23,6 +29,8 @@ var out := "user://battle"
 var align := false
 var paving := ""
 var tile_id := ""
+var team := {}
+const STONE := Color("#e8d6b0")
 
 
 func _ready() -> void:
@@ -37,6 +45,8 @@ func _ready() -> void:
 	align = args.has("align")
 	paving = args.get("paving", "")
 	tile_id = args.get("tile", "")
+	for kv in str(args.get("team", "")).split(",", false):
+		team[kv.get_slice("=", 0)] = float(kv.get_slice("=", 1))
 	if args.has("artseed"):
 		Art._rng.seed = int(args["artseed"])
 	if args.has("reload"):  # stretch every gun's reload at spawn, so a mid-reload frame exists to shoot
@@ -50,6 +60,10 @@ func _ready() -> void:
 	sb._enter_edit()
 	sb.play()
 	Indicators.own_player = sb.player(0)  # both sandbox sides are AI: draw side 0's arcs as a human's
+	if args.has("wall"):
+		var ids: PackedStringArray = str(args["wall"]).split(",")
+		for s in 2:
+			_restyle_walls(s, ids[mini(s, ids.size() - 1)])
 	if args.has("style"):
 		var looks: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://tools/looks.json"))
 		preload("res://tools/looks.gd").apply(sb.world, looks[args["style"]])
@@ -63,7 +77,8 @@ func _ready() -> void:
 		if args.has("top"):  # straight down, for checking what sits on the ground round a gun
 			cam.global_position = target + Vector3(0, float(args["top"]) if args["top"] != "true" else 9.0, 0.001)
 		else:
-			cam.global_position = target + Vector3(0, 9, 6)
+			var eye: PackedStringArray = str(args.get("eye", "9,6")).split(",")
+			cam.global_position = target + Vector3(0, float(eye[0]), float(eye[1]))
 		cam.look_at(target)
 
 
@@ -100,6 +115,9 @@ func _process(_delta: float) -> void:
 	if paving != "":  # at shot time the walls stand, so the enclosures are final
 		_apply_paving(paving)
 		paving = ""
+	if not team.is_empty():
+		_apply_team()
+		team = {}
 	var t: float = shots.pop_front()
 	if align:
 		align = false
@@ -122,6 +140,40 @@ func _apply_paving(spec: String) -> void:
 			t.enclosedColor = Color(p[0]).lerp(Color(p[1]), (0.1 - t.go.position.y) / 0.2)
 			t.wallColor = Color(p[2])
 			t.reset_color()
+
+
+## Every wall block of `side` wears the art `id` instead of the wall's own.
+func _restyle_walls(side: int, id: String) -> void:
+	for x in sb.map.sizeX:
+		for z in sb.map.sizeZ:
+			var t = sb.map.tiles[x][z]
+			if not t.isWall or not U.alive(t.structure) or U.comp(t.structure, "BuildingBlock").player != sb.player(side):
+				continue
+			var art: Node = t.structure.get_node_or_null("Art")
+			if art != null:
+				t.structure.remove_child(art)
+				art.free()
+			Art.attach(t.structure, id)
+
+
+func _apply_team() -> void:
+	var regions: Dictionary = sb.game._ring_regions() if team.has("floor") else {}
+	for x in sb.map.sizeX:
+		for z in sb.map.sizeZ:
+			var t = sb.map.tiles[x][z]
+			if t.isWall and U.alive(t.structure):
+				var p = U.comp(t.structure, "BuildingBlock").player
+				var art: Node = t.structure.get_node_or_null("Art")
+				if p == null or art == null:
+					continue
+				for part in ["deck", "merlons"]:
+					if team.has(part):
+						U.set_color(art.find_child(part, true, false), STONE.lerp(p.mainColor, team[part]))
+				if team.has("body"):
+					U.set_color(art.find_child("wall", true, false), Color.WHITE.lerp(p.mainColor, team["body"]))
+			elif team.has("floor") and regions.get(t, 0) > 0:
+				t.enclosedColor = t.enclosedColor.lerp(sb.game.players[regions[t] - 1].mainColor, team["floor"])
+				t.reset_color()
 
 
 func _print_align() -> void:

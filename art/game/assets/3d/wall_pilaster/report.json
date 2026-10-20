@@ -1,0 +1,70 @@
+{
+  "asset_id": "wall_pilaster",
+  "parts": {
+    "deck": {
+      "verts": 8,
+      "tris": 12,
+      "non_manifold_edges": 0,
+      "materials": [
+        "deck_stone"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "merlons": {
+      "verts": 80,
+      "tris": 144,
+      "non_manifold_edges": 0,
+      "materials": [
+        "merlons_stone"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "wall": {
+      "verts": 40,
+      "tris": 76,
+      "non_manifold_edges": 0,
+      "materials": [
+        "wall_stone"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 128,
+  "tris": 232,
+  "non_manifold_edges": 0,
+  "materials": [
+    "deck_stone",
+    "merlons_stone",
+    "wall_stone"
+  ],
+  "dims_m": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "bbox_min": [
+    -0.5,
+    -0.5,
+    0.0
+  ],
+  "bbox_max": [
+    0.5,
+    0.5,
+    1.0
+  ],
+  "solidity": 0.838,
+  "limits_ok": true,
+  "limit_failures": []
+}
