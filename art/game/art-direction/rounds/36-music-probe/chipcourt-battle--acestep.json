@@ -1,0 +1,19 @@
+{
+  "model": "fal-ai/ace-step",
+  "prompt": "Instrumental only, no vocals, no singing, no lyrics. Renaissance-fanfare chiptune. 8-bit console sound playing court music: square-wave trumpets in fanfare thirds, a pulse-wave harpsichord-like accompaniment, triangle-wave bass, noise-channel field drum rolls. A royal procession, heralds, banners, a cannon salute. Crunchy retro chip timbres, no modern synth pads, no orchestra. Background music for the battle phase of a cheerful castle board game: toy cannons pop like a fairground shooting gallery, water splashes, ships tip over like toys, nothing grim. Tempo: 150 BPM. Mood: driving, exciting, playful, heroic. Arrangement: a field-drum march pattern throughout, a fanfare-like main theme in the lead, a running bass, a second section with more tension, back to the theme, no slow intro, no ending, constant energy so it loops. About 90 seconds long.",
+  "params": {
+    "duration": 90,
+    "lyrics": "[inst]"
+  },
+  "seed": 1529674260,
+  "lyrics": "[inst]",
+  "duration": null,
+  "label": "chipcourt-battle--acestep",
+  "est_cost_usd": 0.023,
+  "created": "2026-10-20T22:36:29",
+  "outputs": [
+    "chipcourt-battle--acestep.wav"
+  ],
+  "vocal_words": 2,
+  "vocal_text": "Thank you."
+}

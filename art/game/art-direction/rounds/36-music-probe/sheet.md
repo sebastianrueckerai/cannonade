@@ -10,6 +10,12 @@
 | chip-build--minimax | minimax/music-3 | 16.0 | -12.9 | 15.9 | 0.0 | 0 | 0.185 |
 | chip-build--minimax90 | minimax/music-3 | 90.1 | -13.3 | 2.3 | 0.2 | 1 | 0.185 |
 | chip-build--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -15.8 | 4.5 | -0.3 | 0 | 0.205 |
+| chipcourt-battle--acestep | fal-ai/ace-step | 89.9 | -12.0 | 2.0 | -0.3 | 2 | 0.023 |
+| chipcourt-battle--lyria3pro | fal-ai/lyria3/pro | 90.4 | -11.9 | 2.2 | 0.2 | 0 | 0.085 |
+| chipcourt-battle--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -12.6 | 2.4 | 0.0 | 5 | 0.205 |
+| chipcourt-build--acestep | fal-ai/ace-step | 89.9 | -11.4 | 3.3 | -1.0 | 6 | 0.023 |
+| chipcourt-build--lyria3pro | fal-ai/lyria3/pro | 88.5 | -11.9 | 2.8 | 0.4 | 2 | 0.085 |
+| chipcourt-build--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -13.0 | 1.9 | 0.0 | 4 | 0.205 |
 | chipfolk-battle--acestep | fal-ai/ace-step | 89.9 | -15.4 | 1.6 | -1.9 | 3 | 0.023 |
 | chipfolk-battle--lyria3pro | fal-ai/lyria3/pro | 87.8 | -11.6 | 7.5 | 0.5 | 2 | 0.085 |
 | chipfolk-battle--minimax | minimax/music-3 | 16.5 | -13.3 | 5.5 | 0.1 | 0 | 0.185 |
@@ -20,6 +26,18 @@
 | chipfolk-build--minimax | minimax/music-3 | 9.9 | -14.2 | 3.0 | -0.3 | 0 | 0.185 |
 | chipfolk-build--minimax90 | minimax/music-3 | 90.1 | -14.2 | 4.0 | 0.1 | 1 | 0.185 |
 | chipfolk-build--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -14.8 | 4.3 | 0.0 | 2 | 0.205 |
+| chipmedieval-battle--acestep | fal-ai/ace-step | 89.9 | -12.1 | 4.6 | -0.5 | 1 | 0.023 |
+| chipmedieval-battle--lyria3pro | fal-ai/lyria3/pro | 89.7 | -11.9 | 3.2 | 0.1 | 2 | 0.085 |
+| chipmedieval-battle--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -9.4 | 4.0 | -0.0 | 0 | 0.205 |
+| chipmedieval-build--acestep | fal-ai/ace-step | 89.9 | -10.8 | 1.9 | -0.6 | 2 | 0.023 |
+| chipmedieval-build--lyria3pro | fal-ai/lyria3/pro | 88.4 | -11.6 | 2.4 | 0.1 | 1 | 0.085 |
+| chipmedieval-build--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -10.6 | 3.3 | 0.0 | 0 | 0.205 |
+| chipsail-battle--acestep | fal-ai/ace-step | 89.9 | -9.0 | 2.2 | 0.0 | 1 | 0.023 |
+| chipsail-battle--lyria3pro | fal-ai/lyria3/pro | 90.5 | -11.8 | 3.9 | 0.1 | 226 | 0.085 |
+| chipsail-battle--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -13.7 | 6.4 | -0.0 | 4 | 0.205 |
+| chipsail-build--acestep | fal-ai/ace-step | 89.9 | -10.9 | 7.5 | -0.2 | 4 | 0.023 |
+| chipsail-build--lyria3pro | fal-ai/lyria3/pro | 90.1 | -12.3 | 2.1 | 0.3 | 0 | 0.085 |
+| chipsail-build--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -11.6 | 2.8 | 0.0 | 5 | 0.205 |
 | organ-battle--acestep | fal-ai/ace-step | 89.9 | -10.0 | 2.9 | -0.3 | 2 | 0.023 |
 | organ-battle--lyria3pro | fal-ai/lyria3/pro | 89.7 | -12.0 | 5.2 | 0.3 | 0 | 0.085 |
 | organ-battle--minimax | minimax/music-3 | 12.1 | -13.9 | 2.1 | 0.1 | 1 | 0.185 |
@@ -41,4 +59,4 @@
 | toybox-build--minimax90 | minimax/music-3 | 90.1 | -13.9 | 4.4 | 0.2 | 39 | 0.185 |
 | toybox-build--stable25 | fal-ai/stable-audio-25/text-to-audio | 90.0 | -10.7 | 3.4 | 0.5 | 3 | 0.205 |
 
-40 clips, ~$5.46
+58 clips, ~$7.34

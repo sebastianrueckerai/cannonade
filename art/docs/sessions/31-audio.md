@@ -18,7 +18,7 @@ Roadmap: K5. Cap: 10 USD. Spent: about 6.5 USD.
 | [research/ai-audio-providers.md](../research/ai-audio-providers.md) | which models exist, where they are sold, what their licences allow | the model rows in [providers.md](../providers.md) |
 | [sound.md](../../game/design/sound.md) | the cue list: five music cues and 54 effect sets, each with the function that fires it | the Godot integration, the next rounds |
 | [audio.py](../../pipeline/audio.py) | music and effects through fal's queue, a round runner, a loudness sheet, a Whisper vocals check | every audio round |
-| round [36-music-probe](../../game/art-direction/rounds/36-music-probe) | four directions times two themes on four models, 40 clips | Sebastian's pick of a direction and a model |
+| round [36-music-probe](../../game/art-direction/rounds/36-music-probe) | four directions times two themes on four models, then three chiptune registers on three, 58 clips on one page | Sebastian's pick of a direction and a model |
 | round [37-sfx-probe](../../game/art-direction/rounds/37-sfx-probe) | twelve cues on three models, then cannons, crumbles and placing sounds, 74 clips on one page | the picks of D83, twelve game assets |
 | round [38-theme-versions](../../game/art-direction/rounds/38-theme-versions) | menu, win and lose as remixes of one build theme | the way the versions get made |
 | stage 02D in [overview.md](../process/overview.md) | sound joins the process chart | the process |
@@ -64,6 +64,16 @@ letters. The three tests are in the `length` folder of the round. On fal, MiniMa
 instrumental or a long song, not a long instrumental.
 MiniMax is the only one of the four that returns 44.1 kHz WAV, the others return WAV or MP3 at their
 own rates. No clip is a seamless loop, all four end or fade, so the loop gets cut on a bar line by hand.
+
+Sebastian on the first set: "I am not happy with the basic chiptunes. Can you make chiptune medieval or
+age of sail music?" The second config of the round, `medieval.json`, keeps the chip timbres and changes
+what they play: `chipmedieval` (a square-wave lead phrased like a recorder or a shawm, a plucked lute
+arpeggio, a hurdy-gurdy drone, tabor and tambourine, Dorian or Mixolydian, an estampie), `chipsail` (a
+fife-like lead, concertina-pumping chords, a tuba-like bass, a hornpipe or a 6/8 jig) and `chipcourt`
+(square-wave trumpets in fanfare thirds, a harpsichord-like pulse, field-drum rolls). Build and battle
+each, on Stable Audio 2.5, Lyria 3 Pro and ACE-Step, MiniMax left out. 18 clips, 1.24 USD, on the same
+page, 58 clips in all. Seventeen came back instrumental. Whisper read 226 words of "T-T-T-T" out of
+chipsail-battle from Lyria, which is a staccato chip lead or sung syllables, the ear decides.
 
 The ear is the critic. There is no audio critic on fal's any-llm, so this session had no second
 judge beyond the numbers, and the pick is Sebastian's.
@@ -120,8 +130,9 @@ the chosen chiptune theme.
 
 ## Open, for Sebastian
 
-1. A direction: chip, toybox, organ or chipfolk, from round 36. The question is which fits the painted
-   toy fortress and does not clash, and whether chiptune reads as Cannonade or as a different game.
+1. A direction from round 36: chip, toybox, organ, chipfolk, or the chiptune registers chipmedieval,
+   chipsail and chipcourt that came after "not happy with the basic chiptunes". The question is which
+   fits the painted toy fortress and does not clash.
 2. A music model for the two themes. By the numbers Stable Audio 2.5 and Lyria 3 Pro deliver 90 s
    instrumentals every time, ACE-Step is the cheapest, MiniMax is the only WAV but sings or stops short.
 3. ~~An effects model.~~ D83: ElevenLabs leads, Mirelo adds variety, Stable Audio 3 Small is out (D82).
