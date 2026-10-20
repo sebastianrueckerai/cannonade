@@ -21,7 +21,7 @@
 #   plain     the D75 block, a full-tile box; square merlons
 #   corbel    plinth 0..0.08 full tile, body inset 0.07, eight corbels under a full-tile slab; octagonal drum merlons
 #   pilaster  panels 0.05 deep between corner posts, from a plinth at 0.08 up to a string course at 0.62;
-#             pyramid-capped merlons
+#             eight round lego studs, three a side
 #   course    three stone courses round a set-back core: joints 0.03 wide and deep at 0.25 and 0.50, a centre joint
 #             in the middle course, notched block corners in the outer courses so every seam reads as a joint;
 #             sixteen small stud merlons
@@ -205,11 +205,24 @@ def deck_plate(z0):
 def merlons(z_from, z_to, top):
     """The teeth on the deck's corner squares, one shape per look so the looks differ from above, where the game
     camera looks (Sebastian, 2026-10-20): square, the D75 block; octagon, drums; pyramid, square teeth with a
-    pyramid cap; studs, a 2 x 2 of small teeth per corner, sixteen a tile. All stay inside [0.125, 0.46] on x
-    and y so the walkway's corridors stay free."""
+    pyramid cap; studs, a 2 x 2 of small teeth per corner, sixteen a tile; lego, three round studs a side, his
+    ask of the same day. All but lego stay inside [0.125, 0.46] on x and y so the walkway's corridors stay free;
+    lego's mid-side studs stand on the corridors and the walkway shows between them."""
     bm = bmesh.new()
+    if top == "lego":
+        # three studs a side: the eight places of a 3 x 3 grid without its centre, so a lone block's centre square
+        # still shows; the mid-side studs stand on the corridors, the walkway showing between them
+        r = 0.08
+        for px in (-1, 0, 1):
+            for py in (-1, 0, 1):
+                if px or py:
+                    ret = bmesh.ops.create_cone(bm, cap_ends=True, segments=8, radius1=r, radius2=r, depth=z_to - 0.05 - z_from)
+                    bmesh.ops.rotate(bm, verts=ret["verts"], cent=Vector(), matrix=Matrix.Rotation(math.pi / 8, 3, "Z"))
+                    bmesh.ops.translate(bm, verts=ret["verts"], vec=Vector((px / 3, py / 3, (z_from + z_to - 0.05) / 2)))
     for x0, x1 in SPANS:
         for y0, y1 in SPANS:
+            if top == "lego":
+                break
             if top == "octagon":
                 r = (x1 - x0) / 2
                 ret = bmesh.ops.create_cone(bm, cap_ends=True, segments=8, radius1=r, radius2=r, depth=z_to - z_from)
@@ -224,11 +237,12 @@ def merlons(z_from, z_to, top):
             else:
                 _tooth(bm, x0, x1, y0, y1, z_from, z_to, top == "pyramid")
     vertical = lambda e: abs(e.verts[0].co.x - e.verts[1].co.x) < EPS and abs(e.verts[0].co.y - e.verts[1].co.y) < EPS
-    flat_top = lambda e: all(abs(v.co.z - z_to) < EPS for v in e.verts)
+    top_z = z_to - 0.05 if top == "lego" else z_to
+    flat_top = lambda e: all(abs(v.co.z - top_z) < EPS for v in e.verts)
     edges = []
     if top in ("square", "pyramid"):
         edges += [e for e in bm.edges if vertical(e) and e.calc_length() > 0.1]
-    if top in ("square", "octagon"):
+    if top in ("square", "octagon", "lego"):
         edges += [e for e in bm.edges if flat_top(e)]
     if edges:
         bmesh.ops.bevel(bm, geom=edges, offset=CHAMFER, offset_type="OFFSET", segments=1, affect="EDGES")
@@ -249,7 +263,7 @@ def _tooth(bm, x0, x1, y0, y1, z_from, z_to, pyramid):
         apex.co.z = z_to
 
 
-TOPS = {"plain": "square", "corbel": "octagon", "pilaster": "pyramid", "course": "studs", "arch": "square",
+TOPS = {"plain": "square", "corbel": "octagon", "pilaster": "lego", "course": "studs", "arch": "square",
         "caps": "pyramid"}
 
 
@@ -311,7 +325,8 @@ def build(asset):
     clean(wall)
     boolean(wall, [deck_plate(z0), merlons(z0 + DECK_TOP - 0.01, z0 + MERLON_TOP, TOPS[style])], "UNION")
     areas = tag_regions(wall, z0)
-    # the deck's top: the centre square, a corridor of 0.335 by 0.25, a cap of 0.04 by 0.25
-    for rid, want in ((1, 0.0625), (2, 0.08375), (6, 0.01)):
+    # the deck's top: the centre square, a corridor of 0.335 by 0.25 (less a lego stud's foot), a cap of 0.04 by 0.25
+    corridor = 0.08375 - (math.pi * 0.08 ** 2 * 0.9 if TOPS[style] == "lego" else 0.0)
+    for rid, want in ((1, 0.0625), (2, corridor), (6, 0.01)):
         if abs(areas.get(rid, 0.0) - want) > 1e-3:
             raise RuntimeError(f"region {rid} area {areas.get(rid, 0.0):.4f}, want {want}")

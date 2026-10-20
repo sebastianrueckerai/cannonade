@@ -219,3 +219,11 @@ square teeth with a pyramid cap, whose lit facets read from above; coursed stone
 corner, sixteen a tile, a finer grain. Triangles: corbel 508, pilaster 398, course 612, within the 700 of the
 block. The six changed models (three looks and their storeys) sync unapproved; the board is shot again and
 waits on his pass.
+
+## Sixth pass: three studs a side
+
+Sebastian: "Looks good. Can you change 2 3rd or 2nd one for one were it has 3 granulations / lego connectors on
+each side instead of 2?" The pilaster look, whose pyramid caps read subtlest, gets eight round studs, the 3 x 3
+grid without its centre, so a lone block's centre square still shows its colour. The mid-side studs stand on
+the walkway's corridors and the strip shows between them; the build's corridor area check allows a stud's foot
+for this top. 618 triangles. Synced unapproved with its storey; the board is shot again for his pass.

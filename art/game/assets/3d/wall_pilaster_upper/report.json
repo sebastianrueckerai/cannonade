@@ -2,8 +2,8 @@
   "asset_id": "wall_pilaster_upper",
   "parts": {
     "wall": {
-      "verts": 201,
-      "tris": 398,
+      "verts": 311,
+      "tris": 618,
       "non_manifold_edges": 0,
       "materials": [
         "wall_stone"
@@ -15,8 +15,8 @@
       ]
     }
   },
-  "verts": 201,
-  "tris": 398,
+  "verts": 311,
+  "tris": 618,
   "non_manifold_edges": 0,
   "materials": [
     "wall_stone"
@@ -24,7 +24,7 @@
   "dims_m": [
     1.0,
     1.0,
-    1.0
+    0.95
   ],
   "bbox_min": [
     -0.5,
@@ -34,9 +34,9 @@
   "bbox_max": [
     0.5,
     0.5,
-    1.75
+    1.7
   ],
-  "solidity": 0.806,
+  "solidity": 0.798,
   "limits_ok": true,
   "limit_failures": []
 }

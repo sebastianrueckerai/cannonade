@@ -89,3 +89,6 @@ for the full-tile block. Spend: six sketches at 0.25 USD and one critique at 0.0
 - **Open: the tops.** "Unfortunately the walls all look the same cause of the angle. Can you also have them
   have some variations for the granulations?" Each look now has its own merlons: square, octagonal drums,
   pyramid-capped, sixteen small studs. [looks-in-game.jpg](looks-in-game.jpg) shot again with them, for his pass.
+- **Three studs a side on the 3rd look.** "Can you change 2 3rd or 2nd one for one were it has 3 granulations /
+  lego connectors on each side instead of 2?" The pilaster look's pyramid caps gave way to eight round studs,
+  a 3 x 3 without its centre. [looks-in-game.jpg](looks-in-game.jpg) shot again, for his pass.

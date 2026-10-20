@@ -3,7 +3,7 @@
   "route": "procedural",
   "inputs": {
     "asset_yaml_sha": "b58d0c500de4",
-    "build_py_sha": "09b5f5dd1b22"
+    "build_py_sha": "dabaf36a3bed"
   },
   "steps": [
     {
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.53
+      "elapsed_s": 0.47
     },
     {
       "name": "export",
@@ -44,5 +44,5 @@
   "approved_by": null,
   "approved": null,
   "cost_usd": 0,
-  "created": "2026-10-20T15:24:43+02:00"
+  "created": "2026-10-20T15:52:40+02:00"
 }

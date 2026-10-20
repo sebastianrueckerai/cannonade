@@ -793,32 +793,32 @@
   "wall_pilaster": {
     "size": [
       1.0,
-      1.0,
+      0.95,
       1.0
     ],
     "tolerance": 0.02,
     "parts": [
       "wall"
     ],
-    "tris": 398,
-    "source_sha": "5a915ccc23d0",
+    "tris": 618,
+    "source_sha": "15c5cb869dc3",
     "approved_by": null,
-    "synced": "2026-10-20T15:24:45+02:00"
+    "synced": "2026-10-20T15:52:55+02:00"
   },
   "wall_pilaster_upper": {
     "size": [
       1.0,
-      1.0,
+      0.95,
       1.0
     ],
     "tolerance": 0.02,
     "parts": [
       "wall"
     ],
-    "tris": 398,
-    "source_sha": "f4d26c091d74",
+    "tris": 618,
+    "source_sha": "0382f9e62b8e",
     "approved_by": null,
-    "synced": "2026-10-20T15:24:45+02:00"
+    "synced": "2026-10-20T15:52:55+02:00"
   },
   "wall_tri_base": {
     "size": [
