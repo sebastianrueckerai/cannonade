@@ -129,6 +129,7 @@ func un_build() -> void:
 	player = null
 	isWall = false
 	map.statesMap.update_tile(self)
+	repaint_walls_around()
 
 
 
@@ -149,6 +150,9 @@ func build(building: Node3D, p) -> void:
 		castle.repaint()
 	map.statesMap.update_tile(self)
 	destroy_decorations()
+	if isWall:
+		U.comp(building, "Wall").wear(p)
+		repaint_walls_around()
 
 
 func stack_wall(wall_go: Node3D) -> void:
@@ -158,6 +162,20 @@ func stack_wall(wall_go: Node3D) -> void:
 	bb.buildingPlace = self
 	wallStacked = wall_go
 	U.comp(wall_go, "Wall").show_upper()
+
+
+## The blocks here and on the four neighbouring tiles redraw their walkways (D78).
+func repaint_walls_around() -> void:
+	for d in [Vector2i.ZERO, Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var x: int = idxX + d.x
+		var z: int = idxZ + d.y
+		if x < 0 or z < 0 or x >= map.sizeX or z >= map.sizeZ:
+			continue
+		var t = map.tiles[x][z]
+		if t.isWall and U.alive(t.structure):
+			U.comp(t.structure, "Wall").repaint()
+			if U.alive(t.wallStacked):
+				U.comp(t.wallStacked, "Wall").repaint()
 
 
 func highlight_off() -> void:

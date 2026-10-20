@@ -65,7 +65,15 @@ boards do not show.
 against the contract's 200 for a wall. The plain and caps blocks fit; the others need the budget raised
 for the full-tile block. Spend: six sketches at 0.25 USD and one critique at 0.03 USD, 1.53 USD.
 
-## Picks
+## Picks (D78)
 
-Open. Sebastian picks the two looks by number from [models.jpg](models.jpg) or [pairs.jpg](pairs.jpg), the
-budget question with it, and the colour scheme by number from [colours.jpg](colours.jpg).
+- **Looks: 1, 3, 4 and 5, all four.** Sebastian, 2026-10-20: "1, 3,4,5 all look good, lets do them all." One per
+  player number: plain, corbel, pilaster, course. The budget rises with it: 308 to 524 triangles a block.
+- **Colour: the walkway, not the merlons, and the walkway follows the neighbours.** "I would color the walkway
+  on the wall, not the lego like blocks on the walls ... a walkway presumes a direction, and the direction is
+  guided by the neighbouring walls. A single standing cell of 1x1 walls should then only have the inner square
+  colored." Shipped at 0.6, the session's call.
+- **Open: the accents.** "If there are other accents like lines around the wall that lend themselves to be
+  colored, experiment with that as well!" [accents.jpg](accents.jpg) shows the shipped walkway against a rim line
+  round the deck, a band round the body's top, both, and the enclosed ground, blue near on the plain look and
+  red far on the corbel look; [ai4.png](ai4.png) shows all four looks and colours in one four-player frame.

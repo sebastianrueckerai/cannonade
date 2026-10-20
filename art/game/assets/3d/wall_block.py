@@ -1,22 +1,30 @@
-# Shared build for the full-tile wall block (level base) and its storey (level upper), in the styles of session 26.
-# Three parts: `wall` the body, `deck` the walkway slab on the body's top, `merlons` the 2 x 2 teeth on the deck.
-# Deck and merlons paint on a white base with the stone colour as the material's base colour factor, so the game
-# tints them by writing one albedo colour (the mud tile's rule, D70); the body keeps the cream stone paint.
-#   base:  body z 0..0.75, deck 0.75..0.77, merlons 0.77..1.0
+# Shared build for the full-tile wall block (level base) and its storey (level upper) in the four faction looks
+# of D78 (asset.yaml `style`): plain, corbel, pilaster, course. The arch and caps looks of round 35 stay buildable.
+# One mesh, `wall`, so a block is one draw call. Its top is a walkway deck in regions, each face tagged with a
+# region id in the second UV layer `region` (u = id), which the game's wall shader colours per block:
+#   0  body and merlons                      7  cap_nx          the walkway's last 0.04 m to the -x edge
+#   1  walk_c   the centre square            8  cap_py
+#   2  walk_px  corridor to the +x edge      9  cap_ny
+#   3  walk_nx                              10  deck   the four corner squares the merlons stand on
+#   4  walk_py  (Blender +y is Godot -z)    11  rim    a 0.04 m frame round the corners, a line round the wall
+#   5  walk_ny                              12  band   the top 0.06 m of the body, a line round the wall's faces
+#   6  cap_px
+# The corridors and caps split so a rim line stays whole where no walkway crosses the edge.
+#   base:  body z 0..0.75 with the band cut at 0.69, deck 0.75..0.77, merlons 0.77..1.0
 #   upper: everything 0.75 up; the body swallows the lower block's deck and merlons
 # Merlons 0.25 x 0.25 at [0.125, 0.375] and [-0.375, -0.125] on x and y (0.5 m period), so a tile seam falls in
-# the middle of a 0.25 gap and neighbours continue the grid.
+# the middle of a 0.25 gap and neighbours continue the grid; the corridors run in those gaps.
 # A block knows nothing of its neighbours (D75), so no style protrudes past the tile edge (a neighbour's
 # protrusion would overlap it) and no recess goes deeper than 0.12 (the storey above must still hide the merlons).
 # An inset body leaves a joint groove at every seam, twice the inset wide.
-# Styles, asset.yaml `style`, default plain:
+# Styles:
 #   plain     the D75 block, a full-tile box
-#   arch      one blind round-headed arch recess per face: 0.5 wide, sill 0.12, springing 0.36, apex 0.61, 0.07 deep
-#   corbel    plinth 0..0.08 full tile, body inset 0.07, eight corbels under a full-tile slab 0.55..0.75
+#   corbel    plinth 0..0.08 full tile, body inset 0.07, eight corbels under a full-tile slab 0.55..0.69
 #   pilaster  panels 0.05 deep between corner posts, from a plinth at 0.08 up to a string course at 0.62
 #   course    three stone courses round a set-back core: joints 0.03 wide and deep at 0.25 and 0.50, a centre joint
 #             in the middle course, notched block corners in the outer courses so every seam reads as a joint
-#   caps      body inset 0.04 under a full-tile cornice band 0.68..0.75, pyramid caps on the merlons
+#   arch      one blind round-headed arch recess per face: 0.5 wide, sill 0.12, springing 0.36, apex 0.61, 0.07 deep
+#   caps      body inset 0.04 under a full-tile cornice 0.65..0.69, pyramid caps on the merlons
 # Chamfers (flat, one segment, 0.05): merlon top edges and merlon vertical corner edges. Never an edge in a tile
 # boundary plane (x or y = +-0.5), never an edge on the ground, never a concave edge.
 import math
@@ -25,14 +33,19 @@ import bmesh
 import bpy
 from mathutils import Matrix, Vector
 
-BODY_H = 0.75
-DECK_H = 0.02
+BODY_TOP = 0.69
+BAND_TOP = 0.75
+DECK_TOP = 0.77
 MERLON_TOP = 1.0
+LEVEL = 0.75
 SPANS = ((-0.375, -0.125), (0.125, 0.375))
+HALF_WALK = 0.125
+CAP = 0.46
 CHAMFER = 0.05
 EDGE = 0.5
 OUT = 0.6  # a cutter starts here, outside the tile, so no cutter face is coplanar with a block face
 EPS = 1e-4
+REGION_PLANES = (-CAP, -HALF_WALK, HALF_WALK, CAP)
 
 
 def box(name, x0, x1, y0, y1, z0, z1):
@@ -111,9 +124,10 @@ def clean(ob):
     bm.free()
 
 
-# ------------------------------------------------------------------ bodies, from z0 to z0 + BODY_H
+# ------------------------------------------------------------------ bodies, from z0 to z0 + BAND_TOP
+# The band is not built: the body's faces are cut at BODY_TOP afterwards and the ring above it tagged region 12.
 def body_plain(z0):
-    return box("wall", -EDGE, EDGE, -EDGE, EDGE, z0, z0 + BODY_H)
+    return box("wall", -EDGE, EDGE, -EDGE, EDGE, z0, z0 + BAND_TOP)
 
 
 def body_arch(z0):
@@ -127,7 +141,7 @@ def body_corbel(z0):
     inset = 0.07
     wall = box("wall", -EDGE, EDGE, -EDGE, EDGE, z0, z0 + 0.08)
     parts = [box("p", -EDGE + inset, EDGE - inset, -EDGE + inset, EDGE - inset, z0 + 0.06, z0 + 0.57),
-             box("p", -EDGE, EDGE, -EDGE, EDGE, z0 + 0.55, z0 + BODY_H)]
+             box("p", -EDGE, EDGE, -EDGE, EDGE, z0 + 0.55, z0 + BAND_TOP)]
     for q in range(4):
         for x0, x1 in SPANS:
             # 5 mm inside the tile plane, so no corbel face lies in the slab's face
@@ -155,10 +169,10 @@ def body_course(z0):
     whose notched corners meet a neighbour's into one joint at the seam, the middle course is four quadrant stones
     with a joint along each axis."""
     j, d = 0.015, 0.03
-    core = box("wall", -EDGE + d + 0.005, EDGE - d - 0.005, -EDGE + d + 0.005, EDGE - d - 0.005, z0, z0 + BODY_H)
+    core = box("wall", -EDGE + d + 0.005, EDGE - d - 0.005, -EDGE + d + 0.005, EDGE - d - 0.005, z0, z0 + BAND_TOP)
     e, n = EDGE, EDGE - d
     plus = [(-n, -e), (n, -e), (n, -n), (e, -n), (e, n), (n, n), (n, e), (-n, e), (-n, n), (-e, n), (-e, -n), (-n, -n)]
-    parts = [prism("p", plus, z0 + za, z0 + zb) for za, zb in ((0.0, 0.25 - j), (0.50 + j, BODY_H))]
+    parts = [prism("p", plus, z0 + za, z0 + zb) for za, zb in ((0.0, 0.25 - j), (0.50 + j, BAND_TOP))]
     for sx in (-1, 1):
         for sy in (-1, 1):
             parts.append(box("p", min(sx * j, sx * e), max(sx * j, sx * e), min(sy * j, sy * e), max(sy * j, sy * e),
@@ -169,8 +183,8 @@ def body_course(z0):
 
 def body_caps(z0):
     inset = 0.04
-    wall = box("wall", -EDGE + inset, EDGE - inset, -EDGE + inset, EDGE - inset, z0, z0 + 0.70)
-    boolean(wall, [box("p", -EDGE, EDGE, -EDGE, EDGE, z0 + 0.68, z0 + BODY_H)], "UNION")
+    wall = box("wall", -EDGE + inset, EDGE - inset, -EDGE + inset, EDGE - inset, z0, z0 + 0.66)
+    boolean(wall, [box("p", -EDGE, EDGE, -EDGE, EDGE, z0 + 0.65, z0 + BAND_TOP)], "UNION")
     return wall
 
 
@@ -179,6 +193,12 @@ BODIES = {"plain": body_plain, "arch": body_arch, "corbel": body_corbel, "pilast
 
 
 # ------------------------------------------------------------------ deck and merlons
+def deck_plate(z0):
+    """The walkway deck, one plate that overlaps the body's top by 0.01 so the union meets no coincident face;
+    tag_regions cuts it into its regions afterwards."""
+    return box("deck", -EDGE, EDGE, -EDGE, EDGE, z0 + BAND_TOP - 0.01, z0 + DECK_TOP)
+
+
 def merlons(z_from, z_to, pyramid):
     bm = bmesh.new()
     for x0, x1 in SPANS:
@@ -203,11 +223,65 @@ def merlons(z_from, z_to, pyramid):
     return _object("merlons", bm)
 
 
+def region_of(c, z0):
+    """The region id of a face by its centre: the deck by its square, the band by height, the rest 0."""
+    z = c.z - z0
+    if z > DECK_TOP + EPS:
+        return 0
+    if z >= BAND_TOP - EPS:
+        ax, ay = abs(c.x), abs(c.y)
+        if ax <= HALF_WALK + EPS and ay <= HALF_WALK + EPS:
+            return 1
+        if ay <= HALF_WALK + EPS:
+            return (6 if c.x > 0 else 7) if ax > CAP - EPS else (2 if c.x > 0 else 3)
+        if ax <= HALF_WALK + EPS:
+            return (8 if c.y > 0 else 9) if ay > CAP - EPS else (4 if c.y > 0 else 5)
+        return 11 if max(ax, ay) > CAP - EPS else 10
+    if z >= BODY_TOP - EPS:
+        return 12
+    return 0
+
+
+def bisect(bm, faces, co, no):
+    geom = faces + list({e for f in faces for e in f.edges}) + list({v for f in faces for v in f.verts})
+    bmesh.ops.bisect_plane(bm, geom=geom, plane_co=co, plane_no=no, dist=EPS)
+
+
+def tag_regions(ob, z0):
+    """Cuts the body at the band line and the deck along the region planes, then writes each face's region id into
+    the `region` UV layer. `UVMap` stays the active, empty layer the paint projects."""
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    bisect(bm, list(bm.faces), Vector((0, 0, z0 + BODY_TOP)), Vector((0, 0, 1)))
+    for axis in (0, 1):
+        for p in REGION_PLANES:
+            deck = [f for f in bm.faces if all(z0 + BAND_TOP - EPS <= v.co.z <= z0 + DECK_TOP + EPS for v in f.verts)]
+            no = Vector((1, 0, 0)) if axis == 0 else Vector((0, 1, 0))
+            bisect(bm, deck, no * p, no)
+    uv = bm.loops.layers.uv.new("UVMap")
+    reg = bm.loops.layers.uv.new("region")
+    areas = {}
+    for f in bm.faces:
+        rid = region_of(f.calc_center_median(), z0)
+        if f.normal.z > 0.5:  # the deck's top only: a look's notched top course adds side faces under the caps
+            areas[rid] = areas.get(rid, 0.0) + f.calc_area()
+        for loop in f.loops:
+            loop[uv].uv = (0.0, 0.0)
+            loop[reg].uv = (float(rid), 0.0)
+    bm.to_mesh(ob.data)
+    bm.free()
+    ob.data.uv_layers.active_index = 0
+    return areas
+
+
 def build(asset):
-    z0 = BODY_H if asset.get("level") == "upper" else 0.0
+    z0 = LEVEL if asset.get("level") == "upper" else 0.0
     style = asset.get("style", "plain")
     wall = BODIES[style](z0)
     clean(wall)
-    body_top = z0 + BODY_H
-    box("deck", -EDGE, EDGE, -EDGE, EDGE, body_top, body_top + DECK_H)
-    merlons(body_top + DECK_H, z0 + MERLON_TOP, style == "caps")
+    boolean(wall, [deck_plate(z0), merlons(z0 + DECK_TOP - 0.01, z0 + MERLON_TOP, style == "caps")], "UNION")
+    areas = tag_regions(wall, z0)
+    # the deck's top: the centre square, a corridor of 0.335 by 0.25, a cap of 0.04 by 0.25
+    for rid, want in ((1, 0.0625), (2, 0.08375), (6, 0.01)):
+        if abs(areas.get(rid, 0.0) - want) > 1e-3:
+            raise RuntimeError(f"region {rid} area {areas.get(rid, 0.0):.4f}, want {want}")

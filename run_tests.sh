@@ -31,6 +31,7 @@ run practice     --fixed-fps 30 res://tests/practice_test.tscn
 run check        --fixed-fps 30 res://tests/check_test.tscn
 run camera       --fixed-fps 30 res://tests/camera_test.tscn
 run previews     --fixed-fps 30 res://tests/preview_test.tscn
+run walls        --fixed-fps 30 res://tests/walls_test.tscn
 run ai           --fixed-fps 30 res://tests/ai_test.tscn
 run target-glow  --fixed-fps 30 res://tests/target_test.tscn
 run catalog      --fixed-fps 30 res://tests/catalog_test.tscn

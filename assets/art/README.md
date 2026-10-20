@@ -9,7 +9,7 @@ Drop a file here with the right name and the game uses it. Nothing else to wire.
 | `3d/<projectile id>.glb` | every shot of the projectile with that file name in `data/projectiles/`, for example `shell`. Origin at its centre |
 | `3d/ship.glb` | the fleet ships |
 | `3d/tile.glb` | every map tile, its first mesh replaces the slab box and gets repainted by the game |
-| `3d/wall.glb`, `3d/wall_upper.glb` | the full-tile wall block and its stacked storey; hand pieces show `wall` per cell. Origin at the tile centre on the ground, the storey starts 0.75 m up. The `wall_<shape>_<level>` files belong to the parked connector walls |
+| `3d/wall.glb`, `3d/wall_corbel.glb`, `3d/wall_pilaster.glb`, `3d/wall_course.glb` and their `_upper` storeys | the full-tile wall block in the four player looks of D78 (`Catalog.WALL_LOOKS`, by player number) and each look's stacked storey; a hand piece shows the owner's block per cell. Origin at the tile centre on the ground, the storey starts 0.75 m up. One mesh, `wall`, whose faces carry a region id in UV2 (the walkway's centre, corridors, caps, the deck corners, the rim, the band) that [materials/wall.gdshader](../../materials/wall.gdshader) colours per block, so the walkway runs toward the own walls beside it. The `wall_<shape>_<level>` files belong to the parked connector walls |
 | `ui/splash.png` | the splash screen |
 | `ui/loading.jpg`, `ui/loading.2.jpg`, ... | the loading screen, one look at random behind the bar, numbered from 2 without a gap. Made from the twenty pictures of [round 29](../../art/game/art-direction/rounds/29-loading-art/PICKS.md) by `art/pipeline/storeset.py loading`, imported as lossy WebP at quality 0.8 |
 | `ui/logo.png` | the menu title |

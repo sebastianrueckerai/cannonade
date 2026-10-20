@@ -1,35 +1,9 @@
 {
   "asset_id": "wall_course",
   "parts": {
-    "deck": {
-      "verts": 8,
-      "tris": 12,
-      "non_manifold_edges": 0,
-      "materials": [
-        "deck_stone"
-      ],
-      "origin": [
-        0.0,
-        0.0,
-        0.0
-      ]
-    },
-    "merlons": {
-      "verts": 80,
-      "tris": 144,
-      "non_manifold_edges": 0,
-      "materials": [
-        "merlons_stone"
-      ],
-      "origin": [
-        0.0,
-        0.0,
-        0.0
-      ]
-    },
     "wall": {
-      "verts": 104,
-      "tris": 204,
+      "verts": 264,
+      "tris": 524,
       "non_manifold_edges": 0,
       "materials": [
         "wall_stone"
@@ -41,12 +15,10 @@
       ]
     }
   },
-  "verts": 192,
-  "tris": 360,
+  "verts": 264,
+  "tris": 524,
   "non_manifold_edges": 0,
   "materials": [
-    "deck_stone",
-    "merlons_stone",
     "wall_stone"
   ],
   "dims_m": [
@@ -64,7 +36,7 @@
     0.5,
     1.0
   ],
-  "solidity": 0.904,
+  "solidity": 0.867,
   "limits_ok": true,
   "limit_failures": []
 }

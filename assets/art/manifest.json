@@ -635,44 +635,10 @@
     "parts": [
       "wall"
     ],
-    "tris": 188,
-    "source_sha": "d07f8a0459bb",
+    "tris": 308,
+    "source_sha": "bffae4393aaf",
     "approved_by": null,
-    "synced": "2026-10-19T22:05:27+02:00"
-  },
-  "wall_arch": {
-    "size": [
-      1.0,
-      1.0,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "deck",
-      "merlons",
-      "wall"
-    ],
-    "tris": 344,
-    "source_sha": "2315b1b7e8e0",
-    "approved_by": null,
-    "synced": "2026-10-20T13:25:37+02:00"
-  },
-  "wall_caps": {
-    "size": [
-      1.0,
-      1.0,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "deck",
-      "merlons",
-      "wall"
-    ],
-    "tris": 192,
-    "source_sha": "938f16494a32",
-    "approved_by": null,
-    "synced": "2026-10-20T13:25:37+02:00"
+    "synced": "2026-10-20T14:22:28+02:00"
   },
   "wall_corbel": {
     "size": [
@@ -682,14 +648,27 @@
     ],
     "tolerance": 0.02,
     "parts": [
-      "deck",
-      "merlons",
       "wall"
     ],
-    "tris": 328,
-    "source_sha": "60b94f779506",
+    "tris": 468,
+    "source_sha": "625b983677af",
     "approved_by": null,
-    "synced": "2026-10-20T13:25:37+02:00"
+    "synced": "2026-10-20T14:22:28+02:00"
+  },
+  "wall_corbel_upper": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "wall"
+    ],
+    "tris": 468,
+    "source_sha": "6bf2ffa9d83d",
+    "approved_by": null,
+    "synced": "2026-10-20T14:22:28+02:00"
   },
   "wall_course": {
     "size": [
@@ -699,14 +678,27 @@
     ],
     "tolerance": 0.02,
     "parts": [
-      "deck",
-      "merlons",
       "wall"
     ],
-    "tris": 360,
-    "source_sha": "2121123139dd",
+    "tris": 524,
+    "source_sha": "4cfa17d633e4",
     "approved_by": null,
-    "synced": "2026-10-20T13:25:37+02:00"
+    "synced": "2026-10-20T14:22:28+02:00"
+  },
+  "wall_course_upper": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "wall"
+    ],
+    "tris": 524,
+    "source_sha": "794ad0576786",
+    "approved_by": null,
+    "synced": "2026-10-20T14:22:28+02:00"
   },
   "wall_cross_base": {
     "size": [
@@ -806,16 +798,14 @@
     ],
     "tolerance": 0.02,
     "parts": [
-      "deck",
-      "merlons",
       "wall"
     ],
-    "tris": 232,
-    "source_sha": "d591a7ad231e",
+    "tris": 390,
+    "source_sha": "989792f67d12",
     "approved_by": null,
-    "synced": "2026-10-20T13:25:37+02:00"
+    "synced": "2026-10-20T14:22:28+02:00"
   },
-  "wall_plain": {
+  "wall_pilaster_upper": {
     "size": [
       1.0,
       1.0,
@@ -823,14 +813,12 @@
     ],
     "tolerance": 0.02,
     "parts": [
-      "deck",
-      "merlons",
       "wall"
     ],
-    "tris": 168,
-    "source_sha": "872d78a5ec01",
+    "tris": 390,
+    "source_sha": "01eca2960494",
     "approved_by": null,
-    "synced": "2026-10-20T13:25:37+02:00"
+    "synced": "2026-10-20T14:22:28+02:00"
   },
   "wall_tri_base": {
     "size": [
@@ -872,9 +860,9 @@
     "parts": [
       "wall"
     ],
-    "tris": 188,
-    "source_sha": "3caaa2a8b541",
+    "tris": 308,
+    "source_sha": "156f1575822f",
     "approved_by": null,
-    "synced": "2026-10-19T22:05:27+02:00"
+    "synced": "2026-10-20T14:22:28+02:00"
   }
 }

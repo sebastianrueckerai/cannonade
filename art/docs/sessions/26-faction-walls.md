@@ -133,3 +133,41 @@ sides are blue and red, in play the AI is purple; a storey (`wall_upper`) exists
 block until a look is picked; after the pick the preview restore in
 [PlayerController.gd](/home/womb/repos/grid-cannons/scripts/components/PlayerController.gd) must keep
 each part's own colour, because `U.get_color` reads one mesh.
+
+## Second pass: the picks in the game
+
+Sebastian, with the boards open: "1, 3,4,5 all look good, lets do them all. I would color the walkway on the
+wall, not the lego like blocks on the walls (trough which the walkways lead. But a problem with this is, that
+a walkway presumes a direction, and the direction is guided by the neighbouring walls. A single standing cell
+of 1x1 walls should then only have the inner square colored. See if you can make that happen. If there are
+other accents like lines around the wall that lend themselves to be colored, experiment with that as well!"
+Recorded as D78.
+
+**The block is one mesh with regions.** A block with a dozen separately coloured parts would be a dozen draw
+calls, and a long game holds hundreds of blocks (K7). So [wall_block.py](../../game/assets/3d/wall_block.py)
+builds the deck as one plate, cuts it along the region planes and writes a region id into a second UV layer
+per face: the centre square, four corridors, their four caps at the tile edge, the four corner squares, a rim
+frame and the band round the body's top. [materials/wall.gdshader](/home/womb/repos/grid-cannons/materials/wall.gdshader)
+multiplies the painted texture by one colour per region, with a `shade` for the placement preview. The deck's
+rows of the texture are painted white (`white_band`), so the colour is the region's own. One material per
+block, one draw call, as before.
+
+**The game.** `Catalog.WALL_LOOKS` names the four looks by player number, `Catalog.spawn` takes the owner so a
+block or piece wears its look from the start, and `Wall.wear` corrects a block built without one (the sandbox
+and the tools). `Wall.repaint` colours the walkway from the centre toward every side where an own wall stands,
+`BuildingPlace.repaint_walls_around` runs it on this tile and its four neighbours when a block is built or
+destroyed, a storey repaints itself when it is stacked, and a hand piece's cells show the walkways between the
+cells in the piece's own frame, which turns with it. The preview darkens the piece through the shader's shade.
+The ground tint and the accents are tool knobs on `Wall` (`walk_tint`, `rim_tint`, `band_tint`) and
+`--team=walk=K,rim=K,band=K,floor=K` in the battle tool, for the accents board.
+
+**Found on the way.** An exact union of boxes that only touch leaves their shared faces inside the result and
+55 non-manifold edges; parts overlap by 0.01 m now. The glTF exporter writes the second UV layer as
+`TEXCOORD_1` without a setting, and Godot reads it as `UV2`.
+
+**Watched red.** `tests/walls_test` went red under each of five breaks: the owner ignored beside a block, one
+look for every player, no repaint when a block is destroyed, a storey wearing the base model, a piece without
+its corridors. `tests/human` and `tests/preview_test` read the shader's shade now instead of an albedo.
+
+**Result.** Triangles: plain 308, pilaster 390, corbel 468, course 524. The walkway reads at the default view
+on both forts as a line through the ring that turns at the corners. Suite green, 19 entries.

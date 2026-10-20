@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://b5603exoudvys"
-path="res://.godot/imported/wall_caps.glb-6a6b9467da2f84c0ed4377e64b1c2c8e.scn"
+uid="uid://cs7q10k8qqkde"
+path="res://.godot/imported/wall_pilaster_upper.glb-521af43e9dd307e95ab39c49f8af4c2d.scn"
 
 [deps]
 
-source_file="res://assets/art/3d/wall_caps.glb"
-dest_files=["res://.godot/imported/wall_caps.glb-6a6b9467da2f84c0ed4377e64b1c2c8e.scn"]
+source_file="res://assets/art/3d/wall_pilaster_upper.glb"
+dest_files=["res://.godot/imported/wall_pilaster_upper.glb-521af43e9dd307e95ab39c49f8af4c2d.scn"]
 
 [params]
 

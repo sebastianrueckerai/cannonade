@@ -2,14 +2,14 @@
   "asset_id": "wall_caps",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "f283be15cfef",
-    "build_py_sha": "7dd99ad5e6eb"
+    "asset_yaml_sha": "72a3b42e2ace",
+    "build_py_sha": "5810efedeaf0"
   },
   "steps": [
     {
       "name": "build",
       "ok": true,
-      "elapsed_s": 0.0
+      "elapsed_s": 0.02
     },
     {
       "name": "normalise",
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 2.2
+      "elapsed_s": 1.03
     },
     {
       "name": "report",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.63
+      "elapsed_s": 0.48
     },
     {
       "name": "export",
@@ -44,5 +44,5 @@
   "approved_by": null,
   "approved": null,
   "cost_usd": 0,
-  "created": "2026-10-20T13:21:55+02:00"
+  "created": "2026-10-20T14:20:36+02:00"
 }

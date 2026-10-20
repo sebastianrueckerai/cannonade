@@ -2,7 +2,7 @@
 
 This document sets the look of Cannonade, the game with the project name Grid Cannons (D26). Everyone who makes art for the game reads it first: Sebastian, the agents that write prompts and build assets, and any artist who joins later.
 
-Version 0.1. Version 0 was approved by Sebastian and tagged `bible-v0`. Session 06 added the gun budgets of D37 to chapter 3 and the block mapping of D32 to chapter 6. Version 0.2 (session 11, D53) amends the wall-face rule of chapter 7.
+Version 0.1. Version 0 was approved by Sebastian and tagged `bible-v0`. Session 06 added the gun budgets of D37 to chapter 3 and the block mapping of D32 to chapter 6. Version 0.2 (session 11, D53) amends the wall-face rule of chapter 7. Version 0.3 (session 26, D78) adds the wall looks and the walkway colour to chapters 2 and 3.
 
 ## How to read this document
 
@@ -120,7 +120,7 @@ Each player has a team colour. The game shows it on the player's base building a
 | teal | #197059 |
 | olive | #8c7a1f |
 
-The rule: at the default view, a base in each team colour reads apart from the other three, on grass, sand, stone and sea. Every base shows its team colour on a flag and a coloured roof (D42).
+The rule: at the default view, a base in each team colour reads apart from the other three, on grass, sand, stone and sea. Every base shows its team colour on a flag and a coloured roof (D42). Every wall block shows its owner's colour on its walkway, the stone lerped 0.6 toward the team colour, and the walkway runs only toward the own walls beside the block (D78); the merlons and the stone stay cream.
 
 The game's old deep blue and purple looked like the same dark block at 13 px. The bible corrected them, and the game now uses this set (roadmap F10).
 
@@ -173,7 +173,7 @@ Sebastian rejected the rounded, chunky language. Its edits made the bevel a quar
 The detail level is named after the game River Towns. It was the middle one of three reference games.
 
 - **A building** is one mass and one roof, plus one or two features: a door, a row of two windows, a chimney, or a crate or barrel beside it. That is five to eight parts.
-- **A wall** has three parts: the slab, the row of merlons, and a ledge at the base or a walkway.
+- **A wall** has three parts: the slab, the row of merlons, and a ledge at the base or a walkway. The full-tile block (D75) comes in four looks, one per player: plain, corbelled, pilastered and coursed (D78); a look is flavour for the zoomed view, the colour tells the players apart.
 - **Walls are plain slabs** at every level. No stones are drawn on them.
 - **At most one prop** stands on a ground tile.
 

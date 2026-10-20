@@ -1,4 +1,5 @@
 extends "res://scripts/components/Component.gd"
+const WallComp = preload("res://scripts/components/Wall.gd")
 ## Port of PlayerController.cs: a human player (mouse + keyboard). AI.gd
 ## extends this class.
 
@@ -54,7 +55,6 @@ var _reachStale := true
 var secondsLastBuilding := 0.0
 var game = null
 var voidSelected := false
-var wallColor := Color.WHITE
 ## battle statistics (shots, hits, intercepted, absorbed, walls_lost, guns_lost, buildings_lost)
 var stats := {}
 ## last mouse position in viewport coordinates
@@ -323,14 +323,17 @@ func next_building_to_gui() -> void:
 
 
 func _restore_wall_color() -> void:
-	if U.alive(nextWall):
-		U.set_color(nextWall, wallColor)
+	_shade_wall(1.0)
 
 
 ## The held piece on the board reads darker than the placed blocks round it.
 func _darken_wall() -> void:
+	_shade_wall(0.7)
+
+
+func _shade_wall(shade: float) -> void:
 	if U.alive(nextWall):
-		U.set_color(nextWall, wallColor.darkened(0.3))
+		WallComp.paint_piece(nextWall, self, U.comp(nextWall, "Structure").def.piece, shade)
 
 
 func switch_casting_shadows(n: Node3D, on := true) -> void:
@@ -515,7 +518,7 @@ func build_upgrade(tile) -> void:
 
 ## A fresh block stacks on the own wall on `tile`; the held single block is used up.
 func stack_wall(tile) -> void:
-	var block := Catalog.spawn("wall")
+	var block := Catalog.spawn("wall", null, self)
 	U.comp(block, "BuildingBlock").player = self
 	tile.stack_wall(block)
 	U.destroy(nextWall)
@@ -528,7 +531,7 @@ func build_next_wall(tile) -> void:
 	var tiles := piece_tiles(tile)
 	map.statesMap.begin_batch()
 	for t in tiles:
-		build_wall(t, Catalog.spawn("wall"))
+		build_wall(t, Catalog.spawn("wall", null, self))
 	map.statesMap.end_batch(tiles)
 	U.destroy(nextWall)
 	nextWall = null
@@ -555,7 +558,7 @@ func _wall_in(x0: int, z0: int, x1: int, z1: int) -> void:
 	for x in range(x0 - 1, x1 + 2):
 		for z in range(z0 - 1, z1 + 2):
 			if x < x0 or x > x1 or z < z0 or z > z1:
-				build_wall(map.tiles[x][z], Catalog.spawn("wall"))
+				build_wall(map.tiles[x][z], Catalog.spawn("wall", null, self))
 
 
 ## Rules v3: every live gun fires, walled in or not; nothing is ever unsupplied.
@@ -576,12 +579,11 @@ func drop(droppable: Node3D, is_wall := true) -> void:
 
 
 func get_next_wall() -> void:
-	var wall := Catalog.spawn(Catalog.draw(BuildingDef.Category.WALL), wallSpawn)
+	var wall := Catalog.spawn(Catalog.draw(BuildingDef.Category.WALL), wallSpawn, self)
 	var rotations := U.rint(0, 4)
 	for i in rotations:
 		U.comp(wall, "BuildingBlock").rotate_counter_clockwise()
 	nextWall = wall
-	wallColor = U.get_color(nextWall)
 	switch_casting_shadows(nextWall, false)
 
 
@@ -594,7 +596,7 @@ func place(def: BuildingDef, x: int, z: int, node: Node3D = null) -> Node3D:
 		if node != null:
 			node.free()
 		return null
-	var go: Node3D = node if node != null else Catalog.spawn(def)
+	var go: Node3D = node if node != null else Catalog.spawn(def, null, self)
 	if def.size == 1:
 		var tile = map.tiles[x][z]
 		if def.category == BuildingDef.Category.WALL:

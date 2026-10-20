@@ -1,35 +1,9 @@
 {
   "asset_id": "wall_arch",
   "parts": {
-    "deck": {
-      "verts": 8,
-      "tris": 12,
-      "non_manifold_edges": 0,
-      "materials": [
-        "deck_stone"
-      ],
-      "origin": [
-        0.0,
-        0.0,
-        0.0
-      ]
-    },
-    "merlons": {
-      "verts": 80,
-      "tris": 144,
-      "non_manifold_edges": 0,
-      "materials": [
-        "merlons_stone"
-      ],
-      "origin": [
-        0.0,
-        0.0,
-        0.0
-      ]
-    },
     "wall": {
-      "verts": 96,
-      "tris": 188,
+      "verts": 284,
+      "tris": 564,
       "non_manifold_edges": 0,
       "materials": [
         "wall_stone"
@@ -41,12 +15,10 @@
       ]
     }
   },
-  "verts": 184,
-  "tris": 344,
+  "verts": 284,
+  "tris": 564,
   "non_manifold_edges": 0,
   "materials": [
-    "deck_stone",
-    "merlons_stone",
     "wall_stone"
   ],
   "dims_m": [
@@ -64,7 +36,7 @@
     0.5,
     1.0
   ],
-  "solidity": 0.848,
+  "solidity": 0.813,
   "limits_ok": true,
   "limit_failures": []
 }

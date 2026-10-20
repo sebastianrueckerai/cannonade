@@ -3,42 +3,24 @@ route: procedural
 class: wall
 build: ../wall_block.py
 level: base
-style: pilaster          # see wall_block.py; session 26 candidate for the faction looks
+style: pilaster          # the faction looks of D78, see wall_block.py
 dimensions:            # metres, Blender axes, Z up. Upper bounds.
   max_x: 1.0
   max_y: 1.0
   max_z: 1.0
 budget:
-  max_tris: 600        # the contract's 200 holds the plain block; the face treatments are measured against it in the session plan
-  max_materials: 3
+  max_tris: 700        # the contract's 200 was the thin wall's; the block carries its walkway regions (D78)
+  max_materials: 1
 parts:
   - wall
-  - deck
-  - merlons
 pivots:
   origin: tile_centre
 paint:
   wall:
     kind: stone
     seed: 41
+    project: true
     over:
       patches: [[10, [8, 15], [0.07, 0.12], [22, 44]], [7, [9, 17], [0.06, 0.10], [-40, -22]]]
       streaks: [12, [0.82, 0.96], [0.04, 0.11], [3, 7], [0.20, 0.32], 34]
-  deck:                # white grain under the stone colour factor: the game tints the walkway by one albedo write
-    kind: stone
-    seed: 42
-    tint: "#e8d6b0"
-    over:
-      stops: [[0.0, "#ffffff"], [1.0, "#ffffff"]]
-      ground: null
-      streaks: null
-      patches: [[6, [8, 15], [0.04, 0.08], [-30, -16]]]
-  merlons:
-    kind: stone
-    seed: 43
-    tint: "#e8d6b0"
-    over:
-      stops: [[0.0, "#ffffff"], [1.0, "#ffffff"]]
-      ground: null
-      patches: [[8, [8, 15], [0.05, 0.10], [-36, -18]]]
-      streaks: [10, [0.55, 0.95], [0.15, 0.40], [3, 7], [0.20, 0.32], 34]
+      white_band: [0.745, 0.78]      # the walkway deck's rows: the wall shader colours them per region

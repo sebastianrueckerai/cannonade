@@ -258,17 +258,30 @@ static func rotations(sig: Array, side: int) -> Array:
 
 
 # ----------------------------------------------------------------- spawning
-## Instantiates a building (by id or def), not yet added to the tree when
-## parent is null.
-func spawn(def_or_id, parent: Node = null) -> Node3D:
+const WallComp = preload("res://scripts/components/Wall.gd")
+## The wall looks of D78, one per player number; a block with no owner wears the first.
+const WALL_LOOKS := ["wall", "wall_corbel", "wall_pilaster", "wall_course"]
+
+
+static func wall_look(owner) -> String:
+	return WALL_LOOKS[(owner.playerID - 1) % WALL_LOOKS.size()] if owner != null else WALL_LOOKS[0]
+
+
+## Instantiates a building (by id or def), not yet added to the tree when parent is null. A wall block or piece
+## wears `owner`'s look from the start (BuildingPlace.build corrects a block spawned without one).
+func spawn(def_or_id, parent: Node = null, owner = null) -> Node3D:
 	var def: BuildingDef = def_or_id if def_or_id is BuildingDef else get_def(def_or_id)
 	if def == null:
 		push_error("Catalog: unknown building %s" % [def_or_id])
 		return null
 	var go: Node3D = def.model.instantiate()
-	Art.attach(go, def.id)
+	if def.id == "wall":
+		Art.attach(go, wall_look(owner))
+		WallComp.dress(go.get_node_or_null("Art"))
+	else:
+		Art.attach(go, def.id)
 	if not def.piece.is_empty():
-		_add_piece_cells(go, def)
+		_add_piece_cells(go, def, owner)
 	configure(go, def)
 	if parent != null:
 		parent.add_child(go)
@@ -422,14 +435,17 @@ func _anchor_path(go: Node3D, c: Node, anchor_name: String, fallback = null) -> 
 	return NodePath(str(c.get_path_to(a)))
 
 
-## A hand piece shows the wall block at each of its cells, so the piece looks like what it places.
-func _add_piece_cells(go: Node3D, def: BuildingDef) -> void:
+## A hand piece shows the owner's wall block at each of its cells, walkways running between them, so the piece
+## looks like what it places.
+func _add_piece_cells(go: Node3D, def: BuildingDef, owner) -> void:
 	var block: BuildingDef = get_def("wall")
 	for c in def.piece:
 		var cell: Node3D = block.model.instantiate()
-		Art.attach(cell, "wall")
+		Art.attach(cell, wall_look(owner))
+		WallComp.dress(cell.get_node_or_null("Art"))
 		cell.position = Vector3(c.x, 0.0, -c.y)
 		go.add_child(cell)
+	WallComp.paint_piece(go, owner, def.piece)
 
 
 func _first_model_child(go: Node3D) -> Node3D:

@@ -76,10 +76,7 @@ func _check_slot(kind: String, i: int) -> void:
 func _check_hovers() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
-	var block := Catalog.spawn("wall")
-	check(_visible_albedo(human.nextWall) == _visible_albedo(block),
-			"the piece in the gui slot wears the placed block's colour, not its hidden placeholder's")
-	block.free()
+	check(_shade(human.nextWall) == 1.0, "the piece in the gui slot wears the placed block's colour, unshaded")
 	var rest := _slot_box(human.nextWall)
 	check(human.nextWall.get_parent() == human.wallSpawn and absf(rest.get_center().x) < 0.01
 			and absf(rest.get_center().z) < 0.01, "the offered piece rests centred in the gui slot")
@@ -114,9 +111,7 @@ func _check_hovers() -> void:
 			"the piece moves onto the hovered tile as the placement preview")
 	check(human.nextBuilding.get_parent() == human.buildingSpawn,
 			"the building stays in its slot; only the wall previews on the tile")
-	var plain := Catalog.spawn("wall")
-	check(_visible_albedo(human.nextWall).v < _visible_albedo(plain).v,
-			"the preview on the board is darker than a placed block")
+	check(_shade(human.nextWall) < 1.0, "the preview on the board is darker than a placed block")
 	check(deco_meshes.all(func(m): return not m.visible),
 			"the tile's trees and stones hide under the placement preview")
 	ev = InputEventMouseMotion.new()
@@ -126,9 +121,7 @@ func _check_hovers() -> void:
 	await get_tree().process_frame
 	check(human.nextWall.get_parent() == human.wallSpawn,
 			"the wall returns to the gui slot off the board")
-	check(_visible_albedo(human.nextWall) == _visible_albedo(plain),
-			"back in the gui slot the piece wears the placed block's colour again")
-	plain.free()
+	check(_shade(human.nextWall) == 1.0, "back in the gui slot the piece wears the placed block's colour again")
 	check(human.nextBuilding.get_parent() == human.buildingSpawn,
 			"the building returns to its slot off the board")
 	check(deco_meshes.all(func(m): return m.visible),
@@ -165,16 +158,10 @@ func _check_pieces() -> void:
 		human._restore_decorations()
 
 
-## Albedo of the first visible mesh: its override, else its mesh's own material.
-func _visible_albedo(root: Node) -> Color:
-	for mi in U.meshes(root):
-		if mi.get_script() != null or not mi.visible:
-			continue
-		var m: Material = mi.get_surface_override_material(0)
-		if m == null:
-			m = mi.mesh.surface_get_material(0)
-		return m.albedo_color if m is BaseMaterial3D else Color.WHITE
-	return Color.BLACK
+## The wall shader's shade of the first block under node, 1 placed, under 1 as the ghost.
+func _shade(node: Node) -> float:
+	var mi := node.find_child("wall", true, false) as MeshInstance3D
+	return mi.material_override.get_shader_parameter("shade") if mi != null else -1.0
 
 
 ## Bounds of the piece's meshes in its slot's space.

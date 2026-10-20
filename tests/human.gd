@@ -141,11 +141,10 @@ func _run() -> void:
 	check(ghost == want, "the ghost of the upright three covers %s (got %s)" % [want, ghost])
 	var piece = human.nextWall
 	var walls_before: int = human.wallTiles.size()
-	var ring_color := U.get_color(map.tiles[b.x - 2][b.y].structure)
-	check(U.get_color(piece).v < ring_color.v, "the ghost is darker than the ring's blocks")
+	check(_shade(piece) < 1.0, "the ghost is darker than the ring's blocks")
 	await press("build_wall")
 	check(_all_blocks(want), "left click stamps a wall block on every tile the ghost covered")
-	check(want.all(func(t): return U.get_color(map.tiles[t.x][t.y].structure) == ring_color),
+	check(want.all(func(t): return _shade(map.tiles[t.x][t.y].structure) == 1.0),
 			"the placed blocks wear the ring's colour, not the ghost's tint")
 	check(human.wallTiles.size() == walls_before + 3, "the three blocks count as the player's walls")
 	check(not U.alive(piece) and U.alive(human.nextWall), "the piece is used up and a new one is offered")
@@ -286,7 +285,13 @@ func _run() -> void:
 ## Replaces the randomly drawn wall piece (fixture for a specific piece).
 func _hold(id: String) -> void:
 	U.destroy(human.nextWall)
-	human.nextWall = Catalog.spawn(id, human.wallSpawn)
+	human.nextWall = Catalog.spawn(id, human.wallSpawn, human)
+
+
+## The wall shader's shade of the first block under node, 1 placed, under 1 as the ghost.
+func _shade(node: Node) -> float:
+	var mi := node.find_child("wall", true, false) as MeshInstance3D
+	return mi.material_override.get_shader_parameter("shade") if mi != null else -1.0
 
 
 func _all_free(tiles: Array) -> bool:

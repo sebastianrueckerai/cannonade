@@ -49,11 +49,10 @@ func _process(_delta: float) -> void:
 	var id: String = item[0]
 	if item[2]:
 		U.destroy(human.nextWall)
-		human.nextWall = Catalog.spawn(id, human.wallSpawn)
+		human.nextWall = Catalog.spawn(id, human.wallSpawn, human)
 		var bb = U.comp(human.nextWall, "BuildingBlock")
 		for i in item[1]:
 			bb.rotate_counter_clockwise()
-		human.wallColor = U.get_color(human.nextWall)
 		human.next_wall_to_gui()
 	else:
 		U.destroy(human.nextBuilding)

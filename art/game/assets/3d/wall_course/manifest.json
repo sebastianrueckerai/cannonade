@@ -2,14 +2,14 @@
   "asset_id": "wall_course",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "758efe3b6329",
-    "build_py_sha": "b6e7dcad91f2"
+    "asset_yaml_sha": "af688d641fb9",
+    "build_py_sha": "8c40c4fa5159"
   },
   "steps": [
     {
       "name": "build",
       "ok": true,
-      "elapsed_s": 0.03
+      "elapsed_s": 0.05
     },
     {
       "name": "normalise",
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 2.27
+      "elapsed_s": 1.02
     },
     {
       "name": "report",
@@ -29,12 +29,12 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.61
+      "elapsed_s": 0.58
     },
     {
       "name": "export",
       "ok": true,
-      "elapsed_s": 0.01
+      "elapsed_s": 0.02
     }
   ],
   "report": "report.json",
@@ -44,5 +44,5 @@
   "approved_by": null,
   "approved": null,
   "cost_usd": 0,
-  "created": "2026-10-20T13:24:50+02:00"
+  "created": "2026-10-20T14:22:26+02:00"
 }

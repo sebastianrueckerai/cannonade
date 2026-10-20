@@ -148,6 +148,8 @@ def paint_texture(params, seed):
                 c = lerp(c, rgb(col), k * kk)
             # su is full circles per metre (u features/m = 2*pi*su), so 2.07/6.0 match the v frequencies 13/38
             n = pnoise(u, v, 2.07, 13.0, 3.1) * g1 + pnoise(u, v, 6.0, 38.0, 7.7) * g2
+            if params.get("white_band") and params["white_band"][0] <= v <= params["white_band"][1]:
+                c = (255.0, 255.0, 255.0)   # the rows a recoloured region samples: grain only, the game's colour on top
             c = tuple(ch * (1.0 + n) for ch in c)
             o = (y * W + x) * 4
             flat[o:o + 3] = c
@@ -190,8 +192,10 @@ def paint_texture(params, seed):
 
 def painted_material(ob, spec, keep_slots=False):
     """Paints `spec` {"kind", "seed", optional "over"} onto `ob`, assigns the material, returns it.
-    Keeps existing UVs (the shell's sphere); projects box meshes that have none. `tint`, a hex, becomes the
-    material's base colour factor over the texture, for a part the game recolours.
+    Keeps existing UVs (the shell's sphere); projects box meshes that have none, or any mesh with `project`
+    (the wall block carries a second UV layer of region ids and wants the projection on its first). `tint`, a
+    hex, becomes the material's base colour factor over the texture, for a part the game recolours. `white_band`
+    [v0, v1] in `over` paints those rows white, grain only, for the faces the game colours itself.
     keep_slots: leave the slot list alone (the caller places the material), for
     meshes whose first material must stay, like the castle's team slot."""
     kind = spec["kind"]
@@ -199,7 +203,7 @@ def painted_material(ob, spec, keep_slots=False):
     params = dict(PAINTERS[kind])
     params.update(spec.get("over") or {})
     name = f"{ob.name}_{kind}"
-    if ob.data.uv_layers.active is None:
+    if ob.data.uv_layers.active is None or spec.get("project"):
         cube_uv(ob, top_planar=spec.get("top_planar", False))
     img = bpy.data.images.new(name + "_tex", width=W, height=H)
     img.colorspace_settings.name = "sRGB"
