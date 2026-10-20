@@ -232,6 +232,9 @@ func _run() -> void:
 	# 4: live: the yard closes, guns go inside own closed ground, a neutral castle is ringed
 	enemy.dormant = false
 	enemy.nextAction = 0.0
+	check(enemy.secondsBetweenShots > 0.0 and enemy.secondsBetweenBuilds >= 2.0 * enemy.secondsBetweenShots,
+			"the AI pauses after every action and builds at most half as fast as it shoots by default")
+	enemy.secondsBetweenBuilds = 0.5  # a pace of the test's own: 25 s give the plan 50 actions
 	game.timeLeftInRound = 1e6
 	await seconds(25.0)
 	check(yard.closed() and enclosed_by(yard.yard, enemy), "the yard is closed and the AI's")
@@ -287,14 +290,14 @@ func _run() -> void:
 	check(enemy.wallTiles.size() == before + 2, "the action places the wall piece instead")
 	check(flying_buildings().is_empty(), "nothing flies away")
 
-	# 7: the reaction time (set to a value of the test's own) after every build action
-	check(enemy.secondsBetweenActions > 0.0, "the AI pauses between actions by default")
-	enemy.secondsBetweenActions = 0.8
+	# 7: the reaction times (set to values of the test's own, apart) after every build action and shot
+	enemy.secondsBetweenBuilds = 1.1
+	enemy.secondsBetweenShots = 0.8
 	enemy.dormant = false
 	enemy.nextAction = 0.0
 	var built := await action_times(5.0)
 	check(flying_buildings().is_empty(), "five seconds of building phase fly no building away")
-	check_pace(built, 0.8, "build")
+	check_pace(built, 1.1, "build")
 
 	# battle: the loaded guns fire one shot per action, never two at once
 	game.buildingAllowed = false

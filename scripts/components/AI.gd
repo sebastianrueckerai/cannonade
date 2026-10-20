@@ -4,9 +4,11 @@ extends "res://scripts/components/PlayerController.gd"
 
 const RingPlan = preload("res://scripts/RingPlan.gd")
 
-## Reaction time: the pause after every action (a placed piece or gun, a stacked block, a dropped
-## piece, a shot), the time a human needs to move the mouse and click. Must stay above 0.
-var secondsBetweenActions := 0.5
+## Reaction time: the pause after every shot, the aim move and the click. Must stay above 0.
+var secondsBetweenShots := 0.5
+## The pause after every build action (a placed piece or gun, a stacked block, a dropped piece):
+## a human turns and places a piece slower than it fires a loaded gun. Must stay above 0.
+var secondsBetweenBuilds := 1.0
 ## When nothing could be done, wait this long before trying again
 var secondsIdleRetry := 0.15
 var nextAction := 0.0
@@ -196,7 +198,7 @@ func execute_building_plan() -> void:
 	if not did and U.alive(nextWall):
 		drop(nextWall, true)
 		did = true
-	nextAction = U.time + (secondsBetweenActions if did else secondsIdleRetry)
+	nextAction = U.time + (secondsBetweenBuilds if did else secondsIdleRetry)
 
 
 ## The held building goes inside the AI's closed ground, an own castle's first, then a yard's, then
@@ -359,7 +361,7 @@ func search_and_fire_at_targets() -> void:
 	for i in activeCannons.size():
 		var t = targets[i % targets.size()]
 		if activeCannons[i].try_shoot(t.go.global_position, t):
-			nextAction = U.time + secondsBetweenActions
+			nextAction = U.time + secondsBetweenShots
 			return
 
 
