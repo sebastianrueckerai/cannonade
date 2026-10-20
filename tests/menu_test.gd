@@ -27,8 +27,7 @@ func _ready() -> void:
 		if b.text == "Tutorial & Controls":
 			tut = b
 	_check(tut != null, "the menu has a Tutorial & Controls button")
-	# the fit round: the panel must fit a 720-tall window without scaling, and the
-	# help overlay must shrink when the window is shorter than it
+	# the menu and the help overlay both fit the 1280x720 canvas, the smallest any window shows
 	var panels: Array = menu.find_children("*", "PanelContainer", true, false)
 	var menu_panel: PanelContainer = panels[0]
 	_check(menu_panel.get_combined_minimum_size().y < 700.0,
@@ -39,16 +38,34 @@ func _ready() -> void:
 	await _frames(3)
 	var help_panel: PanelContainer = null
 	for p in menu.find_children("*", "PanelContainer", true, false):
-		if p.get_parent() is ScrollContainer:
+		if p != menu_panel:
 			help_panel = p
-	var help_scroll: ScrollContainer = (help_panel.get_parent()
-			if help_panel != null else null)
-	_check(help_panel != null and help_scroll.size.y <= menu.size.y + 0.5,
-			"the Tutorial & Controls scroll area never leaves the window")
-	_check(help_panel != null and help_scroll.get_v_scroll_bar().max_value
-			>= help_panel.get_combined_minimum_size().y,
-			"the whole tutorial scrolls into view when the window is shorter than it")
-	_esc()
+	var win := Rect2(Vector2.ZERO, menu.size)
+	var help_rect: Rect2 = help_panel.get_global_rect() if help_panel != null else Rect2()
+	_check(help_panel != null and win.encloses(help_rect),
+			"the Tutorial & Controls panel %s fits inside the %s window" % [help_rect, menu.size])
+	_check(help_panel != null and help_rect.get_center().distance_to(win.get_center()) < 1.0,
+			"the Tutorial & Controls panel is centred")
+	var close0: Button = null
+	for b in menu.find_children("*", "Button", true, false):
+		if b.text == "Close":
+			close0 = b
+	_check(close0 != null and win.encloses(close0.get_global_rect()),
+			"the Close button %s is inside the window" % (close0.get_global_rect() if close0 != null else Rect2()))
+	# Close holds the focus, so its text must keep the readable ink: the default focus colour is near-white
+	_check(close0 != null and close0.has_focus()
+			and close0.get_theme_color("font_focus_color") == close0.get_theme_color("font_color"),
+			"the focused Close button keeps its font colour (%s)"
+			% (close0.get_theme_color("font_focus_color") if close0 != null else Color()))
+	# a click on the parchment, off every button, keeps the help open
+	_click(help_rect.position + Vector2(8, 8))
+	await _frames(2)
+	_check(_labels_with("fire the cannons", menu) == 1,
+			"a click on the panel itself keeps Tutorial & Controls open")
+	_click(Vector2(8, 8))
+	await _frames(2)
+	_check(_labels_with("fire the cannons", menu) == 0,
+			"a click outside the panel closes Tutorial & Controls")
 	await _frames(2)
 	# a corrupt input_remap.cfg must not stop the menu building or later rows loading
 	var t_key0 := InputEventKey.new()
@@ -186,6 +203,16 @@ func _esc() -> void:
 	ev.action = "ui_cancel"
 	ev.pressed = true
 	Input.parse_input_event(ev)
+
+
+func _click(pos: Vector2) -> void:
+	for pressed in [true, false]:
+		var ev := InputEventMouseButton.new()
+		ev.button_index = MOUSE_BUTTON_LEFT
+		ev.position = pos
+		ev.global_position = pos
+		ev.pressed = pressed
+		Input.parse_input_event(ev)
 
 
 func _key(k: int) -> void:
