@@ -1,0 +1,20 @@
+{
+  "source": "game/art-direction/rounds/36-music-probe/chipsail-build--acestep.wav",
+  "model": "fal-ai/ace-step",
+  "prompt": "Instrumental only, no vocals, no singing, no lyrics. Age-of-sail chiptune. 8-bit console sound playing a sea shanty and a hornpipe: a square-wave lead that phrases like a fife or a tin whistle, pulse-wave chords pumping like a concertina, a triangle-wave bass walking like a tuba, noise-channel snare and a wooden-sounding drum. 6/8 jig lilt or a brisk 2/4 hornpipe, a harbour, sailors hauling rope, tall ships. Crunchy retro chip timbres, no modern synth pads, no orchestra. Background music for the build phase of a cheerful castle board game: the player stacks painted wooden wall pieces on a tile board, friendly and quick, sunlit toy fortress by the sea. Tempo: 108 BPM. Mood: calm, bouncy, curious, light. Arrangement: a steady loop of a catchy eight-bar melody with a second eight bars that answers it, a light counter-melody, no big build-up, no breakdown, no ending, constant energy so it loops. About 90 seconds long.",
+  "params": {
+    "duration": 90,
+    "lyrics": "[inst]"
+  },
+  "seed": 979277658,
+  "bus": "music",
+  "target": {
+    "lufs": -16.0
+  },
+  "created": "2026-10-20T22:41:54",
+  "seconds": 88.9,
+  "lufs": -15.9,
+  "m_max": -12.4,
+  "range_lu": 7.5,
+  "peak_dbtp": -5.2
+}

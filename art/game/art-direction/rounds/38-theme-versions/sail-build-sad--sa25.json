@@ -1,0 +1,19 @@
+{
+  "model": "fal-ai/stable-audio-25/audio-to-audio",
+  "prompt": "Chiptune, 8-bit, the same melody very slow in a minor key, mournful, sad, sparse, music box, no drums, a lament, instrumental, no vocals",
+  "audio": "game/art-direction/rounds/36-music-probe/chipsail-build--acestep.wav",
+  "params": {
+    "strength": 0.6,
+    "total_seconds": 90
+  },
+  "seed": 1273836666,
+  "duration": null,
+  "label": "sail-build-sad--sa25",
+  "est_cost_usd": 0.205,
+  "created": "2026-10-20T22:43:05",
+  "outputs": [
+    "sail-build-sad--sa25.wav"
+  ],
+  "vocal_words": 2,
+  "vocal_text": "......... you"
+}

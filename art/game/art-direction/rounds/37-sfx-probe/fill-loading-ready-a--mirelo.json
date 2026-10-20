@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a bright short wooden chime of two rising xylophone notes, a ready signal in a board game.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.0
+  },
+  "seed": 421194847,
+  "duration": null,
+  "label": "fill-loading-ready-a--mirelo",
+  "est_cost_usd": 0.01,
+  "created": "2026-10-20T22:45:43",
+  "outputs": [
+    "fill-loading-ready-a--mirelo.wav"
+  ]
+}

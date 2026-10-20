@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a brief whoosh of flame and a crackle, a tiny thing catching fire and going out, no explosion.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.5
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-burn-outside-b--eleven",
+  "est_cost_usd": 0.003,
+  "created": "2026-10-20T22:45:00",
+  "outputs": [
+    "fill-burn-outside-b--eleven.mp3"
+  ]
+}

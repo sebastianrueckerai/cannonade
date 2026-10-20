@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron cannonball hits the wooden hull of a small sailing ship: a hard wooden crack, splintering and a creak, short.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.2
+  },
+  "seed": 914681828,
+  "duration": null,
+  "label": "fill-hit-ship-a--mirelo",
+  "est_cost_usd": 0.012,
+  "created": "2026-10-20T22:45:38",
+  "outputs": [
+    "fill-hit-ship-a--mirelo.wav"
+  ]
+}

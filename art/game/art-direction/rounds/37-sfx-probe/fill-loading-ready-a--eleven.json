@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a bright short wooden chime of two rising xylophone notes, a ready signal in a board game.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.0
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-loading-ready-a--eleven",
+  "est_cost_usd": 0.002,
+  "created": "2026-10-20T22:45:04",
+  "outputs": [
+    "fill-loading-ready-a--eleven.mp3"
+  ]
+}

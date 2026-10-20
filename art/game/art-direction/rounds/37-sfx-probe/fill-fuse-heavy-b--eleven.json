@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. heavy metal parts slide and lock into place: a short grind, a deep clunk and a ring, mechanical and solid.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 2.0
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-fuse-heavy-b--eleven",
+  "est_cost_usd": 0.004,
+  "created": "2026-10-20T22:44:53",
+  "outputs": [
+    "fill-fuse-heavy-b--eleven.mp3"
+  ]
+}

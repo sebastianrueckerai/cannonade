@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a quick rising glockenspiel arpeggio with a soft wooden tap at the end, a small win, one second.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.2
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-ring-closed-b--eleven",
+  "est_cost_usd": 0.0024,
+  "created": "2026-10-20T22:44:59",
+  "outputs": [
+    "fill-ring-closed-b--eleven.mp3"
+  ]
+}

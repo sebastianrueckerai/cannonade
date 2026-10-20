@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron cannonball strikes a stone castle wall: a hard stone crack with a puff of dust and a small chip of stone falling, dry, short.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.2
+  },
+  "seed": 659083498,
+  "duration": null,
+  "label": "fill-hit-wall-c--mirelo",
+  "est_cost_usd": 0.012,
+  "created": "2026-10-20T22:45:44",
+  "outputs": [
+    "fill-hit-wall-c--mirelo.wav"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden game piece is pulled from a cloth bag and set in a tray: a soft rustle and a wooden tap.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 0.8
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-draw-piece-b--eleven",
+  "est_cost_usd": 0.0016,
+  "created": "2026-10-20T22:45:08",
+  "outputs": [
+    "fill-draw-piece-b--eleven.mp3"
+  ]
+}

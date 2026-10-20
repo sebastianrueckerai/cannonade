@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. four small iron cannons clatter together and lock into one big cannon: a quick metallic clatter, then a deep iron clunk, then a short satisfying ring.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 2.0
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-fuse-heavy-a--eleven",
+  "est_cost_usd": 0.004,
+  "created": "2026-10-20T22:44:53",
+  "outputs": [
+    "fill-fuse-heavy-a--eleven.mp3"
+  ]
+}

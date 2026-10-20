@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden game piece is turned a quarter turn on a board: a tiny wooden tick, very short.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 0.5
+  },
+  "seed": 4131367795,
+  "duration": null,
+  "label": "fill-rotate-a--mirelo",
+  "est_cost_usd": 0.005,
+  "created": "2026-10-20T22:45:20",
+  "outputs": [
+    "fill-rotate-a--mirelo.wav"
+  ]
+}

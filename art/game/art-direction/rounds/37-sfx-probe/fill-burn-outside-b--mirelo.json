@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a brief whoosh of flame and a crackle, a tiny thing catching fire and going out, no explosion.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.5
+  },
+  "seed": 306364595,
+  "duration": null,
+  "label": "fill-burn-outside-b--mirelo",
+  "est_cost_usd": 0.015,
+  "created": "2026-10-20T22:45:37",
+  "outputs": [
+    "fill-burn-outside-b--mirelo.wav"
+  ]
+}

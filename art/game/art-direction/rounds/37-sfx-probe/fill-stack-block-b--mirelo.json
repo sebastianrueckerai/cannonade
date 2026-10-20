@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden block is stacked onto another wooden block: a short hollow wooden knock, one hit.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.0
+  },
+  "seed": 435982433,
+  "duration": null,
+  "label": "fill-stack-block-b--mirelo",
+  "est_cost_usd": 0.01,
+  "created": "2026-10-20T22:45:13",
+  "outputs": [
+    "fill-stack-block-b--mirelo.wav"
+  ]
+}

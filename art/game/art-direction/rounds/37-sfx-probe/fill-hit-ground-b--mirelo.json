@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a heavy iron ball drops onto grass and dirt: a low thump and a scatter of soil, short.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.0
+  },
+  "seed": 3343983720,
+  "duration": null,
+  "label": "fill-hit-ground-b--mirelo",
+  "est_cost_usd": 0.01,
+  "created": "2026-10-20T22:45:37",
+  "outputs": [
+    "fill-hit-ground-b--mirelo.wav"
+  ]
+}

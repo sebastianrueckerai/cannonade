@@ -1,18 +1,67 @@
 {
   "models": {
-    "eleven": {"id": "fal-ai/elevenlabs/sound-effects/v2", "prompt_field": "text", "params": {"prompt_influence": 0.6, "output_format": "mp3_44100_192"}},
-    "mirelo": {"id": "mirelo-ai/sfx2.0/text-to-audio", "params": {"num_samples": 2, "negative_prompt": "music, melody, voice, speech, crowd, birds, wind"}}
+    "eleven": {
+      "id": "fal-ai/elevenlabs/sound-effects/v2",
+      "prompt_field": "text",
+      "params": {
+        "prompt_influence": 0.6,
+        "output_format": "mp3_44100_192"
+      }
+    },
+    "mirelo": {
+      "id": "mirelo-ai/sfx2.0/text-to-audio",
+      "params": {
+        "num_samples": 2,
+        "negative_prompt": "music, melody, voice, speech, crowd, birds, wind"
+      }
+    }
   },
   "directions": [
-    {"slug": "rubble", "crumble": "several stone blocks tumble, crack and knock against each other as a small castle wall collapses into rubble, dusty, chunky", "place": "a heavy cut stone block is set down onto a stone wall: a solid stone thud with a short gritty grind as it settles, one hit"},
-    {"slug": "chunks", "crumble": "a section of a stone wall breaks apart and a few big stone chunks fall and roll on stone, hard knocks, short", "place": "a stone block is dropped into place on a wall: a dull heavy clunk and a tiny stone tick, dry, one hit"},
-    {"slug": "clatter", "crumble": "a stack of stone blocks topples and clatters down, a quick series of stone-on-stone knocks that settle in a second", "place": "a wooden game piece is set firmly onto a wooden board: one crisp wooden clack, like a domino placed hard, no bounce"},
-    {"slug": "crunch", "crumble": "stone masonry crumbles with a crunch: a low crack, stones grinding and tumbling, a last chunk dropping, no explosion", "place": "a chunky wooden block snaps into a slot on a board: a short wooden knock with a click at the end, satisfying, one hit"}
+    {
+      "slug": "rubble",
+      "crumble": "several stone blocks tumble, crack and knock against each other as a small castle wall collapses into rubble, dusty, chunky",
+      "place": "a heavy cut stone block is set down onto a stone wall: a solid stone thud with a short gritty grind as it settles, one hit"
+    },
+    {
+      "slug": "chunks",
+      "crumble": "a section of a stone wall breaks apart and a few big stone chunks fall and roll on stone, hard knocks, short",
+      "place": "a stone block is dropped into place on a wall: a dull heavy clunk and a tiny stone tick, dry, one hit"
+    },
+    {
+      "slug": "clatter",
+      "crumble": "a stack of stone blocks topples and clatters down, a quick series of stone-on-stone knocks that settle in a second",
+      "place": "a wooden game piece is set firmly onto a wooden board: one crisp wooden clack, like a domino placed hard, no bounce"
+    },
+    {
+      "slug": "crunch",
+      "crumble": "stone masonry crumbles with a crunch: a low crack, stones grinding and tumbling, a last chunk dropping, no explosion",
+      "place": "a chunky wooden block snaps into a slot on a board: a short wooden knock with a click at the end, satisfying, one hit"
+    }
   ],
   "tracks": {
-    "crumble": {"prompt": "Game sound effect, dry, close, no music, no voice, no ambience. {crumble}.",
-      "params": {"eleven": {"duration_seconds": 1.8}, "mirelo": {"duration": 1.8}}},
-    "place": {"prompt": "Game sound effect, dry, close, no music, no voice, no ambience. {place}.",
-      "params": {"eleven": {"duration_seconds": 0.6}, "mirelo": {"duration": 0.6}}}
+    "crumble": {
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. {crumble}.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.8
+        },
+        "mirelo": {
+          "duration": 1.8
+        }
+      },
+      "cue": "crumble"
+    },
+    "place": {
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. {place}.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 0.6
+        },
+        "mirelo": {
+          "duration": 0.6
+        }
+      },
+      "cue": "place_piece"
+    }
   }
 }

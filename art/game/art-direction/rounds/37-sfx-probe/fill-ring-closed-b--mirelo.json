@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a quick rising glockenspiel arpeggio with a soft wooden tap at the end, a small win, one second.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.2
+  },
+  "seed": 1942395588,
+  "duration": null,
+  "label": "fill-ring-closed-b--mirelo",
+  "est_cost_usd": 0.012,
+  "created": "2026-10-20T22:45:26",
+  "outputs": [
+    "fill-ring-closed-b--mirelo.wav"
+  ]
+}

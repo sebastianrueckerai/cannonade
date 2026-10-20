@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a crisp short bell ding with a wooden tap, a ready signal, half a second.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.0
+  },
+  "seed": 3777162478,
+  "duration": null,
+  "label": "fill-loading-ready-b--mirelo",
+  "est_cost_usd": 0.01,
+  "created": "2026-10-20T22:45:42",
+  "outputs": [
+    "fill-loading-ready-b--mirelo.wav"
+  ]
+}

@@ -494,3 +494,13 @@ so far." Then, from the stone sets: "Those 3 can be used for things crumbling (w
 angle from ElevenLabs and both Mirelo takes, `crumble_1` to `crumble_3`.
 [PICKS.md](../game/art-direction/rounds/37-sfx-probe/PICKS.md).
 
+## D84. The age-of-sail chiptune from ACE-Step is the music (2026-10-20, Sebastian)
+
+On the round 36 page, after "I am not happy with the basic chiptunes. Can you make chiptune medieval or age
+of sail music?" and the three registers that followed: "Use these two musics", chipsail-build--acestep and
+chipsail-battle--acestep. A square-wave lead phrased like a fife over concertina-pumping pulse chords, a
+tuba-like triangle bass, a hornpipe lilt, 8-bit through and through. ACE-Step 1.0 on fal, Apache-2.0,
+0.018 USD a clip. They are `build.ogg` and `battle.ogg` in the game's
+[assets/audio/music/](/home/womb/repos/grid-cannons/assets/audio/music), not yet cut to loops. The menu,
+win and lose cues come as versions of them, round 38. [PICKS.md](../game/art-direction/rounds/36-music-probe/PICKS.md).
+

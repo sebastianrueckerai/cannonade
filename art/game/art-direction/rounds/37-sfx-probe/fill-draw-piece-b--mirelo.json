@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden game piece is pulled from a cloth bag and set in a tray: a soft rustle and a wooden tap.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 0.8
+  },
+  "seed": 1424245656,
+  "duration": null,
+  "label": "fill-draw-piece-b--mirelo",
+  "est_cost_usd": 0.008,
+  "created": "2026-10-20T22:45:49",
+  "outputs": [
+    "fill-draw-piece-b--mirelo.wav"
+  ]
+}

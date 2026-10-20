@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron cannonball lands on soft earth: a dull heavy thud with a puff of dirt, no crack, short.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.0
+  },
+  "seed": 2389403187,
+  "duration": null,
+  "label": "fill-hit-ground-a--mirelo",
+  "est_cost_usd": 0.01,
+  "created": "2026-10-20T22:45:33",
+  "outputs": [
+    "fill-hit-ground-a--mirelo.wav"
+  ]
+}

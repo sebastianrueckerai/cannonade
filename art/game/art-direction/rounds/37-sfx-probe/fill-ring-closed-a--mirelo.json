@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a short bright rising chime of three wooden xylophone notes, cheerful, a success in a board game.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.2
+  },
+  "seed": 3788431519,
+  "duration": null,
+  "label": "fill-ring-closed-a--mirelo",
+  "est_cost_usd": 0.012,
+  "created": "2026-10-20T22:45:24",
+  "outputs": [
+    "fill-ring-closed-a--mirelo.wav"
+  ]
+}

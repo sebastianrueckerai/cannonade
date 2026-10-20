@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. four small iron cannons clatter together and lock into one big cannon: a quick metallic clatter, then a deep iron clunk, then a short satisfying ring.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 2.0
+  },
+  "seed": 2125319125,
+  "duration": null,
+  "label": "fill-fuse-heavy-a--mirelo",
+  "est_cost_usd": 0.02,
+  "created": "2026-10-20T22:45:19",
+  "outputs": [
+    "fill-fuse-heavy-a--mirelo.wav"
+  ]
+}

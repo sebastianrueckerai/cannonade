@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. wood splinters as a cannonball strikes a ship's planks: a sharp crack and a wooden creak, dry.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.2
+  },
+  "seed": 1685363412,
+  "duration": null,
+  "label": "fill-hit-ship-b--mirelo",
+  "est_cost_usd": 0.012,
+  "created": "2026-10-20T22:45:38",
+  "outputs": [
+    "fill-hit-ship-b--mirelo.wav"
+  ]
+}

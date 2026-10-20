@@ -258,9 +258,7 @@ def cmd_vocals(a):
         print(f"{d['vocal_words']:4d} words  {d['label']}  {text[:80]!r}")
 
 
-def cmd_page(a):
-    """index.html with a player, the prompt and the measurements per clip, and sheet.md with the numbers."""
-    rd = Path(a.round).resolve()
+def clip_metas(rd):
     metas = []
     for p in sorted(rd.glob("*.json")):
         d = json.loads(p.read_text())
@@ -271,23 +269,107 @@ def cmd_page(a):
             if clip.exists():
                 label = d["label"] if len(d["outputs"]) == 1 else f"{d['label']}-{i + 1}"
                 metas.append({**d, "label": label, "file": clip.name, **measure(clip)})
+    return metas
+
+
+def cue_map(rd):
+    """stem prefix -> cue, from every config of the round whose tracks name a `cue`."""
+    out = {}
+    for cfg in rd.glob("*.json"):
+        try:
+            c = json.loads(cfg.read_text())
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(c, dict) or "tracks" not in c:
+            continue
+        for d in c["directions"]:
+            for tslug, t in c["tracks"].items():
+                if "cue" in t:
+                    out[f"{d['slug']}-{tslug}--"] = t["cue"]
+    return out
+
+
+def card(m, check=None):
+    box = f'<input type="checkbox" data-cue="{check[0]}" data-stem="{m["label"]}"{" checked" if check[1] else ""}> ' if check else ""
+    return (f'<div class="c"><label>{box}<b>{html.escape(m["label"])}</b></label> <small>{html.escape(m["model"])} · {m["seconds"]} s · '
+            f'{m["lufs"]} LUFS · {m.get("vocal_words", "?")} words · ~${m["est_cost_usd"]:.3f}</small>'
+            f'<audio controls preload="none" src="{html.escape(m["file"])}"></audio>'
+            f'<details><summary>prompt</summary><pre>{html.escape(m["prompt"])}</pre></details></div>')
+
+
+STYLE = ('<style>body{font:14px system-ui;margin:20px;max-width:900px}.c{border-bottom:1px solid #ddd;padding:8px 0}'
+         'audio{width:100%;display:block;margin:4px 0}pre{white-space:pre-wrap;font-size:12px}h2{margin:28px 0 4px}'
+         'h2 small{font-weight:normal;color:#666}.bar{position:sticky;top:0;background:#fff;padding:8px 0;border-bottom:2px solid #333}'
+         'textarea{width:100%;height:90px;font:12px monospace}.none{color:#888}</style>')
+
+PICKS_JS = """<script>
+const key = 'picks:' + document.title;
+const boxes = [...document.querySelectorAll('input[type=checkbox]')];
+const saved = localStorage.getItem(key);
+if (saved) { const on = new Set(JSON.parse(saved)); boxes.forEach(b => b.checked = on.has(b.dataset.cue + ': ' + b.dataset.stem)); }
+function lines() { return boxes.filter(b => b.checked).map(b => b.dataset.cue + ': ' + b.dataset.stem); }
+function refresh() { document.getElementById('picks').value = lines().join('\n'); localStorage.setItem(key, JSON.stringify(lines())); }
+boxes.forEach(b => b.addEventListener('change', refresh));
+document.getElementById('copy').onclick = () => navigator.clipboard.writeText(lines().join('\n'));
+document.getElementById('reset').onclick = () => { localStorage.removeItem(key); location.reload(); };
+refresh();
+</script>"""
+
+
+def cmd_page(a):
+    """index.html with a player per clip and sheet.md with the numbers. A round with a cues.json gets a heading per cue,
+    a checkbox per clip, the picks of picks.json ticked, and a box that lists the ticked clips to paste back."""
+    rd = Path(a.round).resolve()
+    metas = clip_metas(rd)
     rows = ["| clip | model | s | LUFS | LRA | peak dBTP | words | USD |", "|---|---|---|---|---|---|---|---|"]
-    cards = []
     for m in metas:
         rows.append(f"| {m['label']} | {m['model']} | {m['seconds']} | {m['lufs']} | {m['range_lu']} | {m['peak_dbtp']} | {m.get('vocal_words', '')} | {m['est_cost_usd']:.3f} |")
-        cards.append(
-            f'<div class="c"><b>{html.escape(m["label"])}</b> <small>{html.escape(m["model"])} · {m["seconds"]} s · '
-            f'{m["lufs"]} LUFS · {m.get("vocal_words", "?")} words · ~${m["est_cost_usd"]:.3f}</small><br><audio controls preload="none" src="{html.escape(m["file"])}"></audio>'
-            f'<details><summary>prompt</summary><pre>{html.escape(m["prompt"])}</pre></details></div>')
     total = sum(m["est_cost_usd"] for m in metas)
     (rd / "sheet.md").write_text("\n".join(rows) + f"\n\n{len(metas)} clips, ~${total:.2f}\n")
-    (rd / "index.html").write_text(
-        f'<!doctype html><meta charset="utf-8"><title>{html.escape(rd.name)}</title>'
-        '<style>body{font:14px system-ui;margin:20px;max-width:900px}.c{border-bottom:1px solid #ddd;padding:8px 0}'
-        'audio{width:100%;display:block;margin:4px 0}pre{white-space:pre-wrap;font-size:12px}</style>'
-        f'<h1>{html.escape(rd.name)}</h1><p>{len(metas)} clips, ~${total:.2f}</p>' + "".join(cards))
+    head = f'<!doctype html><meta charset="utf-8"><title>{html.escape(rd.name)}</title>{STYLE}'
+    if not (rd / "cues.json").exists():
+        body = f'<h1>{html.escape(rd.name)}</h1><p>{len(metas)} clips, ~${total:.2f}</p>' + "".join(card(m) for m in metas)
+    else:
+        cues = json.loads((rd / "cues.json").read_text())
+        picks = json.loads((rd / "picks.json").read_text()) if (rd / "picks.json").exists() else {}
+        prefixes = cue_map(rd)
+        by_cue = {}
+        for m in metas:
+            cue = next((c for pre, c in prefixes.items() if m["label"].startswith(pre)), None)
+            by_cue.setdefault(cue, []).append(m)
+        parts = [f'<h1>{html.escape(rd.name)}</h1><div class="bar">{len(metas)} clips, ~${total:.2f}. Tick the clips to use, then '
+                 f'<button id="copy">copy the list</button> and paste it to me. <button id="reset">Reset to the saved picks</button>'
+                 f'<textarea id="picks" readonly></textarea></div>']
+        for c in cues:
+            clips = by_cue.pop(c["id"], [])
+            chosen = picks.get(c["id"], [])
+            have = f'{len(chosen)} picked' if chosen else 'none picked'
+            parts.append(f'<h2 id="{c["id"]}">{html.escape(c["title"])} <small>{c["id"]} · {html.escape(c["what"])} · wants {c["wants"]} · {have}</small></h2>')
+            if c.get("from"):
+                parts.append(f'<p class="none">Made from {html.escape(c["from"])}, no clips of its own.</p>')
+            if not clips and not c.get("from"):
+                parts.append('<p class="none">No candidates yet.</p>')
+            clips.sort(key=lambda m: (m["label"] not in chosen, m["label"]))
+            parts.extend(card(m, (c["id"], m["label"] in chosen)) for m in clips)
+        rest = [m for ms in by_cue.values() for m in ms]
+        if rest:
+            parts.append('<h2>Not in the cue list</h2>' + "".join(card(m) for m in rest))
+        body = "".join(parts) + PICKS_JS
+    (rd / "index.html").write_text(head + body)
     print(rd / "index.html")
     print(f"{len(metas)} clips, ~${total:.2f}")
+
+
+def cmd_finals(a):
+    """Every pick of a round's picks.json becomes a game asset named after its cue, numbered when the cue has several."""
+    rd = Path(a.round).resolve()
+    picks = json.loads((rd / "picks.json").read_text())
+    cues = {c["id"]: c for c in json.loads((rd / "cues.json").read_text())} if (rd / "cues.json").exists() else {}
+    for cue, stems in picks.items():
+        bus = "ui" if cue.startswith("ui_") or cue == "countdown" else "sfx"
+        for i, stem in enumerate(stems):
+            src = next(p for p in rd.iterdir() if p.stem == stem and p.suffix in (".wav", ".mp3", ".ogg"))
+            cmd_final(argparse.Namespace(src=str(src), id=f"{cue}_{i + 1}" if len(stems) > 1 or cues.get(cue, {}).get("wants", 1) > 1 else cue, bus=bus, lufs=None))
 
 
 GAME = Path(os.environ.get("GAME_REPO", ROOT.parent))
@@ -299,13 +381,13 @@ TRIM = "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremo
 
 def cmd_final(a):
     """A picked clip becomes a game asset: leading and trailing silence cut, level set for its bus, true peak under
-    -1 dBTP, 44.1 kHz 16-bit WAV in game/assets/audio/<bus>/<id>.wav with a sidecar naming the source, and a copy in
-    the game's assets/audio/<bus>/."""
+    -1 dBTP, 44.1 kHz 16-bit WAV, or Vorbis for music, in game/assets/audio/<bus>/<id> with a sidecar naming the
+    source, and a copy in the game's assets/audio/<bus>/."""
     src = Path(a.src).resolve()
     kind, target = BUS[a.bus]
     if a.lufs is not None:
         target = a.lufs
-    out = ROOT / "game" / "assets" / "audio" / a.bus / f"{a.id}.wav"
+    out = ROOT / "game" / "assets" / "audio" / a.bus / f"{a.id}.{'ogg' if a.bus == 'music' else 'wav'}"  # music as Vorbis, a 90 s WAV is 16 MB
     out.parent.mkdir(parents=True, exist_ok=True)
     trimmed = Path("/tmp") / f"{a.id}.trim.wav"
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-af", TRIM, "-ar", "44100", str(trimmed)], check=True)
@@ -321,7 +403,8 @@ def cmd_final(a):
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(trimmed), "-af", "apad=pad_dur=0.5", str(padded)], check=True)
         gain = target - measure(padded)["m_max"]
         chain = f"volume={gain:.2f}dB,alimiter=limit=0.891:attack=1:release=50:level=false"
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(trimmed), "-af", chain, "-ar", "44100", "-c:a", "pcm_s16le", str(out)], check=True)
+    codec = ["-c:a", "libvorbis", "-q:a", "6"] if a.bus == "music" else ["-c:a", "pcm_s16le"]
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(trimmed), "-af", chain, "-ar", "44100", *codec, str(out)], check=True)
     side = src.with_suffix(".json")
     meta = {
         "source": rel(src),
@@ -365,6 +448,9 @@ def main():
     v.add_argument("round")
     v.add_argument("--redo", action="store_true")
     v.set_defaults(fn=cmd_vocals)
+    fs = sub.add_parser("finals")
+    fs.add_argument("round")
+    fs.set_defaults(fn=cmd_finals)
     pg = sub.add_parser("page")
     pg.add_argument("round")
     pg.set_defaults(fn=cmd_page)

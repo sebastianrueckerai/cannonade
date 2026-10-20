@@ -32,7 +32,8 @@
         "mirelo": {
           "duration": 1.5
         }
-      }
+      },
+      "cue": "shot_cannon"
     },
     "heavy-shot": {
       "prompt": "{style}. A large heavy cannon fires: a deep round boom with a low thud and a short metallic ring, bigger and slower than a small cannon, fairground scale, not a real war cannon.",
@@ -43,7 +44,8 @@
         "mirelo": {
           "duration": 2
         }
-      }
+      },
+      "cue": "shot_heavy"
     },
     "hit-wall": {
       "prompt": "{style}. An iron cannonball hits a painted wooden toy castle wall: a sharp stone crack and a wooden knock, one block breaks off and tumbles, short.",
@@ -54,7 +56,8 @@
         "mirelo": {
           "duration": 1.2
         }
-      }
+      },
+      "cue": "hit_wall"
     },
     "crumble": {
       "prompt": "{style}. A short wall of painted wooden toy blocks crumbles: several blocks knock, tumble and clatter onto a wooden board game table, chunky, over in a second and a half.",
@@ -65,7 +68,8 @@
         "mirelo": {
           "duration": 1.8
         }
-      }
+      },
+      "cue": "crumble"
     },
     "hit-water": {
       "prompt": "{style}. A cannonball splashes into calm sea water: a round plop and a small splash, toy pond scale, short.",
@@ -76,7 +80,8 @@
         "mirelo": {
           "duration": 1.2
         }
-      }
+      },
+      "cue": "hit_water"
     },
     "place-piece": {
       "prompt": "{style}. A painted wooden game piece is set down on a wooden board game table: a single satisfying wooden clack with a tiny click, like a domino or a wooden block placed firmly.",
@@ -87,7 +92,8 @@
         "mirelo": {
           "duration": 0.6
         }
-      }
+      },
+      "cue": "place_piece"
     },
     "place-invalid": {
       "prompt": "{style}. A move is refused in a board game: a soft dull wooden double knock, low and muted, polite not harsh, like a piece bumping against the table edge.",
@@ -98,7 +104,8 @@
         "mirelo": {
           "duration": 0.6
         }
-      }
+      },
+      "cue": "place_invalid"
     },
     "draw-piece": {
       "prompt": "{style}. A new wooden game piece slides out of a wooden box and lands in a tray: a short wooden slide and a light tap, quick, friendly.",
@@ -109,7 +116,8 @@
         "mirelo": {
           "duration": 0.7
         }
-      }
+      },
+      "cue": "draw_piece"
     },
     "ui-click": {
       "prompt": "{style}. A menu button click for a wooden toy game: a crisp light wooden tick, very short.",
@@ -120,7 +128,8 @@
         "mirelo": {
           "duration": 0.3
         }
-      }
+      },
+      "cue": "ui_click"
     },
     "phase-horn": {
       "prompt": "{style}. A short brass signal horn or bugle call announces the start of a battle, two rising notes, bright and cheerful, a toy fortress by the sea, one second.",
@@ -131,7 +140,8 @@
         "mirelo": {
           "duration": 1.5
         }
-      }
+      },
+      "cue": "horn_battle"
     },
     "ship-sink": {
       "prompt": "{style}. A small wooden toy sailing ship is hit and tips over into water: a wooden creak and crack, then a gentle splash and bubbles, short.",
@@ -142,7 +152,8 @@
         "mirelo": {
           "duration": 2
         }
-      }
+      },
+      "cue": "ship_sink"
     },
     "castle-claim": {
       "prompt": "{style}. A small castle is captured in a cheerful toy board game: a short bright chime sting with a tiny flag-raising rope creak and a flap of cloth, triumphant but small, one second.",
@@ -153,7 +164,8 @@
         "mirelo": {
           "duration": 1.5
         }
-      }
+      },
+      "cue": "castle_claimed"
     }
   }
 }

@@ -1,0 +1,20 @@
+{
+  "source": "game/art-direction/rounds/36-music-probe/chipsail-battle--acestep.wav",
+  "model": "fal-ai/ace-step",
+  "prompt": "Instrumental only, no vocals, no singing, no lyrics. Age-of-sail chiptune. 8-bit console sound playing a sea shanty and a hornpipe: a square-wave lead that phrases like a fife or a tin whistle, pulse-wave chords pumping like a concertina, a triangle-wave bass walking like a tuba, noise-channel snare and a wooden-sounding drum. 6/8 jig lilt or a brisk 2/4 hornpipe, a harbour, sailors hauling rope, tall ships. Crunchy retro chip timbres, no modern synth pads, no orchestra. Background music for the battle phase of a cheerful castle board game: toy cannons pop like a fairground shooting gallery, water splashes, ships tip over like toys, nothing grim. Tempo: 150 BPM. Mood: driving, exciting, playful, heroic. Arrangement: a field-drum march pattern throughout, a fanfare-like main theme in the lead, a running bass, a second section with more tension, back to the theme, no slow intro, no ending, constant energy so it loops. About 90 seconds long.",
+  "params": {
+    "duration": 90,
+    "lyrics": "[inst]"
+  },
+  "seed": 1675295830,
+  "bus": "music",
+  "target": {
+    "lufs": -16.0
+  },
+  "created": "2026-10-20T22:41:58",
+  "seconds": 87.7,
+  "lufs": -15.9,
+  "m_max": -12.8,
+  "range_lu": 2.2,
+  "peak_dbtp": -6.7
+}

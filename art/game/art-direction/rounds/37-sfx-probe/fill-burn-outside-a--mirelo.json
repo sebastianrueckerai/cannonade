@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a small wooden structure burns up quickly: a short crackle of fire and a soft puff of smoke, over in a second.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.5
+  },
+  "seed": 3249101073,
+  "duration": null,
+  "label": "fill-burn-outside-a--mirelo",
+  "est_cost_usd": 0.015,
+  "created": "2026-10-20T22:45:32",
+  "outputs": [
+    "fill-burn-outside-a--mirelo.wav"
+  ]
+}

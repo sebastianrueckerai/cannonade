@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a stone block is set on top of a wall block: a solid stone-on-stone tap, higher and lighter than a floor placement, one hit.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.0
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-stack-block-a--eleven",
+  "est_cost_usd": 0.002,
+  "created": "2026-10-20T22:44:53",
+  "outputs": [
+    "fill-stack-block-a--eleven.mp3"
+  ]
+}

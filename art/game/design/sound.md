@@ -151,6 +151,12 @@ Counts: 33 clip sets in A, 21 in B, about 70 files with the variations.
 
 ## Picked so far
 
-D83, from round 37: `cannon_1` to `cannon_3` (shot_cannon x3), `heavy_1` to `heavy_3` (shot_heavy),
-`castle_claimed`, `draw_piece`, `ship_sink`, `place_piece`, `place_invalid`, `horn_battle`, `hit_water`,
-`ui_click` and `crumble_1` to `crumble_3` (crumble, castle_ruin). Open from the A list: the rest.
+The assets are named after their cue id, numbered when a cue has several: `shot_cannon_1`. The picks
+live in the round's `picks.json`, the page of round 37 shows them ticked, and `audio.py finals` makes
+the assets from it. D83, from round 37: shot_cannon x3, shot_heavy x3, castle_claimed, draw_piece,
+ship_sink, place_piece, place_invalid, horn_battle, hit_water, ui_click and crumble x3. Open from the
+A list: the rest, with candidates on the page.
+
+D84, from round 36: the build and the battle theme are the age-of-sail chiptune from ACE-Step,
+`build.ogg` and `battle.ogg`, full clips not yet cut to loops. Menu, win and lose are open, as versions
+of them in round 38.

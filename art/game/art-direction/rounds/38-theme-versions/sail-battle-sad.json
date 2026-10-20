@@ -1,0 +1,22 @@
+{
+  "model": "fal-ai/ace-step/audio-to-audio",
+  "prompt": "chiptune, 8-bit, very slow, minor key, mournful, sad, sparse, music box, descending, no drums, defeat, a lament, same melody",
+  "audio": "game/art-direction/rounds/36-music-probe/chipsail-battle--acestep.wav",
+  "params": {
+    "edit_mode": "remix",
+    "original_tags": "Instrumental only, no vocals, no singing, no lyrics. Age-of-sail chiptune. 8-bit console sound playing a sea shanty and a hornpipe: a square-wave lead that phrases like a fife or a tin whistle, pulse-wave chords pumping like a concertina, a triangle-wave bass walking like a tuba, noise-channel snare and a wooden-sounding drum. 6/8 jig lilt or a brisk 2/4 hornpipe, a harbour, sailors hauling rope, tall ships. Crunchy retro chip timbres, no modern synth pads, no orchestra. Background music for the battle phase of a cheerful castle board game: toy cannons pop like a fairground shooting gallery, water splashes, ships tip over like toys, nothing grim. Tempo: 150 BPM. Mood: driving, exciting, playful, heroic. Arrangement: a field-drum march pattern throughout, a fanfare-like main theme in the lead, a running bass, a second section with more tension, back to the theme, no slow intro, no ending, constant energy so it loops. About 90 seconds long.",
+    "lyrics": "[inst]",
+    "original_lyrics": ""
+  },
+  "seed": 41475679,
+  "lyrics": "[inst]",
+  "duration": null,
+  "label": "sail-battle-sad",
+  "est_cost_usd": 0.017,
+  "created": "2026-10-20T22:42:12",
+  "outputs": [
+    "sail-battle-sad.wav"
+  ],
+  "vocal_words": 1,
+  "vocal_text": "so"
+}

@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a gentle wooden whistle plays two falling notes, like a boatswain's call, calm.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.5
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-horn-build-b--eleven",
+  "est_cost_usd": 0.003,
+  "created": "2026-10-20T22:45:02",
+  "outputs": [
+    "fill-horn-build-b--eleven.mp3"
+  ]
+}

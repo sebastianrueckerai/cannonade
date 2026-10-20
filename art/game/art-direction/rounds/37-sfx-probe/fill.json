@@ -1,0 +1,302 @@
+{
+  "models": {
+    "eleven": {
+      "id": "fal-ai/elevenlabs/sound-effects/v2",
+      "prompt_field": "text",
+      "params": {
+        "prompt_influence": 0.6,
+        "output_format": "mp3_44100_192"
+      }
+    },
+    "mirelo": {
+      "id": "mirelo-ai/sfx2.0/text-to-audio",
+      "params": {
+        "num_samples": 1,
+        "negative_prompt": "music, melody, voice, speech, crowd, birds, wind"
+      }
+    }
+  },
+  "directions": [
+    {
+      "slug": "fill"
+    }
+  ],
+  "tracks": {
+    "stack-block-a": {
+      "cue": "stack_block",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a stone block is set on top of a wall block: a solid stone-on-stone tap, higher and lighter than a floor placement, one hit.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.0
+        },
+        "mirelo": {
+          "duration": 1.0
+        }
+      }
+    },
+    "stack-block-b": {
+      "cue": "stack_block",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden block is stacked onto another wooden block: a short hollow wooden knock, one hit.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.0
+        },
+        "mirelo": {
+          "duration": 1.0
+        }
+      }
+    },
+    "place-gun-a": {
+      "cue": "place_gun",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a small iron cannon on a wooden carriage is set down on stone: a heavy wooden thump with a short iron ring, one hit.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.2
+        },
+        "mirelo": {
+          "duration": 1.2
+        }
+      }
+    },
+    "place-gun-b": {
+      "cue": "place_gun",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a heavy cast-iron object is placed on a stone floor: a dull deep clunk and a brief metallic ring.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.2
+        },
+        "mirelo": {
+          "duration": 1.2
+        }
+      }
+    },
+    "fuse-heavy-a": {
+      "cue": "fuse_heavy",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. four small iron cannons clatter together and lock into one big cannon: a quick metallic clatter, then a deep iron clunk, then a short satisfying ring.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 2.0
+        },
+        "mirelo": {
+          "duration": 2.0
+        }
+      }
+    },
+    "fuse-heavy-b": {
+      "cue": "fuse_heavy",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. heavy metal parts slide and lock into place: a short grind, a deep clunk and a ring, mechanical and solid.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 2.0
+        },
+        "mirelo": {
+          "duration": 2.0
+        }
+      }
+    },
+    "rotate-a": {
+      "cue": "rotate",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden game piece is turned a quarter turn on a board: a tiny wooden tick, very short.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 0.5
+        },
+        "mirelo": {
+          "duration": 0.5
+        }
+      }
+    },
+    "rotate-b": {
+      "cue": "rotate",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden knob clicks one notch: a short crisp wooden click.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 0.5
+        },
+        "mirelo": {
+          "duration": 0.5
+        }
+      }
+    },
+    "ring-closed-a": {
+      "cue": "ring_closed",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a short bright rising chime of three wooden xylophone notes, cheerful, a success in a board game.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.2
+        },
+        "mirelo": {
+          "duration": 1.2
+        }
+      }
+    },
+    "ring-closed-b": {
+      "cue": "ring_closed",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a quick rising glockenspiel arpeggio with a soft wooden tap at the end, a small win, one second.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.2
+        },
+        "mirelo": {
+          "duration": 1.2
+        }
+      }
+    },
+    "horn-build-a": {
+      "cue": "horn_build",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a small harbour bell rings twice, warm and soft, announcing a calm phase.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.5
+        },
+        "mirelo": {
+          "duration": 1.5
+        }
+      }
+    },
+    "horn-build-b": {
+      "cue": "horn_build",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a gentle wooden whistle plays two falling notes, like a boatswain's call, calm.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.5
+        },
+        "mirelo": {
+          "duration": 1.5
+        }
+      }
+    },
+    "burn-outside-a": {
+      "cue": "burn_outside",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a small wooden structure burns up quickly: a short crackle of fire and a soft puff of smoke, over in a second.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.5
+        },
+        "mirelo": {
+          "duration": 1.5
+        }
+      }
+    },
+    "burn-outside-b": {
+      "cue": "burn_outside",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a brief whoosh of flame and a crackle, a tiny thing catching fire and going out, no explosion.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.5
+        },
+        "mirelo": {
+          "duration": 1.5
+        }
+      }
+    },
+    "hit-ground-a": {
+      "cue": "hit_ground",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron cannonball lands on soft earth: a dull heavy thud with a puff of dirt, no crack, short.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.0
+        },
+        "mirelo": {
+          "duration": 1.0
+        }
+      }
+    },
+    "hit-ground-b": {
+      "cue": "hit_ground",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a heavy iron ball drops onto grass and dirt: a low thump and a scatter of soil, short.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.0
+        },
+        "mirelo": {
+          "duration": 1.0
+        }
+      }
+    },
+    "hit-ship-a": {
+      "cue": "hit_ship",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron cannonball hits the wooden hull of a small sailing ship: a hard wooden crack, splintering and a creak, short.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.2
+        },
+        "mirelo": {
+          "duration": 1.2
+        }
+      }
+    },
+    "hit-ship-b": {
+      "cue": "hit_ship",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. wood splinters as a cannonball strikes a ship's planks: a sharp crack and a wooden creak, dry.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.2
+        },
+        "mirelo": {
+          "duration": 1.2
+        }
+      }
+    },
+    "loading-ready-a": {
+      "cue": "loading_ready",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a bright short wooden chime of two rising xylophone notes, a ready signal in a board game.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.0
+        },
+        "mirelo": {
+          "duration": 1.0
+        }
+      }
+    },
+    "loading-ready-b": {
+      "cue": "loading_ready",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a crisp short bell ding with a wooden tap, a ready signal, half a second.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.0
+        },
+        "mirelo": {
+          "duration": 1.0
+        }
+      }
+    },
+    "hit-wall-c": {
+      "cue": "hit_wall",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron cannonball strikes a stone castle wall: a hard stone crack with a puff of dust and a small chip of stone falling, dry, short.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.2
+        },
+        "mirelo": {
+          "duration": 1.2
+        }
+      }
+    },
+    "hit-water-b": {
+      "cue": "hit_water",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a cannonball drops into the sea: a deep plunk and a splash with droplets, short.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 1.2
+        },
+        "mirelo": {
+          "duration": 1.2
+        }
+      }
+    },
+    "draw-piece-b": {
+      "cue": "draw_piece",
+      "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden game piece is pulled from a cloth bag and set in a tray: a soft rustle and a wooden tap.",
+      "params": {
+        "eleven": {
+          "duration_seconds": 0.8
+        },
+        "mirelo": {
+          "duration": 0.8
+        }
+      }
+    }
+  }
+}

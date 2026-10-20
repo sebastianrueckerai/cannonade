@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a gentle wooden whistle plays two falling notes, like a boatswain's call, calm.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.5
+  },
+  "seed": 299508040,
+  "duration": null,
+  "label": "fill-horn-build-b--mirelo",
+  "est_cost_usd": 0.015,
+  "created": "2026-10-20T22:45:29",
+  "outputs": [
+    "fill-horn-build-b--mirelo.wav"
+  ]
+}

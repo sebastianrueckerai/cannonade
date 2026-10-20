@@ -1,0 +1,1 @@
+Game sound effect, dry, close, no music, no voice, no ambience. a stone block is set on top of a wall block: a solid stone-on-stone tap, higher and lighter than a floor placement, one hit.

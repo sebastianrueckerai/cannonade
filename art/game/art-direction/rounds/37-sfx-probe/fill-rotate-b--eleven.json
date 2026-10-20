@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden knob clicks one notch: a short crisp wooden click.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 0.5
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-rotate-b--eleven",
+  "est_cost_usd": 0.001,
+  "created": "2026-10-20T22:44:54",
+  "outputs": [
+    "fill-rotate-b--eleven.mp3"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron cannonball strikes a stone castle wall: a hard stone crack with a puff of dust and a small chip of stone falling, dry, short.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.2
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-hit-wall-c--eleven",
+  "est_cost_usd": 0.0024,
+  "created": "2026-10-20T22:45:05",
+  "outputs": [
+    "fill-hit-wall-c--eleven.mp3"
+  ]
+}

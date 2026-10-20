@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden block is stacked onto another wooden block: a short hollow wooden knock, one hit.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.0
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-stack-block-b--eleven",
+  "est_cost_usd": 0.002,
+  "created": "2026-10-20T22:44:53",
+  "outputs": [
+    "fill-stack-block-b--eleven.mp3"
+  ]
+}

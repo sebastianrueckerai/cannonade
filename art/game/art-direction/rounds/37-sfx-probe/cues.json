@@ -1,0 +1,183 @@
+[
+ {
+  "id": "place_piece",
+  "title": "Place a wall piece",
+  "what": "a painted piece set down on the board, one clack per cell",
+  "wants": 3
+ },
+ {
+  "id": "stack_block",
+  "title": "Stack a block on a wall",
+  "what": "a block set on top of a wall, higher than the placement",
+  "wants": 2
+ },
+ {
+  "id": "place_invalid",
+  "title": "Placement refused",
+  "what": "a soft dull double knock, polite",
+  "wants": 1
+ },
+ {
+  "id": "place_gun",
+  "title": "Place a gun",
+  "what": "a heavier set-down with an iron ring",
+  "wants": 2
+ },
+ {
+  "id": "fuse_heavy",
+  "title": "Four cannons fuse into the heavy gun",
+  "what": "a clatter, then a deep iron clunk",
+  "wants": 1
+ },
+ {
+  "id": "rotate",
+  "title": "Rotate the held piece",
+  "what": "a short wooden tick",
+  "wants": 2
+ },
+ {
+  "id": "draw_piece",
+  "title": "Draw a new piece",
+  "what": "a piece slides out of a box into a tray",
+  "wants": 2
+ },
+ {
+  "id": "ring_closed",
+  "title": "A ring closes",
+  "what": "a short rising chime as the ground takes the owner's colour",
+  "wants": 1
+ },
+ {
+  "id": "horn_battle",
+  "title": "Battle phase starts",
+  "what": "a bugle call, two rising notes",
+  "wants": 1
+ },
+ {
+  "id": "horn_build",
+  "title": "Build phase starts",
+  "what": "a softer bell or whistle",
+  "wants": 1
+ },
+ {
+  "id": "countdown",
+  "title": "Countdown tick",
+  "what": "the last five seconds of a phase",
+  "wants": 1,
+  "from": "ui_click, quieter"
+ },
+ {
+  "id": "burn_outside",
+  "title": "A building outside a ring is lost",
+  "what": "a short crackle and a puff at the check",
+  "wants": 1
+ },
+ {
+  "id": "castle_claimed",
+  "title": "Castle claimed",
+  "what": "a chime sting with a flag going up",
+  "wants": 1
+ },
+ {
+  "id": "castle_lost",
+  "title": "Castle lost",
+  "what": "the claim chime falling",
+  "wants": 1,
+  "from": "castle_claimed reversed"
+ },
+ {
+  "id": "castle_ruin",
+  "title": "Castle becomes a ruin",
+  "what": "a big collapse of stone",
+  "wants": 1,
+  "from": "crumble"
+ },
+ {
+  "id": "shot_cannon",
+  "title": "Cannon fires",
+  "what": "the 1x1 gun, a tight boom",
+  "wants": 3
+ },
+ {
+  "id": "shot_heavy",
+  "title": "Heavy cannon fires",
+  "what": "the 2x2 gun, a deep boom with a ring",
+  "wants": 3
+ },
+ {
+  "id": "shot_ship",
+  "title": "A ship fires",
+  "what": "the small boom further away",
+  "wants": 1,
+  "from": "shot_cannon, quieter"
+ },
+ {
+  "id": "hit_ground",
+  "title": "Shell hits the ground",
+  "what": "a dull thud, a puff of dust",
+  "wants": 3
+ },
+ {
+  "id": "hit_wall",
+  "title": "Shell hits a wall",
+  "what": "a stone crack, a block tumbles",
+  "wants": 3
+ },
+ {
+  "id": "hit_gun",
+  "title": "Shell hits a gun",
+  "what": "an iron clang",
+  "wants": 1,
+  "from": "hit_wall for a first version"
+ },
+ {
+  "id": "hit_castle",
+  "title": "Shell hits a castle",
+  "what": "a heavy stone crack",
+  "wants": 1,
+  "from": "hit_wall for a first version"
+ },
+ {
+  "id": "hit_water",
+  "title": "Shell hits water",
+  "what": "a plop and a splash",
+  "wants": 3
+ },
+ {
+  "id": "hit_ship",
+  "title": "Shell hits a ship",
+  "what": "a wooden crack and a creak",
+  "wants": 2
+ },
+ {
+  "id": "crumble",
+  "title": "Wall or gun crumbles",
+  "what": "stone blocks tumble and clatter",
+  "wants": 3
+ },
+ {
+  "id": "ship_sink",
+  "title": "Ship sinks",
+  "what": "the ship tips over: creak, splash, bubbles",
+  "wants": 1
+ },
+ {
+  "id": "ui_hover",
+  "title": "Button hover",
+  "what": "a very light tick",
+  "wants": 1,
+  "from": "ui_click, quieter"
+ },
+ {
+  "id": "ui_click",
+  "title": "Button click",
+  "what": "a crisp wooden tick",
+  "wants": 1
+ },
+ {
+  "id": "loading_ready",
+  "title": "Map built",
+  "what": "a bright chime when the loading ends",
+  "wants": 1
+ }
+]

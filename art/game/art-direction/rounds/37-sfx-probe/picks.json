@@ -1,0 +1,41 @@
+{
+ "shot_cannon": [
+  "boom-normal--eleven",
+  "boom-normal--mirelo-1",
+  "boom-normal--mirelo-2"
+ ],
+ "shot_heavy": [
+  "boom-big--eleven",
+  "boom-big-v2--eleven",
+  "boom-big-v3--eleven"
+ ],
+ "castle_claimed": [
+  "sfx-castle-claim--eleven"
+ ],
+ "draw_piece": [
+  "sfx-draw-piece--eleven"
+ ],
+ "ship_sink": [
+  "sfx-ship-sink--eleven"
+ ],
+ "place_piece": [
+  "sfx-place-piece--eleven"
+ ],
+ "place_invalid": [
+  "sfx-place-invalid--eleven"
+ ],
+ "horn_battle": [
+  "sfx-phase-horn--eleven"
+ ],
+ "hit_water": [
+  "sfx-hit-water--eleven"
+ ],
+ "ui_click": [
+  "sfx-ui-click--mirelo"
+ ],
+ "crumble": [
+  "crunch-crumble--eleven",
+  "crunch-crumble--mirelo-1",
+  "crunch-crumble--mirelo-2"
+ ]
+}

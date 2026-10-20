@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a small wooden structure burns up quickly: a short crackle of fire and a soft puff of smoke, over in a second.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.5
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-burn-outside-a--eleven",
+  "est_cost_usd": 0.003,
+  "created": "2026-10-20T22:44:59",
+  "outputs": [
+    "fill-burn-outside-a--eleven.mp3"
+  ]
+}

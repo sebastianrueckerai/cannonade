@@ -105,6 +105,16 @@ because he heard the Mirelo and ElevenLabs cannon shots at different volumes. Tw
 boom and four stone angles of crumbles and placing sounds followed on the same page, which holds 74 clips
 for 0.80 USD. "Eleven seems to be the best so far."
 
+Sebastian then asked for the page by cue: "Make a heading for each needed clip. For most we want 3
+variants. Where I have already chosen, place those. For categories to be filled, generate picks and place
+them under the heading. Can you make a simple UI where I check boxes behind the sounds I want to choose?
+Already chosen ones should be pre-ticked." The round's `cues.json` lists the A cues with what each wants,
+every track of every config names its cue, `picks.json` holds the picks, and the page has a heading per
+cue, a checkbox per clip, the picks ticked and a box that lists the ticks to copy and paste back; the
+ticks also survive a reload in the browser. `fill.json` made two angles for each of the ten cues without
+a candidate and a third for hit_wall, hit_water and draw_piece, on ElevenLabs and one Mirelo take.
+`audio.py finals` makes the assets from `picks.json`, named after the cue: `shot_cannon_1`.
+
 ## The versions, round 38
 
 The menu, win and lose cues as remixes of one build theme through `fal-ai/ace-step/audio-to-audio`,
@@ -130,11 +140,9 @@ the chosen chiptune theme.
 
 ## Open, for Sebastian
 
-1. A direction from round 36: chip, toybox, organ, chipfolk, or the chiptune registers chipmedieval,
-   chipsail and chipcourt that came after "not happy with the basic chiptunes". The question is which
-   fits the painted toy fortress and does not clash.
-2. A music model for the two themes. By the numbers Stable Audio 2.5 and Lyria 3 Pro deliver 90 s
-   instrumentals every time, ACE-Step is the cheapest, MiniMax is the only WAV but sings or stops short.
+1. ~~A direction from round 36.~~ D84: chipsail, the age-of-sail chiptune.
+2. ~~A music model for the two themes.~~ D84: the chipsail build and battle clips from ACE-Step are the
+   themes, `build.ogg` and `battle.ogg`. Open: the loop cut, and the versions in round 38.
 3. ~~An effects model.~~ D83: ElevenLabs leads, Mirelo adds variety, Stable Audio 3 Small is out (D82).
    Open: a crumble and a placing sound from the stone sets.
 4. Whether the ACE-Step remixes of round 38 count as versions of the theme.

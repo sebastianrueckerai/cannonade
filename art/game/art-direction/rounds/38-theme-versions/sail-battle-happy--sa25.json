@@ -1,0 +1,19 @@
+{
+  "model": "fal-ai/stable-audio-25/audio-to-audio",
+  "prompt": "Chiptune, 8-bit, the same melody very happy and bright in a major key, triumphant, fast, a victory celebration with fanfare and full drums, instrumental, no vocals",
+  "audio": "game/art-direction/rounds/36-music-probe/chipsail-battle--acestep.wav",
+  "params": {
+    "strength": 0.6,
+    "total_seconds": 90
+  },
+  "seed": 1703299299,
+  "duration": null,
+  "label": "sail-battle-happy--sa25",
+  "est_cost_usd": 0.205,
+  "created": "2026-10-20T22:42:19",
+  "outputs": [
+    "sail-battle-happy--sa25.wav"
+  ],
+  "vocal_words": 1,
+  "vocal_text": "you"
+}

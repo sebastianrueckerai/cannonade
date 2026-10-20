@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a small harbour bell rings twice, warm and soft, announcing a calm phase.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.5
+  },
+  "seed": 1320708776,
+  "duration": null,
+  "label": "fill-horn-build-a--mirelo",
+  "est_cost_usd": 0.015,
+  "created": "2026-10-20T22:45:27",
+  "outputs": [
+    "fill-horn-build-a--mirelo.wav"
+  ]
+}

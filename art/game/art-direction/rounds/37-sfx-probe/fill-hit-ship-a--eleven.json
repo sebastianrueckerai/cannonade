@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. an iron cannonball hits the wooden hull of a small sailing ship: a hard wooden crack, splintering and a creak, short.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.2
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-hit-ship-a--eleven",
+  "est_cost_usd": 0.0024,
+  "created": "2026-10-20T22:45:04",
+  "outputs": [
+    "fill-hit-ship-a--eleven.mp3"
+  ]
+}

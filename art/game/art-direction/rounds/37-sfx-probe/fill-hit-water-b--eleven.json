@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a cannonball drops into the sea: a deep plunk and a splash with droplets, short.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.2
+  },
+  "seed": null,
+  "duration": null,
+  "label": "fill-hit-water-b--eleven",
+  "est_cost_usd": 0.0024,
+  "created": "2026-10-20T22:45:05",
+  "outputs": [
+    "fill-hit-water-b--eleven.mp3"
+  ]
+}
