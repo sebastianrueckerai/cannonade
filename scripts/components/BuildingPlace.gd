@@ -164,8 +164,16 @@ func un_build(quiet := false) -> void:
 	isWall = false
 	map.statesMap.update_tile(self)
 	repaint_walls_around()
+	_board_changed()
 
 
+
+## A structure appeared or fell: it can stand on another player's sight line to their build spot, so
+## every player's reach goes stale, not only the builder's.
+func _board_changed() -> void:
+	if map.game != null:
+		for q in map.game.players:
+			q.reach_changed()
 
 func build(building: Node3D, p) -> void:
 	var bb = U.comp(building, "BuildingBlock")
@@ -189,6 +197,7 @@ func build(building: Node3D, p) -> void:
 	if isWall:
 		U.comp(building, "Wall").wear(p)
 		repaint_walls_around()
+	_board_changed()
 
 
 func stack_wall(wall_go: Node3D) -> void:

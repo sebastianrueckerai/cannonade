@@ -111,7 +111,8 @@ func _rebuild_reach() -> void:
 	reach = _anchor_mask(map.buildingRange)
 
 
-## 1 within r tiles (Chebyshev) of an own wall tile or of a tile of an own castle that is not a ruin.
+## 1 within r tiles (Chebyshev) of an own wall tile or of a tile of an own castle that is not a ruin,
+## joined to it by a straight line of empty ground: nothing may stand on the tiles between.
 func _anchor_mask(r: int) -> PackedByteArray:
 	var m := PackedByteArray()
 	m.resize(map.sizeX * map.sizeZ)
@@ -122,8 +123,30 @@ func _anchor_mask(r: int) -> PackedByteArray:
 	for t in anchors:
 		for x in range(maxi(t.idxX - r, 0), mini(t.idxX + r, map.sizeX - 1) + 1):
 			for z in range(maxi(t.idxZ - r, 0), mini(t.idxZ + r, map.sizeZ - 1) + 1):
-				m[x * map.sizeZ + z] = 1
+				if _line_clear(t, x, z):
+					m[x * map.sizeZ + z] = 1
 	return m
+
+## The tiles strictly between the anchor tile and (x, z) on the straight line joining them stand empty.
+func _line_clear(t, x: int, z: int) -> bool:
+	var dx: int = absi(x - t.idxX)
+	var dz: int = absi(z - t.idxZ)
+	var sx: int = signi(x - t.idxX)
+	var sz: int = signi(z - t.idxZ)
+	var cx: int = t.idxX
+	var cz: int = t.idxZ
+	var err: int = dx - dz
+	while cx != x or cz != z:
+		var e2: int = 2 * err
+		if e2 > -dz:
+			err -= dz
+			cx += sx
+		if e2 < dx:
+			err += dx
+			cz += sz
+		if (cx != x or cz != z) and U.alive(map.tiles[cx][cz].structure):
+			return false
+	return true
 
 
 # --------------------------------------------------------------- input

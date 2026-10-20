@@ -251,36 +251,80 @@ func _run() -> void:
 	for k in below:
 		map.tiles[k.x][k.y].un_build()  # they would reach the column the gun checks below walk
 
-	# nobody builds on ground another player's closed ring holds, reach or not: a 1 x 1 ring of the enemy's two
-	# tiles north of the castle's ring
-	var hole := Vector2i(b.x - 2, b.y + 4)
-	var enemy_ring: Array = []
-	for dx in range(-1, 2):
-		for dz in range(-1, 2):
-			if dx != 0 or dz != 0:
-				enemy_ring.append(hole + Vector2i(dx, dz))
-	check(_all_free(enemy_ring + [hole]), "the 3 x 3 north of the ring's west corner is free")
-	game.players[1]._wall_in(hole.x, hole.y, hole.x, hole.y)
-	var hole_tile = map.tiles[hole.x][hole.y]
-	check(map.is_tile_enclosed(hole.x, hole.y) and hole_tile.ringOwner == game.players[1] and human.in_reach(hole.x, hole.y),
-			"the enemy's ring closes a tile in the player's reach")
-	var hole_far: Vector3 = map.tile_position(hole.x, hole.y, 0.1) + Vector3(0, 0, -0.35)  # the enemy's wall hides the near half
+		# nobody builds on ground another player's closed ring holds, even anchored from inside it:
+	# a 2 x 1 room of the enemy's two rows north of the castle's ring, the player's block in its west half
+	var room := Vector2i(b.x - 2, b.y + 4)
+	var enemy_room: Array = []
+	for x in range(room.x - 1, room.x + 3):
+		for z in range(room.y - 1, room.y + 2):
+			if x < room.x or x > room.x + 1 or z < room.y or z > room.y:
+				enemy_room.append(Vector2i(x, z))
+	check(_all_free(enemy_room + [room, room + Vector2i(1, 0)]), "the 4 x 3 north of the ring's west corner is free")
+	game.players[1]._wall_in(room.x, room.y, room.x + 1, room.y)
+	var room_w = map.tiles[room.x][room.y]
+	var room_e = map.tiles[room.x + 1][room.y]
+	check(map.is_tile_enclosed(room.x, room.y) and room_e.ringOwner == game.players[1] \
+			and not human.in_reach(room.x + 1, room.y),
+			"the enemy's room closes a tile no straight empty line reaches")
+	human.build_wall(room_w, Catalog.spawn("wall", null, human))
+	check(human.in_reach(room.x + 1, room.y), "the player's block inside the room anchors its neighbour")
+	var room_e_far: Vector3 = map.tile_position(room.x + 1, room.y, 0.1) + Vector3(0, 0, -0.35)  # the enemy's wall hides the near half
 	_hold("wall_1")
-	await point_at(hole_far)
-	check(human.buildableTileSelected == hole_tile, "the cursor picks the tile inside the enemy's ring")
+	await point_at(room_e_far)
+	check(human.buildableTileSelected == room_e, "the cursor picks the tile inside the enemy's room")
 	await press("act")
-	check(not U.alive(hole_tile.structure), "a block inside the enemy's ring is refused")
+	check(not U.alive(room_e.structure), "a block on the enemy's closed ground is refused")
 	_offer_building("cannon")
-	await point_at(hole_far)
+	await point_at(room_e_far)
 	await press("act")
-	check(not U.alive(hole_tile.structure), "a gun inside the enemy's ring is refused")
-	for k in enemy_ring:
+	check(not U.alive(room_e.structure), "a gun on the enemy's closed ground is refused")
+	room_w.un_build()
+	for k in enemy_room:
 		map.tiles[k.x][k.y].un_build()
 	_hold("wall_1")
-	await point_at(hole_far)
+	await point_at(room_e_far)
 	await press("act")
-	check(U.alive(hole_tile.structure), "with the enemy's ring gone the block places")
-	hole_tile.un_build()  # it would reach the column the reach checks below walk
+	check(U.alive(room_e.structure), "with the enemy's room gone the block places")
+	room_e.un_build()  # it would reach the column the gun checks below walk
+	# a placement two tiles from an own wall needs the straight line between them empty: the enemy's
+	# block on the line refuses the piece and the gun, the line clear again places
+	var post := Vector2i(b.x + 3, b.y + 4)
+	var post_t := Vector2i(b.x + 5, b.y + 4)
+	check(_all_free([post, post_t, Vector2i(b.x + 4, b.y + 4)]), "the row east of the enemy's room is free")
+	human.build_wall(map.tiles[post.x][post.y], Catalog.spawn("wall", null, human))
+	check(human.in_reach(post_t.x, post_t.y), "two tiles east of the own block is in reach")
+	_hold("wall_1")
+	await point_at_tile(post_t)
+	await press("act")
+	check(U.alive(map.tiles[post_t.x][post_t.y].structure), "the block places with the line empty")
+	map.tiles[post_t.x][post_t.y].un_build()
+	game.players[1].build_wall(map.tiles[b.x + 4][b.y + 4], Catalog.spawn("wall", null, game.players[1]))
+	check(not human.in_reach(post_t.x, post_t.y), "the enemy's block between blocks the line")
+	_hold("wall_1")
+	await point_at_tile(post_t)
+	check(not human.canPlaceWall, "the piece over the blocked tile reads unplaceable")
+	await press("act")
+	check(not U.alive(map.tiles[post_t.x][post_t.y].structure), "a block behind the enemy's block is refused")
+	_offer_building("cannon")
+	await point_at_tile(post_t)
+	check(not human.canPlaceBuilding, "the gun over the blocked tile reads unplaceable")
+	await press("act")
+	check(not U.alive(map.tiles[post_t.x][post_t.y].structure), "a gun behind the enemy's block is refused")
+	map.tiles[b.x + 4][b.y + 4].un_build()
+	map.tiles[post.x][post.y].un_build()
+	# only the tiles the line runs through block: the diagonal's one tile does, its side tiles do not
+	var dg := Vector2i(b.x + 4, b.y + 6)
+	var dg_t := Vector2i(b.x + 6, b.y + 4)
+	check(_all_free([dg, dg_t, Vector2i(b.x + 5, b.y + 5), Vector2i(b.x + 6, b.y + 5)]), "the diagonal's square is free")
+	human.build_wall(map.tiles[dg.x][dg.y], Catalog.spawn("wall", null, human))
+	game.players[1].build_wall(map.tiles[b.x + 5][b.y + 5], Catalog.spawn("wall", null, game.players[1]))
+	check(not human.in_reach(dg_t.x, dg_t.y), "the enemy's block on the diagonal blocks the line")
+	map.tiles[b.x + 5][b.y + 5].un_build()
+	game.players[1].build_wall(map.tiles[b.x + 6][b.y + 5], Catalog.spawn("wall", null, game.players[1]))
+	check(human.in_reach(dg_t.x, dg_t.y), "the enemy's block beside the diagonal does not block the line")
+	map.tiles[b.x + 6][b.y + 5].un_build()
+	map.tiles[dg.x][dg.y].un_build()
+
 
 	# zoomed in, the cursor on a wall's walkway picks that wall, not the ground behind it, and the held block shows
 	# there the storey it stacks as. The east side's middle has own walls north and south of it; the cursor sits on

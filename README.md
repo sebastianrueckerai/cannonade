@@ -50,9 +50,10 @@ Walls come as **pieces**, Rampart style: one block, two, three or four in a row,
 or a cross, drawn at random (small pieces more often) and turned with X / Y. A piece stamps
 a full-tile wall block on each of its cells. Blocks that share a side are one wall; blocks
 that touch only at a corner do not join, so a ring must close side to side. Everything you
-place needs one tile within two tiles of your own walls or of a castle you hold, so nobody
-builds behind enemy lines, and nobody builds on ground another player's closed ring holds. The
-AI keeps the same rules. A piece stacks wherever your walls fill every tile under it, whichever
+place needs one tile within two tiles of your own walls or of a castle you hold, with a
+straight line of empty ground between it and that wall or castle, so nobody builds behind enemy
+lines or inside an enemy's half-built room, and nobody builds on ground another player's closed
+ring holds. The AI keeps the same rules. A piece stacks wherever your walls fill every tile under it, whichever
 pieces placed them, as long as none of those tiles has a storey yet. A stacked tile takes two
 shells. Held over your walls, the piece shows the storeys it adds, red where it cannot stack,
 and the cursor on a block picks that block, not the ground hidden behind it.
