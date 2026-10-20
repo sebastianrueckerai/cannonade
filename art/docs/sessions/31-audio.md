@@ -145,7 +145,8 @@ the chosen chiptune theme.
    themes, `build.ogg` and `battle.ogg`. Open: the loop cut, and the versions in round 38.
 3. ~~An effects model.~~ D83: ElevenLabs leads, Mirelo adds variety, Stable Audio 3 Small is out (D82).
    Open: a crumble and a placing sound from the stone sets.
-4. Whether the ACE-Step remixes of round 38 count as versions of the theme.
+4. ~~Whether the ACE-Step remixes of round 38 count as versions of the theme.~~ D85: yes, on both routes.
+   The menu waltz and the happy battle theme from ACE-Step, the sad build theme from Stable Audio 2.5.
 
 The picks go into decisions.md as D82 and following, then round 39 makes the five cues and the A-list
 effects on the picked models, and the Godot side follows: three buses, the hooks of the cue list.

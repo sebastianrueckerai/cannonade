@@ -1,0 +1,20 @@
+{
+  "source": "game/art-direction/rounds/38-theme-versions/sail-build-sad--sa25.wav",
+  "model": "fal-ai/stable-audio-25/audio-to-audio",
+  "prompt": "Chiptune, 8-bit, the same melody very slow in a minor key, mournful, sad, sparse, music box, no drums, a lament, instrumental, no vocals",
+  "params": {
+    "strength": 0.6,
+    "total_seconds": 90
+  },
+  "seed": 1273836666,
+  "bus": "music",
+  "target": {
+    "lufs": -16.0
+  },
+  "created": "2026-10-20T22:59:36",
+  "seconds": 89.0,
+  "lufs": -15.9,
+  "m_max": -12.5,
+  "range_lu": 6.5,
+  "peak_dbtp": -5.0
+}
