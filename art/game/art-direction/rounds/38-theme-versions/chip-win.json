@@ -1,0 +1,22 @@
+{
+  "model": "fal-ai/ace-step/audio-to-audio",
+  "prompt": "chiptune, 8-bit, triumphant, fanfare, fast, bright, major key, victory jingle, celebration, drums, same melody",
+  "audio": "game/art-direction/rounds/38-theme-versions/source-chip-build-16s.wav",
+  "params": {
+    "edit_mode": "remix",
+    "original_tags": "chiptune, 8-bit, square wave leads, triangle bass, noise drums, playful game loop, 108 BPM, G major, calm, bouncy",
+    "lyrics": "[inst]",
+    "original_lyrics": ""
+  },
+  "seed": 1712051435,
+  "lyrics": "[inst]",
+  "duration": null,
+  "label": "chip-win",
+  "est_cost_usd": 0.017,
+  "created": "2026-10-20T22:03:39",
+  "outputs": [
+    "chip-win.wav"
+  ],
+  "vocal_words": 2,
+  "vocal_text": "Thank you."
+}

@@ -1,0 +1,16 @@
+{
+  "model": "fal-ai/stable-audio-3/small/sfx/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A menu button click for a wooden toy game: a crisp light wooden tick, very short.",
+  "params": {
+    "output_format": "wav",
+    "duration": 1.0
+  },
+  "seed": 1017889401,
+  "duration": null,
+  "label": "sfx-ui-click--sa3small",
+  "est_cost_usd": 0.0206,
+  "created": "2026-10-20T21:52:45",
+  "outputs": [
+    "sfx-ui-click--sa3small.wav"
+  ]
+}

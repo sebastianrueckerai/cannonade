@@ -22,6 +22,7 @@ One shared creative direction feeds four production lines. This page holds the m
 | M | mesh or scene: .blend, .glb, .obj |
 | C | code: Blender Python, GDScript |
 | R | render or screenshot |
+| A | audio: WAV, MP3, OGG |
 
 Solid arrows are handoffs. Dashed arrows are feedback or optional reuse.
 
@@ -102,6 +103,15 @@ flowchart TB
       SY --> GD --> SH --> RW --> FB
     end
 
+    subgraph AUD["02D  Music and sound effects, see sound.md in the game design"]
+      CUE["Cue list from the game's events: trigger, length, character [J]"]
+      AR["Audio round: directions times cues times models, audio.py [T in, A out]"]
+      AQ["Loudness sheet and Whisper word count, then Sebastian's ear [A in, J out]"]
+      AV["Versions of the picked theme: ACE-Step remix of the clip [A in, A out]"]
+      CUE --> AR --> AQ --> AV
+    end
+
+    BIBLE --> CUE
     BIBLE --> AS
     BIBLE --> RV
     BIBLE --> US
@@ -110,6 +120,7 @@ flowchart TB
     BIBLE --> PS
     BIBLE --> PI
     LIB --> SY
+    AV --> SY
     UL --> SY
     UL --> PC
     LIB -. hero renders .-> PR

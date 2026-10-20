@@ -1,0 +1,16 @@
+{
+  "model": "fal-ai/stable-audio-3/small/sfx/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. An iron cannonball hits a painted wooden toy castle wall: a sharp stone crack and a wooden knock, one block breaks off and tumbles, short.",
+  "params": {
+    "output_format": "wav",
+    "duration": 1.2
+  },
+  "seed": 663583316,
+  "duration": null,
+  "label": "sfx-hit-wall--sa3small",
+  "est_cost_usd": 0.0206,
+  "created": "2026-10-20T21:51:11",
+  "outputs": [
+    "sfx-hit-wall--sa3small.wav"
+  ]
+}

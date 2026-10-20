@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A new wooden game piece slides out of a wooden box and lands in a tray: a short wooden slide and a light tap, quick, friendly.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 0.7
+  },
+  "seed": 1196647004,
+  "duration": null,
+  "label": "sfx-draw-piece--mirelo",
+  "est_cost_usd": 0.007,
+  "created": "2026-10-20T21:51:37",
+  "outputs": [
+    "sfx-draw-piece--mirelo.wav"
+  ]
+}

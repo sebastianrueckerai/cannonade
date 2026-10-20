@@ -33,6 +33,9 @@ One model per role. Change a row here when a spike shows a better one, and log t
 | Image-to-3D, the game's models | Meshy API, `meshy-t2` low-poly mode with `target_polycount`, 15 credits textured. Returns parts, hits the face count. No endpoint edits an existing mesh's shape and Meshy Edit is browser-only, so shape variants run through the picture chain (D72) | Meshy | picked in round 18, D36 |
 | Image-to-3D, simple shapes only | Tripo API, `smart_low_poly` with `face_limit`, 40 credits. Slower, overshoots the face count 1.3 to 2.3 times, fuses the parts. API credits are bought apart from Tripo Studio | Tripo | round 18, D36: used for trees and rocks until the balance is spent |
 | Procedural geometry, repair, render, export | Blender 5.2.2 through `blx` | local | in use, see [blender.md](blender.md) |
+| Music: the themes and their versions | `minimax/music-3`, 0.002 USD a second, 44.1 kHz WAV, duration a cap of 1 to 300 s. A lyrics structure of empty section tags (`[verse]`, `[chorus]`) reaches the cap but sings nonsense on half the clips, `[instrumental]` tags alone stop at 10 to 32 s, and sixteen of them sing too: on fal it makes a short instrumental or a long song. `fal-ai/stable-audio-25/text-to-audio` (0.20, `seconds_total` up to 190, instrumental by nature), `fal-ai/lyria3/pro` (0.08, MP3, length by prompt) and `fal-ai/ace-step` (0.0002 a second, `tags` and `lyrics` `[inst]`) ran beside it in round 36. Versions of a picked theme: `fal-ai/ace-step/audio-to-audio` remixes a clip under new tags | fal | probe in round 36, session 31, pick open |
+| Sound effects | `fal-ai/elevenlabs/sound-effects/v2` (`text`, `duration_seconds` 0.5 to 22, 0.002 USD a second, MP3), `fal-ai/stable-audio-3/small/sfx/text-to-audio` (0.0206, `duration` 1 to 120, WAV on request) and `mirelo-ai/sfx2.0/text-to-audio` (0.010 a second, WAV, `negative_prompt`) ran in round 37 | fal | probe in round 37, pick open |
+| Vocals check on a music clip | `fal-ai/whisper` through `audio.py vocals`: the word count of the transcript, a few words for an instrumental | fal | in use since session 31 |
 
 Model IDs on fal change often. Read the endpoint page before a paid run and write the ID you used into the sidecar JSON.
 
@@ -63,3 +66,11 @@ Direct vendors, when one specific model is wanted. Tripo sells credits at 0.01 U
 The Hunyuan 2.x line ships open weights and self-hosts for free, but the full version wants more than the 11 GB of VRAM in this machine. At these prices self-hosting only pays above roughly 1500 generations a month.
 
 The pipeline that works: generate from a reference image, import the OBJ, then decimate and remesh in Blender to the target budget. Generated topology never ships as it arrives.
+
+## Music and sound effects, measured on 20 October 2026
+
+The research of session 31 is in [research/ai-audio-providers.md](research/ai-audio-providers.md): every usable
+model, where it is sold, what it costs and what its licence allows. The short of it: fal carries everything worth
+trying, MiniMax's own API takes no new users, and a whole soundtrack costs under 20 USD on any candidate, so the
+ear decides. There is no audio critic on fal's any-llm, so the only independent check is the Whisper transcript
+above and the loudness sheet of [audio.py](../pipeline/audio.py).

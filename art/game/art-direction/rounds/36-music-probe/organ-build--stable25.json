@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/stable-audio-25/text-to-audio",
+  "prompt": "Instrumental only, no vocals, no singing, no lyrics. Fairground band organ. A mechanical street organ with pipes and bells, a snare and bass drum on the beat, a glockenspiel on top, cymbal taps. Carnival, seaside pier, mechanical and merry. Background music for the build phase of a cheerful castle board game: the player stacks painted wooden wall pieces on a tile board, friendly and quick, sunlit toy fortress by the sea. Genre: playful game loop. Tempo: 108 BPM. Key: G major. Mood: calm, bouncy, curious, light. Arrangement: a steady loop of a catchy eight-bar melody with a second eight bars that answers it, a light counter-melody, no big build-up, no breakdown, no ending, constant energy so it loops. About 90 seconds long.",
+  "params": {
+    "seconds_total": 90
+  },
+  "seed": 996471115,
+  "duration": null,
+  "label": "organ-build--stable25",
+  "est_cost_usd": 0.205,
+  "created": "2026-10-20T21:51:54",
+  "outputs": [
+    "organ-build--stable25.wav"
+  ],
+  "vocal_words": 0,
+  "vocal_text": ""
+}

@@ -1,0 +1,18 @@
+{
+  "model": "minimax/music-3",
+  "prompt": "Instrumental only, no vocals, no singing, no lyrics. Toy-box folk orchestra. Tin whistle and fiddle lead, accordion chords, marimba and glockenspiel, pizzicato strings, woodblock and tambourine, a bodhran hand drum. Acoustic, warm, wooden, like a painted toy harbour. Background music for the build phase of a cheerful castle board game: the player stacks painted wooden wall pieces on a tile board, friendly and quick, sunlit toy fortress by the sea. Genre: playful game loop. Tempo: 108 BPM. Key: G major. Mood: calm, bouncy, curious, light. Arrangement: a steady loop of a catchy eight-bar melody with a second eight bars that answers it, a light counter-melody, no big build-up, no breakdown, no ending, constant energy so it loops. About 90 seconds long.",
+  "params": {
+    "duration": 90,
+    "lyrics": "[intro]\n[verse]\n[chorus]\n[verse]\n[chorus]\n[bridge]\n[chorus]\n[outro]"
+  },
+  "seed": 487163872,
+  "duration": 90.11,
+  "label": "toybox-build--minimax90",
+  "est_cost_usd": 0.185,
+  "created": "2026-10-20T22:05:03",
+  "outputs": [
+    "toybox-build--minimax90.wav"
+  ],
+  "vocal_words": 39,
+  "vocal_text": "Thank you. Canapes, cup, bis, bis, bis, cup, bis, cup, this, this, this cup Held up at this cup, this, this, this cup Held up at this cup, this, this, this cup Held up at this cup, this, this"
+}

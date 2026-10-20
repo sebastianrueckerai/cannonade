@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A cannonball splashes into calm sea water: a round plop and a small splash, toy pond scale, short.",
+  "params": {
+    "prompt_influence": 0.5,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.2
+  },
+  "seed": null,
+  "duration": null,
+  "label": "sfx-hit-water--eleven",
+  "est_cost_usd": 0.0024,
+  "created": "2026-10-20T21:50:59",
+  "outputs": [
+    "sfx-hit-water--eleven.mp3"
+  ]
+}

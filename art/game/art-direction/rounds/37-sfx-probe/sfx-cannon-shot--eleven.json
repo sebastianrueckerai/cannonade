@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A small toy-sized iron cannon fires: a short tight boom with a wooden thump, a quick puff of smoke, cheerful fairground shooting gallery, not a real war cannon.",
+  "params": {
+    "prompt_influence": 0.5,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.5
+  },
+  "seed": null,
+  "duration": null,
+  "label": "sfx-cannon-shot--eleven",
+  "est_cost_usd": 0.003,
+  "created": "2026-10-20T21:50:59",
+  "outputs": [
+    "sfx-cannon-shot--eleven.mp3"
+  ]
+}

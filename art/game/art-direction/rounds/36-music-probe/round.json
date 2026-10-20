@@ -1,0 +1,61 @@
+{
+  "models": {
+    "minimax": {
+      "id": "minimax/music-3",
+      "params": {
+        "duration": 90,
+        "lyrics": "[instrumental]"
+      }
+    },
+    "stable25": {
+      "id": "fal-ai/stable-audio-25/text-to-audio",
+      "params": {
+        "seconds_total": 90
+      }
+    },
+    "lyria3pro": {
+      "id": "fal-ai/lyria3/pro"
+    },
+    "acestep": {
+      "id": "fal-ai/ace-step",
+      "prompt_field": "tags",
+      "params": {
+        "duration": 90,
+        "lyrics": "[inst]"
+      }
+    },
+    "minimax90": {
+      "id": "minimax/music-3",
+      "params": {
+        "duration": 90,
+        "lyrics": "[intro]\n[verse]\n[chorus]\n[verse]\n[chorus]\n[bridge]\n[chorus]\n[outro]"
+      }
+    }
+  },
+  "directions": [
+    {
+      "slug": "chip",
+      "style": "Chiptune. 8-bit console sound: two square-wave pulse leads, a triangle-wave bass, a noise-channel drum kit, short arpeggios. Bright, clean, crunchy, retro arcade"
+    },
+    {
+      "slug": "toybox",
+      "style": "Toy-box folk orchestra. Tin whistle and fiddle lead, accordion chords, marimba and glockenspiel, pizzicato strings, woodblock and tambourine, a bodhran hand drum. Acoustic, warm, wooden, like a painted toy harbour"
+    },
+    {
+      "slug": "organ",
+      "style": "Fairground band organ. A mechanical street organ with pipes and bells, a snare and bass drum on the beat, a glockenspiel on top, cymbal taps. Carnival, seaside pier, mechanical and merry"
+    },
+    {
+      "slug": "chipfolk",
+      "style": "Chip-folk. Chiptune square-wave lead and arpeggios over a real accordion, a fiddle, a plucked banjo and hand drums. Sea shanty spirit with an 8-bit edge, bright and bouncy"
+    }
+  ],
+  "tracks": {
+    "build": {
+      "prompt": "Instrumental only, no vocals, no singing, no lyrics. {style}. Background music for the build phase of a cheerful castle board game: the player stacks painted wooden wall pieces on a tile board, friendly and quick, sunlit toy fortress by the sea. Genre: playful game loop. Tempo: 108 BPM. Key: G major. Mood: calm, bouncy, curious, light. Arrangement: a steady loop of a catchy eight-bar melody with a second eight bars that answers it, a light counter-melody, no big build-up, no breakdown, no ending, constant energy so it loops. About 90 seconds long."
+    },
+    "battle": {
+      "prompt": "Instrumental only, no vocals, no singing, no lyrics. {style}. Background music for the battle phase of a cheerful castle board game: toy cannons pop like a fairground shooting gallery, water splashes, ships tip over like toys, nothing grim. Genre: energetic game battle loop, march. Tempo: 150 BPM. Key: D major with a minor turn in the middle. Mood: driving, exciting, playful, heroic. Arrangement: a snare-drum march pattern throughout, a fanfare-like main theme in the lead, a running bass, a second section with more tension, back to the theme, no slow intro, no ending, constant energy so it loops. About 90 seconds long."
+    }
+  }
+}

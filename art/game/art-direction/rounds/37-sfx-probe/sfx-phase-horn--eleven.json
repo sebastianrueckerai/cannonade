@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A short brass signal horn or bugle call announces the start of a battle, two rising notes, bright and cheerful, a toy fortress by the sea, one second.",
+  "params": {
+    "prompt_influence": 0.5,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.5
+  },
+  "seed": null,
+  "duration": null,
+  "label": "sfx-phase-horn--eleven",
+  "est_cost_usd": 0.003,
+  "created": "2026-10-20T21:51:08",
+  "outputs": [
+    "sfx-phase-horn--eleven.mp3"
+  ]
+}

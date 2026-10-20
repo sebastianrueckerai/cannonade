@@ -1,0 +1,22 @@
+{
+  "model": "fal-ai/ace-step/audio-to-audio",
+  "prompt": "chiptune, 8-bit, slow, soft, music box, sparse, calm, gentle, 84 BPM, G major, menu theme, same melody, fewer parts, no drums",
+  "audio": "game/art-direction/rounds/38-theme-versions/source-chip-build--stable25.wav",
+  "params": {
+    "edit_mode": "remix",
+    "original_tags": "chiptune, 8-bit, square wave leads, triangle bass, noise drums, playful game loop, 108 BPM, G major, calm, bouncy",
+    "lyrics": "[inst]",
+    "original_lyrics": ""
+  },
+  "seed": 1458032965,
+  "lyrics": "[inst]",
+  "duration": null,
+  "label": "chip-menu",
+  "est_cost_usd": 0.017,
+  "created": "2026-10-20T22:04:29",
+  "outputs": [
+    "chip-menu.wav"
+  ],
+  "vocal_words": 4,
+  "vocal_text": "I Bye. Thank you."
+}

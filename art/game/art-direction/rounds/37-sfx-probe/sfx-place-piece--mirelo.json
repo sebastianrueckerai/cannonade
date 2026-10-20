@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A painted wooden game piece is set down on a wooden board game table: a single satisfying wooden clack with a tiny click, like a domino or a wooden block placed firmly.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 0.6
+  },
+  "seed": 2885897259,
+  "duration": null,
+  "label": "sfx-place-piece--mirelo",
+  "est_cost_usd": 0.006,
+  "created": "2026-10-20T21:51:30",
+  "outputs": [
+    "sfx-place-piece--mirelo.wav"
+  ]
+}

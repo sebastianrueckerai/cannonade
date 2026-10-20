@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A large heavy cannon fires: a deep round boom with a low thud and a short metallic ring, bigger and slower than a small cannon, fairground scale, not a real war cannon.",
+  "params": {
+    "prompt_influence": 0.5,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 2
+  },
+  "seed": null,
+  "duration": null,
+  "label": "sfx-heavy-shot--eleven",
+  "est_cost_usd": 0.004,
+  "created": "2026-10-20T21:51:02",
+  "outputs": [
+    "sfx-heavy-shot--eleven.mp3"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A small wooden toy sailing ship is hit and tips over into water: a wooden creak and crack, then a gentle splash and bubbles, short.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 2
+  },
+  "seed": 3466023936,
+  "duration": null,
+  "label": "sfx-ship-sink--mirelo",
+  "est_cost_usd": 0.02,
+  "created": "2026-10-20T21:51:42",
+  "outputs": [
+    "sfx-ship-sink--mirelo.wav"
+  ]
+}

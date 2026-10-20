@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A short wall of painted wooden toy blocks crumbles: several blocks knock, tumble and clatter onto a wooden board game table, chunky, over in a second and a half.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 1.8
+  },
+  "seed": 2146398696,
+  "duration": null,
+  "label": "sfx-crumble--mirelo",
+  "est_cost_usd": 0.018,
+  "created": "2026-10-20T21:51:29",
+  "outputs": [
+    "sfx-crumble--mirelo.wav"
+  ]
+}

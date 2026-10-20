@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/stable-audio-25/text-to-audio",
+  "prompt": "Instrumental only, no vocals, no singing, no lyrics. Chiptune. 8-bit console sound: two square-wave pulse leads, a triangle-wave bass, a noise-channel drum kit, short arpeggios. Bright, clean, crunchy, retro arcade. Background music for the build phase of a cheerful castle board game: the player stacks painted wooden wall pieces on a tile board, friendly and quick, sunlit toy fortress by the sea. Genre: playful game loop. Tempo: 108 BPM. Key: G major. Mood: calm, bouncy, curious, light. Arrangement: a steady loop of a catchy eight-bar melody with a second eight bars that answers it, a light counter-melody, no big build-up, no breakdown, no ending, constant energy so it loops. About 90 seconds long.",
+  "params": {
+    "seconds_total": 90
+  },
+  "seed": 289973239,
+  "duration": null,
+  "label": "chip-build--stable25",
+  "est_cost_usd": 0.205,
+  "created": "2026-10-20T21:51:10",
+  "outputs": [
+    "chip-build--stable25.wav"
+  ],
+  "vocal_words": 0,
+  "vocal_text": ""
+}

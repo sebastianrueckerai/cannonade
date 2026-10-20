@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A small toy-sized iron cannon fires: a short tight boom with a wooden thump, a quick puff of smoke, cheerful fairground shooting gallery, not a real war cannon.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 1.5
+  },
+  "seed": 2858610590,
+  "duration": null,
+  "label": "sfx-cannon-shot--mirelo",
+  "est_cost_usd": 0.015,
+  "created": "2026-10-20T21:51:24",
+  "outputs": [
+    "sfx-cannon-shot--mirelo.wav"
+  ]
+}

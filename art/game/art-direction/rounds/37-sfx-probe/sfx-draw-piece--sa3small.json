@@ -1,0 +1,16 @@
+{
+  "model": "fal-ai/stable-audio-3/small/sfx/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A new wooden game piece slides out of a wooden box and lands in a tray: a short wooden slide and a light tap, quick, friendly.",
+  "params": {
+    "output_format": "wav",
+    "duration": 1.0
+  },
+  "seed": 501338051,
+  "duration": null,
+  "label": "sfx-draw-piece--sa3small",
+  "est_cost_usd": 0.0206,
+  "created": "2026-10-20T21:52:45",
+  "outputs": [
+    "sfx-draw-piece--sa3small.wav"
+  ]
+}

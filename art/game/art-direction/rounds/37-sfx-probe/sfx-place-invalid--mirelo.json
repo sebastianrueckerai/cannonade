@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A move is refused in a board game: a soft dull wooden double knock, low and muted, polite not harsh, like a piece bumping against the table edge.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 0.6
+  },
+  "seed": 3564537715,
+  "duration": null,
+  "label": "sfx-place-invalid--mirelo",
+  "est_cost_usd": 0.006,
+  "created": "2026-10-20T21:51:34",
+  "outputs": [
+    "sfx-place-invalid--mirelo.wav"
+  ]
+}

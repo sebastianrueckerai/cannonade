@@ -1,0 +1,22 @@
+{
+  "model": "fal-ai/ace-step/audio-to-audio",
+  "prompt": "chiptune, 8-bit, slow, minor key, sad, sparse, defeat jingle, descending, no drums, same melody",
+  "audio": "game/art-direction/rounds/38-theme-versions/source-chip-build-16s.wav",
+  "params": {
+    "edit_mode": "remix",
+    "original_tags": "chiptune, 8-bit, square wave leads, triangle bass, noise drums, playful game loop, 108 BPM, G major, calm, bouncy",
+    "lyrics": "[inst]",
+    "original_lyrics": ""
+  },
+  "seed": 1881196271,
+  "lyrics": "[inst]",
+  "duration": null,
+  "label": "chip-lose",
+  "est_cost_usd": 0.017,
+  "created": "2026-10-20T22:04:09",
+  "outputs": [
+    "chip-lose.wav"
+  ],
+  "vocal_words": 0,
+  "vocal_text": ""
+}

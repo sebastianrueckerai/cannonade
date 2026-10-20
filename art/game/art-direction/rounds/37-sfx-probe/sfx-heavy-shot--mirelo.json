@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A large heavy cannon fires: a deep round boom with a low thud and a short metallic ring, bigger and slower than a small cannon, fairground scale, not a real war cannon.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 2
+  },
+  "seed": 2203950507,
+  "duration": null,
+  "label": "sfx-heavy-shot--mirelo",
+  "est_cost_usd": 0.02,
+  "created": "2026-10-20T21:51:25",
+  "outputs": [
+    "sfx-heavy-shot--mirelo.wav"
+  ]
+}

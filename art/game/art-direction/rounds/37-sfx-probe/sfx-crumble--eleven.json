@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A short wall of painted wooden toy blocks crumbles: several blocks knock, tumble and clatter onto a wooden board game table, chunky, over in a second and a half.",
+  "params": {
+    "prompt_influence": 0.5,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.8
+  },
+  "seed": null,
+  "duration": null,
+  "label": "sfx-crumble--eleven",
+  "est_cost_usd": 0.0036,
+  "created": "2026-10-20T21:51:03",
+  "outputs": [
+    "sfx-crumble--eleven.mp3"
+  ]
+}

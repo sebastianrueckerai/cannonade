@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/stable-audio-25/text-to-audio",
+  "prompt": "Instrumental only, no vocals, no singing, no lyrics. Chip-folk. Chiptune square-wave lead and arpeggios over a real accordion, a fiddle, a plucked banjo and hand drums. Sea shanty spirit with an 8-bit edge, bright and bouncy. Background music for the battle phase of a cheerful castle board game: toy cannons pop like a fairground shooting gallery, water splashes, ships tip over like toys, nothing grim. Genre: energetic game battle loop, march. Tempo: 150 BPM. Key: D major with a minor turn in the middle. Mood: driving, exciting, playful, heroic. Arrangement: a snare-drum march pattern throughout, a fanfare-like main theme in the lead, a running bass, a second section with more tension, back to the theme, no slow intro, no ending, constant energy so it loops. About 90 seconds long.",
+  "params": {
+    "seconds_total": 90
+  },
+  "seed": 166366903,
+  "duration": null,
+  "label": "chipfolk-battle--stable25",
+  "est_cost_usd": 0.205,
+  "created": "2026-10-20T21:52:16",
+  "outputs": [
+    "chipfolk-battle--stable25.wav"
+  ],
+  "vocal_words": 2,
+  "vocal_text": "Thank you."
+}

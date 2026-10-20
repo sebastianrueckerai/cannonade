@@ -1,0 +1,17 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. An iron cannonball hits a painted wooden toy castle wall: a sharp stone crack and a wooden knock, one block breaks off and tumbles, short.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 1.2
+  },
+  "seed": 1119190995,
+  "duration": null,
+  "label": "sfx-hit-wall--mirelo",
+  "est_cost_usd": 0.012,
+  "created": "2026-10-20T21:51:28",
+  "outputs": [
+    "sfx-hit-wall--mirelo.wav"
+  ]
+}
