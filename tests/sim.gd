@@ -110,7 +110,7 @@ func _scan_marked(g) -> void:
 ## Very simple stand-in for a human: places the held piece where it fits.
 func _autobuild(g) -> void:
 	for p in g.players:
-		if p.has_method("search_best_building_plans") or not g.buildingAllowed or not U.alive(p.nextWall):
+		if p.is_ai() or not g.buildingAllowed or not U.alive(p.nextWall):
 			continue
 		var cands: Array = []
 		for x in g.map.sizeX:
@@ -138,8 +138,12 @@ func _report(g) -> void:
 		line += " P%d walls=%d stacked=%d guns=%d parts=%d/%d castles=%d upg=%d" % [
 			p.playerID, p.wallTiles.size(), stacked, p.cannons.size(), p.parts_used(), p.partsCap,
 			p.castle_count(), p.upgrades.size()]
-		if p.has_method("search_best_building_plans"):
-			line += " plans=%d/%d" % [p.activePlans.size(), p.finishedPlans.size()]
+		if p.is_ai():
+			var open := 0
+			for plan in p.activePlans:
+				if not plan.closed():
+					open += 1
+			line += " plans=%d open=%d" % [p.activePlans.size(), open]
 		line += " |"
 	line += " enclosed_tiles=%d ships=%d" % [_count_enclosed(g), g.fleet.ships.size()]
 	print(line)
@@ -176,11 +180,11 @@ func _check_outcome(g) -> void:
 	var battle_happened: bool = g.roundNumber >= 1
 	var n_ais := 0
 	for p in g.players:
-		if p.has_method("search_best_building_plans"):
+		if p.is_ai():
 			n_ais += 1
 	for p in g.players:
 		var k: int = p.playerID
-		if not p.has_method("search_best_building_plans"):
+		if not p.is_ai():
 			continue
 		var built: int = _max_walls.get(k, 0) - _start_walls.get(k, 0)
 		if built < 5:

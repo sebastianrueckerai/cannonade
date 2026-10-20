@@ -1,48 +1,38 @@
 extends "res://scripts/components/PlayerController.gd"
-## Port of AI.cs: computer player. Plans rectangles of walls, builds guns
-## inside them and shoots at what the new rules make worth shooting.
+## Port of AI.cs: computer player. Rings castles and yards with whatever piece it holds, builds
+## guns inside its closed ground and shoots at what the rules make worth shooting.
 
-const BuildingPlan = preload("res://scripts/BuildingPlan.gd")
+const RingPlan = preload("res://scripts/RingPlan.gd")
 
 ## Reaction time: the pause after every action (a placed piece or gun, a stacked block, a dropped
-## piece, a discarded gun, a shot), the time a human needs to move the mouse and click. Must stay above 0.
+## piece, a shot), the time a human needs to move the mouse and click. Must stay above 0.
 var secondsBetweenActions := 0.5
-## When nothing could be done, wait this long before planning again (the Unity
-## version re-planned every frame, which is too expensive in GDScript).
+## When nothing could be done, wait this long before trying again
 var secondsIdleRetry := 0.15
 var nextAction := 0.0
-var nActivePlans := 3
-var nFinishedPlans := 12
+## Castles the AI rings to claim at once
+var claimsAtOnce := 3
+## RingPlan per live castle, the AI's and the others'
+var castlePlans := {}
+## RingPlans of the 3x3 yards the AI walls for its guns
+var yards: Array = []
+## The plans the held piece serves, in order: own castles, yards, claims
 var activePlans: Array = []
-var finishedPlans: Array = []
-var doubleStackPlan = null
+## activePlans split by tier: [own castles, yards, claims]
+var tiers: Array = [[], [], []]
+var _plansStale := true
+var _plansTime := -1.0
 var enemyPlayers = null
-var maxUp := 3
-var maxDown := 2
-var maxLeft := 3
-var maxRight := 2
-var maxPlanRange := 3
-var inPlanRange := PackedByteArray()
 ## A dormant AI never acts (sandbox: test a build against a stationary enemy).
 var dormant := false
 ## What the AI shoots at: "auto" (enemy guns, then castles, then walls),
 ## "walls", "guns", "castles", "supply" or "random"; the explicit modes fall
 ## back to walls when their pool is empty
 var targetMode := "auto"
-## True within one slice of a plan search, while the map cannot change (BuildingPlan's count cache)
-var slicing := false
-var searchStamp := 0
-var sliceBudgetUsec := 4000
-var _searching := false
-## set when the game was left while a search was running
-var _abort_search := false
-var _slice_start := 0
 
 
-func setup() -> void:
-	maxPlanRange = maxi(maxi(maxUp, maxDown), maxi(maxLeft, maxRight))
-	super.setup()
-	activePlans = []
+func is_ai() -> bool:
+	return true
 
 
 func update_point_and_tile_selected() -> void:
@@ -56,108 +46,300 @@ func manage_player_actions() -> void:
 		if game.shootingAllowed:
 			search_and_fire_at_targets()
 		else:
-			update_plans()
 			execute_building_plan()
 
 
+func reach_changed() -> void:
+	super.reach_changed()
+	_plansStale = true
+
+
+# ------------------------------------------------------------------ plans
+## Refreshes the plans when the board changed under the AI or two seconds passed (the enemy builds too).
 func update_plans() -> void:
-	for p in activePlans:
-		if p.finished():
-			finishedPlans.append(p)
-	var kept: Array = []
-	for p in finishedPlans:
-		if p.walls_in_something_valuable() and p.fits_with_existing_buildings() and p.finished():
-			kept.append(p)
-			if kept.size() >= nFinishedPlans:
-				break
-	finishedPlans = kept
-	var active: Array = []
-	for p in activePlans:
-		if p.can_be_finished() and not p.finished():
-			active.append(p)
-	activePlans = active
-	if activePlans.size() < nActivePlans and not _searching:
-		_run_search()
-
-
-## The plan search is expensive in GDScript; it runs as a coroutine spread over
-## several frames (at most sliceBudgetUsec per frame) so the game stays smooth.
-func _run_search() -> void:
-	_searching = true
-	var result: Array = await search_best_building_plans(activePlans.duplicate(), nActivePlans)
-	if _abort_search or not is_instance_valid(self):
+	if not _plansStale and U.time - _plansTime < 2.0:
 		return
-	activePlans = result
-	_searching = false
-
-
-func _yield_if_needed() -> void:
-	if Time.get_ticks_usec() - _slice_start > sliceBudgetUsec:
-		# caches are only valid while the map cannot change, i.e. within one slice
-		slicing = false
-		await (Engine.get_main_loop() as SceneTree).process_frame
-		if not is_instance_valid(self) or not is_inside_tree():
-			_abort_search = true
-			return
-		_begin_slice()
-
-
-func _begin_slice() -> void:
-	_slice_start = Time.get_ticks_usec()
-	slicing = true
-	searchStamp += 1
-
-
-func _update_double_stack_plan() -> void:
-	if doubleStackPlan == null or doubleStackPlan.is_fully_stacked():
-		doubleStackPlan = null
-		for plan in finishedPlans + activePlans:
-			if not plan.is_fully_stacked():
-				doubleStackPlan = plan
+	_plansStale = false
+	_plansTime = U.time
+	var own: Array = []
+	var ranked: Array = []
+	for c in castlePlans.keys():
+		if not U.alive(c) or c.is_ruin():
+			castlePlans.erase(c)
+	for c in map.castles:
+		if not U.alive(c) or c.is_ruin():
+			continue
+		if not castlePlans.has(c):
+			castlePlans[c] = RingPlan.new(self, c)
+		var plan = castlePlans[c]
+		if c.owner() == self:
+			own.append(plan)
+		elif _claimable(c):
+			ranked.append([_anchor_distance(plan.centre()), plan])
+	for plan in own + yards:
+		plan.refresh()
+	yards = yards.filter(func(y): return y.possible())
+	ranked.sort_custom(func(a, b): return a[0] < b[0])
+	var claims: Array = []
+	var open := 0
+	for r in ranked:
+		r[1].refresh()
+		if r[1].possible():
+			claims.append(r[1])
+			if not r[1].closed():
+				open += 1
+			if open >= claimsAtOnce:
 				break
+	var need: int = partsCap - parts_used()
+	if need > 0 and not yards.any(func(y): return not y.closed()) and gun_room() < need:
+		var avoid := {}
+		for plan in own + yards + claims:
+			avoid.merge(plan.inside)
+		var y = _pick_yard(avoid)
+		if y != null:
+			yards.append(y)
+	tiers = [own, yards, claims]
+	activePlans = own + yards + claims
 
 
+## A castle worth ringing: not the AI's, and not sitting in another player's closed ring.
+func _claimable(c) -> bool:
+	var cc: Vector2i = map.tile_index_at(c.go.global_position)
+	var t = map.tiles[cc.x][cc.y]
+	return not (map.is_tile_enclosed(cc.x, cc.y) and t.ringOwner != null and t.ringOwner != self)
+
+
+## Chebyshev distance from k to the nearest own wall or own castle tile.
+func _anchor_distance(k: Vector2i) -> int:
+	var d := RingPlan.INF
+	for t in wallTiles:
+		d = mini(d, maxi(absi(t.idxX - k.x), absi(t.idxZ - k.y)))
+	for c in map.castles:
+		if U.alive(c) and not c.is_ruin() and c.owner() == self:
+			for t in c.my_tiles():
+				d = mini(d, maxi(absi(t.idxX - k.x), absi(t.idxZ - k.y)))
+	return d
+
+
+func _castle_distance(k: Vector2i) -> int:
+	var d := RingPlan.INF
+	for c in map.castles:
+		if U.alive(c) and not c.is_ruin() and c.owner() == self:
+			var cc: Vector2i = map.tile_index_at(c.go.global_position)
+			d = mini(d, maxi(absi(cc.x - k.x), absi(cc.y - k.y)))
+	return d
+
+
+## A free tile in reach inside the AI's closed ground.
+func _gun_spot(t) -> bool:
+	return t.is_free() and in_reach(t.idxX, t.idxZ) and map.is_tile_enclosed(t.idxX, t.idxZ) \
+			and t.ringOwner == self
+
+
+func gun_room() -> int:
+	var n := 0
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			if _gun_spot(map.tiles[x][z]):
+				n += 1
+	return n
+
+
+## The 3x3 of free open ground outside every plan whose ring shares the most own walls, nearest an
+## own castle on ties; the four best by that proxy are costed for real.
+func _pick_yard(avoid: Dictionary):
+	var cands: Array = []
+	var y: int = RingPlan.YARD
+	for x in range(1, map.sizeX - y):
+		for z in range(1, map.sizeZ - y):
+			if not _yard_free(x, z, avoid):
+				continue
+			var shared := 0
+			var reached := false
+			for bx in range(x - 1, x + y + 1):
+				for bz in range(z - 1, z + y + 1):
+					if bx != x - 1 and bx != x + y and bz != z - 1 and bz != z + y:
+						continue
+					var t = map.tiles[bx][bz]
+					if t.isWall and map.get_mini(bx, bz) == playerID:
+						shared += 1
+					reached = reached or in_reach(bx, bz)
+			if reached:
+				cands.append([shared, _castle_distance(Vector2i(x + 1, z + 1)), Vector2i(x, z)])
+	cands.sort_custom(func(a, b): return a[0] > b[0] if a[0] != b[0] else a[1] < b[1])
+	var best = null
+	for i in mini(4, cands.size()):
+		var plan = RingPlan.new(self, null, cands[i][2])
+		plan.refresh()
+		if plan.possible() and (best == null or plan.cost < best.cost):
+			best = plan
+	return best
+
+
+func _yard_free(x: int, z: int, avoid: Dictionary) -> bool:
+	for dx in RingPlan.YARD:
+		for dz in RingPlan.YARD:
+			var t = map.tiles[x + dx][z + dz]
+			if U.alive(t.structure) or t.water or t.disabled or map.is_tile_enclosed(x + dx, z + dz) \
+					or avoid.has(Vector2i(x + dx, z + dz)):
+				return false
+	return true
+
+
+# --------------------------------------------------------------- building
 func execute_building_plan() -> void:
-	var did := false
-	# a drawn shooter over the parts cap can never be placed; discard it so the hand rotates
-	if U.alive(nextBuilding) and U.shooter(nextBuilding) != null and over_parts_cap(nextBuilding):
-		_discard_next_building()
-		did = true
-	if not did:
-		did = try_build_gun_in_plan()
-	if not did:
-		var n_for_max := 25
-		var n := _count_walled_in_tiles_in_finished_plans()
-		var p := 0.05 + 0.75 * (float(n) / float(n_for_max) if n < n_for_max else 1.0)
-		if U.rfloat(0.0, 1.0) < p:
-			did = try_stack_next_wall()
+	var did := try_build_gun()
 	if not did:
 		did = try_build_next_wall()
 	if not did:
 		did = try_stack_next_wall()
-	# a piece no plan takes is dropped, but only once the search is done: the first one at game
-	# start would fly away while the first plans are still being found
-	if not did and U.alive(nextWall) and not _searching:
+	if not did and U.alive(nextWall):
 		drop(nextWall, true)
 		did = true
 	nextAction = U.time + (secondsBetweenActions if did else secondsIdleRetry)
 
 
-## Discards the held building without the fly-away; the next draw follows the
-## usual cooldown, as it would after fly_away.
-func _discard_next_building() -> void:
-	U.destroy(nextBuilding)
-	nextBuilding = null
-	secondsLastBuilding = U.time
+## The held building goes inside the AI's closed ground, an own castle's first, then a yard's, then
+## any; it waits in hand until a free tile is there, so the check never burns it, and over the parts
+## cap it waits for a gun to die.
+func try_build_gun() -> bool:
+	if not U.alive(nextBuilding) or over_parts_cap(nextBuilding):
+		return false
+	update_plans()
+	for plan in activePlans:
+		for k in plan.inside:
+			if _gun_spot(map.tiles[k.x][k.y]):
+				build_next_building(map.tiles[k.x][k.y])
+				return true
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			if _gun_spot(map.tiles[x][z]):
+				build_next_building(map.tiles[x][z])
+				return true
+	return false
 
 
-func _count_walled_in_tiles_in_finished_plans() -> int:
-	var count := 0
-	for bp in finishedPlans:
-		count += bp.count_unoccupied_free_tiles()
-	return count
+## Places the held piece where it covers the most gap tiles of a plan, own castles first, then
+## yards, then claims; with no gap in reach the piece walks towards the nearest one.
+func try_build_next_wall() -> bool:
+	if not U.alive(nextWall):
+		return false
+	update_plans()
+	var bb := U.comp(nextWall, "BuildingBlock")
+	for tier in tiers:
+		var fit = _best_cover(bb, tier)
+		if fit != null:
+			_place(bb, fit)
+			return true
+	for plan in activePlans:
+		if not plan.gaps.is_empty():
+			var fit = _best_approach(bb, plan)
+			if fit != null:
+				_place(bb, fit)
+				return true
+	return false
 
 
+func _place(bb, fit: Array) -> void:
+	for i in fit[0]:
+		bb.rotate_clockwise()
+	build_next_wall(fit[1])
+
+
+## A cell may not land off the map or inside the plan it serves.
+func _forbidden(t: Vector2i, plan) -> bool:
+	return t.x < 0 or t.y < 0 or t.x >= map.sizeX or t.y >= map.sizeZ or plan.inside.has(t)
+
+
+## [turns, anchor tile] covering the most gaps of one of `plans`, the fewest cells off the ring on
+## ties; null when no placement covers a gap. Leaves the piece turned as it was.
+func _best_cover(bb, plans: Array):
+	var best = null
+	var best_cover := 0
+	var best_spill := 0
+	for turns in 4:
+		for plan in plans:
+			for g in plan.gaps:
+				for c in bb.cells:
+					var a: Vector2i = g - c
+					var cover := 0
+					var spill := 0
+					var ok := true
+					for c2 in bb.cells:
+						var t: Vector2i = a + c2
+						if _forbidden(t, plan):
+							ok = false
+							break
+						if plan.gaps.has(t):
+							cover += 1
+						elif not plan.ring.has(t):
+							spill += 1
+					if not ok or cover < best_cover or (cover == best_cover and spill >= best_spill):
+						continue
+					if can_place_piece(map.tiles[a.x][a.y]):
+						best = [turns, map.tiles[a.x][a.y]]
+						best_cover = cover
+						best_spill = spill
+		bb.rotate_clockwise()
+	return best
+
+
+## [turns, anchor tile] in reach with a cell nearer the plan's nearest gap than any own anchor is;
+## null when the piece cannot get nearer. Leaves the piece turned as it was.
+func _best_approach(bb, plan):
+	var d0: int = RingPlan.INF
+	var near := Vector2i.ZERO
+	for g in plan.gaps:
+		var d := _anchor_distance(g)
+		if d < d0:
+			d0 = d
+			near = g
+	if d0 == RingPlan.INF:
+		return null
+	var best = null
+	var best_d := d0
+	for turns in 4:
+		for x in range(maxi(near.x - d0, 0), mini(near.x + d0, map.sizeX - 1) + 1):
+			for z in range(maxi(near.y - d0, 0), mini(near.y + d0, map.sizeZ - 1) + 1):
+				var a := Vector2i(x, z)
+				var d: int = RingPlan.INF
+				var ok := true
+				for c in bb.cells:
+					var t: Vector2i = a + c
+					if _forbidden(t, plan):
+						ok = false
+						break
+					d = mini(d, maxi(absi(t.x - near.x), absi(t.y - near.y)))
+				if ok and d < best_d and can_place_piece(map.tiles[x][z]):
+					best = [turns, map.tiles[x][z]]
+					best_d = d
+		bb.rotate_clockwise()
+	return best
+
+
+## A single block with nothing to cover stacks on a ring wall of an own castle, then of a yard,
+## then anywhere own.
+func try_stack_next_wall() -> bool:
+	if not U.alive(nextWall) or U.comp(nextWall, "BuildingBlock").cells.size() != 1:
+		return false
+	update_plans()
+	for tier in tiers.slice(0, 2):
+		var spots: Array = []
+		for plan in tier:
+			for k in plan.ring:
+				if can_stack_on(map.tiles[k.x][k.y]):
+					spots.append(map.tiles[k.x][k.y])
+		if not spots.is_empty():
+			stack_wall(spots[U.rint(0, spots.size())])
+			return true
+	for t in wallTiles:
+		if can_stack_on(t):
+			stack_wall(t)
+			return true
+	return false
+
+
+# --------------------------------------------------------------- shooting
 ## One shot per action: the first loaded gun that can aim at a target fires.
 func search_and_fire_at_targets() -> void:
 	nextAction = U.time + secondsIdleRetry
@@ -212,191 +394,6 @@ func aquire_targets(enemy, n: int) -> Array:
 	for i in mini(n, tiles.size()):
 		out.append(tiles[i][1])
 	return out
-
-
-func _get_plans_for_spot(x: int, z: int, m_up: int, m_down: int, m_left: int, m_right: int) -> Array:
-	var out: Array = []
-	var max_ix: int = map.sizeX - 1
-	var max_iz: int = map.sizeZ - 1
-	m_right = mini(x + m_right, max_ix) - x
-	m_up = mini(z + m_up, max_iz) - z
-	m_left = x if x - m_left < 0 else m_left
-	m_down = z if z - m_down < 0 else m_down
-	# Cheap pre-check shared by all plan sizes (see BuildingPlan.construct_building_place)
-	if x <= 0 or z <= 0 or x >= max_ix or z >= max_iz or map.get_mini(x, z) != 0 \
-			or not map.statesMap.is_open(x * 3 + 1, z * 3 + 1):
-		return out
-	for mu in range(1, m_up + 1):
-		for md in range(1, m_down + 1):
-			for ml in range(1, m_left + 1):
-				for mr in range(1, m_right + 1):
-					var bp = BuildingPlan.new(x, z, self, mu, md, ml, mr)
-					if bp.possible:
-						out.append(bp)
-	return out
-
-
-func _start_expotential_wall_costs() -> int:
-	var n := activeCannons.size()
-	if n == 0:
-		return 0
-	elif n == 1:
-		return 5
-	elif n < 5:
-		return 10
-	elif n < 7:
-		return 15
-	return 20
-
-
-## Plans start within maxPlanRange of the same anchors that set the reach.
-func _rebuild_reach() -> void:
-	super._rebuild_reach()
-	inPlanRange = _anchor_mask(maxPlanRange)
-
-
-func search_best_building_plans(plans = null, max_plans := 3) -> Array:
-	if plans == null:
-		plans = []
-	_begin_slice()
-	_fresh_reach()
-	var potential: Array = []
-	for ix in map.sizeX:
-		for iz in map.sizeZ:
-			if inPlanRange[ix * map.sizeZ + iz] != 0:
-				potential.append_array(_get_plans_for_spot(ix, iz, maxUp, maxDown, maxLeft, maxRight))
-				await _yield_if_needed()
-				if _abort_search:
-					return plans
-	var standalone: Array = []
-	var additions: Array = []
-	for pi in potential.size():
-		var p = potential[pi]
-		var compatible: bool = p.can_be_compatible_all(plans)
-		if compatible and p.can_be_finished():
-			standalone.append(p)
-		if not compatible:
-			additions.append(p)
-		if pi % 64 == 0:
-			await _yield_if_needed()
-			if _abort_search:
-				return plans
-	var costs := _start_expotential_wall_costs()
-	while standalone.size() > 0 and plans.size() < max_plans:
-		var scored: Array = []
-		for si in standalone.size():
-			var p = standalone[si]
-			scored.append([p.calculate_compatibility_score(plans, costs), p])
-			if si % 64 == 0:
-				await _yield_if_needed()
-				if _abort_search:
-					return plans
-		scored.sort_custom(func(a, b): return a[0] > b[0])
-		var best = scored[0][1]
-		plans.append(best)
-		var rest: Array = []
-		for i in range(1, scored.size()):
-			var p = scored[i][1]
-			if p.can_be_compatible_all(plans):
-				rest.append(p)
-		standalone = rest
-	for i in plans.size():
-		var candidate = null
-		var candidate_score := 0
-		var candidate_idx := 0
-		var plan_score: int = plans[i].calculate_score(costs)
-		var others: Array = plans.slice(0, i) + plans.slice(i + 1)
-		for j in additions.size():
-			if j % 64 == 0:
-				await _yield_if_needed()
-				if _abort_search:
-					return plans
-			if plans[i].can_be_combined(additions[j]):
-				var new_candidate = plans[i].combine(additions[j])
-				var new_score: int = new_candidate.calculate_score(costs)
-				if candidate != null or new_score > candidate_score:
-					if new_candidate.can_be_compatible_all(others) and new_candidate.can_be_finished():
-						candidate_score = new_score
-						candidate = new_candidate
-						candidate_idx = j
-		if candidate != null and candidate_score > plan_score:
-			plans[i] = candidate
-			additions.remove_at(candidate_idx)
-	slicing = false
-	return plans
-
-
-func try_stack_next_wall() -> bool:
-	_update_double_stack_plan()
-	if doubleStackPlan == null:
-		return false
-	for k in doubleStackPlan.stackable_walls():
-		var t = map.tiles[k.x][k.y]
-		if can_stack_on(t):
-			stack_wall(t)
-			return true
-	return false
-
-
-## Places the held piece where it covers the most unfinished ring tiles of a plan, no cell inside the
-## plan's enclosure, turned to that rotation first.
-func try_build_next_wall() -> bool:
-	if not U.alive(nextWall):
-		return false
-	var bb := U.comp(nextWall, "BuildingBlock")
-	var best_tile = null
-	var best_turns := 0
-	var best_cover := 0
-	for plan in activePlans:
-		var open: Dictionary = plan.unfinished_ring()
-		var inside := {}
-		for xz in plan.xzWalledInTiles:
-			inside[xz] = true
-		for turns in 4:
-			for k in open:
-				for c in bb.cells:
-					var a: Vector2i = k - c
-					if a.x < 0 or a.y < 0 or a.x >= map.sizeX or a.y >= map.sizeZ:
-						continue
-					var cover := _ring_cover(bb.cells, a, open, inside)
-					if cover > best_cover and can_place_piece(map.tiles[a.x][a.y]):
-						best_cover = cover
-						best_tile = map.tiles[a.x][a.y]
-						best_turns = turns
-			bb.rotate_clockwise()
-	if best_tile == null:
-		return false
-	for i in best_turns:
-		bb.rotate_clockwise()
-	build_next_wall(best_tile)
-	return true
-
-
-## Unfinished ring tiles the cells cover anchored on `a`; 0 when a cell lands inside the enclosure.
-func _ring_cover(cells: Array[Vector2i], a: Vector2i, open: Dictionary, inside: Dictionary) -> int:
-	var n := 0
-	for c in cells:
-		var t: Vector2i = a + c
-		if inside.has(t):
-			return 0
-		if open.has(t):
-			n += 1
-	return n
-
-
-## A drawn gun goes into a plan's enclosure, the only ground a ring will close round, and waits in
-## hand until a plan has room. (A gun on loose ground at the edge of reach can never be walled in:
-## the ring would stand beyond reach, so the check burns it.)
-func try_build_gun_in_plan() -> bool:
-	if not U.alive(nextBuilding) or U.comp(nextBuilding, "Shooter") == null:
-		return false
-	for plan in activePlans:
-		for xz in plan.xzWalledInTiles:
-			# (sic) the original checks (x, x)
-			if in_reach(xz.x, xz.y) and map.get_mini(xz.x, xz.y) == 0:
-				build_next_building(map.tiles[xz.x][xz.y])
-				return true
-	return false
 
 
 ## Tiles to shoot at for the target modes other than "walls" (empty = fall

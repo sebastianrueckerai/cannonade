@@ -74,6 +74,10 @@ func setup() -> void:
 	reach_changed()
 
 
+func is_ai() -> bool:
+	return false
+
+
 func in_reach(x: int, z: int) -> bool:
 	_fresh_reach()
 	return reach[x * map.sizeZ + z] != 0

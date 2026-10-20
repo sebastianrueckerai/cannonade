@@ -1,11 +1,12 @@
 extends Node
-## The AI's hand while it builds: a gun goes only into a plan's enclosure, a drawn
-## shooter it cannot afford (the parts cap) is discarded quietly and redrawn on the
-## usual cooldown; no building ever flies away from the AI's gui while it waits.
-## Its reaction time: every build action and every shot waits secondsBetweenActions.
+## The AI's building: a ring plan per castle and per yard, the held piece placed where it covers
+## the most gap tiles, guns only inside own closed ground, a neutral castle ringed and claimed, a
+## breach patched, a shooter over the parts cap kept in hand while the walls keep coming, and the
+## reaction time after every action.
 ##   godot --headless --fixed-fps 30 res://tests/ai_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
+const RingPlan = preload("res://scripts/RingPlan.gd")
 
 var main: Node
 var game
@@ -46,6 +47,47 @@ func seconds(t: float) -> void:
 	var end: float = U.time + t
 	while U.time < end:
 		await get_tree().process_frame
+
+
+func centre(c) -> Vector2i:
+	return map.tile_index_at(c.go.global_position)
+
+
+func castle_of(p):
+	for c in map.castles:
+		if U.alive(c) and not c.is_ruin() and c.owner() == p:
+			return c
+	return null
+
+
+func neutrals() -> Array:
+	var out: Array = []
+	for c in map.castles:
+		if U.alive(c) and not c.is_ruin() and c.owner() == null:
+			out.append(c)
+	return out
+
+
+## The tile sits in a closed ring whose owner is p.
+func enclosed_by(xz: Vector2i, p) -> bool:
+	return map.is_tile_enclosed(xz.x, xz.y) and map.tiles[xz.x][xz.y].ringOwner == p
+
+
+## A neutral castle with nothing but free dry ground within Chebyshev 3 of its centre.
+func free_neutral():
+	for c in neutrals():
+		var cc := centre(c)
+		var ok := true
+		for x in range(cc.x - 3, cc.x + 4):
+			for z in range(cc.y - 3, cc.y + 4):
+				if absi(x - cc.x) < 2 and absi(z - cc.y) < 2:
+					continue
+				var t = map.tiles[x][z]
+				if U.alive(t.structure) or t.water or t.disabled:
+					ok = false
+		if ok:
+			return c
+	return null
 
 
 ## Live FlyAndVanish flights of buildings. The wall's discard may fly (that is
@@ -98,78 +140,149 @@ func check_pace(times: Array, pace: float, phase: String, slack := INF) -> void:
 				"%s: the next action follows the reaction time within %.1f s %s" % [phase, slack, gaps])
 
 
-## Free, dry, buildable tiles in the enemy's build range.
-func enemy_free_tiles() -> Array:
-	var b := Vector2i(map.sizeX / 2, map.sizeZ - 1 - map.sizeZ / 4)
-	var out: Array = []
-	for r in range(2, 6):
-		for dx in range(-r, r + 1):
-			for dz in range(-r, r + 1):
-				var t = map.tiles[b.x + dx][b.y + dz]
-				if enemy.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
-					out.append(t)
-	return out
+func hold_wall(id: String) -> void:
+	U.destroy(enemy.nextWall)
+	enemy.nextWall = Catalog.spawn(id, enemy.wallSpawn, enemy)
 
 
 func _run() -> void:
 	await frames(3)
-	# a gun goes only where a plan walls it: with no plan yet, the drawn cannon stays in hand
-	check(enemy.activePlans.is_empty(), "the dormant enemy has no plan yet")
+
+	# 1: the plans at the start
+	enemy.update_plans()
+	var own = castle_of(enemy)
+	var own_plan = enemy.castlePlans[own]
+	check(own_plan.closed() and own_plan.ring.size() == 16,
+			"the start castle's plan is closed by its 16 ring blocks (cost %d, ring %d)" % [own_plan.cost, own_plan.ring.size()])
+	var ring_own := true
+	for k in own_plan.ring:
+		ring_own = ring_own and map.tiles[k.x][k.y].isWall and map.get_mini(k.x, k.y) == enemy.playerID
+	check(ring_own, "every ring tile of the start plan is an own wall")
+	check(own_plan.inside.size() == 9, "nothing but the castle sits inside the start ring")
+	check(enemy.tiers[0] == [own_plan], "tier 0 holds the own castle's plan")
+	check(enemy.yards.size() == 1 and not enemy.yards[0].closed() and enemy.yards[0].possible(),
+			"a yard is planned: the start ring leaves no room for a gun (%d yards, closed %s, cost %d, gaps %d)" % [
+				enemy.yards.size(), enemy.yards[0].closed() if not enemy.yards.is_empty() else "-",
+				enemy.yards[0].cost if not enemy.yards.is_empty() else -1, enemy.yards[0].gaps.size() if not enemy.yards.is_empty() else -1])
+	check(enemy.yards[0].cost < 16, "the yard's ring shares the start ring (cost %d)" % enemy.yards[0].cost)
+	check(enemy.tiers[2].size() == enemy.claimsAtOnce and enemy.tiers[2].all(func(p): return p.possible()),
+			"two claim plans with a finite ring")
+	var free = free_neutral()
+	check(free != null, "a neutral castle stands on free ground")
+	if free != null:
+		var plan = RingPlan.new(enemy, free)
+		plan.refresh()
+		check(plan.cost == 24 and plan.gaps.size() == 24 and plan.inside.size() == 25,
+				"a free castle's ring is the 24 tiles two out, 25 inside (cost %d, gaps %d, inside %d)" % [plan.cost, plan.gaps.size(), plan.inside.size()])
+
+	# a breach of one block: the plan's gap is that block, cost 1
+	var breach: Vector2i = own_plan.ring.keys()[0]
+	map.tiles[breach.x][breach.y].un_build()
+	enemy.update_plans()
+	check(own_plan.cost == 1 and own_plan.gaps.keys() == [breach],
+			"one ring block gone: the plan's gap is that block (cost %d, gaps %s)" % [own_plan.cost, own_plan.gaps.keys()])
+	enemy.build_wall(map.tiles[breach.x][breach.y], Catalog.spawn("wall", null, enemy))
+	enemy.update_plans()
+	check(own_plan.closed(), "the block back, the plan is closed")
+
+	# 2: a gun waits in hand while no own closed ground has a free tile
 	U.destroy(enemy.nextBuilding)
 	enemy.nextBuilding = Catalog.spawn("cannon", enemy.buildingSpawn)
 	var held = enemy.nextBuilding
-	var piece = enemy.nextWall
+	check(enemy.gun_room() == 0, "the start ring has no gun room")
 	enemy.execute_building_plan()
 	check(U.alive(held) and enemy.nextBuilding == held and enemy.cannons.is_empty(),
-			"with no plan to wall it, the AI keeps the drawn gun in hand")
-	# no plan and no search running: the piece is dropped, and the drop is an action
-	check(enemy.nextWall == null and U.comp(piece, "FlyAndVanish").fly,
-			"with no plan and no search, the AI drops its piece")
-	check(enemy.nextAction >= U.time + enemy.secondsBetweenActions,
-			"the drop waits the reaction time like any action")
-	U.destroy(held)
-	enemy.nextBuilding = null
+			"with no room, the AI keeps the drawn gun in hand")
+	check(flying_buildings().is_empty(), "the kept gun never flies")
 
-	# while a plan search runs, the AI keeps the redrawn piece (a search that yields at once
-	# stands in for the first search of a game, which spans several frames)
-	await seconds(3.2)
-	piece = enemy.nextWall
-	check(U.alive(piece), "the dropped piece is redrawn")
-	var budget: int = enemy.sliceBudgetUsec
-	enemy.sliceBudgetUsec = 0
-	enemy.update_plans()
-	enemy.execute_building_plan()
-	enemy.sliceBudgetUsec = budget
-	check(enemy.activePlans.is_empty() and enemy.nextWall == piece and not U.comp(piece, "FlyAndVanish").fly,
-			"while the plans are still being searched, the AI keeps its piece")
+	# 3: an S piece goes where it covers the yard's gaps, no cell on own ground or inside a plan
+	hold_wall("wall_s")
+	var yard = enemy.yards[0]
+	var gaps: Dictionary = yard.gaps.duplicate()
+	var before: int = enemy.wallTiles.size()
+	check(enemy.try_build_next_wall(), "the S piece is placed")
+	var placed: Array = enemy.wallTiles.slice(before)
+	var covered := 0
+	var on_own := false
+	for t in placed:
+		var k := Vector2i(t.idxX, t.idxZ)
+		if gaps.has(k):
+			covered += 1
+		if own_plan.inside.has(k) or yard.inside.has(k):
+			on_own = true
+	check(placed.size() == 4 and covered >= 2 and not on_own,
+			"its four blocks cover %d yard gaps and none sits inside a plan" % covered)
 	U.destroy(enemy.nextBuilding)
 	enemy.nextBuilding = null
-	# the enemy sits at its parts cap, built the real way
-	var spots := enemy_free_tiles()
-	check(spots.size() >= 6, "the enemy has free tiles in build range")
-	for i in 6:
-		enemy.build_building(spots[i], Catalog.spawn("cannon"))
-	check(enemy.parts_used() == 6, "six guns sit at the enemy's parts cap")
 
-	# a drawn shooter over the cap is discarded without flying away
+	# 4: live: the yard closes, guns go inside own closed ground, a neutral castle is ringed
+	enemy.dormant = false
+	enemy.nextAction = 0.0
+	game.timeLeftInRound = 1e6
+	await seconds(25.0)
+	check(yard.closed() and enclosed_by(yard.yard, enemy), "the yard is closed and the AI's")
+	var guns_inside := true
+	for k in enemy.cannons:
+		guns_inside = guns_inside and enclosed_by(k, enemy)
+	check(enemy.cannons.size() >= 3 and guns_inside,
+			"%d guns placed, all inside own closed ground" % enemy.cannons.size())
+	var ringed: Array = []
+	for c in neutrals():
+		if enclosed_by(centre(c), enemy):
+			ringed.append(c)
+	check(not ringed.is_empty(), "in 25 s of building the AI rings a neutral castle (%d)" % ringed.size())
+	check(flying_buildings().is_empty(), "no building ever flies away from the AI's hand")
+	var castles_before: int = enemy.castle_count()
+	var guns_before: int = enemy.cannons.size()
+	game.next_phase()
+	check(enemy.castle_count() == castles_before + ringed.size(),
+			"the check claims the ringed castles: %d held" % enemy.castle_count())
+	check(enemy.cannons.size() == guns_before, "no gun burns at the check")
+	game.next_phase()
+	game.timeLeftInRound = 1e6
+
+	# 5: a breach two blocks wide in the start ring is patched
+	enemy.dormant = true
+	var oc := centre(own)
+	for dz in 2:
+		map.tiles[oc.x + 2][oc.y + dz].un_build()
+	check(not enclosed_by(oc, enemy), "two blocks gone, the castle stands open")
+	enemy.dormant = false
+	enemy.nextAction = 0.0
+	await seconds(6.0)
+	check(enclosed_by(oc, enemy), "within 6 s the AI closes its castle again")
+
+	# 6: at the parts cap a drawn shooter waits in hand, and the walls keep coming
+	enemy.dormant = true
+	var spots: Array = []
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			if enemy._gun_spot(map.tiles[x][z]):
+				spots.append(map.tiles[x][z])
+	while enemy.parts_used() < enemy.partsCap and not spots.is_empty():
+		enemy.build_building(spots.pop_back(), Catalog.spawn("cannon"))
+	check(enemy.parts_used() == enemy.partsCap, "the guns fill the parts cap (%d)" % enemy.partsCap)
+	U.destroy(enemy.nextBuilding)
 	enemy.nextBuilding = Catalog.spawn("cannon", enemy.buildingSpawn)
-	check(enemy.over_parts_cap(enemy.nextBuilding), "the drawn cannon is over the cap")
+	held = enemy.nextBuilding
+	check(enemy.over_parts_cap(held), "the drawn cannon is over the cap")
+	hold_wall("wall_2")
+	before = enemy.wallTiles.size()
 	enemy.execute_building_plan()
-	check(not U.alive(enemy.nextBuilding), "the over-cap shooter is discarded")
-	check(flying_buildings().is_empty(), "the discard flies nothing away")
+	check(enemy.nextBuilding == held and U.alive(held), "the over-cap shooter stays in hand")
+	check(enemy.wallTiles.size() == before + 2, "the action places the wall piece instead")
+	check(flying_buildings().is_empty(), "nothing flies away")
 
-	# live build phase: the AI churns through draws, no building ever flies, and it takes its
-	# reaction time (set to a value of the test's own) after every action
+	# 7: the reaction time (set to a value of the test's own) after every build action
 	check(enemy.secondsBetweenActions > 0.0, "the AI pauses between actions by default")
 	enemy.secondsBetweenActions = 0.8
 	enemy.dormant = false
 	enemy.nextAction = 0.0
 	var built := await action_times(5.0)
-	check(flying_buildings().is_empty(),
-			"five seconds of building phase fly no building away")
+	check(flying_buildings().is_empty(), "five seconds of building phase fly no building away")
 	check_pace(built, 0.8, "build")
 
-	# battle: the six loaded guns fire one shot per action, never two at once
+	# battle: the loaded guns fire one shot per action, never two at once
 	game.buildingAllowed = false
 	game.shootingAllowed = true
 	game.timeLeftInRound = 1e6

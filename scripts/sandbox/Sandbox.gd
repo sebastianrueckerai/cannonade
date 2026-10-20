@@ -341,7 +341,7 @@ func play() -> void:
 	for s in 2:
 		var p = player(s)
 		p.stats = {}
-		if p.has_method("search_best_building_plans"):
+		if p.is_ai():
 			p.targetMode = targets[s]
 			p.dormant = match_index in [2, 3] and s == dormant_side
 	game.buildingAllowed = false

@@ -221,8 +221,8 @@ can be repeated and compared.
 
 ### Behaviour changes compared to the Unity code
 
-The port follows the original logic closely (including its quirks, e.g. the AI's plan
-geometry). A few things were changed on purpose:
+The port follows the original logic closely (including its quirks). A few things were
+changed on purpose:
 
 * Upgrade patterns match their structure as laid out first, then turned by 180°, then
   by 90°. Unity accepted any rotation, so an adjacent pair of b blocks always became a
@@ -243,9 +243,14 @@ geometry). A few things were changed on purpose:
 * Tiles hit by a tile-destroying rocket can no longer be built on (Unity only hid them).
 * Tile selection intersects the mouse ray with the ground, so the tile under a building
   can always be picked (in Unity the colliders of some buildings caught the raycast).
-* The AI's plan search runs as a coroutine spread over several frames, and the
-  enclosure flood fill treats fully walkable tiles as 3×3 blocks; both give the same
-  results as the original algorithms (see `tests/flood_test.gd`) but keep GDScript fast.
+* The AI plans rings, not the Unity rectangles: for every castle and for 3×3 gun yards it
+  finds the cheapest closed loop of wall tiles round the target on the board as it stands,
+  places whatever piece it holds where it covers the most of that loop's gaps, bulging
+  outward freely, and walks towards a loop out of reach. That is how it claims neutral
+  castles and patches its breaches. Guns go only into its closed ground, and a gun over
+  the parts cap waits in its hand until a gun dies.
+* The enclosure flood fill treats fully walkable tiles as 3×3 blocks; it gives the same
+  results as the original algorithm (see `tests/flood_test.gd`) but keeps GDScript fast.
 
 Not ported: particle effects / trails, the Amplify force-field shader (the shield is a
 transparent sphere), the second-player gamepad controls and the custom cursor.

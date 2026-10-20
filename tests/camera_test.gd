@@ -78,7 +78,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	get_tree().current_scene = main
 	for p in main.game.players:
-		if p.has_method("search_best_building_plans"):
+		if p.is_ai():
 			p.nextAction = 1e9
 	cam = main.camera
 	await frames(2)

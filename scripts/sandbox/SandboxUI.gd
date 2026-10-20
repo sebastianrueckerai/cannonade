@@ -318,7 +318,7 @@ func update_live() -> void:
 	for s in 2:
 		var p = g.players[s]
 		var st: Dictionary = p.stats
-		lines.append("%s%s" % [sandbox.SIDE_NAMES[s], "  (you)" if not p.has_method("search_best_building_plans") else ""])
+		lines.append("%s%s" % [sandbox.SIDE_NAMES[s], "  (you)" if not p.is_ai() else ""])
 		lines.append("  guns %d   walls %d" % [p.cannons.size(), p.wallTiles.size()])
 		lines.append("  parts %d / %d   castles %d" % [p.parts_used(), p.partsCap, p.castle_count()])
 		if sandbox.mode != sandbox.Mode.EDIT:
