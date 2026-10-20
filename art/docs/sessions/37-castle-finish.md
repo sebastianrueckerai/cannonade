@@ -7,8 +7,10 @@ should crumble and disappear and if it was my only one that should loose the gam
 destroying the castle did not work or the ai targeting is fucked were it stops targeting the
 castle shortly before it could win!"
 
-Roadmap: I64. The crumble of the castle itself is the `crumble2` session's work
-(`castle_d3_rubble.glb` in its tree), not this one's.
+Roadmap: I65. The ruined castle still stands as the d4 ruin; its crumble and whether its ground
+frees up are I66, an open question for Sebastian, since rules v3 keeps the ruin standing and
+blocking (I37). The `crumble2` worktree, which had cut a `castle_d3_rubble.glb`, was gone
+unmerged with its branch by the end of this session.
 
 ## What the game did
 

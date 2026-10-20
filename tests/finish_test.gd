@@ -1,5 +1,5 @@
 extends Node
-## The AI finishes the castle it started on, and the game ends as the last castle falls (I64), on
+## The AI finishes the castle it started on, and the game ends as the last castle falls (I65), on
 ## a real versus map with the AI idle until the script fires its guns: the target list leads with
 ## the castles the enemy holds, the nearest to ruin first, never a neutral one; every gun fires at
 ## the first target in its reach; the shell that ruins the last castle ends the game at once.

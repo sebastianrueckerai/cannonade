@@ -22,7 +22,7 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 - A castle of yours that stands open at the check is destroyed.
 - A castle takes shells like anything else. Its hit count is a starting value for the lab, 12 as the first guess.
 - A destroyed castle is gone for the rest of the match. Castles are never repaired and never rebuilt.
-- You lose when your last castle falls: at once when a shell ruins it in battle, at the check when it burns or is claimed away (2026-10-20, I64). In a match of four sides, the last side in wins.
+- You lose when your last castle falls: at once when a shell ruins it in battle, at the check when it burns or is claimed away (2026-10-20, I65). In a match of four sides, the last side in wins.
 
 ## 3. The parts cap
 

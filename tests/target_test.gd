@@ -3,7 +3,7 @@ extends Node
 ## wall block's size on the slab, so the ground and whatever stands there turn
 ## lighter; no material changes (playtest round 4: emission on the castle blew
 ## its team surface out to white). Only the human's shots light a tile while a
-## human plays; with no human (AI against AI) every side's do (I64).
+## human plays; with no human (AI against AI) every side's do (I65).
 ##   godot --headless --fixed-fps 30 res://tests/target_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
