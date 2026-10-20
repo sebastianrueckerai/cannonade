@@ -36,6 +36,7 @@ func take_damage(damage: float) -> void:
 	bb.health -= damage
 	if bb.health <= 0:
 		become_ruin()
+		map.game.decide()
 	else:
 		var full: float = Catalog.def_of(go).health
 		var gone: float = 1.0 - bb.health / full

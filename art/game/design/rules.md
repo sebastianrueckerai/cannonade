@@ -90,6 +90,7 @@ Why counts and not shapes: a 2x2 has six patterns, a 3x3 has 140. Nobody learns 
 
 - The same draws, the same hold slots, the same queue and skip.
 - Two reaction times in seconds in [AI.gd](/home/womb/repos/grid-cannons/scripts/components/AI.gd), never 0. `secondsBetweenShots`, 0.5 by default, is the wait after every shot, the aim move and the click: a human lands about one shot per 0.5 to 0.8 s. `secondsBetweenBuilds`, 1.0 by default, is the wait after every build action, whether a placed piece or gun, a stacked block, a dropped piece or a discarded gun: a human turns and places a piece slower than it fires. D76 had one wait of 0.5 for both, which built too fast (2026-10-20, I63); the two waits planned here before, `reaction` and `switch`, stay replaced.
+- It shoots, best first: the enemy's guns, then the castles the enemy holds, the nearest to ruin first, then the enemy's walls, the most walled-in first. Every loaded gun fires at the first of these in its reach, so the guns gang up on what decides the game. A neutral castle it rings and claims, never shoots (2026-10-20, I64).
 - It knows every recipe of section 7 and can lay a 3x3. Today its integer square root returns 4 for 9.
 - Personalities: swarm, heavy, mortar, flak, siege, mixed. Each defends with small guns and spends the rest of its land on its kind. Mixed may build everything.
 

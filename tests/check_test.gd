@@ -312,12 +312,14 @@ func _run() -> void:
 	check(vc.is_ruin() and vc.owner() == null, "the ruin is never claimed, walled in or not")
 	check(ruins() == 1 and neutrals().size() == 6, "only the shelled castle is a ruin")
 
-	# 6: the end
-	for i in 12:
-		map.tiles[map.sizeX / 2][map.sizeZ - 1 - map.sizeZ / 4].damage_building_place(10.0)
-	check(enemy.castle_count() == 0, "the enemy holds no castle any more")
+	# 6: the end at the check: the enemy's ring opened, its castle burns and nobody is left to beat
+	# (the shell that ruins a last castle ends the game at once: tests/finish_test)
+	var ec := Vector2i(map.sizeX / 2, map.sizeZ - 1 - map.sizeZ / 4)
+	map.tiles[ec.x - 2][ec.y].un_build()
+	check(enemy.castle_count() == 1 and game.started, "an opened ring alone costs nothing")
 	game.next_phase()
-	check(not game.started, "a player without a castle is out at the check")
+	check(enemy.castle_count() == 0 and not game.started,
+			"the castle outside a closed ring burns at the check, and its holder is out")
 	var overlay := main.get_node_or_null("GameOver")
 	check(overlay != null and _find_label(overlay, "VICTORY"), "the overlay shows the victory")
 	_check_margins()

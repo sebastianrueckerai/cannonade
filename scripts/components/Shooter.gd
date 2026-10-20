@@ -79,11 +79,6 @@ func sleep() -> void:
 	_set_barrel_x(-10.0)
 
 
-## Only the human's guns draw aim arcs; with no human (AI against AI) every side draws.
-func _draws_arc() -> bool:
-	return Indicators.own_player == null or player == Indicators.own_player
-
-
 func try_aim(destination: Vector3) -> bool:
 	_arc().line.color = Color.GRAY if player == null else player.mainColor
 	distance = go.global_position.distance_to(destination)
@@ -105,7 +100,7 @@ func try_aim(destination: Vector3) -> bool:
 			go.rotation = Vector3(0.0, go.rotation.y, 0.0)
 			go.scale = s
 		_set_barrel_x(angleDegrees)
-		if _draws_arc():
+		if Indicators.shows(player):
 			renderArc.draw_arc(10, _spawn().global_position, destination, distance, angleRads, ascendingPart)
 		else:
 			renderArc.switch_on_or_off(false)

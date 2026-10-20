@@ -65,7 +65,8 @@ glance tells whose wall and whose ground is whose.
 
 Rounds alternate between a **build phase** (45 s, green timer) and a **battle phase**
 (30 s, red timer). **Castles are the game**: ten sit on the map, you start with one
-walled in, and a player who holds no castle at a check is out.
+walled in, and a player whose last castle falls is out: at once when a shell ruins it,
+at the check when it burns.
 
 At the end of every build phase the **check** runs:
 
@@ -290,6 +291,9 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
   output, readable errors.
 * `tests/check_test` – the rules check on a fixed seed through the real timer: the castle
   map layout, burn, claim, the parts cap gate, the ruin, the game-over rule.
+* `tests/finish_test` – the AI's target list (the enemy's guns, its castles nearest to ruin
+  first, then walls, never a neutral castle), each gun at the first target in its reach, and
+  the game ending the moment a shell ruins the last castle.
 * `tests/sim` – full games (`--mode=versus` with an autobuild stand-in, `--mode=ai2`):
   rounds alternate, AIs build, arm
   themselves and fight, ships sail and shoot; map invariants hold; frame times are printed.

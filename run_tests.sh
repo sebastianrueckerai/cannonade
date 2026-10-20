@@ -34,6 +34,7 @@ run previews     --fixed-fps 30 res://tests/preview_test.tscn
 run walls        --fixed-fps 30 res://tests/walls_test.tscn
 run ai           --fixed-fps 30 res://tests/ai_test.tscn
 run target-light --fixed-fps 30 res://tests/target_test.tscn
+run finish       --fixed-fps 30 res://tests/finish_test.tscn
 run catalog      --fixed-fps 30 res://tests/catalog_test.tscn
 run sandbox      --fixed-fps 30 res://tests/sandbox_test.tscn
 run lab          res://tests/lab_test.tscn

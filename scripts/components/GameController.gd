@@ -259,11 +259,16 @@ func run_check() -> void:
 			castle.claim(claimant)
 	for p in players:
 		p.recompute_parts_cap()
-	var holders: Array = []
-	for p in players:
-		if p.castle_count() > 0:
-			holders.append(p)
-	if players.size() > 1 and holders.size() < 2:
+	decide()
+
+
+## Rules v3 end: once fewer than two players hold a castle, the last holder wins, nobody a draw.
+## Runs at the check and the moment a shell leaves a castle a ruin.
+func decide() -> void:
+	if not (castles and started) or players.size() < 2:
+		return
+	var holders: Array = players.filter(func(p): return p.castle_count() > 0)
+	if holders.size() < 2:
 		end(holders[0] if holders.size() == 1 else null)
 
 

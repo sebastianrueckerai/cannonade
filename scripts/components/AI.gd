@@ -342,7 +342,8 @@ func try_stack_next_wall() -> bool:
 
 
 # --------------------------------------------------------------- shooting
-## One shot per action: the first loaded gun that can aim at a target fires.
+## One shot per action: the guns in random order, each at the first target in its reach, and the
+## first loaded one fires. A gun still reloading stays aimed at its target.
 func search_and_fire_at_targets() -> void:
 	nextAction = U.time + secondsIdleRetry
 	if enemyPlayers == null:
@@ -353,16 +354,15 @@ func search_and_fire_at_targets() -> void:
 	if enemyPlayers.is_empty():
 		return
 	_random_shuffle(activeCannons)
-	var enemy = enemyPlayers[U.rint(0, enemyPlayers.size())]
-	var targets := aquire_targets(enemy, activeCannons.size())
-	if targets.is_empty():
-		return
-	_random_shuffle(targets)
-	for i in activeCannons.size():
-		var t = targets[i % targets.size()]
-		if activeCannons[i].try_shoot(t.go.global_position, t):
-			nextAction = U.time + secondsBetweenShots
-			return
+	var targets := aquire_targets(enemyPlayers[U.rint(0, enemyPlayers.size())])
+	for gun in activeCannons:
+		for t in targets:
+			if not gun.can_reach(gun.go.global_position.distance_to(t.go.global_position)):
+				continue
+			if gun.try_shoot(t.go.global_position, t):
+				nextAction = U.time + secondsBetweenShots
+				return
+			break
 
 
 func _random_shuffle(arr: Array) -> void:
@@ -374,44 +374,44 @@ func _random_shuffle(arr: Array) -> void:
 		arr[r] = hold
 
 
-func aquire_targets(enemy, n: int) -> Array:
-	if targetMode == "auto":
-		# guns first (they shoot back), then the castles that decide the game
-		for mode in ["guns", "castles"]:
-			var auto_pool := _target_pool_for(mode, enemy)
-			if not auto_pool.is_empty():
-				_random_shuffle(auto_pool)
-				return auto_pool.slice(0, n)
-	elif targetMode != "walls":
-		var pool := _target_pool_for(targetMode, enemy)
-		if not pool.is_empty():
+## The tiles to shoot at, best first. "auto": the enemy's guns (they shoot back), then the castles
+## the enemy holds, the nearest to ruin first (they decide the game), then its walls, the most
+## walled-in first. An explicit mode leads with its own pool, and the walls follow it.
+func aquire_targets(enemy) -> Array:
+	var out: Array = []
+	for mode in (["guns", "castles"] if targetMode == "auto" else [targetMode]):
+		var pool := _target_pool_for(mode, enemy)
+		if mode != "castles":
 			_random_shuffle(pool)
-			return pool.slice(0, n)
-	var tiles: Array = []
+		out.append_array(pool)
+	var walls: Array = []
 	for t in enemy.wallTiles:
 		if U.alive(t):
-			tiles.append([t.count_neighbouring_walls(), t])
-	tiles.sort_custom(func(a, b): return a[0] > b[0])
-	var out: Array = []
-	for i in mini(n, tiles.size()):
-		out.append(tiles[i][1])
+			walls.append([t.count_neighbouring_walls(), t])
+	walls.sort_custom(func(a, b): return a[0] > b[0])
+	for w in walls:
+		out.append(w[1])
 	return out
 
 
-## Tiles to shoot at for the target modes other than "walls" (empty = fall
-## back to walls).
+## The tiles of one target mode; "walls" has none here, the walls follow every list.
 func _target_pool_for(mode: String, enemy) -> Array:
 	var keys: Array = []
 	match mode:
 		"guns":
 			keys = enemy.cannons.keys() + enemy.supports.keys()
 		"castles":
-			var seats: Array = []
+			# the castles the enemy holds, the nearest to ruin first: the AI finishes what it started.
+			# A neutral castle is one to ring and claim, not to shoot; a ruin decides nothing any more.
+			var held: Array = []
 			for c in map.castles:
-				# enemy and neutral castles; a ruin decides nothing any more
-				if U.alive(c.go) and not c.is_ruin() and c.owner() != self:
-					var centre: Vector2i = map.tile_index_at(c.go.global_position)
-					seats.append(map.tiles[centre.x][centre.y])
+				if U.alive(c.go) and not c.is_ruin() and c.owner() == enemy:
+					held.append(c)
+			held.sort_custom(func(a, b): return U.comp(a.go, "BuildingBlock").health < U.comp(b.go, "BuildingBlock").health)
+			var seats: Array = []
+			for c in held:
+				var centre: Vector2i = map.tile_index_at(c.go.global_position)
+				seats.append(map.tiles[centre.x][centre.y])
 			return seats
 		"supply":
 			keys = enemy.supplies.keys()

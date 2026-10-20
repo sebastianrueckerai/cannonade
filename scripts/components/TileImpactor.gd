@@ -14,6 +14,8 @@ var damage := 0.0
 var start := Vector3.INF
 ## BuildingPlace component of the target tile
 var destinationTile = null
+## Whether this shot lit its tile (Indicators.shows: own guns only); it puts the light out when it lands
+var _marked := false
 
 
 func _enter_tree() -> void:
@@ -22,7 +24,7 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	U.projectiles.erase(self)
-	if U.alive(destinationTile):
+	if _marked and U.alive(destinationTile):
 		destinationTile.target_off()
 
 
@@ -30,10 +32,11 @@ func shoot_down() -> void:
 	U.destroy(go)
 
 
-## Sets the tile this shot flies at and puts the shooter's targeting marker on it.
+## Sets the tile this shot flies at and, when the shooter's aim shows, puts its marker on it.
 func aim_tile(dest_tile) -> void:
 	destinationTile = dest_tile
-	if U.alive(dest_tile) and player != null:
+	_marked = U.alive(dest_tile) and player != null and Indicators.shows(player)
+	if _marked:
 		dest_tile.target_on(player.mainColor)
 
 

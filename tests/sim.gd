@@ -207,8 +207,11 @@ func _check_outcome(g) -> void:
 			_fail("AI %d never lost a wall or a gun in battle" % k)
 	if battle_happened and stats["shots"] == 0:
 		_fail("nobody fired")
-	if battle_happened and not stats.get("marked"):
+	# only the human's shots mark tiles while a human plays (Indicators.shows), and the sim's human never fires
+	if battle_happened and Indicators.own_player == null and not stats.get("marked"):
 		_fail("no tile ever carried a targeting marker during battle")
+	if stats.get("marked") and Indicators.own_player != null:
+		_fail("a tile carried a targeting marker in a game whose human never fired")
 	if g.fleet.ships.size() > 0:
 		var moved: int = stats.get("ships_moved", 0)
 		if moved != g.fleet.ships.size():
