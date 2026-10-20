@@ -173,7 +173,7 @@ Sebastian rejected the rounded, chunky language. Its edits made the bevel a quar
 The detail level is named after the game River Towns. It was the middle one of three reference games.
 
 - **A building** is one mass and one roof, plus one or two features: a door, a row of two windows, a chimney, or a crate or barrel beside it. That is five to eight parts.
-- **A wall** has three parts: the slab, the row of merlons, and a ledge at the base or a walkway. The full-tile block (D75) comes in four looks, one per player: plain, corbelled, pilastered and coursed (D78); a look is flavour for the zoomed view, the colour tells the players apart.
+- **A wall** has three parts: the slab, the row of merlons, and a ledge at the base or a walkway. The full-tile block (D75) comes in four looks, dealt one per player each game: plain, corbelled, pilastered and coursed (D78, D81), each with its own merlons so they differ from above (D80); the colour tells the players apart.
 - **Walls are plain slabs** at every level. No stones are drawn on them.
 - **At most one prop** stands on a ground tile.
 

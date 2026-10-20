@@ -3,8 +3,9 @@ class_name Art
 ##
 ##   3d/<id>.glb            a model for building id, "ship", "tile" or projectile id ("shell"), origin at the ground
 ##                          centre, Y up, metres, one tile = 1 m. Walls keep the tile centre as origin, projectiles
-##                          their centre. The wall block has one model per player look (Catalog.WALL_LOOKS: "wall",
-##                          "wall_corbel", ...) and each a storey, "<look>_upper"; Wall.gd puts its shader on them
+##                          their centre. The wall block has one model per look (Catalog.WALL_LOOKS: "wall",
+##                          "wall_corbel", ..., dealt one per player each game) and each a storey, "<look>_upper";
+##                          Wall.gd puts its shader on them
 ##   3d/<id>.2.glb, .3.glb  more looks of the same id, one picked at random for each instance
 ##   ui/splash.png          splash screen image
 ##   ui/logo.png            title image on the menu

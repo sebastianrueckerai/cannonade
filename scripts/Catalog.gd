@@ -259,12 +259,24 @@ static func rotations(sig: Array, side: int) -> Array:
 
 # ----------------------------------------------------------------- spawning
 const WallComp = preload("res://scripts/components/Wall.gd")
-## The wall looks of D78, one per player number; a block with no owner wears the first.
+## The wall looks of D78. Every game deals each player a different one (D81, Main.build); a block with no owner
+## wears the first.
 const WALL_LOOKS := ["wall", "wall_corbel", "wall_pilaster", "wall_course"]
 
 
 static func wall_look(owner) -> String:
-	return WALL_LOOKS[(owner.playerID - 1) % WALL_LOOKS.size()] if owner != null else WALL_LOOKS[0]
+	return owner.wallLook if owner != null and owner.wallLook != "" else WALL_LOOKS[0]
+
+
+## The looks in a random order, drawn from the art's own generator so the game's random sequence stays.
+static func deal_wall_looks() -> Array:
+	var looks: Array = WALL_LOOKS.duplicate()
+	for i in range(looks.size() - 1, 0, -1):
+		var j: int = Art._rng.randi_range(0, i)
+		var t = looks[i]
+		looks[i] = looks[j]
+		looks[j] = t
+	return looks
 
 
 ## Instantiates a building (by id or def), not yet added to the tree when parent is null. A wall block or piece

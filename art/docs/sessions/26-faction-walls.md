@@ -237,3 +237,11 @@ on the deck, not unioned, tagged regions 13 to 16, and the shader drops a region
 `Wall.paint_art` clears a side's stud exactly where it opens that side's corridor; the deck stays whole under a
 dropped stud and the walkway shows through. `tests/walls_test` reads the stud with the corridor: a corridor open
 with its stud still standing, or closed with its stud gone, fails. 606 triangles.
+
+## Eighth pass: deployed
+
+Sebastian: "Looks good. Deploy! Every faction gets a random wall type, no wall twice!" Recorded as D81. The six
+changed models are approved. `Catalog.deal_wall_looks` shuffles the four looks from `Art._rng` once per game and
+`Main.build` gives each player the next, in `PlayerController.wallLook`; `Catalog.wall_look` reads it. The walls
+test checks that a two-player game deals two different looks and that five four-player games on five art seeds
+each deal all four, not all alike.

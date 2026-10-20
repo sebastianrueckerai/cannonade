@@ -1,5 +1,6 @@
 extends Node
-## The faction walls of D78: every player's blocks wear the look of their number, a block's walkway runs from its
+## The faction walls of D78 and D81: every game deals each player another look and a player's blocks wear it, a
+## block's walkway runs from its
 ## centre toward the own walls beside it and no further, it follows the neighbours as they come and go, a storey
 ## wears the look's upper model, and a hand piece's cells show the walkways between them whichever way it turns.
 ##   godot --headless --fixed-fps 30 res://tests/walls_test.tscn
@@ -33,6 +34,7 @@ func _ready() -> void:
 	_check_storey()
 	_check_piece()
 	_check_ground()
+	await _check_deal()
 	print("WALLS TEST PASSED" if failures.is_empty() else "WALLS TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
 
@@ -84,14 +86,15 @@ func _open(go: Node3D, p) -> Array:
 func _check_looks() -> void:
 	var a := _build(p1, 10, 2)
 	var b := _build(p2, 10, 5)
-	check(_look(a) == "wall", "player 1's block wears the plain look (got %s)" % _look(a))
-	check(_look(b) == "wall_corbel", "player 2's block wears the corbel look (got %s)" % _look(b))
+	check(p1.wallLook in Catalog.WALL_LOOKS and p2.wallLook in Catalog.WALL_LOOKS and p1.wallLook != p2.wallLook,
+			"the game dealt both players a look of the four, not the same one (%s, %s)" % [p1.wallLook, p2.wallLook])
+	check(_look(a) == p1.wallLook, "player 1's block wears player 1's look (got %s)" % _look(a))
+	check(_look(b) == p2.wallLook, "player 2's block wears player 2's look (got %s)" % _look(b))
 	var bare := Catalog.spawn("wall")
 	check(_look(bare) == "wall", "a block spawned without an owner wears the first look")
 	p2.build_wall(_tile(12, 5), bare)
-	check(_look(bare) == "wall_corbel", "built by player 2, the ownerless block changes into the corbel look")
-	check(Catalog.wall_look(game.players[0]) == "wall" and Catalog.WALL_LOOKS.size() == 4,
-			"four looks, one per player number")
+	check(_look(bare) == p2.wallLook, "built by player 2, the ownerless block changes into player 2's look")
+	check(Catalog.WALL_LOOKS.size() == 4, "four looks")
 	for go in [a, b, bare]:
 		var c := _colors(go)
 		var p = U.comp(go, "BuildingBlock").player
@@ -130,7 +133,7 @@ func _check_storey() -> void:
 	var storey := Catalog.spawn("wall", null, p1)
 	U.comp(storey, "BuildingBlock").player = p1
 	tile.stack_wall(storey)
-	check(_look(storey) == "wall_upper", "a stacked block wears the look's storey (got %s)" % _look(storey))
+	check(_look(storey) == p1.wallLook + "_upper", "a stacked block wears the look's storey (got %s)" % _look(storey))
 	check(_open(storey, p1) == [true, true, true, false], "the storey's walkway follows the tile's neighbours (%s)" % [_open(storey, p1)])
 	_tile(14, 2).un_build()
 	check(_open(storey, p1) == [true, false, true, false], "the storey closes its -x corridor when that neighbour goes (%s)" % [_open(storey, p1)])
@@ -138,7 +141,7 @@ func _check_storey() -> void:
 	var storey2 := Catalog.spawn("wall", null, p2)
 	U.comp(storey2, "BuildingBlock").player = p2
 	tile2.stack_wall(storey2)
-	check(_look(storey2) == "wall_corbel_upper", "player 2's storey is the corbel storey (got %s)" % _look(storey2))
+	check(_look(storey2) == p2.wallLook + "_upper", "player 2's storey is player 2's look's storey (got %s)" % _look(storey2))
 
 
 func _check_piece() -> void:
@@ -155,10 +158,10 @@ func _check_piece() -> void:
 	var shade: float = WallComp.material(cells[1].get_node("Art")).get_shader_parameter("shade")
 	check(shade == 0.7 and cells.map(func(c): return _open(c, p1)) == want,
 			"shading the piece keeps its corridors (shade %s)" % shade)
-	check(_look(cells[0]) == "wall", "the cells wear the owner's look")
+	check(_look(cells[0]) == p1.wallLook, "the cells wear the owner's look")
 	var piece2 := Catalog.spawn("wall_3", p2.wallSpawn, p2)
-	check(_look(piece2.get_children().filter(func(n): return n is Node3D)[0]) == "wall_corbel",
-			"player 2's piece shows the corbel look")
+	check(_look(piece2.get_children().filter(func(n): return n is Node3D)[0]) == p2.wallLook,
+			"player 2's piece shows player 2's look")
 	piece.free()
 	piece2.free()
 
@@ -191,3 +194,33 @@ func _check_ground() -> void:
 	_tile(25, 3).un_build()
 	_build(p1, 25, 3)
 	check(inside.ringOwner == p1, "three blocks each: the tie goes to the lower player number")
+
+
+## The deal: five art seeds give five permutations of the four looks, not all alike, and a four-player game hands
+## them out, every player another. The versus game's AI is idle, so freeing it resumes no coroutine.
+func _check_deal() -> void:
+	var deals: Array = []
+	for seed in [1, 2, 3, 4, 5]:
+		Art._rng.seed = seed
+		var looks: Array = Catalog.deal_wall_looks()
+		var distinct := {}
+		for l in looks:
+			distinct[l] = true
+		check(distinct.size() == 4 and looks.size() == 4 and looks.all(func(l): return l in Catalog.WALL_LOOKS),
+				"a deal is the four looks in some order (%s)" % [looks])
+		deals.append(looks)
+	check(deals.any(func(d): return d != deals[0]), "the deal differs between games (%s)" % [deals])
+	main.free()
+	await get_tree().process_frame
+	Main.requested_mode = "ai4"
+	Main.requested_args = {"seed": "3", "no-decorations": "true"}
+	main = Main.new()
+	get_tree().root.add_child.call_deferred(main)
+	await get_tree().process_frame
+	get_tree().current_scene = main
+	var dealt: Array = main.game.players.map(func(p): return p.wallLook)
+	var seen := {}
+	for l in dealt:
+		seen[l] = true
+	check(seen.size() == 4 and dealt.all(func(l): return l in Catalog.WALL_LOOKS),
+			"four players, four different looks of the four (%s)" % [dealt])

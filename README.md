@@ -52,7 +52,7 @@ a full-tile wall block on each of its cells. Blocks that share a side are one wa
 that touch only at a corner do not join, so a ring must close side to side. Everything you
 place needs one tile within two tiles of your own walls or of a castle you hold, so nobody
 builds behind enemy lines. Only a single block stacks: a stacked tile takes two shells.
-Each player's walls have their own look. The walkway along the top of a wall carries the
+Every game deals each player a different wall look of four. The walkway along the top of a wall carries the
 owner's colour, running toward the neighbouring blocks of the same wall, and the ground inside
 a closed ring takes a wash of the colour of the player whose walls surround it most, so a
 glance tells whose wall and whose ground is whose.

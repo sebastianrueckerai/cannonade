@@ -95,3 +95,5 @@ for the full-tile block. Spend: six sketches at 0.25 USD and one critique at 0.0
 - **The studs follow the docking walls (D80).** "3 granulations are only in place, were the wall is overlooking
   open space!" A mid-side stud goes where that side's walkway opens. [looks-in-game.jpg](looks-in-game.jpg)
   shot again, for his pass.
+- **Passed and deployed (D81).** "Looks good. Deploy! Every faction gets a random wall type, no wall twice!"
+  All eight models approved; each game deals the looks at random, one per player.

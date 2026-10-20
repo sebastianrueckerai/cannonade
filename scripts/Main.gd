@@ -131,6 +131,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	game.roundTimer = ui.get_node("Timer")
 	var kinds: Array = cfg["players"]
 	Indicators.own_player = null  # static: reset every game, then the human owns the aim arcs
+	var looks: Array = Catalog.deal_wall_looks()  # every player another look, no look twice (D81)
 	for i in kinds.size():
 		var script: Script = AIScript if kinds[i] == "ai" else PlayerController
 		var p = _component("%s%d" % ["AI" if kinds[i] == "ai" else "HumanPlayer", i + 1], script)
@@ -140,6 +141,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 		if cfg.has("colors"):
 			colors[0] = cfg["colors"][i]
 		p.mainColorHexCode = colors[0]
+		p.wallLook = looks[i % looks.size()]
 		p.highlightPosColorHexCode = colors[1]
 		p.highlightNegColorHexCode = colors[2]
 		game.players.append(p)

@@ -19,6 +19,8 @@ var partsCap := 0
 var partsLabel: Label = null
 var castlesLabel: Label = null
 var mainColor := Color.WHITE
+## The wall look this game dealt the player (Catalog.WALL_LOOKS, D81), empty for the first look
+var wallLook := ""
 var highlightPosColor := Color.WHITE
 var highlightNegColor := Color.RED
 ## GameObject (Node3D) of the next wall / building to place
