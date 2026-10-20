@@ -6,4 +6,4 @@ set -eu
 cd "$(dirname "$0")/.."
 GODOT=${GODOT:-$(command -v godot || echo "$HOME/Applications/Godot_v4.7.1-stable_linux.x86_64")}
 # Displays from :200 up: Flatpak apps see the real display as :99 and would reach a host Xvfb there.
-exec xvfb-run -a -n 200 -s "-screen 0 1280x720x24" "$GODOT" --rendering-driver opengl3 --fixed-fps 30 "$@"
+exec xvfb-run -a -n 200 -s "-screen 0 1280x720x24" "$GODOT" --rendering-driver opengl3 --audio-driver Dummy --fixed-fps 30 "$@"

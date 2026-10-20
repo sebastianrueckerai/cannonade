@@ -70,6 +70,8 @@ highest-numbered file in [art/docs/sessions/](art/docs/sessions), and it can nam
   broken (check this by breaking the code on purpose before you commit). Follow
   https://github.com/openclaw/openclaw/blob/main/.agents/skills/test-audit/SKILL.md
 - Visual check: `tools/godot_render.sh res://tools/screenshot.tscn -- --mode=versus --at=5 --out=/tmp/shot`
+- Every Godot run without a window plays no sound. `--headless` mutes it on its own; any other run
+  (`xvfb-run`, a tool, a subprocess) passes `--audio-driver Dummy`, as `tools/godot_render.sh` does.
 
 ## Gotchas
 - GDScript `:=` cannot infer types from untyped (Variant) expressions; declare the type.
