@@ -20,7 +20,8 @@ Sebastian, 2026-10-20, on the page, the page open in his tabs:
 | sfx-place-piece--eleven, sfx-place-invalid--eleven | "and these" | `place_piece`, `place_invalid` |
 | sfx-phase-horn--eleven | "use" | `horn_battle` |
 | sfx-hit-water--eleven | "use" | `hit_water` |
-| the first crumbles | "most sound more like stone blocks crumbling" wanted, so four stone angles came in `crumble-place.json` | open |
+| the first crumbles | "most sound more like stone blocks crumbling" wanted, so four stone angles came in `crumble-place.json` | out |
+| crunch-crumble--eleven, crunch-crumble--mirelo-1, -2 | "Those 3 can be used for things crumbling (walls, castle)" | `crumble_1`, `crumble_2`, `crumble_3` |
 | the first cannon shots | "not great", wanted umpf: `cannons.json` with four angles, a normal and a big gun | picked above |
 
 "Eleven seems to be the best so far."
@@ -30,4 +31,4 @@ The picks are game assets in [game/assets/audio/](../../assets/audio) and copies
 both ends, the loudest 400 ms at -16 LUFS (UI -22), peaks under -1 dBTP, 44.1 kHz 16-bit WAV, a sidecar
 naming the source clip. Decision D83.
 
-Open on this page: a crumble and a placing sound from the stone sets, and the rest of the A list.
+Open on this page: a placing sound from the stone sets if the wooden one should go, and the rest of the A list.

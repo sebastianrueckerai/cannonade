@@ -1,0 +1,13 @@
+{
+  "source": "game/art-direction/rounds/37-sfx-probe/crunch-crumble--mirelo-1.wav",
+  "bus": "sfx",
+  "target": {
+    "m_max": -16.0
+  },
+  "created": "2026-10-20T22:37:21",
+  "seconds": 1.8,
+  "lufs": -26.8,
+  "m_max": -20.3,
+  "range_lu": 0.0,
+  "peak_dbtp": -0.9
+}

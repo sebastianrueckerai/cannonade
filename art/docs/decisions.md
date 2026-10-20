@@ -490,5 +490,7 @@ are similar, they seem to have differing volume." So `audio.py final` sets every
 400 ms, -16 LUFS for effects and -22 for UI, under a -1 dBTP limiter, and the picks land in the game's
 [assets/audio/](/home/womb/repos/grid-cannons/assets/audio). The first heavy shot ("sounds like a faint
 drum beat") and the first crumbles (wanted: stone blocks crumbling) are out. "Eleven seems to be the best
-so far." [PICKS.md](../game/art-direction/rounds/37-sfx-probe/PICKS.md).
+so far." Then, from the stone sets: "Those 3 can be used for things crumbling (walls, castle)", the crunch
+angle from ElevenLabs and both Mirelo takes, `crumble_1` to `crumble_3`.
+[PICKS.md](../game/art-direction/rounds/37-sfx-probe/PICKS.md).
 

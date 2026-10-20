@@ -152,5 +152,5 @@ Counts: 33 clip sets in A, 21 in B, about 70 files with the variations.
 ## Picked so far
 
 D83, from round 37: `cannon_1` to `cannon_3` (shot_cannon x3), `heavy_1` to `heavy_3` (shot_heavy),
-`castle_claimed`, `draw_piece`, `ship_sink`, `place_piece`, `place_invalid`, `horn_battle`, `hit_water`
-and `ui_click`. Open from the A list: the rest.
+`castle_claimed`, `draw_piece`, `ship_sink`, `place_piece`, `place_invalid`, `horn_battle`, `hit_water`,
+`ui_click` and `crumble_1` to `crumble_3` (crumble, castle_ruin). Open from the A list: the rest.
