@@ -8,12 +8,6 @@
         "output_format": "mp3_44100_192"
       }
     },
-    "sa3small": {
-      "id": "fal-ai/stable-audio-3/small/sfx/text-to-audio",
-      "params": {
-        "output_format": "wav"
-      }
-    },
     "mirelo": {
       "id": "mirelo-ai/sfx2.0/text-to-audio",
       "params": {
@@ -35,9 +29,6 @@
         "eleven": {
           "duration_seconds": 1.5
         },
-        "sa3small": {
-          "duration": 1.5
-        },
         "mirelo": {
           "duration": 1.5
         }
@@ -48,9 +39,6 @@
       "params": {
         "eleven": {
           "duration_seconds": 2
-        },
-        "sa3small": {
-          "duration": 2
         },
         "mirelo": {
           "duration": 2
@@ -63,9 +51,6 @@
         "eleven": {
           "duration_seconds": 1.2
         },
-        "sa3small": {
-          "duration": 1.2
-        },
         "mirelo": {
           "duration": 1.2
         }
@@ -76,9 +61,6 @@
       "params": {
         "eleven": {
           "duration_seconds": 1.8
-        },
-        "sa3small": {
-          "duration": 1.8
         },
         "mirelo": {
           "duration": 1.8
@@ -91,9 +73,6 @@
         "eleven": {
           "duration_seconds": 1.2
         },
-        "sa3small": {
-          "duration": 1.2
-        },
         "mirelo": {
           "duration": 1.2
         }
@@ -104,9 +83,6 @@
       "params": {
         "eleven": {
           "duration_seconds": 0.6
-        },
-        "sa3small": {
-          "duration": 1.0
         },
         "mirelo": {
           "duration": 0.6
@@ -119,9 +95,6 @@
         "eleven": {
           "duration_seconds": 0.6
         },
-        "sa3small": {
-          "duration": 1.0
-        },
         "mirelo": {
           "duration": 0.6
         }
@@ -132,9 +105,6 @@
       "params": {
         "eleven": {
           "duration_seconds": 0.7
-        },
-        "sa3small": {
-          "duration": 1.0
         },
         "mirelo": {
           "duration": 0.7
@@ -147,9 +117,6 @@
         "eleven": {
           "duration_seconds": 0.5
         },
-        "sa3small": {
-          "duration": 1.0
-        },
         "mirelo": {
           "duration": 0.3
         }
@@ -160,9 +127,6 @@
       "params": {
         "eleven": {
           "duration_seconds": 1.5
-        },
-        "sa3small": {
-          "duration": 1.5
         },
         "mirelo": {
           "duration": 1.5
@@ -175,9 +139,6 @@
         "eleven": {
           "duration_seconds": 2
         },
-        "sa3small": {
-          "duration": 2
-        },
         "mirelo": {
           "duration": 2
         }
@@ -188,9 +149,6 @@
       "params": {
         "eleven": {
           "duration_seconds": 1.5
-        },
-        "sa3small": {
-          "duration": 1.5
         },
         "mirelo": {
           "duration": 1.5

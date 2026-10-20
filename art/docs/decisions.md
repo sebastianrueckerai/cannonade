@@ -472,3 +472,11 @@ Replaces D75's "only the single block stacks". After the single block's stacking
 ## D81. The four wall looks pass, and every game deals them at random, no look twice (2026-10-20, Sebastian)
 
 On [looks-in-game.jpg](../game/art-direction/rounds/35-faction-walls/looks-in-game.jpg) with the D80 tops: "Looks good. Deploy! Every faction gets a random wall type, no wall twice!" The eight wall models are approved. A look no longer follows the player number: `Main.build` shuffles `Catalog.WALL_LOOKS` once per game, from the art's own random generator so the game's sequence stays, and gives each player the next one, so two players never share a look and the human sees another look from game to game.
+
+## D82. Stable Audio 3 Small is out for sound effects (2026-10-20, Sebastian)
+
+Round 37 ran twelve cues on three fal endpoints. Sebastian on the Stable Audio 3 Small clips: "terrible.
+Remove those. I'll choose from the suite once those are gone." The sheet had shown six of its twelve impacts
+above full scale, +5 to +7 dBTP. Its clips, sidecars and prompts are deleted from the round, and the pick
+stands between ElevenLabs SFX v2 and Mirelo SFX 2.0. Session plan [31-audio.md](sessions/31-audio.md).
+

@@ -19,7 +19,7 @@ Roadmap: K5. Cap: 10 USD. Spent: about 6.5 USD.
 | [sound.md](../../game/design/sound.md) | the cue list: five music cues and 54 effect sets, each with the function that fires it | the Godot integration, the next rounds |
 | [audio.py](../../pipeline/audio.py) | music and effects through fal's queue, a round runner, a loudness sheet, a Whisper vocals check | every audio round |
 | round [36-music-probe](../../game/art-direction/rounds/36-music-probe) | four directions times two themes on four models, 40 clips | Sebastian's pick of a direction and a model |
-| round [37-sfx-probe](../../game/art-direction/rounds/37-sfx-probe) | twelve cues on three models, 36 clips | the pick of an effects model |
+| round [37-sfx-probe](../../game/art-direction/rounds/37-sfx-probe) | twelve cues on three models, 36 clips, 24 after D82 | the pick of an effects model |
 | round [38-theme-versions](../../game/art-direction/rounds/38-theme-versions) | menu, win and lose as remixes of one build theme | the way the versions get made |
 | stage 02D in [overview.md](../process/overview.md) | sound joins the process chart | the process |
 
@@ -77,10 +77,10 @@ per cue, 0.5 to 2 s.
 |---|---|---|---|---|---|
 | ElevenLabs SFX v2 | 12 | -6 to -28 | -9 to +1.4 | 0.001 to 0.004 | takes a duration from 0.5 s, MP3, the loop option exists |
 | Mirelo SFX 2.0 | 12 | -11 to -41 | -1.0 on every clip | 0.003 to 0.020 | WAV, peak-limited, takes a negative prompt |
-| Stable Audio 3 Small SFX | 12 | +4.9 to -34 | +7.4 to -14.6 | 0.021 | WAV, minimum 1 s. Six impacts sit above full scale and clip |
+| Stable Audio 3 Small SFX | 12 | +4.9 to -34 | +7.4 to -14.6 | 0.021 | WAV, minimum 1 s. Six impacts sat above full scale. Sebastian: "terrible", struck (D82), its clips and sidecars are gone |
 
 Every clip gets normalised to its bus level before it enters the game, so the levels above do not
-decide. The clipped Stable Audio clips do: a clip over 0 dBTP has lost its peaks already.
+decide. The clipped Stable Audio clips did: a clip over 0 dBTP has lost its peaks already.
 
 ## The versions, round 38
 
@@ -111,8 +111,8 @@ the chosen chiptune theme.
    toy fortress and does not clash, and whether chiptune reads as Cannonade or as a different game.
 2. A music model for the two themes. By the numbers Stable Audio 2.5 and Lyria 3 Pro deliver 90 s
    instrumentals every time, ACE-Step is the cheapest, MiniMax is the only WAV but sings or stops short.
-3. An effects model: ElevenLabs by its duration control and loop option, Mirelo by its clean peaks, or
-   Stable Audio 3 Small once normalised.
+3. An effects model: ElevenLabs by its duration control and loop option, or Mirelo by its clean peaks.
+   Stable Audio 3 Small is out (D82).
 4. Whether the ACE-Step remixes of round 38 count as versions of the theme.
 
 The picks go into decisions.md as D82 and following, then round 39 makes the five cues and the A-list

@@ -29,12 +29,15 @@ clip is cut to a bar line and the join is checked by ear.
 A draw shares the lose sting. The loading screen plays the menu cue on, since the map builds over a
 few seconds, and the build cue starts when `built` fires.
 
-Versions of a theme: a text-to-music model cannot repeat a theme across runs. The routes that do:
-[fal-ai/ace-step/audio-to-audio](https://fal.ai/models/fal-ai/ace-step/audio-to-audio) remixes a
-clip under new tags (slower, minor, fewer instruments) and keeps its material, at 0.0002 USD a second;
-MiniMax's `music-cover` takes a reference clip on the direct API, which takes no new users; a tracker or
-a DAW makes the versions by hand from the chosen theme, the chiptune route makes this easy. Round 38
-tries the ACE-Step remix on the picked theme.
+Versions of a theme: a text-to-music model cannot repeat a theme across runs, so a version is made
+from the clip. The routes: [fal-ai/ace-step/audio-to-audio](https://fal.ai/models/fal-ai/ace-step/audio-to-audio)
+remixes a clip under new tags (slower, minor, fewer instruments) and keeps its material, with no dial
+for how much, at 0.0002 USD a second, round 38 made three this way;
+[fal-ai/stable-audio-25/audio-to-audio](https://fal.ai/models/fal-ai/stable-audio-25/audio-to-audio)
+regenerates a clip from a prompt with a `strength` dial, 0 returns the input and 1 ignores it, at 0.20
+a run, untested; MiniMax's `music-cover` takes a reference clip on the direct API, which takes no new
+users; a tracker or a DAW makes the versions by hand from the chosen theme, the chiptune route makes
+this easy. A cut of the clip is a version too: the win and lose stings are the first 16 s with a fade.
 
 The directions on probe, each on the four music endpoints of fal:
 
