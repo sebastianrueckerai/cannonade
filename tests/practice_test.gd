@@ -105,7 +105,8 @@ func _run() -> void:
 			neutral += 1
 	check(map.castles.size() == 10 and neutral == 8, "ten castles, eight of them neutral")
 	check(human.partsCap == 6, "one castle caps the parts at 6")
-	check(game.buildingAllowed and not main.get_node("UI/Timer").visible, "practice starts building, without a timer")
+	check(game.phase == game.Phase.WALLS and not main.find_child("Count", true, false).visible
+			and main.find_child("Phase", true, false).visible, "practice starts on the walls, the phase shown without a countdown")
 
 	# a pocket on the start ring for a gun (the ring itself has no free tile), then Enter: battle
 	var b := Vector2i(map.sizeX / 2, map.sizeZ / 4)  # the player's castle
@@ -120,7 +121,9 @@ func _run() -> void:
 	await frames(2)
 	check(human.activeCannons.size() == 1, "the player's gun is active")
 	await press_key(KEY_ENTER)
-	check(game.shootingAllowed and not game.buildingAllowed, "Enter starts the battle")
+	check(game.phase == game.Phase.GUNS, "Enter steps to the cannons")
+	await press_key(KEY_ENTER)
+	check(game.phase == game.Phase.BATTLE, "Enter again starts the battle")
 	await seconds(6.0)
 	check(enemy.stats.get("shots", 0) == 0, "the dormant enemy never fires")
 
@@ -131,7 +134,7 @@ func _run() -> void:
 	await seconds(12.0)
 	check(not U.alive(map.tiles[front.x][front.y].structure), "a shell destroys the aimed enemy wall")
 	await press_key(KEY_ENTER)
-	check(game.buildingAllowed and not game.shootingAllowed, "Enter goes back to building")
+	check(game.phase == game.Phase.WALLS, "Enter goes back to the walls")
 	await frames(3)
 	check(not U.alive(map.tiles[front.x][front.y].structure), "the damage stays while building")
 	check(human.cannons.size() == 1 and game.started, "the walled gun survives the check and the game runs on")
@@ -140,6 +143,7 @@ func _run() -> void:
 	for i in 12:
 		map.tiles[map.sizeX / 2][map.sizeZ - 1 - map.sizeZ / 4].damage_building_place(10.0)
 	check(ec.is_ruin() and U.alive(ec.go) and map.get_mini(map.sizeX / 2, map.sizeZ - 1 - map.sizeZ / 4) == 255, "twelve shells leave a ruin")
+	await press_key(KEY_ENTER)
 	await press_key(KEY_ENTER)
 	check(not game.started, "the enemy without a castle is out at the check")
 	var overlay := main.get_node_or_null("GameOver")

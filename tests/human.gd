@@ -140,6 +140,7 @@ func free_quad_in_range() -> Vector2i:
 
 func _run() -> void:
 	await frames(3)
+	game.timeLeftInRound = 1e6  # the script sets the phase it needs
 	var b := base_xz()
 	check(map.is_tile_enclosed(b.x, b.y), "player starts with a walled-in castle")
 
@@ -306,9 +307,8 @@ func _run() -> void:
 	await point_at(map.tiles[e.x][e.y - 1].go.global_position + Vector3(0, 0.85, 0))
 	check(cell.get_node("Art").get_meta("art_id") == storey, "the next wall south shows the storey too")
 	await point_at_tile(b)  # the castle takes no block: the piece goes back to the hand
-	check(human.nextWall.get_parent() == human.wallSpawn and cell.get_node("Art").get_meta("art_id") == Catalog.wall_look(human)
-			and U.meshes(cell).all(func(mi): return mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF),
-			"back in the hand the held block is a block again and casts no shadow")
+	check(human.nextWall.get_parent() == human.hand and cell.get_node("Art").get_meta("art_id") == Catalog.wall_look(human),
+			"back in the hand the held block is a block again")
 	await point_at(map.tiles[e.x][e.y - 1].go.global_position + Vector3(0, 0.85, 0))
 	await point_at_tile(e + Vector2i(1, 0))
 	check(cell.get_node("Art").get_meta("art_id") == Catalog.wall_look(human),
@@ -385,7 +385,7 @@ func _run() -> void:
 	await press("build_building")
 	await frames(2)  # active guns are re-evaluated every frame
 	check(human.activeCannons.size() == 1, "gun inside the walls is active")
-	game.timeLeftInRound = -1.5  # skip to the battle phase
+	game.timeLeftInRound = -1.5  # the cannon phase ends: the check, then the battle
 	await frames(2)
 	var enemy = null
 	for c in map.castles:
@@ -447,10 +447,12 @@ func _has_label(node: Node, text: String) -> bool:
 	return node.find_children("*", "Label", true, false).any(func(l): return l.text == text)
 
 
-## Replaces the randomly drawn wall piece (fixture for a specific piece).
+## The wall phase with a specific piece in hand.
 func _hold(id: String) -> void:
+	game.phase = game.Phase.WALLS
+	U.destroy(human.nextBuilding)
 	U.destroy(human.nextWall)
-	human.nextWall = Catalog.spawn(id, human.wallSpawn, human)
+	human.nextWall = Catalog.spawn(id, human.hand, human)
 
 
 ## The wall shader's shade of the first block under node, 1 placed, under 1 as the ghost.
@@ -489,10 +491,12 @@ func _v(pairs: Array) -> Array[Vector2i]:
 	return out
 
 
-## Replaces the randomly drawn next building (fixture for a specific piece).
+## The cannon phase with a specific building in hand.
 func _offer_building(id: String) -> void:
+	game.phase = game.Phase.GUNS
+	U.destroy(human.nextWall)
 	U.destroy(human.nextBuilding)
-	human.nextBuilding = Catalog.spawn(id, human.buildingSpawn)
+	human.nextBuilding = Catalog.spawn(id, human.hand)
 
 
 ## A one-tile pocket on the east side of the start ring, so a gun fits inside the walls without

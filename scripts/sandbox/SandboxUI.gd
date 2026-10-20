@@ -79,10 +79,18 @@ func _label(parent: Node, text: String) -> Label:
 	return l
 
 
+## The share of the view's height the top bar and the bottom toolbar cover: the board fits between them.
+func bands() -> Vector2:
+	var h: float = get_viewport().get_visible_rect().size.y
+	return Vector2(get_node("TopBar").get_combined_minimum_size().y, get_node("BottomBar").get_combined_minimum_size().y) / h
+
+
 func _build_top() -> void:
 	var rows := VBoxContainer.new()
 	rows.name = "Top"
-	_panel(Control.PRESET_TOP_WIDE).add_child(rows)
+	var top := _panel(Control.PRESET_TOP_WIDE)
+	top.name = "TopBar"
+	top.add_child(rows)
 	var bar := HBoxContainer.new()
 	bar.add_theme_constant_override("separation", 6)
 	rows.add_child(bar)
@@ -150,6 +158,7 @@ func _build_top() -> void:
 
 func _build_bottom() -> void:
 	var p := _panel(Control.PRESET_BOTTOM_WIDE)
+	p.name = "BottomBar"
 	var v := VBoxContainer.new()
 	p.add_child(v)
 	_hint = Label.new()

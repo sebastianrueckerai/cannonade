@@ -14,12 +14,12 @@ var _target: Vector3  # ground point in the screen centre
 var _zoom := 1.0  # 1 = fully zoomed out, smaller = closer
 var _min_zoom := 1.0
 var _panning := false
-var _half_extent := 10.0  # half the map size: how far the view centre may move
+var _half_extent := Vector2(10.0, 10.0)  # half the map size, x and z: how far the view centre may move
 
 
 ## Remember the current transform as the fully zoomed out view of a map that
-## extends half_extent around its centre.
-func capture_home_view(half_extent: float) -> void:
+## extends half_extent (x, z) around its centre.
+func capture_home_view(half_extent: Vector2) -> void:
 	_half_extent = half_extent
 	_home = global_position
 	_home_target = _ground_point(get_viewport().get_visible_rect().size / 2.0)
@@ -44,7 +44,7 @@ func _ground_point(screen: Vector2) -> Vector3:
 func _apply() -> void:
 	# the further out, the less room to pan: fully zoomed out the view is fixed
 	var room := (1.0 - _zoom) / (1.0 - _min_zoom) if _min_zoom < 1.0 else 0.0
-	var half := Vector3(_half_extent, 0, _half_extent)
+	var half := Vector3(_half_extent.x, 0, _half_extent.y)
 	var off := (_target - _home_target).clamp(-half * room, half * room)
 	_target = _home_target + off
 	global_position = _target + (_home - _home_target) * _zoom

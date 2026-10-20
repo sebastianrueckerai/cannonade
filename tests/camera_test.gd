@@ -95,7 +95,7 @@ func _ready() -> void:
 	var under := ground(cursor)
 	var human = main.game.players[0]
 	U.destroy(human.nextWall)
-	human.nextWall = Catalog.spawn("wall_t", human.wallSpawn)  # no quarter turn maps a T onto itself
+	human.nextWall = Catalog.spawn("wall_t", human.hand)  # no quarter turn maps a T onto itself
 	var wall = U.comp(human.nextWall, "BuildingBlock")
 	var cells: Array[Vector2i] = wall.cells.duplicate()
 	await wheel(cursor, true)

@@ -20,29 +20,30 @@ Game modes:
 
 | mode     | menu entry      | setup                                          |
 |----------|-----------------|------------------------------------------------|
-| `versus` | Player vs. AI   | you vs. one AI, 34×34 map, ten castles         |
+| `versus` | Player vs. AI   | you vs. one AI, 52×34 map, ten castles         |
 | `ai2`    | Watch           | watch two AIs, same map                        |
 | `practice` | Practice      | the versus map with a dormant enemy, no timer  |
 
 `single` and `ai4` are parked (D64-style): their mode code and files stay, the menu does
-not offer them. In `practice`, Enter switches between the build and the battle phase, so
-you can try the rules check on your own walls.
+not offer them. In `practice`, Enter steps to the next phase, so you can try the rules
+check on your own walls.
 
-Extra options after `--`: `--seed=N`, `--round=SECONDS`, `--size=TILES`,
-`--timescale=F`, `--quit-after=SECONDS`, `--no-decorations`.
+Extra options after `--`: `--seed=N`, `--walls=SECONDS`, `--guns=SECONDS`,
+`--battle=SECONDS`, `--size=TILES` (the depth), `--width=TILES`, `--timescale=F`,
+`--quit-after=SECONDS`, `--no-decorations`.
 
 ### Controls (same as the Unity input settings for player 1)
 
 | input             | action                                                   |
 |-------------------|----------------------------------------------------------|
-| left mouse        | place the wall piece, or stack it on your walls            |
-| right mouse       | place the next building (a gun, at a parts cost)          |
+| left mouse        | place the wall piece, or stack it on your walls (wall phase) |
+| right mouse       | place the cannon at a parts cost, or fuse it onto three cannons (cannon phase) |
 | X                 | rotate the wall piece clockwise                          |
 | Y or Z            | rotate the wall piece counter-clockwise                  |
 | mouse wheel       | zoom in / out (towards the cursor; fully out shows the whole map) |
 | middle mouse drag | pan the view while zoomed in                              |
 | Space             | fire (battle phase)                                       |
-| Enter             | switch between build and battle (`practice` only)        |
+| Enter             | step to the next phase (`practice` only)                 |
 | K / L             | testing keys: win / lose the running game at once         |
 | click outside map | discard the current piece / building                      |
 | Esc               | back to the menu                                          |
@@ -64,12 +65,16 @@ owner's colour, running toward the neighbouring blocks of the same wall, and the
 a closed ring takes a wash of the colour of the player whose walls surround it most, so a
 glance tells whose wall and whose ground is whose.
 
-Rounds alternate between a **build phase** (45 s, green timer) and a **battle phase**
-(30 s, red timer). **Castles are the game**: ten sit on the map, you start with one
-walled in, and a player whose last castle falls is out: at once when a shell ruins it,
-at the check when it burns.
+A round is three phases: **build walls** (45 s), **place cannons** (15 s) and the
+**battle** (30 s). The plaque at the top counts each phase down and names it, its last
+five seconds in red; the line at the bottom names the controls of the phase. You hold one
+thing at a time and see it only where you point: the wall piece in the wall phase, a drawn
+cannon in the cannon phase, each on the tile under the cursor, red where it cannot go.
+**Castles are the game**: ten sit on the map, each side's four neutrals spread across
+its half with free rows between the two halves, you start with one walled in, and a player
+whose last castle falls is out: at once when a shell ruins it, at the check when it burns.
 
-At the end of every build phase the **check** runs:
+At the end of every cannon phase the **check** runs:
 
 - every owned building standing outside your closed wall ring burns,
 - a castle inside another player's ring changes owner (a ruin never does),
@@ -290,6 +295,9 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 * `tests/practice_test` – practice mode: Enter switches the phase, the dormant enemy
   never fires, the standard versus map with its castles.
 * `tests/camera_test` – wheel zoom towards the cursor within its limits, middle mouse panning.
+* `tests/preview_test` – the hand is invisible; the wall piece previews on a free tile in the
+  wall phase and the cannon in the cannon phase; the HUD plaques stay on screen, apart, and
+  off the board, which spans the window's width.
 * `tests/catalog_test` – shipped data is valid; data problems are reported, not crashed on;
   duplicate a building, change it, press F5: it works in the running game (incl. recipes).
 * `tests/sandbox_test` – the sandbox through real mouse / key input: drawing walls, placing,

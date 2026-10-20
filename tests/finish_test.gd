@@ -124,7 +124,8 @@ func _run() -> void:
 		return
 	var nc := centre(n)
 	human._wall_in(nc.x - 1, nc.y - 1, nc.x + 1, nc.y + 1)
-	game.next_phase()  # to battle through the check: the ringed neutral is claimed
+	game.next_phase()  # to the cannons
+	game.next_phase()  # to the battle through the check: the ringed neutral is claimed
 	game.timeLeftInRound = 1e6
 	await frames(2)
 	check(n.owner() == human and castles_of(human).size() == 2,

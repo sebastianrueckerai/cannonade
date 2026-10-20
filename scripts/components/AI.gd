@@ -45,7 +45,7 @@ func manage_player_actions() -> void:
 	if dormant:
 		return
 	if U.time > nextAction:
-		if game.shootingAllowed:
+		if game.phase == game.Phase.BATTLE:
 			search_and_fire_at_targets()
 		else:
 			execute_building_plan()

@@ -6,8 +6,8 @@ extends BuildingBehaviour
 @export var projectile: ProjectileDef
 @export var damage := 10.0
 @export var min_range := 1.0
-## Whole-map range: the 30x30 diagonal is 42.4, every gun reaches every tile.
-@export var max_range := 50.0
+## Whole-map range: the 52x34 diagonal is 62.2, every gun reaches every tile.
+@export var max_range := 65.0
 ## Seconds between shots
 @export var reload := 2.0
 @export var gravity := 5.0

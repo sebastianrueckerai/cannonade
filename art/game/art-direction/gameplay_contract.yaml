@@ -5,16 +5,16 @@ game_repo: /home/womb/repos/grid-cannons
 renderer: gl_compatibility
 window: {width: 1280, height: 720}
 tile_size_m: 1.0                       # scripts/components/Map.gd:8
-grid_tiles: {single: 20, versus: 30, ai2: 30, ai4: 60}   # scripts/Main.gd:17-23, versus is the default mode
+grid_tiles: {single: 20, versus: [52, 34], ai2: [52, 34], ai4: 60}   # scripts/Main.gd MODES, [width, depth], versus is the default mode (session 38)
 tile_height_jitter_m: 0.1              # Map.gd:159, each tile sits between -0.1 and +0.1
 slab: {size_m: [1.0, 0.2, 1.0], top_above_origin_m: 0.1}   # prefabs/Slab.tscn
 model_origin: tile centre at slab mid height, +Y up, forward -Z, rotations about Y in 90 degree steps
 wrapper_lift_m: 0.1                    # our assets have the origin at the ground centre, the wrapper lifts them to the slab top
-camera:                                # versus and ai2, the default mode. Main.gd:140-146, GameController.gd:49-64
+camera:                                # versus and ai2, the default mode. GameController.position_camera fits the board between the HUD bands
   projection: perspective
   pitch_deg: 60
   fov_deg: 30                          # vertical
-  distance_m: 54.4                     # to the board centre, position (0, 46.67, 29.0)
+  distance_m: 65.2                     # to the board centre, position (-1, 55.9, 34.5), measured at 1280 x 720 in session 38
   zoom_min_m: 7                        # CameraRig.gd:7
 camera_single:                         # single and ai4
   projection: perspective
@@ -22,7 +22,7 @@ camera_single:                         # single and ai4
   fov_deg: 37.44
   distance_m: 30.5                     # position (0, 28.79, 10.93)
 on_screen_px_at_1280x720:              # computed: px per metre = 720 / (2 * distance * tan(fov / 2))
-  versus_default: {tile_width: 24.7, tile_depth: 21.4, vertical_1m: 12.3, measured_wall_1m: [26, 13]}
+  versus_default: {tile_width: 20.7, tile_depth: 17.7, vertical_1m: 10.7}   # the board centre, measured in session 38 on the 52 x 34 board
   single_default: {tile_width: 34.8, tile_depth: 33.0, vertical_1m: 11.1}
   versus_zoomed_in: {tile_width: 192, vertical_1m: 96, measured_wall_1m: [221, 157]}
 existing_models:

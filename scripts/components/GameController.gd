@@ -1,46 +1,43 @@
 extends "res://scripts/components/Component.gd"
-## Port of GameController.cs: rounds alternate between building and shooting.
+## Port of GameController.cs: a round is a wall phase, a cannon phase and a battle.
 
-@export var roundDuration := 10.0
-@export var battleDuration := 10.0
-@export var roundsPerGame := 6
+## The round: walls, then cannons, then the battle. The check runs where the build ends, at GUNS to BATTLE.
+enum Phase { WALLS, GUNS, BATTLE }
+
+@export var wallDuration := 45.0
+@export var gunDuration := 15.0
+@export var battleDuration := 30.0
 @export var randomSeed := 41
 @export var useRandomSeed := false
 @export var initialShips := 7
 
-var wallSpawns: Array = []
-var buildingSpawns: Array = []
-## HUD labels per player: [parts, castles]
-var partsLabels: Array = []
-var castlesLabels: Array = []
-var roundTimer: Label = null
-var shootingAllowed := false
-var buildingAllowed := false
+var phase := Phase.WALLS
 ## PlayerController / AI components
 var players: Array = []
 var map = null
 var fleet = null
 var timeLeftInRound := 0.0
+## Phase flips so far
 var roundNumber := 0
 var started := false
 ## false: no castles on the map (the sandbox places its own)
 var castles := true
 
-signal round_changed(round_number: int, building: bool)
+signal phase_changed(phase: Phase)
 ## rules v3 end: the winning player, or null on a draw
 signal game_over(winner)
 
 ## The last seconds of a phase tick, once a second.
 const COUNTDOWN := 5
 var _ticked := 0
+const HORNS := ["horn_build", "horn_guns", "horn_battle"]
 
 
 func start_game() -> void:
 	if useRandomSeed:
 		seed(randomSeed)
-	buildingAllowed = true
-	shootingAllowed = not buildingAllowed
-	timeLeftInRound = roundDuration
+	phase = Phase.WALLS
+	timeLeftInRound = wallDuration
 	map.game = self
 	await map.make_map(players)
 	fleet.game = self
@@ -49,28 +46,52 @@ func start_game() -> void:
 	_initialize_players()
 	for p in players:
 		p.get_next_wall()
-		p.next_wall_to_gui()
 	position_camera()
 	started = true
 	Sound.music("build")
 
 
+## How long the current phase lasts.
+func duration() -> float:
+	return [wallDuration, gunDuration, battleDuration][phase]
+
+
+## The share of the view's height kept clear of the board at the top and at the bottom, for the HUD.
+var hudBand := Vector2.ZERO
+
+
+## The camera keeps its pitch and moves back until the board, ground and a block's top, fills the view's width
+## or the height between the HUD bands, centred in that space, so a board of any shape fills the window.
 func position_camera() -> void:
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
 		return
-	var fov := cam.fov
-	var fov_half := fov / 2.0
-	var view_plane: float = map.sizeX * 1.1
-	var forward := -cam.global_transform.basis.z
-	var cam_angle := 90.0 - rad_to_deg(forward.angle_to(Vector3.FORWARD))
-	var projection_plane := view_plane * cos(deg_to_rad(fov))
-	var projection_side := view_plane / sin(deg_to_rad(fov))
-	var cam_height := projection_side * cos(deg_to_rad(cam_angle + fov_half))
-	var offset := cam_height * tan(deg_to_rad(cam_angle - fov_half))
-	var far_part := (projection_plane / 2.0) / cos(deg_to_rad(fov))
-	var near_part := view_plane - far_part
-	cam.global_position = Vector3(0.0, cam_height, offset + near_part)
+	var tv := tan(deg_to_rad(cam.fov / 2.0))
+	var th: float = tv * cam.get_viewport().get_visible_rect().size.aspect()
+	var b := cam.global_basis
+	var half: float = map.tileSize / 2.0
+	var p0: Vector3 = map.tile_position(0, 0)
+	var p1: Vector3 = map.tile_position(map.sizeX - 1, map.sizeZ - 1)
+	var corners: Array[Vector3] = []
+	for x in [minf(p0.x, p1.x) - half, maxf(p0.x, p1.x) + half]:
+		for z in [minf(p0.z, p1.z) - half, maxf(p0.z, p1.z) + half]:
+			for y in [0.0, 1.1]:
+				corners.append(Vector3(x, y, z))
+	var top := 1.0 - 2.0 * hudBand.x
+	var bottom := -1.0 + 2.0 * hudBand.y
+	var target := (p0 + p1) / 2.0
+	var d: float = 3.0 * maxf(map.sizeX, map.sizeZ) * map.tileSize
+	for i in 12:
+		var lo := Vector2(INF, INF)
+		var hi := -lo
+		for c in corners:
+			var q: Vector3 = (c - target) * b  # camera space, +z toward the camera
+			var n := Vector2(q.x / ((d - q.z) * th), q.y / ((d - q.z) * tv))
+			lo = lo.min(n)
+			hi = hi.max(n)
+		target += b.x * (lo.x + hi.x) / 2.0 * d * th + b.y * ((lo.y + hi.y) - (top + bottom)) / 2.0 * d * tv
+		d *= maxf((hi.x - lo.x) / 2.0, (hi.y - lo.y) / (top - bottom))
+	cam.global_position = target + b.z * d
 
 
 func random_shuffle_index(length: int) -> Array:
@@ -83,10 +104,6 @@ func _initialize_players() -> void:
 		p.playerID = i + 1
 		p.game = self
 		p.map = map
-		p.wallSpawn = wallSpawns[i] if i < wallSpawns.size() else null
-		p.buildingSpawn = buildingSpawns[i] if i < buildingSpawns.size() else null
-		p.partsLabel = partsLabels[i] if i < partsLabels.size() else null
-		p.castlesLabel = castlesLabels[i] if i < castlesLabels.size() else null
 		p.setup()
 	if castles:
 		_place_castles()
@@ -96,8 +113,20 @@ func _initialize_players() -> void:
 
 ## Free rows between any castle and the map edge: room to wall it in.
 const CASTLE_MARGIN := 3
-## Where the four neutral castles of a side try to sit on the 34-tile map, before jitter.
-const CASTLE_ANCHORS: Array[Vector2i] = [Vector2i(8, 13), Vector2i(25, 13), Vector2i(6, 6), Vector2i(27, 6)]
+## Rows the two sides keep between their deepest castles, so neither side's castles crowd the middle.
+const SIDE_GAP := 5
+## Castle centre jitter off its anchor: sideways and deep.
+const JITTER := Vector2i(3, 2)
+
+
+## Where the four neutral castles of a side try to sit, before jitter: the inner pair forward at 0.3 of the
+## depth, the outer pair back at 0.18, spread over the width.
+func _castle_anchors() -> Array[Vector2i]:
+	var w: int = map.sizeX
+	var inner := int(map.sizeZ * 0.3)
+	var outer := int(map.sizeZ * 0.18)
+	return [Vector2i(int(w * 0.35), inner), Vector2i(int(w * 0.65), inner), Vector2i(int(w * 0.15), outer),
+			Vector2i(int(w * 0.85), outer)]
 
 
 ## Each player starts with a walled-in castle; with two players, four neutral
@@ -127,7 +156,7 @@ func _place_castles() -> void:
 		return
 	var castle := Catalog.get_def("castle")
 	var placed: Array = [Vector2i(map.sizeX / 2, dz), Vector2i(map.sizeX / 2, map.sizeZ - 1 - dz)]
-	for anchor in CASTLE_ANCHORS:
+	for anchor in _castle_anchors():
 		var c := _neutral_castle_spot(anchor, placed)
 		map.place_neutral(castle, c.x - 1, c.y - 1)
 		var m := Vector2i(c.x, map.sizeZ - 1 - c.y)
@@ -136,15 +165,14 @@ func _place_castles() -> void:
 		placed.append(m)
 
 
-## A jittered castle centre: up to 2 tiles off the anchor from the game's
-## random numbers, inside the bottom half and off the margin, at Chebyshev
-## distance at least 5 from every castle already placed. The exact mirror has
-## to keep its distance too. Falls back to the anchor itself.
+## A jittered castle centre: up to JITTER off the anchor from the game's random numbers, inside the
+## side's band and off the margin, at Chebyshev distance at least 5 from every castle already placed. The
+## exact mirror has to keep its distance too. Falls back to the anchor itself.
 func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
 	var lo := CASTLE_MARGIN + 1  # the centre of a 3x3 whose edge sits on the margin
-	var max_z: int = map.sizeZ / 2 - 3  # keeps the exact mirror 5 tiles away too
+	var max_z: int = map.sizeZ / 2 - SIDE_GAP
 	for i in 25:
-		var c := anchor + Vector2i(U.rint(-2, 3), U.rint(-2, 3))
+		var c := anchor + Vector2i(U.rint(-JITTER.x, JITTER.x + 1), U.rint(-JITTER.y, JITTER.y + 1))
 		if c.x < lo or c.y < lo or c.x > map.sizeX - 1 - lo or c.y > max_z:
 			continue
 		var m := Vector2i(c.x, map.sizeZ - 1 - c.y)
@@ -168,31 +196,29 @@ func _update_round_time(delta: float) -> void:
 	if s != _ticked and s >= 1 and s <= COUNTDOWN:
 		_ticked = s
 		Sound.play("countdown")
-	if roundTimer:
-		roundTimer.modulate = Color.RED if shootingAllowed else Color.GREEN
-		roundTimer.text = "%d" % int(ceilf(timeLeftInRound))
 
 
-## Ends the current phase: build turns into battle (through the rules check)
-## and back. The hand follows the phase: held pieces fly away when the battle
-## starts, a fresh wall is drawn when building returns.
+## Ends the current phase: walls turn into cannons, cannons into the battle (through the rules check), the
+## battle into walls. The hand follows the phase: the wall piece flies away when the cannons come, the gun
+## when the battle starts, and a fresh wall is drawn when the walls return.
 func next_phase() -> void:
 	roundNumber += 1
-	buildingAllowed = not buildingAllowed
-	shootingAllowed = not buildingAllowed
-	timeLeftInRound = roundDuration if buildingAllowed else battleDuration
-	if not buildingAllowed and castles and started:
+	phase = ((phase + 1) % Phase.size()) as Phase
+	timeLeftInRound = duration()
+	if phase == Phase.BATTLE and castles and started:
 		run_check()
 	for p in players:
-		if buildingAllowed:
-			p.get_next_wall()
-		else:
-			p.drop(p.nextWall, true)
-			p.drop(p.nextBuilding, false)
-	round_changed.emit(roundNumber, buildingAllowed)
+		match phase:
+			Phase.WALLS:
+				p.get_next_wall()
+			Phase.GUNS:
+				p.drop(p.nextWall, true)
+			Phase.BATTLE:
+				p.drop(p.nextBuilding, false)
+	phase_changed.emit(phase)
 	if started:
-		Sound.play("horn_build" if buildingAllowed else "horn_battle")
-		Sound.music("build" if buildingAllowed else "battle")
+		Sound.play(HORNS[phase])
+		Sound.music("battle" if phase == Phase.BATTLE else "build")
 
 
 # ------------------------------------------------------------- the check

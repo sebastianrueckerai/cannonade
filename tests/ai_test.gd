@@ -142,7 +142,7 @@ func check_pace(times: Array, pace: float, phase: String, slack := INF) -> void:
 
 func hold_wall(id: String) -> void:
 	U.destroy(enemy.nextWall)
-	enemy.nextWall = Catalog.spawn(id, enemy.wallSpawn, enemy)
+	enemy.nextWall = Catalog.spawn(id, enemy.hand, enemy)
 
 
 func _run() -> void:
@@ -201,13 +201,15 @@ func _run() -> void:
 
 	# 2: a gun waits in hand while no own closed ground has a free tile
 	U.destroy(enemy.nextBuilding)
-	enemy.nextBuilding = Catalog.spawn("cannon", enemy.buildingSpawn)
+	enemy.nextBuilding = Catalog.spawn("cannon", enemy.hand)
 	var held = enemy.nextBuilding
 	check(enemy.gun_room() == 0, "the start ring has no gun room")
+	game.phase = game.Phase.GUNS
 	enemy.execute_building_plan()
 	check(U.alive(held) and enemy.nextBuilding == held and enemy.cannons.is_empty(),
 			"with no room, the AI keeps the drawn gun in hand")
 	check(flying_buildings().is_empty(), "the kept gun never flies")
+	game.phase = game.Phase.WALLS
 
 	# 3: an S piece goes where it covers the yard's gaps, no cell on own ground or inside a plan
 	hold_wall("wall_s")
@@ -229,7 +231,8 @@ func _run() -> void:
 	U.destroy(enemy.nextBuilding)
 	enemy.nextBuilding = null
 
-	# 4: live: the yard closes, guns go inside own closed ground, a neutral castle is ringed
+	# 4: live: in the wall phase the yard closes and a neutral castle is ringed, in the cannon phase the guns
+	# go inside own closed ground, and the check claims the ringed castle
 	enemy.dormant = false
 	enemy.nextAction = 0.0
 	check(enemy.secondsBetweenShots > 0.0 and enemy.secondsBetweenBuilds >= 2.0 * enemy.secondsBetweenShots,
@@ -238,38 +241,50 @@ func _run() -> void:
 	game.timeLeftInRound = 1e6
 	await seconds(25.0)
 	check(yard.closed() and enclosed_by(yard.yard, enemy), "the yard is closed and the AI's")
-	var guns_inside := true
-	for k in enemy.cannons:
-		guns_inside = guns_inside and enclosed_by(k, enemy)
-	check(enemy.cannons.size() >= 3 and guns_inside,
-			"%d guns placed, all inside own closed ground" % enemy.cannons.size())
+	check(enemy.cannons.is_empty(), "no gun is placed in the wall phase")
 	var ringed: Array = []
 	for c in neutrals():
 		if enclosed_by(centre(c), enemy):
 			ringed.append(c)
-	check(not ringed.is_empty(), "in 25 s of building the AI rings a neutral castle (%d)" % ringed.size())
+	check(not ringed.is_empty(), "in 25 s of walls the AI rings a neutral castle (%d)" % ringed.size())
+	game.next_phase()  # the cannons
+	game.timeLeftInRound = 1e6
+	await seconds(5.0)
+	var guns_inside := true
+	for k in enemy.cannons:
+		guns_inside = guns_inside and enclosed_by(k, enemy)
+	check(enemy.cannons.size() >= 3 and guns_inside,
+			"in 5 s of cannons %d guns are placed, all inside own closed ground" % enemy.cannons.size())
 	check(flying_buildings().is_empty(), "no building ever flies away from the AI's hand")
 	var castles_before: int = enemy.castle_count()
 	var guns_before: int = enemy.cannons.size()
-	game.next_phase()
+	game.next_phase()  # the battle, through the check
 	check(enemy.castle_count() == castles_before + ringed.size(),
 			"the check claims the ringed castles: %d held" % enemy.castle_count())
 	check(enemy.cannons.size() == guns_before, "no gun burns at the check")
-	game.next_phase()
+	game.next_phase()  # the walls
 	game.timeLeftInRound = 1e6
 
 	# 5: a breach two blocks wide in the start ring is patched
 	enemy.dormant = true
 	var oc := centre(own)
-	for dz in 2:
-		map.tiles[oc.x + 2][oc.y + dz].un_build()
+	# a side of the ring with open ground beyond it: the AI may have walled a neighbouring castle in with it
+	var side := Vector2i.ZERO
+	for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var beyond: Array = [oc + d * 3, oc + d * 3 + Vector2i(absi(d.y), absi(d.x))]
+		if side == Vector2i.ZERO and beyond.all(func(k): return not map.tiles[k.x][k.y].isWall and not map.is_tile_enclosed(k.x, k.y)):
+			side = d
+	check(side != Vector2i.ZERO, "a side of the start ring has open ground beyond it")
+	for k in 2:
+		var t: Vector2i = oc + side * 2 + Vector2i(absi(side.y), absi(side.x)) * k
+		map.tiles[t.x][t.y].un_build()
 	check(not enclosed_by(oc, enemy), "two blocks gone, the castle stands open")
 	enemy.dormant = false
 	enemy.nextAction = 0.0
 	await seconds(6.0)
 	check(enclosed_by(oc, enemy), "within 6 s the AI closes its castle again")
 
-	# 6: at the parts cap a drawn shooter waits in hand, and the walls keep coming
+	# 6: at the parts cap a drawn shooter waits in hand and never flies, and the walls keep coming
 	enemy.dormant = true
 	var spots: Array = []
 	for x in map.sizeX:
@@ -280,15 +295,18 @@ func _run() -> void:
 		enemy.build_building(spots.pop_back(), Catalog.spawn("cannon"))
 	check(enemy.parts_used() == enemy.partsCap, "the guns fill the parts cap (%d)" % enemy.partsCap)
 	U.destroy(enemy.nextBuilding)
-	enemy.nextBuilding = Catalog.spawn("cannon", enemy.buildingSpawn)
+	enemy.nextBuilding = Catalog.spawn("cannon", enemy.hand)
 	held = enemy.nextBuilding
 	check(enemy.over_parts_cap(held), "the drawn cannon is over the cap")
+	game.phase = game.Phase.GUNS
+	enemy.execute_building_plan()
+	check(enemy.nextBuilding == held and U.alive(held), "the over-cap shooter stays in hand")
+	check(flying_buildings().is_empty(), "nothing flies away")
+	game.phase = game.Phase.WALLS
 	hold_wall("wall_2")
 	before = enemy.wallTiles.size()
 	enemy.execute_building_plan()
-	check(enemy.nextBuilding == held and U.alive(held), "the over-cap shooter stays in hand")
-	check(enemy.wallTiles.size() == before + 2, "the action places the wall piece instead")
-	check(flying_buildings().is_empty(), "nothing flies away")
+	check(enemy.wallTiles.size() == before + 2, "in the wall phase the action places the wall piece")
 
 	# 7: the reaction times (set to values of the test's own, apart) after every build action and shot
 	enemy.secondsBetweenBuilds = 1.1
@@ -300,8 +318,7 @@ func _run() -> void:
 	check_pace(built, 1.1, "build")
 
 	# battle: the loaded guns fire one shot per action, never two at once
-	game.buildingAllowed = false
-	game.shootingAllowed = true
+	game.phase = game.Phase.BATTLE
 	game.timeLeftInRound = 1e6
 	check_pace(await action_times(6.0), 0.8, "battle", 0.1)
 	await frames(2)

@@ -119,7 +119,7 @@ func _scan_marked(g) -> void:
 ## Very simple stand-in for a human: places the held piece where it fits.
 func _autobuild(g) -> void:
 	for p in g.players:
-		if p.is_ai() or not g.buildingAllowed or not U.alive(p.nextWall):
+		if p.is_ai() or g.phase != g.Phase.WALLS or not U.alive(p.nextWall):
 			continue
 		var cands: Array = []
 		for x in g.map.sizeX:
@@ -132,8 +132,8 @@ func _autobuild(g) -> void:
 
 
 func _report(g) -> void:
-	var line := "t=%6.1f round=%d %s proj=%d shots=%d |" % [U.time, g.roundNumber,
-			"BUILD" if g.buildingAllowed else "FIGHT", U.projectiles.size(), stats["shots"]]
+	var line := "t=%6.1f flips=%d %s proj=%d shots=%d |" % [U.time, g.roundNumber,
+			["WALLS", "GUNS", "FIGHT"][g.phase], U.projectiles.size(), stats["shots"]]
 	for p in g.players:
 		var enclosed := 0
 		for x in g.map.sizeX:
@@ -174,19 +174,18 @@ func _check_outcome(g) -> void:
 	# decided by conquest stops the phase clock where it stands
 	var expected_rounds := 0
 	var spent := 0.0
-	var building := true
+	var durations := [g.wallDuration, g.gunDuration, g.battleDuration]
 	while true:
 		# a flip lands strictly after its phase end, so a boundary seconds value
 		# must not count the flip that happens exactly at it
-		var d: float = (g.roundDuration if building else g.battleDuration) + 1.0
+		var d: float = durations[expected_rounds % 3] + 1.0
 		if spent + d >= seconds:
 			break
 		spent += d
 		expected_rounds += 1
-		building = not building
 	if g.started and g.roundNumber != expected_rounds:
-		_fail("expected %d round changes, got %d" % [expected_rounds, g.roundNumber])
-	var battle_happened: bool = g.roundNumber >= 1
+		_fail("expected %d phase flips, got %d" % [expected_rounds, g.roundNumber])
+	var battle_happened: bool = g.roundNumber >= 2
 	var n_ais := 0
 	for p in g.players:
 		if p.is_ai():

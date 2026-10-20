@@ -6,18 +6,19 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 
 ## 1. The round
 
-- A round is a build phase, then a battle phase. Build 45 s, battle 30 s, the values from [rules.md](rules.md) section 2.
-- In the build phase you close your walls, place guns and replace what died.
+- A round is a wall phase, a cannon phase, then a battle phase: 45 s, 15 s, 30 s (session 38, D86). The wall and cannon phases together are the build.
+- In the wall phase you close your walls and stack them; in the cannon phase you place guns and replace what died. You hold one piece at a time, a wall piece or a gun, and see it only on the board where you point.
 - Walls come as Rampart pieces (session 24, D75): one block, two, three or four in a row, S, T and cross, drawn at weights 30/25/15/10/10/6/4. A piece stamps a full-tile block on each cell. Blocks sharing a side are one wall; a corner contact does not join.
 - You build only near your own: every piece, gun and building needs one tile within 2 tiles of your walls or of a castle you hold that is not a ruin. Guns anchor nothing. The 2 is a first lab value.
 - Nobody builds on ground another player's closed ring holds, reach or not (D82). The AI keeps the same rules.
-- At the end of the build phase the check runs, section 6. Then the battle.
+- At the end of the cannon phase the check runs, section 6. Then the battle.
 - Shells fly arcs over walls, so walls block no shot. Every building is a legal target at all times, walled in or not.
 - A breach during the battle changes nothing. Walls matter only at the check. This is the Rampart rule of [rules.md](rules.md) section 1, unchanged.
 
 ## 2. Castles and winning
 
 - Every player starts with one castle. Neutral castles stand between the forts.
+- The board is 52 tiles wide and 34 deep, the window's shape. Each side's four neutrals spread across its half from anchors at 0.15, 0.35, 0.65 and 0.85 of the width, jittered at random up to 3 tiles sideways and 2 deep, and stay 5 rows or more from the middle line, so the two halves keep free ground between them (session 38, D86).
 - A castle inside your closed wall ring at the check is yours. Wall a neutral castle in and it is yours at the next check.
 - A castle of yours that stands open at the check is destroyed.
 - A castle takes shells like anything else. Its hit count is a starting value for the lab, 12 as the first guess.
@@ -36,7 +37,7 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 ## 4. Guns, damage and fusing
 
 - Two basic guns, one part each, and both shoot. Basic gun A is today's small cannon. What basic gun B is, is open, section 9.
-- Four basic guns in a 2x2 square fuse during the build phase into one bigger building. The pattern names the result: four A the heavy cannon, two A and two B the flak. Further patterns are for the lab.
+- Four basic guns in a 2x2 square fuse during the cannon phase into one bigger building. The pattern names the result: four A the heavy cannon, two A and two B the flak. Further patterns are for the lab.
 - A fused building counts its four parts against the cap. Fusing is one way.
 - A basic gun takes 4 shells, a fused 2x2 building 8. Starting values.
 - The heavy cannon fires a pointed heavy shell worth four shells, 40 against 10, at the basic gun's reload. One heavy shell kills a basic gun, three ruin a castle. A wall dies to any shell, so against walls the heavy opens a quarter of what its four cannons would (session 25, D77).
@@ -54,7 +55,7 @@ The game is quick strategy, tower defence meets Tetris. You lose when your last 
 
 ## 6. The check
 
-At the end of every build phase, in this order:
+At the end of every cannon phase, in this order:
 
 1. Burn. Every building of yours outside your closed wall ring is destroyed: guns, fused buildings and castles alike.
 2. Claim. Each castle inside your ring is now yours.
@@ -89,15 +90,15 @@ A castle that burns in step 1 cannot be claimed in step 2, so the order matters.
 ## 10. Defaults taken without a pick
 
 - Neutral castles never burn. Only shells remove them.
-- The start castle follows the same rule as any castle: close a ring around it in the first build phase, or it falls at the first check.
-- The first build phase is the first round. You start with your castle and your 6 parts, nothing else placed.
+- The start castle follows the same rule as any castle: close a ring around it in the first wall phase, or it falls at the first check.
+- The first wall phase opens the first round. You start with your castle and your 6 parts, nothing else placed.
 - Walls never burn at the check. Only shells destroy walls, section 5.
 
 ## 11. What this replaces in [rules.md](rules.md)
 
 - Section 1's flag rule. The base as an instant-loss flag becomes the castle: an open castle is destroyed, you lose at zero castles.
 - Section 1's line that the base takes no damage. Castles now take shells and fall to shooting.
-- The live enclosure check in today's code, which silences guns the moment a wall opens. The check runs once, at the end of the build phase, and guns fire regardless of walls.
+- The live enclosure check in today's code, which silences guns the moment a wall opens. The check runs once, at the end of the cannon phase, and guns fire regardless of walls.
 - Section 3's supply column and section 6's depots. No gun needs supply under these rules.
 - The upgrade blocks, parked in favour of the two basic guns.
 - The menu text "Destroy the enemy base before yours falls", which names the old ending.

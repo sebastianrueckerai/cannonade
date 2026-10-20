@@ -20,11 +20,16 @@ Reproduced headless (versus, seed 7): gun at (-12.5, 0, 13.5), its plate at (0, 
 placed from a slot, the human's or the AI's, left its plate there, all stacked as one square, and
 stood on no plate. A discarded gun flew off out of its slot without its plate.
 
+Session 38 (I67) merged during this session: the slots are gone, and a gun waits in the hand, an
+invisible node of the player's, and previews on each hovered tile. The old `ArtPlate` failed there
+the same way: the plate stayed on the first spot it froze at, 4.5 m and 13.5 m off the previewed gun
+in the test below.
+
 ## Change
 
 - [ArtPlate.gd](/home/womb/repos/grid-cannons/scripts/ArtPlate.gd): the plate stays the gun's
-  child, so the scene tree carries it wherever the gun goes: slot to board, onto a 2x2 square's
-  centre, up with a discard. It keeps its global basis from its first entry and takes back the
+  child, so the scene tree carries it wherever the gun goes: from the hand onto a hovered tile, onto
+  a 2x2 square's centre. It keeps its global basis from its first entry and takes back the
   gun's turn on `NOTIFICATION_TRANSFORM_CHANGED`. The engine sends that after every node's process
   and before drawing, so no drawn frame shows the plate swung (the session 11 lag came from a plate
   turned back in its own process).
@@ -38,17 +43,19 @@ stood on no plate. A discarded gun flew off out of its slot without its plate.
 
 ## Tests
 
-`tests/preview_test`, `_check_plates`: a gun that rested in its slot, placed with a real right
-click, keeps its plate at the slot's offset under it. Aimed with `Shooter.try_aim`, the gun turns,
-and the plate keeps its basis and stays under it. A gun discarded with a right click off the board
-flies with its plate.
+`tests/preview_test`, `_check_plates`, in the cannon phase: a gun that rested in the hand, previewed
+on a hovered tile, then on the next, then placed with a real right click, keeps its plate at the
+hand's offset under it. Aimed with `Shooter.try_aim`, the gun turns, and the plate keeps its basis
+and stays under it.
 
-**Watched red:**
+**Watched red** on master after session 38:
 
-- the old `ArtPlate`: four checks red, "placed from its slot" (plate 3.5 m and 5.5 m off the gun),
-  "the plate stays square to the grid while the gun turns", "turned to aim" and "flying off as a
-  discard" (plate 2.1 m under the gun)
+- the old `ArtPlate`: "previewed on a tile" (plate 4.5 m and 13.5 m off the gun), "previewed on the
+  next tile", "placed" and "turned to aim" red
 - the turn not taken back: "the plate stays square to the grid while the gun turns" red
+
+Before the merge the test drove the slots: there the old `ArtPlate` left the placed gun's plate
+3.5 m and 5.5 m off and a discard's 2.1 m under the flying gun.
 
 Taking out `set_notify_transform(true)` stays green: the plate is a MeshInstance3D, which sends
 the notification anyway. The call stays, since the script extends Node3D.
