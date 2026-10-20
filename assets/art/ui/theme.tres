@@ -47,6 +47,7 @@ corner_radius_bottom_left = 3
 [resource]
 default_font_size = 20
 Button/colors/font_color = Color(0.227, 0.18, 0.157, 1)
+Button/colors/font_focus_color = Color(0.227, 0.18, 0.157, 1)
 Button/colors/font_hover_color = Color(0.784, 0.196, 0.176, 1)
 Button/colors/font_pressed_color = Color(0.227, 0.18, 0.157, 1)
 Button/styles/focus = SubResource("btn_hover")

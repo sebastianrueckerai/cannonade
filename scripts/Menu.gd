@@ -12,8 +12,8 @@ const MODES := [
 ## The five actions the panel remaps; everything else (wheel, middle drag,
 ## Enter, Esc) is hardcoded where it is used and listed as a fixed row.
 const REMAP := [
-	["build_wall", "place the wall piece, or stack it on your walls"],
-	["build_building", "place the next building / fuse four cannons in a 2x2 square"],
+	["build_wall", "place / stack the wall piece"],
+	["build_building", "place the building / fuse four cannons"],
 	["rotate_cw", "rotate the wall piece clockwise"],
 	["rotate_ccw", "rotate the wall piece counter-clockwise"],
 	["fire", "fire the cannons"],
@@ -23,6 +23,7 @@ const FIXED := [
 	["pan the view while zoomed in", "Middle mouse drag"],
 	["discard the piece / building in hand", "Click outside the map"],
 ]
+const INTRO := "You and an AI opponent each start with a walled-in castle on one island. Rounds switch between a green build phase and a red battle phase.\n\nWalls come as pieces you turn and drop. Pieces that share a side form one wall; touching corners do not join. Everything you place needs one tile within two tiles of your walls or of a castle you hold.\n\nBuild out from your castle: ring in neutral castles to claim them and raise your parts cap, place cannons with the right mouse button, fuse four cannons in a 2x2 square into a heavy gun whose shell hits as hard as all four. Buildings outside your walls burn at the end of the build phase. Hit guns reload slower; castles take 12 shells and fall through four damage states.\n\nRuin the enemy's last castle before yours falls."
 const REMAP_PATH := "user://input_remap.cfg"
 
 ## The help overlay while open, null when closed.
@@ -144,15 +145,12 @@ func _show_help() -> void:
 		if e is InputEventMouseButton and e.pressed:
 			_close_help())
 	add_child(dim)
-	var scroll := ScrollContainer.new()
-	scroll.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-	dim.add_child(scroll)
 	var panel := PanelContainer.new()
-	panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	scroll.add_child(panel)
+	panel.set_anchors_preset(PRESET_CENTER)
+	panel.grow_horizontal = GROW_DIRECTION_BOTH
+	panel.grow_vertical = GROW_DIRECTION_BOTH
+	dim.add_child(panel)
 	var box := VBoxContainer.new()
-	box.custom_minimum_size = Vector2(560, 0)
 	box.add_theme_constant_override("separation", 12)
 	panel.add_child(box)
 	var title := Label.new()
@@ -160,15 +158,27 @@ func _show_help() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 32)
 	box.add_child(title)
-	var intro := Label.new()
-	intro.text = "You and an AI opponent each start with a walled-in castle on one island. Rounds switch between a green build phase and a red battle phase.\n\nWalls come as pieces you turn and drop. Pieces that share a side form one wall; touching corners do not join. Everything you place needs one tile within two tiles of your walls or of a castle you hold.\n\nBuild out from your castle: ring in neutral castles to claim them and raise your parts cap, place cannons with the right mouse button, fuse four cannons in a 2x2 square into a heavy gun whose shell hits as hard as all four. Buildings outside your walls burn at the end of the build phase. Hit guns reload slower; castles take 12 shells and fall through four damage states.\n\nRuin the enemy's last castle before yours falls."
-	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	box.add_child(intro)
+	# the tutorial left, the controls right: the 1280x720 canvas is wide, not tall
+	var columns := HBoxContainer.new()
+	columns.add_theme_constant_override("separation", 32)
+	box.add_child(columns)
+	var intro := VBoxContainer.new()
+	intro.custom_minimum_size = Vector2(560, 0)
+	intro.add_theme_constant_override("separation", 8)
+	columns.add_child(intro)
+	for paragraph in INTRO.split("\n\n"):
+		var text := Label.new()
+		text.text = paragraph
+		text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		intro.add_child(text)
+	var controls := VBoxContainer.new()
+	controls.add_theme_constant_override("separation", 12)
+	columns.add_child(controls)
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 24)
 	grid.add_theme_constant_override("v_separation", 4)
-	box.add_child(grid)
+	controls.add_child(grid)
 	for row in REMAP:
 		var what := Label.new()
 		what.text = row[1]
@@ -176,12 +186,12 @@ func _show_help() -> void:
 		var bind := Button.new()
 		bind.name = row[0]
 		bind.text = _binding_text(InputMap.action_get_events(row[0]))
-		bind.custom_minimum_size = Vector2(220, 0)
+		bind.custom_minimum_size = Vector2(200, 0)
 		bind.pressed.connect(_capture.bind(row[0], bind))
 		grid.add_child(bind)
 	var fixed: Array = FIXED.duplicate()
 	if not OS.has_feature("web"):
-		fixed.append(["switch between build and battle (Practice)", "Enter"])
+		fixed.append(["switch build and battle (Practice)", "Enter"])
 	fixed.append(["back to the menu", "Esc"])
 	for row in fixed:
 		var what := Label.new()
@@ -195,7 +205,7 @@ func _show_help() -> void:
 	_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_note.add_theme_color_override("font_color", Color(1, 0.45, 0.4))
 	_note.visible = false
-	box.add_child(_note)
+	controls.add_child(_note)
 	var close := Button.new()
 	close.text = "Close"
 	close.custom_minimum_size = Vector2(0, 44)
