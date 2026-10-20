@@ -19,7 +19,7 @@ Roadmap: K5. Cap: 10 USD. Spent: about 6.5 USD.
 | [sound.md](../../game/design/sound.md) | the cue list: five music cues and 54 effect sets, each with the function that fires it | the Godot integration, the next rounds |
 | [audio.py](../../pipeline/audio.py) | music and effects through fal's queue, a round runner, a loudness sheet, a Whisper vocals check | every audio round |
 | round [36-music-probe](../../game/art-direction/rounds/36-music-probe) | four directions times two themes on four models, 40 clips | Sebastian's pick of a direction and a model |
-| round [37-sfx-probe](../../game/art-direction/rounds/37-sfx-probe) | twelve cues on three models, 36 clips, 24 after D82 | the pick of an effects model |
+| round [37-sfx-probe](../../game/art-direction/rounds/37-sfx-probe) | twelve cues on three models, then cannons, crumbles and placing sounds, 74 clips on one page | the picks of D83, twelve game assets |
 | round [38-theme-versions](../../game/art-direction/rounds/38-theme-versions) | menu, win and lose as remixes of one build theme | the way the versions get made |
 | stage 02D in [overview.md](../process/overview.md) | sound joins the process chart | the process |
 
@@ -89,6 +89,12 @@ takes each, 24 clips for 0.40 USD, on the same page so his tabs stay open. The p
 transient, a sub-bass thump, a round boom or a crack over a punch, dry and close, and the big gun adds
 a long low rumble tail and a metallic ring at 3 s against 1.5 s.
 
+Sebastian's picks on the page are in [PICKS.md](../../game/art-direction/rounds/37-sfx-probe/PICKS.md)
+and D83: twelve clips became game assets through `audio.py final`, levelled by their loudest 400 ms
+because he heard the Mirelo and ElevenLabs cannon shots at different volumes. Two more takes of the big
+boom and four stone angles of crumbles and placing sounds followed on the same page, which holds 74 clips
+for 0.80 USD. "Eleven seems to be the best so far."
+
 ## The versions, round 38
 
 The menu, win and lose cues as remixes of one build theme through `fal-ai/ace-step/audio-to-audio`,
@@ -118,8 +124,8 @@ the chosen chiptune theme.
    toy fortress and does not clash, and whether chiptune reads as Cannonade or as a different game.
 2. A music model for the two themes. By the numbers Stable Audio 2.5 and Lyria 3 Pro deliver 90 s
    instrumentals every time, ACE-Step is the cheapest, MiniMax is the only WAV but sings or stops short.
-3. An effects model: ElevenLabs by its duration control and loop option, or Mirelo by its clean peaks.
-   Stable Audio 3 Small is out (D82).
+3. ~~An effects model.~~ D83: ElevenLabs leads, Mirelo adds variety, Stable Audio 3 Small is out (D82).
+   Open: a crumble and a placing sound from the stone sets.
 4. Whether the ACE-Step remixes of round 38 count as versions of the theme.
 
 The picks go into decisions.md as D82 and following, then round 39 makes the five cues and the A-list

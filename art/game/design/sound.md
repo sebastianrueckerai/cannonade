@@ -141,7 +141,16 @@ Counts: 33 clip sets in A, 21 in B, about 70 files with the variations.
   steals the oldest. The whistle ducks under the shots.
 - Enemy and AI actions play the same clips, 6 dB quieter and panned to the side of the map they come
   from. The camera decides the pan.
-- Every clip is normalised to the same loudness in its bus before it goes into the game: effects at
-  -18 LUFS, UI at -24, music at -16. The sheet of a round shows the numbers.
-- Formats: effects as 44.1 kHz WAV, music as OGG Vorbis with loop points. The game's copies live in
-  [assets/audio/](/home/womb/repos/grid-cannons/assets/audio) once the integration lands.
+- Every clip is levelled for its bus before it goes into the game, by `audio.py final`: a one-shot is
+  too short for an integrated loudness, so effects and UI are set by their loudest 400 ms, -16 LUFS
+  for effects and -22 for UI, under a limiter at -1 dBTP; music by its integrated loudness, -16 LUFS.
+  Silence is cut at both ends. The sheet of a round shows the numbers.
+- Formats: effects as 44.1 kHz 16-bit WAV, music as OGG Vorbis with loop points. The kit's copies are
+  in [game/assets/audio/](../assets/audio) with a sidecar naming the source clip, the game's in
+  [assets/audio/](/home/womb/repos/grid-cannons/assets/audio).
+
+## Picked so far
+
+D83, from round 37: `cannon_1` to `cannon_3` (shot_cannon x3), `heavy_1` to `heavy_3` (shot_heavy),
+`castle_claimed`, `draw_piece`, `ship_sink`, `place_piece`, `place_invalid`, `horn_battle`, `hit_water`
+and `ui_click`. Open from the A list: the rest.

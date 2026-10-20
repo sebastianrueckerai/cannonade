@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, no music, no voice. A huge heavy siege cannon fires once: a fat round boom, a deep whomp of air, a brief rumble, recorded close, no echo, no room, but massive, much bigger and deeper than a normal cannon, a window-shaking sub-bass boom with a long low rumble tail and a faint metallic ring of the barrel.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 3
+  },
+  "seed": null,
+  "duration": null,
+  "label": "boom-big-v3--eleven",
+  "est_cost_usd": 0.006,
+  "created": "2026-10-20T22:32:34",
+  "outputs": [
+    "boom-big-v3--eleven.mp3"
+  ]
+}

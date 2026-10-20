@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a stone block is dropped into place on a wall: a dull heavy clunk and a tiny stone tick, dry, one hit.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 0.6
+  },
+  "seed": null,
+  "duration": null,
+  "label": "chunks-place--eleven",
+  "est_cost_usd": 0.0012,
+  "created": "2026-10-20T22:32:49",
+  "outputs": [
+    "chunks-place--eleven.mp3"
+  ]
+}

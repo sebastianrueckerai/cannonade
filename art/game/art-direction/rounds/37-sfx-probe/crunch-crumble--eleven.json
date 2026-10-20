@@ -1,0 +1,17 @@
+{
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. stone masonry crumbles with a crunch: a low crack, stones grinding and tumbling, a last chunk dropping, no explosion.",
+  "params": {
+    "prompt_influence": 0.6,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.8
+  },
+  "seed": null,
+  "duration": null,
+  "label": "crunch-crumble--eleven",
+  "est_cost_usd": 0.0036,
+  "created": "2026-10-20T22:32:45",
+  "outputs": [
+    "crunch-crumble--eleven.mp3"
+  ]
+}

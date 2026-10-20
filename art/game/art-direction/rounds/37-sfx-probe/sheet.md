@@ -3,21 +3,47 @@
 | boom-big--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -8.8 | 20.0 | 0.4 |  | 0.006 |
 | boom-big--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -15.8 | 20.0 | -1.0 |  | 0.030 |
 | boom-big--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -23.5 | 20.0 | -1.0 |  | 0.030 |
+| boom-big-v2--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -9.1 | 20.0 | 0.8 |  | 0.006 |
+| boom-big-v3--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -8.3 | 20.0 | -0.2 |  | 0.006 |
 | boom-normal--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -9.2 | 0.0 | 1.0 |  | 0.003 |
 | boom-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -18.9 | 0.0 | -0.9 |  | 0.015 |
 | boom-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -20.3 | 0.0 | -1.0 |  | 0.015 |
+| chunks-crumble--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.8 | -32.7 | 0.0 | -12.4 |  | 0.004 |
+| chunks-crumble--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.8 | -20.3 | 0.0 | -0.9 |  | 0.018 |
+| chunks-crumble--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.8 | -28.0 | 0.0 | -0.9 |  | 0.018 |
+| chunks-place--eleven | fal-ai/elevenlabs/sound-effects/v2 | 0.6 | -16.9 | 0.0 | -0.1 |  | 0.001 |
+| chunks-place--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 0.6 | -22.8 | 0.0 | -0.9 |  | 0.006 |
+| chunks-place--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 0.6 | -24.7 | 0.0 | -1.0 |  | 0.006 |
+| clatter-crumble--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.8 | -19.7 | 0.0 | -0.0 |  | 0.004 |
+| clatter-crumble--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.8 | -28.8 | 0.0 | -1.0 |  | 0.018 |
+| clatter-crumble--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.8 | -29.3 | 0.0 | -0.9 |  | 0.018 |
+| clatter-place--eleven | fal-ai/elevenlabs/sound-effects/v2 | 0.6 | -30.1 | 0.0 | -7.1 |  | 0.001 |
+| clatter-place--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 0.6 | -26.8 | 0.0 | -1.0 |  | 0.006 |
+| clatter-place--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 0.6 | -31.2 | 0.0 | -2.2 |  | 0.006 |
 | crack-big--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -8.0 | 20.0 | 0.7 |  | 0.006 |
 | crack-big--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -21.8 | 20.0 | -1.0 |  | 0.030 |
 | crack-big--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -24.4 | 20.0 | -1.0 |  | 0.030 |
 | crack-normal--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -14.3 | 0.0 | 0.3 |  | 0.003 |
 | crack-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -20.6 | 0.0 | -0.9 |  | 0.015 |
 | crack-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -20.8 | 0.0 | -0.9 |  | 0.015 |
+| crunch-crumble--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.8 | -25.7 | 0.0 | -3.0 |  | 0.004 |
+| crunch-crumble--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.8 | -28.8 | 0.0 | -1.0 |  | 0.018 |
+| crunch-crumble--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.8 | -23.7 | 0.0 | -0.9 |  | 0.018 |
+| crunch-place--eleven | fal-ai/elevenlabs/sound-effects/v2 | 0.6 | -22.1 | 0.0 | -0.4 |  | 0.001 |
+| crunch-place--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 0.6 | -22.4 | 0.0 | -0.9 |  | 0.006 |
+| crunch-place--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 0.6 | -25.4 | 0.0 | -1.0 |  | 0.006 |
 | punch-big--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -11.3 | 20.0 | 0.7 |  | 0.006 |
 | punch-big--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -22.4 | 20.0 | -1.0 |  | 0.030 |
 | punch-big--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -25.2 | 20.0 | -1.0 |  | 0.030 |
 | punch-normal--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -10.5 | 0.0 | 0.6 |  | 0.003 |
 | punch-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -19.7 | 0.0 | -1.0 |  | 0.015 |
 | punch-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -25.0 | 0.0 | -1.0 |  | 0.015 |
+| rubble-crumble--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.8 | -14.8 | 0.0 | 0.1 |  | 0.004 |
+| rubble-crumble--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.8 | -27.7 | 0.0 | -0.9 |  | 0.018 |
+| rubble-crumble--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.8 | -25.9 | 0.0 | -1.0 |  | 0.018 |
+| rubble-place--eleven | fal-ai/elevenlabs/sound-effects/v2 | 0.6 | -15.4 | 0.0 | -0.6 |  | 0.001 |
+| rubble-place--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 0.6 | -20.9 | 0.0 | -1.0 |  | 0.006 |
+| rubble-place--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 0.6 | -24.4 | 0.0 | -1.0 |  | 0.006 |
 | sfx-cannon-shot--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -11.0 | 0.0 | 0.2 |  | 0.003 |
 | sfx-cannon-shot--mirelo | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -15.6 | 0.0 | -1.0 |  | 0.015 |
 | sfx-castle-claim--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -9.4 | 0.0 | 0.3 |  | 0.003 |
@@ -49,4 +75,4 @@
 | thump-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -19.7 | 0.0 | -1.0 |  | 0.015 |
 | thump-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -18.4 | 0.0 | -1.0 |  | 0.015 |
 
-48 clips, ~$0.58
+74 clips, ~$0.80

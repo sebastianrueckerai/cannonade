@@ -1,0 +1,21 @@
+{
+  "source": "game/art-direction/rounds/37-sfx-probe/sfx-ui-click--mirelo.wav",
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A menu button click for a wooden toy game: a crisp light wooden tick, very short.",
+  "params": {
+    "num_samples": 1,
+    "negative_prompt": "music, melody, voice, speech, reverb tail, room echo",
+    "duration": 0.3
+  },
+  "seed": 2722095,
+  "bus": "ui",
+  "target": {
+    "m_max": -22.0
+  },
+  "created": "2026-10-20T22:35:41",
+  "seconds": 0.3,
+  "lufs": -70.0,
+  "m_max": -30.7,
+  "range_lu": 0.0,
+  "peak_dbtp": -0.5
+}

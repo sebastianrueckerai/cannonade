@@ -1,0 +1,13 @@
+{
+  "source": "game/art-direction/rounds/37-sfx-probe/boom-normal--mirelo-1.wav",
+  "bus": "sfx",
+  "target": {
+    "m_max": -16.0
+  },
+  "created": "2026-10-20T22:35:35",
+  "seconds": 1.5,
+  "lufs": -20.8,
+  "m_max": -16.0,
+  "range_lu": 0.0,
+  "peak_dbtp": -2.8
+}

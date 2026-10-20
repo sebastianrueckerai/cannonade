@@ -1,0 +1,18 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a heavy cut stone block is set down onto a stone wall: a solid stone thud with a short gritty grind as it settles, one hit.",
+  "params": {
+    "num_samples": 2,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 0.6
+  },
+  "seed": 2412635668,
+  "duration": null,
+  "label": "rubble-place--mirelo",
+  "est_cost_usd": 0.006,
+  "created": "2026-10-20T22:32:59",
+  "outputs": [
+    "rubble-place--mirelo-1.wav",
+    "rubble-place--mirelo-2.wav"
+  ]
+}

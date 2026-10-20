@@ -1,0 +1,21 @@
+{
+  "source": "game/art-direction/rounds/37-sfx-probe/sfx-castle-claim--eleven.mp3",
+  "model": "fal-ai/elevenlabs/sound-effects/v2",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no background ambience. A small castle is captured in a cheerful toy board game: a short bright chime sting with a tiny flag-raising rope creak and a flap of cloth, triumphant but small, one second.",
+  "params": {
+    "prompt_influence": 0.5,
+    "output_format": "mp3_44100_192",
+    "duration_seconds": 1.5
+  },
+  "seed": null,
+  "bus": "sfx",
+  "target": {
+    "m_max": -16.0
+  },
+  "created": "2026-10-20T22:35:38",
+  "seconds": 1.5,
+  "lufs": -19.4,
+  "m_max": -16.0,
+  "range_lu": 0.0,
+  "peak_dbtp": -9.9
+}

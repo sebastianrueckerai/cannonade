@@ -1,0 +1,18 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a stack of stone blocks topples and clatters down, a quick series of stone-on-stone knocks that settle in a second.",
+  "params": {
+    "num_samples": 2,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.8
+  },
+  "seed": 2179561531,
+  "duration": null,
+  "label": "clatter-crumble--mirelo",
+  "est_cost_usd": 0.018,
+  "created": "2026-10-20T22:33:03",
+  "outputs": [
+    "clatter-crumble--mirelo-1.wav",
+    "clatter-crumble--mirelo-2.wav"
+  ]
+}

@@ -480,3 +480,15 @@ Remove those. I'll choose from the suite once those are gone." The sheet had sho
 above full scale, +5 to +7 dBTP. Its clips, sidecars and prompts are deleted from the round, and the pick
 stands between ElevenLabs SFX v2 and Mirelo SFX 2.0. Session plan [31-audio.md](sessions/31-audio.md).
 
+## D83. The first sound effects are picked, and ElevenLabs leads (2026-10-20, Sebastian)
+
+On the round 37 page: the castle claim, the draw, the ship sinking, the piece placed and refused, the
+battle horn and the water hit from ElevenLabs, the UI click from Mirelo, and for the guns the "boom" angle
+of the second cannon set: boom-normal from ElevenLabs with the two Mirelo takes beside it for variety,
+boom-big from ElevenLabs with two more takes of its prompt. "Make sure the levels of these and the other one
+are similar, they seem to have differing volume." So `audio.py final` sets every one-shot by its loudest
+400 ms, -16 LUFS for effects and -22 for UI, under a -1 dBTP limiter, and the picks land in the game's
+[assets/audio/](/home/womb/repos/grid-cannons/assets/audio). The first heavy shot ("sounds like a faint
+drum beat") and the first crumbles (wanted: stone blocks crumbling) are out. "Eleven seems to be the best
+so far." [PICKS.md](../game/art-direction/rounds/37-sfx-probe/PICKS.md).
+

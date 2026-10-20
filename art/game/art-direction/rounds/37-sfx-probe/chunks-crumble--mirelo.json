@@ -1,0 +1,18 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a section of a stone wall breaks apart and a few big stone chunks fall and roll on stone, hard knocks, short.",
+  "params": {
+    "num_samples": 2,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 1.8
+  },
+  "seed": 2056886665,
+  "duration": null,
+  "label": "chunks-crumble--mirelo",
+  "est_cost_usd": 0.018,
+  "created": "2026-10-20T22:33:02",
+  "outputs": [
+    "chunks-crumble--mirelo-1.wav",
+    "chunks-crumble--mirelo-2.wav"
+  ]
+}

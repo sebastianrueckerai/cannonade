@@ -1,0 +1,18 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, dry, close, no music, no voice, no ambience. a wooden game piece is set firmly onto a wooden board: one crisp wooden clack, like a domino placed hard, no bounce.",
+  "params": {
+    "num_samples": 2,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds, wind",
+    "duration": 0.6
+  },
+  "seed": 3153807694,
+  "duration": null,
+  "label": "clatter-place--mirelo",
+  "est_cost_usd": 0.006,
+  "created": "2026-10-20T22:32:59",
+  "outputs": [
+    "clatter-place--mirelo-1.wav",
+    "clatter-place--mirelo-2.wav"
+  ]
+}

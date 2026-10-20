@@ -222,8 +222,10 @@ def measure(p):
         return float(m[-1]) if m else None
     dur = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(p)],
                          capture_output=True, text=True).stdout.strip()
+    moments = [float(x) for x in re.findall(r"\bM:\s*(-?[\d.]+)", txt)]
     return {"seconds": round(float(dur), 1) if dur else None,
             "lufs": grab(r"I:\s+(-?[\d.]+) LUFS"),
+            "m_max": max(moments) if moments else None,  # the loudest 400 ms, the measure for a one-shot
             "range_lu": grab(r"LRA:\s+([\d.]+) LU"),
             "peak_dbtp": grab(r"Peak:\s+(-?[\d.]+) dBFS")}
 
@@ -288,6 +290,58 @@ def cmd_page(a):
     print(f"{len(metas)} clips, ~${total:.2f}")
 
 
+GAME = Path(os.environ.get("GAME_REPO", ROOT.parent))
+# The level per bus (sound.md). A one-shot is too short for an integrated loudness, so effects and UI are set by
+# their loudest 400 ms (momentary max), music by its integrated loudness.
+BUS = {"sfx": ("m_max", -16.0), "ui": ("m_max", -22.0), "music": ("lufs", -16.0)}
+TRIM = "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-60dB,areverse"
+
+
+def cmd_final(a):
+    """A picked clip becomes a game asset: leading and trailing silence cut, level set for its bus, true peak under
+    -1 dBTP, 44.1 kHz 16-bit WAV in game/assets/audio/<bus>/<id>.wav with a sidecar naming the source, and a copy in
+    the game's assets/audio/<bus>/."""
+    src = Path(a.src).resolve()
+    kind, target = BUS[a.bus]
+    if a.lufs is not None:
+        target = a.lufs
+    out = ROOT / "game" / "assets" / "audio" / a.bus / f"{a.id}.wav"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    trimmed = Path("/tmp") / f"{a.id}.trim.wav"
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-af", TRIM, "-ar", "44100", str(trimmed)], check=True)
+    if kind == "lufs":
+        first = subprocess.run(["ffmpeg", "-nostats", "-i", str(trimmed), "-af", f"loudnorm=I={target}:TP=-1:LRA=11:print_format=json", "-f", "null", "-"],
+                               capture_output=True, text=True).stderr
+        m = json.loads(first[first.rindex("{"):first.rindex("}") + 1])
+        chain = (f"loudnorm=I={target}:TP=-1:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:measured_LRA={m['input_lra']}"
+                 f":measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
+    else:
+        # the momentary window is 400 ms, so a click is measured with silence padded behind it
+        padded = Path("/tmp") / f"{a.id}.pad.wav"
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(trimmed), "-af", "apad=pad_dur=0.5", str(padded)], check=True)
+        gain = target - measure(padded)["m_max"]
+        chain = f"volume={gain:.2f}dB,alimiter=limit=0.891:attack=1:release=50:level=false"
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(trimmed), "-af", chain, "-ar", "44100", "-c:a", "pcm_s16le", str(out)], check=True)
+    side = src.with_suffix(".json")
+    meta = {
+        "source": rel(src),
+        **({k: json.loads(side.read_text()).get(k) for k in ("model", "prompt", "params", "seed")} if side.exists() else {}),
+        "bus": a.bus,
+        "target": {kind: target},
+        "created": dt.datetime.now().isoformat(timespec="seconds"),
+        **measure(out),
+    }
+    if meta["m_max"] is None or meta["m_max"] < -100:
+        pad = Path("/tmp") / f"{a.id}.outpad.wav"
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(out), "-af", "apad=pad_dur=0.5", str(pad)], check=True)
+        meta["m_max"] = measure(pad)["m_max"]
+    out.with_suffix(".json").write_text(json.dumps(meta, indent=2))
+    game = GAME / "assets" / "audio" / a.bus / out.name
+    game.parent.mkdir(parents=True, exist_ok=True)
+    game.write_bytes(out.read_bytes())
+    print(f"{out.name}: {meta['seconds']} s, M max {meta['m_max']}, {meta['lufs']} LUFS, {meta['peak_dbtp']} dBTP, from {meta['source']}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -314,6 +368,12 @@ def main():
     pg = sub.add_parser("page")
     pg.add_argument("round")
     pg.set_defaults(fn=cmd_page)
+    f = sub.add_parser("final")
+    f.add_argument("--src", required=True)
+    f.add_argument("--id", required=True)
+    f.add_argument("--bus", default="sfx", choices=sorted(BUS))
+    f.add_argument("--lufs", type=float)
+    f.set_defaults(fn=cmd_final)
     c = sub.add_parser("cost")
     c.set_defaults(fn=lambda a: print(f"spent ~${spent():.2f} of ${CAP_USD:.2f} since {SESSION_START}"))
     a = ap.parse_args()
