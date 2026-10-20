@@ -8,6 +8,7 @@
 import argparse
 import base64
 import datetime as dt
+import hashlib
 import html
 import json
 import os
@@ -303,7 +304,7 @@ STYLE = ('<style>body{font:14px system-ui;margin:20px;max-width:900px}.c{border-
          '#picks{font:12px monospace;max-height:120px;overflow:auto;margin:6px 0 0;user-select:all}.m{font-family:monospace}.none{color:#888}</style>')
 
 PICKS_JS = """<script>
-const key = 'picks:' + document.title;
+const key = 'picks:' + document.title + ':' + document.body.dataset.picks;  // the saved picks changed: the file wins, the old ticks go
 const boxes = [...document.querySelectorAll('input[type=checkbox]')];
 const saved = localStorage.getItem(key);
 if (saved) { const on = new Set(JSON.parse(saved)); boxes.forEach(b => b.checked = on.has(b.dataset.cue + ': ' + b.dataset.stem)); }
@@ -342,12 +343,13 @@ def cmd_page(a):
     else:
         cues = json.loads((rd / "cues.json").read_text())
         picks = json.loads((rd / "picks.json").read_text()) if (rd / "picks.json").exists() else {}
+        stamp = hashlib.sha1(json.dumps(picks, sort_keys=True).encode()).hexdigest()[:10]
         prefixes = cue_map(rd)
         by_cue = {}
         for m in metas:
             cue = next((c for pre, c in prefixes.items() if m["label"].startswith(pre)), None)
             by_cue.setdefault(cue, []).append(m)
-        parts = [f'<h1>{html.escape(rd.name)}</h1><div class="bar">{len(metas)} clips, ~${total:.2f}. Tick the clips to use, then '
+        parts = [f'<body data-picks="{stamp}"><h1>{html.escape(rd.name)}</h1><div class="bar">{len(metas)} clips, ~${total:.2f}. Tick the clips to use, then '
                  f'<button id="copy">copy the list</button> <span id="copied"></span> and paste it to me, or select the list below and copy it, '
                  f'or copy the whole page: every ticked clip shows [x]. <button id="reset">Reset to the saved picks</button>'
                  f'<pre id="picks"></pre></div>']
