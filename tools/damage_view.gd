@@ -1,8 +1,7 @@
 extends Node3D
 ## The castle's four damage states side by side, textured, under the game camera.
 ##   godot --path . res://tools/damage_view.tscn                          look around: wheel zooms, middle drags
-##   xvfb-run godot --path . --rendering-driver opengl3 --fixed-fps 30 \
-##     res://tools/damage_view.tscn -- --shot=/tmp/damage_view.png
+##   tools/godot_render.sh res://tools/damage_view.tscn -- --shot=/tmp/damage_view.png
 
 const STATES := [
 	{"glb": "res://assets/art/3d/castle_d1.glb", "label": "d1 light"},

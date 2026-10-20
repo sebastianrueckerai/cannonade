@@ -280,9 +280,8 @@ transparent sphere), the second-player gamepad controls and the custom cursor.
 
 The runner fails on any engine or script error output and times out hung tests.
 
-`tools/screenshot.tscn` renders screenshots (needs a display, e.g. `xvfb-run`):
+`tools/screenshot.tscn` renders screenshots (needs a display; `tools/godot_render.sh` runs Godot under Xvfb):
 
 ```sh
-xvfb-run godot --path . --rendering-driver opengl3 --fixed-fps 30 \
-    res://tools/screenshot.tscn -- --mode=ai2 --at=5,30 --out=/tmp/shot
+tools/godot_render.sh res://tools/screenshot.tscn -- --mode=ai2 --at=5,30 --out=/tmp/shot
 ```

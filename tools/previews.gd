@@ -1,8 +1,8 @@
 extends Node
 ## Screenshots every next-piece preview of player 1: each wall in all four rotations
 ## and each drawable building, plus one shot of the wall hovering a free tile (needs a
-## display, e.g. xvfb-run).
-##   xvfb-run godot --rendering-driver opengl3 --fixed-fps 30 res://tools/previews.tscn -- --out=/tmp/pieces
+## display, e.g. tools/godot_render.sh).
+##   tools/godot_render.sh res://tools/previews.tscn -- --out=/tmp/pieces
 
 const Main = preload("res://scripts/Main.gd")
 

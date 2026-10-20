@@ -1,6 +1,6 @@
 extends Node
-## Renders a game mode and saves screenshots (needs a display, e.g. xvfb-run).
-##   xvfb-run godot --rendering-driver opengl3 --fixed-fps 30 res://tests/screenshot.tscn -- --mode=ai2 --at=5,40 --out=/tmp/shot
+## Renders a game mode and saves screenshots (needs a display, e.g. tools/godot_render.sh).
+##   tools/godot_render.sh res://tools/screenshot.tscn -- --mode=ai2 --at=5,40 --out=/tmp/shot
 ##   --look=x,z     the camera close to that tile; --castle=N instead looks at player N's first castle
 ##   --eye=Y,Z      with --look or --castle: the camera Y up and Z back from the target instead of 9,6
 

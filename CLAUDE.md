@@ -69,8 +69,7 @@ highest-numbered file in [art/docs/sessions/](art/docs/sessions), and it can nam
   hooks in production code. Every new test must fail when the behaviour it guards is
   broken (check this by breaking the code on purpose before you commit). Follow
   https://github.com/openclaw/openclaw/blob/main/.agents/skills/test-audit/SKILL.md
-- Visual check: `xvfb-run godot --path . --rendering-driver opengl3 --fixed-fps 30
-  res://tools/screenshot.tscn -- --mode=versus --at=5 --out=/tmp/shot`
+- Visual check: `tools/godot_render.sh res://tools/screenshot.tscn -- --mode=versus --at=5 --out=/tmp/shot`
 
 ## Gotchas
 - GDScript `:=` cannot infer types from untyped (Variant) expressions; declare the type.
