@@ -23,7 +23,7 @@ const FIXED := [
 	["pan the view while zoomed in", "Middle mouse drag"],
 	["discard the piece / building in hand", "Click outside the map"],
 ]
-const INTRO := "You and an AI opponent each start with a walled-in castle on one island. Rounds switch between a green build phase and a red battle phase.\n\nWalls come as pieces you turn and drop. Pieces that share a side form one wall; touching corners do not join. Everything you place needs one tile within two tiles of your walls or of a castle you hold.\n\nBuild out from your castle: ring in neutral castles to claim them and raise your parts cap, place cannons with the right mouse button, fuse four cannons in a 2x2 square into a heavy gun whose shell hits as hard as all four. Buildings outside your walls burn at the end of the build phase. Hit guns reload slower; castles take 12 shells and fall through four damage states.\n\nRuin the enemy's last castle before yours falls."
+const INTRO := "You and the AI each start with a walled castle. Rounds alternate: green build phase, red battle phase.\n\nTurn and drop wall pieces. Pieces that share a side join; corners do not. Build within two tiles of your walls or a castle you hold.\n\nRing in neutral castles to claim them and raise your parts cap. Place cannons; fuse four in a 2x2 square into a heavy gun. Buildings outside your walls burn at the end of the build phase.\n\nRuin the enemy's last castle before yours falls."
 const REMAP_PATH := "user://input_remap.cfg"
 
 ## The help overlay while open, null when closed.
@@ -170,6 +170,7 @@ func _show_help() -> void:
 		var text := Label.new()
 		text.text = paragraph
 		text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		text.add_theme_font_size_override("font_size", 17)  # smaller than the controls, so the columns tell apart
 		intro.add_child(text)
 	var controls := VBoxContainer.new()
 	controls.add_theme_constant_override("separation", 12)

@@ -57,6 +57,36 @@ func _ready() -> void:
 			and close0.get_theme_color("font_focus_color") == close0.get_theme_color("font_color"),
 			"the focused Close button keeps its font colour (%s)"
 			% (close0.get_theme_color("font_focus_color") if close0 != null else Color()))
+	# Close runs the full width below both columns
+	var style: StyleBox = help_panel.get_theme_stylebox("panel")
+	var inner := help_rect.grow_individual(-style.get_content_margin(SIDE_LEFT),
+			-style.get_content_margin(SIDE_TOP), -style.get_content_margin(SIDE_RIGHT),
+			-style.get_content_margin(SIDE_BOTTOM))
+	var close_rect: Rect2 = close0.get_global_rect() if close0 != null else Rect2()
+	_check(close0 != null and absf(close_rect.position.x - inner.position.x) < 1.0
+			and absf(close_rect.end.x - inner.end.x) < 1.0,
+			"the Close button %s spans the panel's content width %s" % [close_rect, inner])
+	var above := true
+	for c in help_panel.find_children("*", "Control", true, false):
+		if c != close0 and (c is Label or c is Button) and c.get_global_rect().end.y > close_rect.position.y:
+			above = false
+	_check(above, "every label and button of Tutorial & Controls ends above the Close button")
+	# the tutorial reads smaller than the controls and keeps every paragraph to three lines
+	var tutorial: Array = []
+	var fire: Label = null
+	for l in help_panel.find_children("*", "Label", true, false):
+		if l.autowrap_mode != TextServer.AUTOWRAP_OFF and l.text != "":
+			tutorial.append(l)
+		elif l.text == "fire the cannons":
+			fire = l
+	_check(tutorial.size() == 4 and fire != null
+			and tutorial.all(func(l): return l.get_theme_font_size("font_size") < fire.get_theme_font_size("font_size")),
+			"the %d tutorial paragraphs use a smaller font (%s) than the controls (%s)"
+			% [tutorial.size(), tutorial[0].get_theme_font_size("font_size") if not tutorial.is_empty() else 0,
+			fire.get_theme_font_size("font_size") if fire != null else 0])
+	_check(not tutorial.is_empty() and tutorial.all(func(l): return l.get_line_count() <= 3),
+			"no tutorial paragraph runs past three lines (%s)"
+			% str(tutorial.map(func(l): return l.get_line_count())))
 	# a click on the parchment, off every button, keeps the help open
 	_click(help_rect.position + Vector2(8, 8))
 	await _frames(2)

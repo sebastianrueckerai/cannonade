@@ -241,11 +241,6 @@ func reset_color(enclosed = null) -> void:
 var _applied_color = null
 ## targeting marker: shots in flight at this tile (refcounted) light it up
 var _target_tints := 0
-## The targeting marker: a cube of additive light the size of a wall block standing on the slab, so the
-## ground and whatever stands on the tile turn lighter while a shot flies at it (I60).
-static var _light_cube := BoxMesh.new()
-const LIGHT_ADD := 0.3
-var _light: MeshInstance3D = null
 
 
 ## Colour of the tile slab (skips the material write when nothing changes).
@@ -256,37 +251,21 @@ func set_tile_color(c: Color) -> void:
 	U.set_color(model(), c)
 
 
-## Puts the targeting marker of a shooter on this tile, tinted in the shooter's colour, until the last shot
-## aimed here lands (target_off).
+## Puts the targeting marker of a shooter on this tile: the slab lights up,
+## subtly tinted in the shooter's colour, until the last shot aimed here lands
+## (target_off).
 func target_on(color: Color) -> void:
 	_target_tints += 1
 	if _target_tints > 1:
 		return
-	if _light == null:
-		_light = MeshInstance3D.new()
-		_light.name = "TargetLight"
-		_light.mesh = _light_cube
-		_light.position.y = Art.SLAB_TOP + 0.5
-		_light.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		var m := StandardMaterial3D.new()
-		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-		m.disable_fog = true
-		_light.material_override = m
-		go.add_child(_light)
-	var c := Color.WHITE.lerp(color, 0.3)
-	c.a = LIGHT_ADD
-	(_light.material_override as StandardMaterial3D).albedo_color = c
-	_light.visible = true
+	U.set_emission(model(), Color.WHITE.lerp(color, 0.3), 1.2)
 
 
 func target_off() -> void:
 	_target_tints = maxi(_target_tints - 1, 0)
 	if _target_tints > 0:
 		return
-	if _light != null:
-		_light.visible = false
+	U.set_emission(model(), Color.WHITE, 0.0)
 
 
 func shake(duration: float) -> void:

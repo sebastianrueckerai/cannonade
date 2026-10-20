@@ -1,8 +1,7 @@
 extends Node
-## The targeting marker is a cube of additive light on the aimed-at tile, a
-## wall block's size on the slab, so the ground and whatever stands there turn
-## lighter; no material changes (playtest round 4: emission on the castle blew
-## its team surface out to white).
+## The targeting marker glows the tile slab only: a castle on the aimed-at
+## tile keeps its colours (playtest round 4: castles flashed white and player
+## colours for every shot in flight aimed at them).
 ##   godot --headless --fixed-fps 30 res://tests/target_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -51,11 +50,6 @@ func castle_clean(c) -> bool:
 	return true
 
 
-func slab_clean(tile) -> bool:
-	var m: Material = tile.model().get_surface_override_material(0)
-	return not (m is StandardMaterial3D and m.emission_enabled)
-
-
 func _run() -> void:
 	var c = null
 	for k in map.castles:
@@ -71,34 +65,19 @@ func _run() -> void:
 	var tile = map.tiles[cc.x][cc.y]
 	check(U.alive(tile.structure) and tile.structure == c.go,
 			"the castle stands on its centre tile")
-	check(tile.go.get_node_or_null("TargetLight") == null, "an untargeted tile carries no light")
 
 	# the aim path (TileImpactor.aim_tile calls target_on with the shooter colour)
 	tile.target_on(Color.RED)
-	var light := tile.go.get_node_or_null("TargetLight") as MeshInstance3D
-	check(light != null and light.visible, "the aimed-at tile carries a visible light cube")
-	if light == null:
-		return
-	var box: AABB = light.global_transform * light.get_aabb()
-	check(box.size.is_equal_approx(Vector3.ONE),
-			"the cube is a tile wide and a wall block tall (%s)" % box.size)
-	check(box.position.is_equal_approx(tile.go.global_position + Vector3(-0.5, Art.SLAB_TOP, -0.5)),
-			"it stands on the slab top over the whole tile (%s)" % box.position)
-	var m := light.material_override as StandardMaterial3D
-	check(m != null and m.blend_mode == BaseMaterial3D.BLEND_MODE_ADD
-			and m.shading_mode == BaseMaterial3D.SHADING_MODE_UNSHADED, "the cube adds light")
-	check(m != null and m.albedo_color.a > 0.0 and m.albedo_color.a <= 0.4,
-			"the light stays subtle (alpha %s)" % (m.albedo_color.a if m != null else -1.0))
-	check(m != null and Color(m.albedo_color, 1.0).is_equal_approx(Color.WHITE.lerp(Color.RED, 0.3)),
-			"the light is tinted in the shooter's colour (%s)" % (m.albedo_color if m != null else null))
-	check(slab_clean(tile), "the slab's material carries no glow")
-	check(castle_clean(c), "the castle on the aimed-at tile keeps its colours")
+	var slab = tile.model()
+	var sm: Material = slab.get_surface_override_material(0)
+	check(sm is StandardMaterial3D and sm.emission_enabled,
+			"the aimed-at tile's slab carries the targeting glow")
+	check(castle_clean(c),
+			"the castle on the aimed-at tile carries no emission and keeps its colours")
 
-	# a second shot in flight keeps the light until both have landed
-	# (TileImpactor.impact and _exit_tree call target_off)
-	tile.target_on(Color.BLUE)
+	# the landing (TileImpactor.impact and _exit_tree call target_off)
 	tile.target_off()
-	check(light.visible, "the light stays while a second shot is in flight")
-	tile.target_off()
-	check(not light.visible, "the light clears when the last shot lands")
-	check(castle_clean(c) and slab_clean(tile), "the castle and the slab still carry no emission")
+	sm = slab.get_surface_override_material(0)
+	check(sm is StandardMaterial3D and not sm.emission_enabled,
+			"the targeting glow clears when the shot lands")
+	check(castle_clean(c), "the castle still carries no emission")
