@@ -103,16 +103,17 @@ func build_multifield_upgrade() -> void:
 	tile.structure.global_position = upgrade_position
 
 
-func damage_structure(damage: float) -> void:
+func damage_structure(damage: float, from := Vector3.INF) -> void:
 	var castle := U.comp(tile.structure, "Castle")
 	if castle != null:
-		castle.take_damage(damage)
+		castle.take_damage(damage, from)
 		return
 	var bb := U.comp(tile.structure, "BuildingBlock")
 	if bb != null:
 		bb.hits_taken += 1
 		bb.health -= damage
 		if bb.health <= 0:
+			Crumble.crumble(tile.structure, from)
 			un_build_upgrade()
 
 

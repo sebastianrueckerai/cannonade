@@ -29,13 +29,13 @@ func bounds() -> AABB:
 	return _bounds
 
 
-func take_damage(damage: float) -> void:
+func take_damage(damage: float, from := Vector3.INF) -> void:
 	if state == RUIN:
 		return
 	var bb = U.comp(go, "BuildingBlock")
 	bb.health -= damage
 	if bb.health <= 0:
-		become_ruin()
+		become_ruin(from)
 		map.game.decide()
 	else:
 		var full: float = Catalog.def_of(go).health
@@ -43,11 +43,14 @@ func take_damage(damage: float) -> void:
 		set_state(clampi(int(gone * 4.0), 0, 3))
 
 
-func become_ruin() -> void:
+## The castle falls to ruins: its severe look crumbles away from the shot, whatever look it wore (I69), and the ruin
+## stands.
+func become_ruin(from := Vector3.INF) -> void:
 	var holder = owner()
 	if holder != null:
 		holder.count("castles_lost")
 	Sound.play("castle_ruin")
+	Crumble.crumble(go, from, STATES[RUIN - 1])
 	set_state(RUIN)
 	hold_tiles(null)
 

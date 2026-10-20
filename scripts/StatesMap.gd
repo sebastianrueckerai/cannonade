@@ -226,7 +226,7 @@ func waterflow(start_x: int, start_z: int, use_initial_open := false) -> void:
 		tile.ringOwner = owner
 		tile.reset_color(not found_edge)
 		if not found_edge:
-			tile.destroy_decorations()
+			tile.destroy_decorations(Vector3.INF, false)
 
 
 func _enqueue(ci: int, cells: PackedInt32Array, queue: PackedInt32Array, zs: int, start: bool) -> void:

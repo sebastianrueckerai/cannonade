@@ -205,12 +205,18 @@ func _check_ground() -> void:
 
 ## The deal: five art seeds give five permutations of the four looks, not all alike, and a four-player game hands
 ## them out, every player another. The versus game's AI is idle, so freeing it resumes no coroutine.
-## A wall shot down crumbles (I58): a storey alone, leaving its block, then the block; the pieces wear the block's
+## A wall shot down crumbles (I62): a storey alone, leaving its block, then the block; the pieces wear the block's
 ## material, fly away from the shot, lie on the walls and not in them, stay on the slab and are gone after Crumble.LIFE.
+## A cannon, the castle falling to ruins and the decorations of a tile shot or built on crumble too (I69).
 func _check_crumble() -> void:
 	Art._rng.seed = 11
-	var tile = _tile(19, 2)
-	var east_tile = _tile(20, 2)
+	var used := [[19, 0], [20, 0], [17, 0], [31, 2], [33, 2], [44, 1], [45, 1], [46, 1], [44, 2], [45, 2], [46, 2],
+			[44, 3], [45, 3], [46, 3]]
+	var free: Array = used.filter(func(c): return not _tile(c[0], c[1]).water and not U.alive(_tile(c[0], c[1]).structure))
+	check(free.size() == used.size(), "the crumble checks' %d tiles are free and dry (taken or wet: %s)"
+			% [used.size(), used.filter(func(c): return not free.has(c))])
+	var tile = _tile(19, 0)
+	var east_tile = _tile(20, 0)
 	var block := Catalog.spawn("wall", null, p1)
 	p1.build_wall(tile, block)
 	p1.build_wall(east_tile, Catalog.spawn("wall", null, p1))
@@ -247,9 +253,75 @@ func _check_crumble() -> void:
 				for v in mi.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]:
 					low = minf(low, mi.to_global(v).y - slab)
 		check(low > -0.1, "no piece of the heap sinks through the slab (lowest vertex %.2f m over it)" % low)
-	await seconds(Crumble.LIFE - 1.2)
-	check(tile.go.get_children().filter(func(n): return n is Crumble).is_empty(),
-			"the rubble is gone after %.0f s" % Crumble.LIFE)
+	# a cannon: its mount's pieces in the mount's material, its barrel's where the barrel stands
+	var gun_tile = _tile(17, 0)
+	var gun := Catalog.spawn("cannon")
+	p1.build_building(gun_tile, gun)
+	var mount_mat: Material = (gun.find_child("mount", true, false) as MeshInstance3D).get_active_material(0)
+	var barrel_pos: Vector3 = (gun.find_child("barrel", true, false) as Node3D).global_position
+	gun_tile.damage_building_place(1e6, from)
+	var gun_heaps: Array = gun_tile.go.get_children().filter(func(n): return n is Crumble)
+	check(gun_heaps.size() == 1 and not U.alive(gun_tile.structure), "a shot cannon crumbles (%d heaps)" % gun_heaps.size())
+	var mount_pieces: Array = gun_heaps[0].get_children().filter(func(n): return n.name.begins_with("mount")) if gun_heaps else []
+	var barrel_pieces: Array = gun_heaps[0].get_children().filter(func(n): return n.name.begins_with("barrel")) if gun_heaps else []
+	check(mount_pieces.size() >= 5 and barrel_pieces.size() >= 3,
+			"its mount and barrel break into %d and %d pieces" % [mount_pieces.size(), barrel_pieces.size()])
+	check(not mount_pieces.is_empty() and mount_pieces.all(func(b): return b.get_child(0).material_override == mount_mat),
+			"the mount's pieces wear the mount's material")
+	var far: float = barrel_pieces.map(func(b): return b.global_position.distance_to(barrel_pos)).max() if barrel_pieces else INF
+	check(far < 0.4, "the barrel's pieces start at the barrel (the farthest %.2f m from it)" % far)
+	# a neutral castle falls to ruins in pieces; a side's last castle would end the game (I65)
+	var castle = map.castles.filter(func(c): return not c.is_ruin() and c.owner() == null)[0]
+	var ci: Vector2i = map.tile_index_at(castle.go.global_position)
+	var ctile = map.tiles[ci.x][ci.y]
+	ctile.damage_building_place(1e6, from)
+	var castle_heaps: Array = ctile.go.get_children().filter(func(n): return n is Crumble)
+	var stones: Array = castle_heaps[0].get_children().filter(func(n): return n is RigidBody3D) if castle_heaps else []
+	check(castle.is_ruin() and castle_heaps.size() == 1 and stones.size() >= 20,
+			"the castle falls to ruins in %d pieces (%d heaps)" % [stones.size(), castle_heaps.size()])
+	var d3 := load(Art.model_path("castle_d3")).instantiate() as Node3D
+	var d3_mat: Material = (d3.find_children("*", "MeshInstance3D", true, false)[0] as MeshInstance3D).get_active_material(0)
+	var stone := 0
+	for b in stones:
+		var worn: Material = b.get_child(0).material_override
+		stone += 1 if worn is BaseMaterial3D and worn.albedo_texture == d3_mat.albedo_texture else 0
+	check(not stones.is_empty() and stone == stones.size(),
+			"the castle's pieces wear the severe look's stone (%d of %d)" % [stone, stones.size()])
+	d3.free()
+	# a shot clears a decorated tile, and a wall placed on decorations clears another, each decoration in pieces
+	var shot_tile = _tile(31, 2)
+	var walled_tile = _tile(33, 2)
+	var ringed_tile = _tile(45, 2)
+	for t in [shot_tile, walled_tile, ringed_tile]:
+		_decorate(t)
+	check([shot_tile, walled_tile, ringed_tile].all(func(t): return t.decorations.size() == 2), "three tiles got two leaf trees each")
+	shot_tile.damage_building_place(1.0, from)
+	heaps = shot_tile.go.get_children().filter(func(n): return n is Crumble)
+	check(shot_tile.decorations.is_empty() and heaps.size() == 2,
+			"a shot clears the tile's 2 trees, each in pieces (%d heaps)" % heaps.size())
+	p1.build_wall(walled_tile, Catalog.spawn("wall", null, p1))
+	heaps = walled_tile.go.get_children().filter(func(n): return n is Crumble)
+	check(walled_tile.decorations.is_empty() and heaps.size() == 2 and U.alive(walled_tile.structure),
+			"a wall placed on 2 trees crumbles them (%d heaps)" % heaps.size())
+	for c in [[44, 1], [45, 1], [46, 1], [44, 2], [46, 2], [44, 3], [45, 3], [46, 3]]:
+		_build(p1, c[0], c[1])
+	heaps = ringed_tile.go.get_children().filter(func(n): return n is Crumble)
+	check(map.is_tile_enclosed(45, 2) and ringed_tile.decorations.is_empty() and heaps.is_empty(),
+			"a ring closing round 2 trees clears them quietly (%d heaps)" % heaps.size())
+	await seconds(Crumble.LIFE + 0.3)
+	var left := 0
+	for t in [tile, gun_tile, ctile, shot_tile, walled_tile]:
+		left += t.go.get_children().filter(func(n): return n is Crumble).size()
+	check(left == 0, "the rubble is gone after %.0f s (%d heaps left)" % [Crumble.LIFE, left])
+
+
+## Two leaf trees of the art layer on `t`, by hand: the test's game has no decorations.
+func _decorate(t) -> void:
+	var maker: Node3D = U.instantiate(preload("res://prefabs/Maker_LeafTree.tscn"), main)
+	for i in 2:
+		var deco: Node3D = U.comp(maker, "CustomModelMaker").get_randomized_model(t.go)
+		deco.position = Vector3(0.25 * i - 0.125, Art.SLAB_TOP, 0.0)
+		t.decorations.append(deco)
 
 
 func _check_deal() -> void:

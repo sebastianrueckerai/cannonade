@@ -5,9 +5,10 @@ class_name Art
 ##                          centre, Y up, metres, one tile = 1 m. Walls keep the tile centre as origin, projectiles
 ##                          their centre. The wall block has one model per look (Catalog.WALL_LOOKS: "wall",
 ##                          "wall_corbel", ..., dealt one per player each game) and each a storey, "<look>_upper";
-##                          Wall.gd puts its shader on them. 3d/wall_rubble.glb and 3d/wall_rubble_upper.glb are the
-##                          plain block and its storey in pieces, one mesh each with the origin at the piece's centre;
-##                          Crumble.gd makes rigid bodies of them when a shot kills a block
+##                          Wall.gd puts its shader on them
+##   3d/<look>_rubble.glb   the model's parts in pieces, cut by art/game/assets/3d/fracture.py, a node per part holding
+##                          its pieces; Crumble.gd throws them as rigid bodies when the thing dies. Walls and storeys,
+##                          guns, castle_d3 as the castle falls to ruins, the nature looks. Not size checked
 ##   3d/<id>.2.glb, .3.glb  more looks of the same id, one picked at random for each instance
 ##   ui/splash.png          splash screen image
 ##   ui/logo.png            title image on the menu
@@ -149,6 +150,7 @@ static func instance(id: String) -> Node3D:
 	var pick: String = ids[_rng.randi_range(0, ids.size() - 1)]
 	var node := (load(model_path(pick)) as PackedScene).instantiate() as Node3D
 	node.name = "Art"
+	node.set_meta("art_look", pick)
 	_check(pick, node)
 	return node
 
@@ -265,7 +267,7 @@ static func bounds(node: Node3D) -> AABB:
 
 
 static func _check(id: String, node: Node3D) -> void:
-	if _checked.has(id):
+	if _checked.has(id) or id.ends_with("_rubble"):
 		return
 	_checked[id] = true
 	_load_manifest()

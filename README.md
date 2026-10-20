@@ -59,7 +59,8 @@ pieces placed them, as long as none of those tiles has a storey yet. A stacked t
 shells. Held over your walls, the piece shows the storeys it adds, red where it cannot stack,
 and the cursor on a block picks that block, not the ground hidden behind it.
 A wall shot down breaks into pieces that fly from the shot, land on the walls around and sink
-into the ground.
+into the ground. So do a gun, the castle as it falls to ruins, and the trees, bushes and
+boulders of a tile that is shot or built on.
 Every game deals each player a different wall look of four. The walkway along the top of a wall carries the
 owner's colour, running toward the neighbouring blocks of the same wall, and the ground inside
 a closed ring takes a wash of the colour of the player whose walls surround it most, so a
@@ -224,9 +225,10 @@ can be repeated and compared.
 * Mouse picking intersects the camera ray with the ground plane instead of raycasting
   colliders; MEC coroutines became small time based state machines.
 * A wall is one full-tile block, `assets/art/3d/wall.glb`, with `wall_upper.glb` as its
-  stacked storey; the original FBX connector walls stay with their parked defs. `wall_rubble.glb`
-  and `wall_rubble_upper.glb` are the block and the storey cut into pieces, which
-  `scripts/Crumble.gd` throws as rigid bodies when a shot kills a wall. The decorations use the boulders, bushes and leaf trees of the
+  stacked storey; the original FBX connector walls stay with their parked defs. `<look>_rubble.glb`
+  is a model cut into pieces, a node per part, which `scripts/Crumble.gd` throws as rigid
+  bodies when the thing dies: the walls, the guns, `castle_d3` as the castle falls to ruins
+  and the nature looks. The decorations use the boulders, bushes and leaf trees of the
   art layer (`assets/art/3d/nature_*.glb`). Each one stays inside its tile and is shrunk
   until it fits, so it never reaches into a neighbouring building.
 * `scripts/Main.gd` builds a game from a mode (camera, light, UI, players).

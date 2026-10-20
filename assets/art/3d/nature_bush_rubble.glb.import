@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c3np5w8f66h5e"
-path="res://.godot/imported/wall_rubble_upper.glb-0ad1bbd01c0223925fbb686ac3448344.scn"
+uid="uid://bnh78llooudxa"
+path="res://.godot/imported/nature_bush_rubble.glb-955a8de60b009f263a65410390833d41.scn"
 
 [deps]
 
-source_file="res://assets/art/3d/wall_rubble_upper.glb"
-dest_files=["res://.godot/imported/wall_rubble_upper.glb-0ad1bbd01c0223925fbb686ac3448344.scn"]
+source_file="res://assets/art/3d/nature_bush_rubble.glb"
+dest_files=["res://.godot/imported/nature_bush_rubble.glb-955a8de60b009f263a65410390833d41.scn"]
 
 [params]
 

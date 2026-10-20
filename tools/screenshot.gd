@@ -3,8 +3,9 @@ extends Node
 ##   tools/godot_render.sh res://tools/screenshot.tscn -- --mode=ai2 --at=5,40 --out=/tmp/shot
 ##   --look=x,z     the camera close to that tile; --castle=N instead looks at player N's first castle
 ##   --eye=Y,Z      with --look or --castle: the camera Y up and Z back from the target instead of 9,6
-##   --kill         at the first --at time, a shot from the camera kills the wall nearest the --look or --castle
-##                  target (the whole stack); the later times show its rubble
+##   --kill[=wall|gun|castle|tree]   at the first --at time, a shot from the camera kills the wall (the whole stack), the
+##                  gun, the castle or the decorated tile nearest the --look or --castle target as it stands then, and the
+##                  camera turns to it; the later times show its rubble
 
 const Main = preload("res://scripts/Main.gd")
 
@@ -12,7 +13,9 @@ var main: Node
 var shots: Array = []
 var out := "user://shot"
 var aim = null
-var kill = null
+var kill_kind := ""
+var kill_target = null
+var eye := Vector3(0, 9, 6)
 
 
 func _ready() -> void:
@@ -55,16 +58,12 @@ func _ready() -> void:
 				target = c.go.global_position
 				break
 	if target != null:
-		var eye: PackedStringArray = str(args.get("eye", "9,6")).split(",")
-		main.camera.global_position = target + Vector3(0, float(eye[0]), float(eye[1]))
-		main.camera.look_at(target)
+		var e: PackedStringArray = str(args.get("eye", "9,6")).split(",")
+		eye = Vector3(0, float(e[0]), float(e[1]))
+		_look_at(target)
 		if args.has("kill"):
-			for col in main.game.map.tiles:
-				for t in col:
-					if t.isWall and U.alive(t.structure) and (kill == null
-							or t.go.global_position.distance_to(target) < kill.go.global_position.distance_to(target)):
-						kill = t
-			print("kill: the wall at %d, %d" % [kill.idxX, kill.idxZ] if kill != null else "kill: no wall stands")
+			kill_kind = args["kill"] if args["kill"] != "true" else "wall"
+			kill_target = target
 	if args.has("aim"):
 		var p: PackedStringArray = str(args["aim"]).split(",")
 		aim = Vector2i(int(p[0]), int(p[1]))
@@ -83,9 +82,8 @@ func _process(_delta: float) -> void:
 		return
 	if U.time >= shots[0]:
 		var t: float = shots.pop_front()
-		if kill != null:
-			kill.damage_building_place(1e6, main.camera.global_position)
-			kill = null
+		if kill_kind != "":
+			_kill()
 		await RenderingServer.frame_post_draw
 		var img := get_viewport().get_texture().get_image()
 		var path := "%s_%03d.png" % [out, int(t)] if t == floorf(t) else "%s_%05.2f.png" % [out, t]
@@ -93,3 +91,37 @@ func _process(_delta: float) -> void:
 		print("saved ", path)
 		if shots.is_empty():
 			get_tree().quit()
+
+
+func _look_at(target: Vector3) -> void:
+	main.camera.global_position = target + eye
+	main.camera.look_at(target)
+
+
+## The thing of the kill kind nearest the kill target, as it stands now: the camera turns to it and a shot from the
+## camera kills it.
+func _kill() -> void:
+	var kill = null
+	for col in main.game.map.tiles:
+		for t in col:
+			if _kind_of(t) == kill_kind and (kill == null
+					or t.go.global_position.distance_to(kill_target) < kill.go.global_position.distance_to(kill_target)):
+				kill = t
+	var kind := kill_kind
+	kill_kind = ""
+	if kill == null:
+		print("kill: no %s stands" % kind)
+		return
+	print("kill: the %s at %d, %d" % [kind, kill.idxX, kill.idxZ])
+	_look_at(kill.go.global_position)
+	kill.damage_building_place(1e6, main.camera.global_position)
+
+
+static func _kind_of(t) -> String:
+	if not U.alive(t.structure):
+		return "tree" if not t.decorations.is_empty() else ""
+	if t.isWall:
+		return "wall"
+	if U.comp(t.structure, "Castle") != null:
+		return "castle"
+	return "gun" if U.shooter(t.structure) != null else ""

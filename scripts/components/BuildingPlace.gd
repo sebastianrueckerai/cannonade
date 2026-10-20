@@ -68,18 +68,24 @@ func is_free() -> bool:
 
 ## `from` is where the shot came from (Vector3.INF: nowhere); a wall killed here crumbles away from it.
 func damage_building_place(damage: float, from := Vector3.INF) -> void:
+	destroy_decorations(from)
 	if U.alive(ship):
 		ship.damage(damage)
 	elif U.alive(wallStacked):
 		damage_stacked_wall(damage, from)
 	elif upgradeCluster != null:
-		upgradeCluster.damage_structure(damage)
+		upgradeCluster.damage_structure(damage, from)
 	elif U.alive(structure):
 		damage_structure(damage, from)
 
 
-func destroy_decorations() -> void:
+## The decorations go. Once the game runs, each crumbles away from `from` unless `crumble` is off (a ring closing
+## round the tile clears it quietly); the map build and the start castles clear them quietly too.
+func destroy_decorations(from := Vector3.INF, crumble := true) -> void:
+	crumble = crumble and map != null and map.game != null and map.game.started
 	for d in decorations:
+		if crumble:
+			Crumble.crumble(d, from)
 		U.destroy(d)
 	decorations = []
 
@@ -100,17 +106,16 @@ func damage_structure(damage: float, from := Vector3.INF) -> void:
 		var castle := U.comp(structure, "Castle")
 		if castle != null:
 			Sound.play("hit_castle")
-			castle.take_damage(damage)
+			castle.take_damage(damage, from)
 			return
 	var bb = block()
 	if bb != null:
 		bb.hits_taken += 1
 		bb.health -= damage
 		if bb.health <= 0:
-			if isWall:
-				Crumble.crumble(structure, from)
-				if U.alive(wallStacked):
-					Crumble.crumble(wallStacked, from)
+			Crumble.crumble(structure, from)
+			if U.alive(wallStacked):
+				Crumble.crumble(wallStacked, from)
 			un_build()
 		else:
 			Sound.play("hit_gun" if U.shooter(structure) != null else "hit_wall")

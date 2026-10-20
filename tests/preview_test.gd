@@ -18,6 +18,7 @@ var failures: Array = []
 func _ready() -> void:
 	get_tree().root.size = Vector2i(1280, 720)  # headless windows are 64 x 64
 	await _build("versus", "7")
+	_check_quiet_build()
 	_check_hand()
 	await _check_hovers()
 	await _check_gun_hover()
@@ -54,6 +55,18 @@ func _check_hand() -> void:
 	check(main.find_children("*", "SubViewport", true, false).is_empty()
 			and main.ui.find_children("*", "TextureRect", true, false).is_empty(),
 			"no next-piece viewport and no icon panel exist")
+
+
+## The map build and the start castles clear decorated ground without rubble (I69): only a shot or a build in play
+## crumbles a tree.
+func _check_quiet_build() -> void:
+	var decorated := 0
+	for col in map.tiles:
+		for t in col:
+			decorated += 1 if not t.decorations.is_empty() else 0
+	var heaps: int = main.find_children("*", "Node3D", true, false).filter(func(n): return n is Crumble).size()
+	check(decorated > 0 and heaps == 0,
+			"the map build and the start castles leave no rubble (%d decorated tiles, %d heaps)" % [decorated, heaps])
 
 
 ## A free tile in reach of the start castle with trees or stones on it.

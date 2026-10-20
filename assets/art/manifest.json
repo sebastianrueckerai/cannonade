@@ -864,29 +864,5 @@
     "source_sha": "156f1575822f",
     "approved_by": "Sebastian",
     "synced": "2026-10-20T16:27:26+02:00"
-  },
-  "wall_rubble": {
-    "size": [
-      1.0,
-      1.0,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "wall_rubble"
-    ],
-    "tris": 623
-  },
-  "wall_rubble_upper": {
-    "size": [
-      1.0,
-      1.0,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "wall_rubble_upper"
-    ],
-    "tris": 570
   }
 }
