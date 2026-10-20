@@ -123,9 +123,9 @@
       "castle"
     ],
     "tris": 3121,
-    "source_sha": "c1ccea198077",
+    "source_sha": "c69a1ca38239",
     "approved_by": "Sebastian",
-    "synced": "2026-10-19T15:33:01+02:00"
+    "synced": "2026-10-20T15:07:07+02:00"
   },
   "castle_d1": {
     "size": [
@@ -138,9 +138,9 @@
       "castle_d1"
     ],
     "tris": 3274,
-    "source_sha": "779584a679af",
+    "source_sha": "64030da115b4",
     "approved_by": "Sebastian",
-    "synced": "2026-10-19T15:33:01+02:00"
+    "synced": "2026-10-20T15:07:07+02:00"
   },
   "castle_d2": {
     "size": [
@@ -153,9 +153,9 @@
       "castle_d2"
     ],
     "tris": 2726,
-    "source_sha": "673a1b72df3e",
+    "source_sha": "94ea2673b8e4",
     "approved_by": "Sebastian",
-    "synced": "2026-10-19T15:33:01+02:00"
+    "synced": "2026-10-20T15:07:07+02:00"
   },
   "castle_d3": {
     "size": [

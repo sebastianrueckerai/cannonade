@@ -136,7 +136,41 @@ def split_team(ob):
             votes += TEAM_HUE[0] <= hue <= TEAM_HUE[1] and sat >= TEAM_MIN_SAT and val > 0.08
         p.material_index = 0 if votes * 2 > len(pts) else 1
         n += votes * 2 > len(pts)
-    return int(n)
+    return int(n) + fill_team(ob)
+
+
+def fill_team(ob, passes=4):
+    """A face the vote left out inside a team surface joins it: the texture shades a cone roof's slice or an annex
+    roof's slope too pale for the hue vote, and the slice stayed stone (Sebastian, 2026-10-20). A face with more
+    team neighbours across its edges than not becomes team, and so does a sloping face of some size with any
+    team neighbour, a roof slope beside its other half; a wall face under a roof edge stands vertical and stays."""
+    # edges keyed by vertex position, not index: a generated mesh doubles its vertices along a UV seam, and the
+    # pale slice sits on that seam
+    verts = ob.data.vertices
+    key = lambda i: tuple(round(c, 3) for c in verts[i].co)
+    edge_of = lambda a, b: (min(key(a), key(b)), max(key(a), key(b)))
+    edge_faces = {}
+    polys = ob.data.polygons
+    edges = {}
+    for p in polys:
+        edges[p.index] = [edge_of(a, b) for a, b in p.edge_keys]
+        for k in edges[p.index]:
+            edge_faces.setdefault(k, []).append(p.index)
+    filled = 0
+    for _ in range(passes):
+        grew = 0
+        for p in polys:
+            if p.material_index == 0:
+                continue
+            team = sum(polys[q].material_index == 0 for k in edges[p.index] for q in edge_faces[k] if q != p.index)
+            slope = 0.25 < p.normal.z < 0.95 and p.area > 0.05
+            if team * 2 > len(edges[p.index]) or (team >= 1 and slope):
+                p.material_index = 0
+                grew += 1
+        filled += grew
+        if grew == 0:
+            break
+    return filled
 
 
 def team_deck(ob, spec):

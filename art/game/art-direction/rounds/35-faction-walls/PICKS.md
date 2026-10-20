@@ -83,3 +83,6 @@ for the full-tile block. Spend: six sketches at 0.25 USD and one critique at 0.0
   straight down and at the game's angle, under the shipped colours.
 - **Passed.** Sebastian on [pieces.jpg](pieces.jpg): "looks great! lets go!" The eight wall models (four looks,
   each with its storey) are approved in their manifests; C15 is ticked.
+- **The looks side by side in the game:** "Can you show me the walls in comparison? in Game?"
+  [looks-in-game.jpg](looks-in-game.jpg): a four-player game at its start, each player's castle ring close
+  up, one column per look with its colour, at the game's angle and from a low angle.

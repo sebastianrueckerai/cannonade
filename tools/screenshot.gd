@@ -1,6 +1,8 @@
 extends Node
 ## Renders a game mode and saves screenshots (needs a display, e.g. xvfb-run).
 ##   xvfb-run godot --rendering-driver opengl3 --fixed-fps 30 res://tests/screenshot.tscn -- --mode=ai2 --at=5,40 --out=/tmp/shot
+##   --look=x,z     the camera close to that tile; --castle=N instead looks at player N's first castle
+##   --eye=Y,Z      with --look or --castle: the camera Y up and Z back from the target instead of 9,6
 
 const Main = preload("res://scripts/Main.gd")
 
@@ -39,10 +41,19 @@ func _ready() -> void:
 			main.camera._unhandled_input(ev)
 	if args.has("fov"):
 		main.camera.fov = float(args["fov"])
+	var target = null
 	if args.has("look"):
 		var q: PackedStringArray = str(args["look"]).split(",")
-		var target: Vector3 = main.game.map.tile_position(int(q[0]), int(q[1]))
-		main.camera.global_position = target + Vector3(0, 9, 6)
+		target = main.game.map.tile_position(int(q[0]), int(q[1]))
+	elif args.has("castle"):
+		var p = main.game.players[int(args["castle"])]
+		for c in main.game.map.castles:
+			if c.owner() == p:
+				target = c.go.global_position
+				break
+	if target != null:
+		var eye: PackedStringArray = str(args.get("eye", "9,6")).split(",")
+		main.camera.global_position = target + Vector3(0, float(eye[0]), float(eye[1]))
 		main.camera.look_at(target)
 	if args.has("aim"):
 		var p: PackedStringArray = str(args["aim"]).split(",")

@@ -191,3 +191,19 @@ inside tile, so the majority counts the six side blocks, not ten.
 **The board.** [pieces.jpg](../../game/art-direction/rounds/35-faction-walls/pieces.jpg): the battle tool's
 `--pieces` layout, every hand piece alone (1, 2, 3, 4 in a row, S, T, X), a corner, a 2 x 2, a filled 3 x 3
 and a 4 x 4 ring, straight down and at the game's angle.
+
+## Fourth pass: the looks in the game, and the castle's roof
+
+Sebastian: "Can you show me the walls in comparison? in Game?" and "the castle texture has a piece of the roof
+missing... its like a thin pizza slice of the round roof not colored in the players colors -> fix!"
+
+**The roof.** The cleanup's team vote samples the raw Meshy texture by hue and saturation, and the texture
+shades a slice of the cone and the edges of the annex roofs too pale, so those faces stayed on the stone
+material and showed cream in play. `fill_team` in [cleanup.py](../../pipeline/blender/cleanup.py) now fills a
+face from its team neighbours after the vote; the castle, d1 and d2 were cleaned, rendered, synced and checked
+in a game close-up. d3 and d4 carry no team part (D72).
+
+**The looks in the game.** [looks-in-game.jpg](../../game/art-direction/rounds/35-faction-walls/looks-in-game.jpg):
+a four-player game at its start, each player's castle ring close up at the game's angle and from a low angle,
+so the four looks stand side by side with their colours, shot by [tools/screenshot.gd](/home/womb/repos/grid-cannons/tools/screenshot.gd)
+with its new `--castle=N` and `--eye=Y,Z`.
