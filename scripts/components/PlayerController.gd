@@ -84,6 +84,11 @@ func is_ai() -> bool:
 	return false
 
 
+## Another player's action sounds further away.
+func sound_db() -> float:
+	return Sound.OTHER_DB if is_ai() else 0.0
+
+
 func in_reach(x: int, z: int) -> bool:
 	_fresh_reach()
 	return reach[x * map.sizeZ + z] != 0
@@ -490,11 +495,15 @@ func manage_player_actions() -> void:
 					build_next_wall(buildableTileSelected)
 				elif canStackWall:
 					stack_wall(buildableTileSelected)
+				else:
+					Sound.play("place_invalid")
 			elif button_down("build_building") and U.alive(nextBuilding):
 				if canPlaceBuilding:
 					build_next_building()
 				elif canCombine:
 					_combine_next_building_with_selected_tile()
+				else:
+					Sound.play("place_invalid")
 		if game.shootingAllowed:
 			if button_down("fire"):
 				for cannon in activeCannons:
@@ -506,8 +515,10 @@ func manage_player_actions() -> void:
 		if U.alive(nextWall):
 			if button_down("rotate_cw"):
 				U.comp(nextWall, "BuildingBlock").rotate_clockwise()
+				Sound.play("rotate")
 			if button_down("rotate_ccw"):
 				U.comp(nextWall, "BuildingBlock").rotate_counter_clockwise()
+				Sound.play("rotate")
 	elif voidSelected:
 		if button_down("build_wall") and U.alive(nextWall):
 			drop(nextWall, true)
@@ -533,8 +544,9 @@ func combine_building(tile) -> Node3D:
 	U.destroy(nextBuilding)
 	nextBuilding = null
 	secondsLastBuilding += U.time
-	tile.un_build()
+	tile.un_build(true)
 	build_building(tile, combined)
+	Sound.play("fuse_heavy", sound_db())
 	return combined
 
 
@@ -542,8 +554,10 @@ func build_next_building(tile = null) -> void:
 	if tile == null:
 		tile = buildableTileSelected
 	if over_parts_cap(nextBuilding):
+		Sound.play("place_invalid", sound_db())
 		return
 	build_building(tile, nextBuilding)
+	Sound.play("place_gun", sound_db())
 	nextBuilding = null
 	secondsLastBuilding += U.time
 
@@ -583,6 +597,7 @@ func stack_wall(tile) -> void:
 		var block := Catalog.spawn("wall", null, self)
 		U.comp(block, "BuildingBlock").player = self
 		t.stack_wall(block)
+	Sound.play("stack_block", sound_db())
 	U.destroy(nextWall)
 	nextWall = null
 	get_next_wall()
@@ -591,13 +606,27 @@ func stack_wall(tile) -> void:
 ## Stamps a wall block on every tile of the held piece anchored on `tile`; the piece is used up.
 func build_next_wall(tile) -> void:
 	var tiles := piece_tiles(tile)
+	var closed_before := _closed_tiles()
 	map.statesMap.begin_batch()
 	for t in tiles:
 		build_wall(t, Catalog.spawn("wall", null, self))
 	map.statesMap.end_batch(tiles)
+	Sound.play("place_piece", sound_db())
+	if _closed_tiles() > closed_before:
+		Sound.play("ring_closed", sound_db())
 	U.destroy(nextWall)
 	nextWall = null
 	get_next_wall()
+
+
+## Tiles of the map this player's rings close.
+func _closed_tiles() -> int:
+	var n := 0
+	for column in map.tiles:
+		for t in column:
+			if t.ringOwner == self:
+				n += 1
+	return n
 
 
 func build_wall(tile, wall: Node3D) -> void:
@@ -647,6 +676,8 @@ func get_next_wall() -> void:
 		U.comp(wall, "BuildingBlock").rotate_counter_clockwise()
 	nextWall = wall
 	switch_casting_shadows(nextWall, false)
+	if not is_ai():
+		Sound.play("draw_piece")
 
 
 ## Places a building of `def` with its lower left corner on tile (x, z), as the

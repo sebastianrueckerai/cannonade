@@ -21,6 +21,11 @@ boot_splash/show_image=false
 
 U="*res://scripts/U.gd"
 Catalog="*res://scripts/Catalog.gd"
+Sound="*res://scripts/Sound.gd"
+
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"
 
 [display]
 

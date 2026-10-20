@@ -163,3 +163,25 @@ D84, from round 36: the build and the battle theme are the age-of-sail chiptune 
 `build.ogg` and `battle.ogg`, full clips not yet cut to loops. D85, from round 38: `menu.ogg` is the
 build theme as a slow waltz, `win.ogg` the battle theme happy, `lose.ogg` the build theme mournful, all
 full length. The five music cues are picked.
+
+## In the game
+
+[Sound.gd](/home/womb/repos/grid-cannons/scripts/Sound.gd) is the autoload. It loads every clip of
+[assets/audio/](/home/womb/repos/grid-cannons/assets/audio) at start, `sfx/` and `ui/` by cue, a cue's
+variants from the `_n` suffix, and plays a cue with `Sound.play(cue, db)`: a random variant, never the
+same twice in a row, at most three voices per cue with the oldest stolen, on the clip's bus. A cue with no
+clip plays nothing, so every hook of the cue list is in the code and a new clip only needs its file. A
+cue in `Sound.ALIAS` borrows another's clip until it has one: ui_hover, countdown, shot_ship, stack_block,
+hit_gun and hit_castle. `Sound.music(cue)` loops `music/<cue>.ogg` on the Music bus. The buses are
+Master, Music, SFX and UI in [default_bus_layout.tres](/home/womb/repos/grid-cannons/default_bus_layout.tres).
+Another player's action plays 6 dB down. The clips draw their randomness from the autoload's own
+generator, so seeded battles and the lab stay as they were.
+
+The hooks: the menu, the loading screen, GameController (music, horns, countdown), Castle (claimed, lost,
+ruin), PlayerController (piece, stack, gun, refused, fusion, rotate, draw, ring closed), Shooter (the
+shot by projectile and ship), TileImpactor (water, ground), BuildingPlace (hits, crumble, gun destroyed),
+UpgradeCluster (one sound for one structure), Ship (hit, sink), Main (win, lose, the end buttons).
+[tests/sound_test.gd](/home/womb/repos/grid-cannons/tests/sound_test.gd) drives them.
+
+Not in yet: panning by map side, volume sliders, the loop cut of the music, the B list.
+

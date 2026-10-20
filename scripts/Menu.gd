@@ -35,6 +35,7 @@ var _capture_btn: Button = null
 
 func _ready() -> void:
 	_load_remap()
+	Sound.music("menu")
 	theme = Art.theme()
 	var bg := Art.texture("menu_background.png")
 	if bg != null:
@@ -92,6 +93,7 @@ func _ready() -> void:
 		quit.custom_minimum_size = Vector2(0, 36)
 		quit.pressed.connect(get_tree().quit)
 		box.add_child(quit)
+	Sound.buttons(box)
 	var errors: Array[String] = []
 	errors.append_array(Catalog.errors)
 	errors.append_array(Art.validate())
@@ -212,6 +214,7 @@ func _show_help() -> void:
 	close.custom_minimum_size = Vector2(0, 44)
 	close.pressed.connect(_close_help)
 	box.add_child(close)
+	Sound.buttons(dim)
 	close.grab_focus()
 	_help = dim
 

@@ -150,3 +150,14 @@ the chosen chiptune theme.
 
 The picks go into decisions.md as D82 and following, then round 39 makes the five cues and the A-list
 effects on the picked models, and the Godot side follows: three buses, the hooks of the cue list.
+
+## The game has sound
+
+Sebastian: "You should have everything, make the game have sound! Tell me if anything is missing!"
+[Sound.gd](/home/womb/repos/grid-cannons/scripts/Sound.gd) and the hooks, see the "In the game" section
+of [sound.md](../../game/design/sound.md). `castle_lost` is `castle_claimed` reversed, made in the kit
+as the cue list said. [tests/sound_test.gd](/home/womb/repos/grid-cannons/tests/sound_test.gd) checks
+the buses, the variants, the voice cap, the music per phase and end, and a voice at every hook it can
+drive: 31 checks, each red with its hook removed. Missing clips, now silent hooks or borrowed clips:
+K8 on the roadmap lists them.
+
