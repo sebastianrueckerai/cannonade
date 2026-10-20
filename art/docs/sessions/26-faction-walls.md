@@ -207,3 +207,15 @@ in a game close-up. d3 and d4 carry no team part (D72).
 a four-player game at its start, each player's castle ring close up at the game's angle and from a low angle,
 so the four looks stand side by side with their colours, shot by [tools/screenshot.gd](/home/womb/repos/grid-cannons/tools/screenshot.gd)
 with its new `--castle=N` and `--eye=Y,Z`.
+
+## Fifth pass: the tops differ
+
+Sebastian, on [looks-in-game.jpg](../../game/art-direction/rounds/35-faction-walls/looks-in-game.jpg):
+"Unfortunately the walls all look the same cause of the angle. Can you also have them have some variations for
+the granulations?" The camera sees a block's top, so the tops carry the difference now: each look has its own
+merlons (`TOPS` in [wall_block.py](../../game/assets/3d/wall_block.py)), all inside the deck's corner squares so
+the walkway's corridors stay free. Plain keeps the square teeth; corbel gets octagonal drums; pilaster gets
+square teeth with a pyramid cap, whose lit facets read from above; coursed stone gets a 2 x 2 of small studs per
+corner, sixteen a tile, a finer grain. Triangles: corbel 508, pilaster 398, course 612, within the 700 of the
+block. The six changed models (three looks and their storeys) sync unapproved; the board is shot again and
+waits on his pass.

@@ -17,15 +17,18 @@
 # A block knows nothing of its neighbours (D75), so no style protrudes past the tile edge (a neighbour's
 # protrusion would overlap it) and no recess goes deeper than 0.12 (the storey above must still hide the merlons).
 # An inset body leaves a joint groove at every seam, twice the inset wide.
-# Styles:
-#   plain     the D75 block, a full-tile box
-#   corbel    plinth 0..0.08 full tile, body inset 0.07, eight corbels under a full-tile slab 0.55..0.69
-#   pilaster  panels 0.05 deep between corner posts, from a plinth at 0.08 up to a string course at 0.62
+# Styles, each with its own merlons (TOPS), since the game camera sees the tops and not the faces:
+#   plain     the D75 block, a full-tile box; square merlons
+#   corbel    plinth 0..0.08 full tile, body inset 0.07, eight corbels under a full-tile slab; octagonal drum merlons
+#   pilaster  panels 0.05 deep between corner posts, from a plinth at 0.08 up to a string course at 0.62;
+#             pyramid-capped merlons
 #   course    three stone courses round a set-back core: joints 0.03 wide and deep at 0.25 and 0.50, a centre joint
-#             in the middle course, notched block corners in the outer courses so every seam reads as a joint
+#             in the middle course, notched block corners in the outer courses so every seam reads as a joint;
+#             sixteen small stud merlons
 #   arch      one blind round-headed arch recess per face: 0.5 wide, sill 0.12, springing 0.36, apex 0.61, 0.07 deep
 #   caps      body inset 0.04 under a full-tile cornice 0.65..0.69, pyramid caps on the merlons
-# Chamfers (flat, one segment, 0.05): merlon top edges and merlon vertical corner edges. Never an edge in a tile
+# Chamfers (flat, one segment, 0.05): square merlons on their top and vertical edges, drums on top, pyramids on their
+# verticals, studs none. Never an edge in a tile
 # boundary plane (x or y = +-0.5), never an edge on the ground, never a concave edge.
 import math
 
@@ -199,28 +202,55 @@ def deck_plate(z0):
     return box("deck", -EDGE, EDGE, -EDGE, EDGE, z0 + BAND_TOP - 0.01, z0 + DECK_TOP)
 
 
-def merlons(z_from, z_to, pyramid):
+def merlons(z_from, z_to, top):
+    """The teeth on the deck's corner squares, one shape per look so the looks differ from above, where the game
+    camera looks (Sebastian, 2026-10-20): square, the D75 block; octagon, drums; pyramid, square teeth with a
+    pyramid cap; studs, a 2 x 2 of small teeth per corner, sixteen a tile. All stay inside [0.125, 0.46] on x
+    and y so the walkway's corridors stay free."""
     bm = bmesh.new()
     for x0, x1 in SPANS:
         for y0, y1 in SPANS:
-            top = z_to - 0.06 if pyramid else z_to
-            geom = bmesh.ops.create_cube(bm, size=1.0)["verts"]
-            for v in geom:
-                v.co.x = x1 if v.co.x > 0 else x0
-                v.co.y = y1 if v.co.y > 0 else y0
-                v.co.z = top if v.co.z > 0 else z_from
-            if pyramid:
-                cap = [f for f in bm.faces if all(v in geom for v in f.verts) and all(abs(v.co.z - top) < EPS for v in f.verts)]
-                apex = bmesh.ops.poke(bm, faces=cap)["verts"][0]
-                apex.co.z = z_to
+            if top == "octagon":
+                r = (x1 - x0) / 2
+                ret = bmesh.ops.create_cone(bm, cap_ends=True, segments=8, radius1=r, radius2=r, depth=z_to - z_from)
+                bmesh.ops.rotate(bm, verts=ret["verts"], cent=Vector(), matrix=Matrix.Rotation(math.pi / 8, 3, "Z"))
+                bmesh.ops.translate(bm, verts=ret["verts"], vec=Vector((x0 + r, y0 + r, (z_from + z_to) / 2)))
+            elif top == "studs":
+                s = (x1 - x0) / 2
+                for sx in (0, 1):
+                    for sy in (0, 1):
+                        _tooth(bm, x0 + sx * s + 0.015, x0 + (sx + 1) * s - 0.015, y0 + sy * s + 0.015,
+                               y0 + (sy + 1) * s - 0.015, z_from, z_to - 0.05, False)
+            else:
+                _tooth(bm, x0, x1, y0, y1, z_from, z_to, top == "pyramid")
     vertical = lambda e: abs(e.verts[0].co.x - e.verts[1].co.x) < EPS and abs(e.verts[0].co.y - e.verts[1].co.y) < EPS
     flat_top = lambda e: all(abs(v.co.z - z_to) < EPS for v in e.verts)
-    edges = [e for e in bm.edges if vertical(e) and e.calc_length() > 0.1]
-    if not pyramid:
+    edges = []
+    if top in ("square", "pyramid"):
+        edges += [e for e in bm.edges if vertical(e) and e.calc_length() > 0.1]
+    if top in ("square", "octagon"):
         edges += [e for e in bm.edges if flat_top(e)]
-    bmesh.ops.bevel(bm, geom=edges, offset=CHAMFER, offset_type="OFFSET", segments=1, affect="EDGES")
+    if edges:
+        bmesh.ops.bevel(bm, geom=edges, offset=CHAMFER, offset_type="OFFSET", segments=1, affect="EDGES")
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     return _object("merlons", bm)
+
+
+def _tooth(bm, x0, x1, y0, y1, z_from, z_to, pyramid):
+    top = z_to - 0.06 if pyramid else z_to
+    geom = bmesh.ops.create_cube(bm, size=1.0)["verts"]
+    for v in geom:
+        v.co.x = x1 if v.co.x > 0 else x0
+        v.co.y = y1 if v.co.y > 0 else y0
+        v.co.z = top if v.co.z > 0 else z_from
+    if pyramid:
+        cap = [f for f in bm.faces if all(v in geom for v in f.verts) and all(abs(v.co.z - top) < EPS for v in f.verts)]
+        apex = bmesh.ops.poke(bm, faces=cap)["verts"][0]
+        apex.co.z = z_to
+
+
+TOPS = {"plain": "square", "corbel": "octagon", "pilaster": "pyramid", "course": "studs", "arch": "square",
+        "caps": "pyramid"}
 
 
 def region_of(c, z0):
@@ -279,7 +309,7 @@ def build(asset):
     style = asset.get("style", "plain")
     wall = BODIES[style](z0)
     clean(wall)
-    boolean(wall, [deck_plate(z0), merlons(z0 + DECK_TOP - 0.01, z0 + MERLON_TOP, style == "caps")], "UNION")
+    boolean(wall, [deck_plate(z0), merlons(z0 + DECK_TOP - 0.01, z0 + MERLON_TOP, TOPS[style])], "UNION")
     areas = tag_regions(wall, z0)
     # the deck's top: the centre square, a corridor of 0.335 by 0.25, a cap of 0.04 by 0.25
     for rid, want in ((1, 0.0625), (2, 0.08375), (6, 0.01)):

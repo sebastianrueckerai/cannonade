@@ -86,3 +86,6 @@ for the full-tile block. Spend: six sketches at 0.25 USD and one critique at 0.0
 - **The looks side by side in the game:** "Can you show me the walls in comparison? in Game?"
   [looks-in-game.jpg](looks-in-game.jpg): a four-player game at its start, each player's castle ring close
   up, one column per look with its colour, at the game's angle and from a low angle.
+- **Open: the tops.** "Unfortunately the walls all look the same cause of the angle. Can you also have them
+  have some variations for the granulations?" Each look now has its own merlons: square, octagonal drums,
+  pyramid-capped, sixteen small studs. [looks-in-game.jpg](looks-in-game.jpg) shot again with them, for his pass.

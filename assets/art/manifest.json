@@ -650,10 +650,10 @@
     "parts": [
       "wall"
     ],
-    "tris": 468,
-    "source_sha": "625b983677af",
-    "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:00:19+02:00"
+    "tris": 508,
+    "source_sha": "d12465bea1c2",
+    "approved_by": null,
+    "synced": "2026-10-20T15:24:45+02:00"
   },
   "wall_corbel_upper": {
     "size": [
@@ -665,40 +665,40 @@
     "parts": [
       "wall"
     ],
-    "tris": 468,
-    "source_sha": "6bf2ffa9d83d",
-    "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:00:19+02:00"
+    "tris": 508,
+    "source_sha": "7adae90b6610",
+    "approved_by": null,
+    "synced": "2026-10-20T15:24:45+02:00"
   },
   "wall_course": {
     "size": [
       1.0,
-      1.0,
+      0.95,
       1.0
     ],
     "tolerance": 0.02,
     "parts": [
       "wall"
     ],
-    "tris": 524,
-    "source_sha": "4cfa17d633e4",
-    "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:00:19+02:00"
+    "tris": 612,
+    "source_sha": "9fca023bcdce",
+    "approved_by": null,
+    "synced": "2026-10-20T15:24:45+02:00"
   },
   "wall_course_upper": {
     "size": [
       1.0,
-      1.0,
+      0.95,
       1.0
     ],
     "tolerance": 0.02,
     "parts": [
       "wall"
     ],
-    "tris": 524,
-    "source_sha": "794ad0576786",
-    "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:00:19+02:00"
+    "tris": 612,
+    "source_sha": "6fc187897903",
+    "approved_by": null,
+    "synced": "2026-10-20T15:24:45+02:00"
   },
   "wall_cross_base": {
     "size": [
@@ -800,10 +800,10 @@
     "parts": [
       "wall"
     ],
-    "tris": 390,
-    "source_sha": "989792f67d12",
-    "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:00:19+02:00"
+    "tris": 398,
+    "source_sha": "5a915ccc23d0",
+    "approved_by": null,
+    "synced": "2026-10-20T15:24:45+02:00"
   },
   "wall_pilaster_upper": {
     "size": [
@@ -815,10 +815,10 @@
     "parts": [
       "wall"
     ],
-    "tris": 390,
-    "source_sha": "01eca2960494",
-    "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:00:19+02:00"
+    "tris": 398,
+    "source_sha": "f4d26c091d74",
+    "approved_by": null,
+    "synced": "2026-10-20T15:24:45+02:00"
   },
   "wall_tri_base": {
     "size": [
