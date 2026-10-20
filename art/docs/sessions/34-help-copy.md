@@ -1,11 +1,11 @@
-# Session 33: the tutorial reads snappy and smaller than the controls
+# Session 34: the tutorial reads snappy and smaller than the controls
 
 Sebastian, 2026-10-20: "The tutorial text in the menu is too long. We dont need to be this exact.
 make it snappy and choose a slightly smaller font than the other column where you can change
 controls. Otherwise distinguishing between tutorial text and key binding is hard. Also make sure
 the button at the bottom is placed right!"
 
-Roadmap: I60.
+Roadmap: I61.
 
 ## Change
 
@@ -18,7 +18,7 @@ Roadmap: I60.
   content area, off the parchment's frame, at 1280 x 720, 1920 x 1080, 1280 x 1024 and
   1024 x 600. The test now guards that place.
 
-![before and after](33-help.jpg)
+![before and after](34-help.jpg)
 
 ## Tests
 
