@@ -98,7 +98,7 @@ func _run() -> void:
 	await frames(3)
 	# the standard versus map with a dormant enemy
 	var ec = enemy_castle()
-	check(ec != null and map.is_tile_enclosed(15, 23), "the enemy starts with its castle walled in")
+	check(ec != null and map.is_tile_enclosed(map.sizeX / 2, map.sizeZ - 1 - map.sizeZ / 4), "the enemy starts with its castle walled in")
 	var neutral := 0
 	for c in map.castles:
 		if U.alive(c) and c.owner() == null:
@@ -108,7 +108,7 @@ func _run() -> void:
 	check(game.buildingAllowed and not main.get_node("UI/Timer").visible, "practice starts building, without a timer")
 
 	# a pocket on the start ring for a gun (the ring itself has no free tile), then Enter: battle
-	var b := Vector2i(15, 7)  # the player's castle
+	var b := Vector2i(map.sizeX / 2, map.sizeZ / 4)  # the player's castle
 	human.build_wall(map.tiles[b.x + 3][b.y - 2], Catalog.spawn("wall"))
 	human.build_wall(map.tiles[b.x + 4][b.y - 2], Catalog.spawn("wall"))
 	for z in range(b.y - 1, b.y + 2):
@@ -125,7 +125,7 @@ func _run() -> void:
 	check(enemy.stats.get("shots", 0) == 0, "the dormant enemy never fires")
 
 	# a shell destroys an enemy wall; nothing rebuilds it
-	var front := Vector2i(15, 21)
+	var front := Vector2i(b.x, map.sizeZ - 1 - map.sizeZ / 4 - 2)  # the ring wall south of the enemy's castle
 	await point_at_tile(front)
 	await press_key(KEY_SPACE)
 	await seconds(12.0)
@@ -138,8 +138,8 @@ func _run() -> void:
 
 	# twelve shells ruin the enemy castle; the next check ends the game
 	for i in 12:
-		map.tiles[15][23].damage_building_place(10.0)
-	check(ec.is_ruin() and U.alive(ec.go) and map.get_mini(15, 23) == 255, "twelve shells leave a ruin")
+		map.tiles[map.sizeX / 2][map.sizeZ - 1 - map.sizeZ / 4].damage_building_place(10.0)
+	check(ec.is_ruin() and U.alive(ec.go) and map.get_mini(map.sizeX / 2, map.sizeZ - 1 - map.sizeZ / 4) == 255, "twelve shells leave a ruin")
 	await press_key(KEY_ENTER)
 	check(not game.started, "the enemy without a castle is out at the check")
 	var overlay := main.get_node_or_null("GameOver")

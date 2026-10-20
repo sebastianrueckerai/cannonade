@@ -100,7 +100,7 @@ func check_pace(times: Array, pace: float, phase: String, slack := INF) -> void:
 
 ## Free, dry, buildable tiles in the enemy's build range.
 func enemy_free_tiles() -> Array:
-	var b := Vector2i(map.sizeX / 2, map.sizeZ - map.sizeZ / 4)
+	var b := Vector2i(map.sizeX / 2, map.sizeZ - 1 - map.sizeZ / 4)
 	var out: Array = []
 	for r in range(2, 6):
 		for dx in range(-r, r + 1):

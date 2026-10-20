@@ -54,11 +54,13 @@ func _run() -> void:
 	# the 2x2 specials placed directly from their files (their upgrade-block
 	# recipes are parked out of the game)
 	var built := {}
-	built["cannon22b"] = p2.place(load("res://data/buildings/cannon22b.tres"), 25, 24)
-	built["flak22"] = p2.place(load("res://data/buildings/flak22.tres"), 23, 17)
+	# the spots are off every castle whatever the jitter: the east margin, the middle columns
+	# clear of the start rings and the free rows between the castle bands
+	built["cannon22b"] = p2.place(load("res://data/buildings/cannon22b.tres"), 31, 24)
+	built["flak22"] = p2.place(load("res://data/buildings/flak22.tres"), 20, 11)
 	# the shield stands away from the gun's firing lines: its 7-tile radius would
 	# swallow every shell the checks below fire, and the volley must land
-	built["shield22"] = p2.place(load("res://data/buildings/shield22.tres"), 23, 3)
+	built["shield22"] = p2.place(load("res://data/buildings/shield22.tres"), 20, 2)
 	check(built.values().all(func(s): return U.alive(s)), "the specials stand on the map")
 
 	# four basic cannons in a square fuse into the heavy cannon
@@ -84,8 +86,8 @@ func _run() -> void:
 	check(burning, "cluster bomb sets tiles on fire (not buildable while burning)")
 
 	# rocket, from the parked rocket station placed from its file: the hit tile is destroyed for good
-	var station: Node3D = p1.place(load("res://data/buildings/rocket_station.tres"), 9, 2)
-	var rt = map.tiles[15][26]  # out of reach of the flak and the shield
+	var station: Node3D = p1.place(load("res://data/buildings/rocket_station.tres"), 12, 2)
+	var rt = map.tiles[map.sizeX / 2][map.sizeZ - 1 - map.sizeZ / 4 + 3]  # north of the enemy ring, out of reach of the flak and the shield
 	var launcher := U.shooter(station)
 	launcher.nextBulletTime = 0.0  # skip the initial reload delay
 	check(launcher.try_shoot(rt.go.global_position, rt), "rocket station fires")

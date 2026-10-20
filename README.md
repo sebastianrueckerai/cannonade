@@ -20,7 +20,7 @@ Game modes:
 
 | mode     | menu entry      | setup                                          |
 |----------|-----------------|------------------------------------------------|
-| `versus` | Player vs. AI   | you vs. one AI, 30×30 map, ten castles         |
+| `versus` | Player vs. AI   | you vs. one AI, 34×34 map, ten castles         |
 | `ai2`    | Watch           | watch two AIs, same map                        |
 | `practice` | Practice      | the versus map with a dormant enemy, no timer  |
 

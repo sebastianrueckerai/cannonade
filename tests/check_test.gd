@@ -61,6 +61,11 @@ func centre(c) -> Vector2i:
 	return map.tile_index_at(c.go.global_position)
 
 
+## Free rows between the 3x3 castle centred on `cc` and the nearest edge of map `mp`.
+func edge_rows(mp, cc: Vector2i) -> int:
+	return mini(mini(cc.x, cc.y), mini(mp.sizeX - 1 - cc.x, mp.sizeZ - 1 - cc.y)) - 1
+
+
 func neutrals() -> Array:
 	var out: Array = []
 	for c in map.castles:
@@ -87,7 +92,7 @@ func run_check() -> void:
 
 ## Free, open (never enclosed) tiles at Chebyshev distance at least 8 from both start castles.
 func open_tiles() -> Array:
-	var starts := [Vector2i(15, 7), Vector2i(15, 23)]
+	var starts := [Vector2i(map.sizeX / 2, map.sizeZ / 4), Vector2i(map.sizeX / 2, map.sizeZ - 1 - map.sizeZ / 4)]
 	var out: Array = []
 	for x in map.sizeX:
 		for z in map.sizeZ:
@@ -142,6 +147,8 @@ func _run() -> void:
 		for j in range(i + 1, all.size()):
 			min_dist = mini(min_dist, max(absi(all[i].x - all[j].x), absi(all[i].y - all[j].y)))
 	check(min_dist >= 5, "castle centres keep Chebyshev distance 5 (closest %d)" % [min_dist])
+	check(all.all(func(cc): return edge_rows(map, cc) >= 3),
+			"every castle keeps three free rows to the map edge (%s)" % [all])
 	check(human.partsCap == 6 and enemy.partsCap == 6, "one castle caps both players at 6 parts")
 
 	# 2: the burn (an open gun goes, an open wall stays)
@@ -307,9 +314,24 @@ func _run() -> void:
 
 	# 6: the end
 	for i in 12:
-		map.tiles[15][23].damage_building_place(10.0)
+		map.tiles[map.sizeX / 2][map.sizeZ - 1 - map.sizeZ / 4].damage_building_place(10.0)
 	check(enemy.castle_count() == 0, "the enemy holds no castle any more")
 	game.next_phase()
 	check(not game.started, "a player without a castle is out at the check")
 	var overlay := main.get_node_or_null("GameOver")
 	check(overlay != null and _find_label(overlay, "VICTORY"), "the overlay shows the victory")
+	_check_margins()
+
+
+## The layout over twelve more seeds: ten castles, and the jitter never puts one within three rows of
+## the map edge. Each game is read and freed before a frame passes, so no AI coroutine starts.
+func _check_margins() -> void:
+	for s in range(10, 22):
+		Main.requested_args = {"seed": str(s), "no-decorations": "true"}
+		var m = Main.new()
+		get_tree().root.add_child(m)
+		var mp = m.game.map
+		var rows: Array = mp.castles.map(func(c): return edge_rows(mp, mp.tile_index_at(c.go.global_position)))
+		check(rows.size() == 10 and rows.min() >= 3,
+				"seed %d: ten castles, each three rows or more off the edge (%s)" % [s, rows])
+		m.free()

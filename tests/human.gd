@@ -160,7 +160,7 @@ func _run() -> void:
 			"a piece hanging off the map edge places nothing")
 
 	# out of range: nothing is built (clear of every neutral castle band)
-	var far := Vector2i(10, 15)
+	var far := Vector2i(map.sizeX / 2, map.sizeZ / 2 - 1)
 	await point_at_tile(far)
 	await press("build_wall")
 	check(not U.alive(map.tiles[far.x][far.y].structure), "no building far away from own walls")

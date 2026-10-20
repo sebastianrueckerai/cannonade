@@ -89,8 +89,10 @@ func _initialize_players() -> void:
 			p.recompute_parts_cap()
 
 
-## Where the four neutral castles of a side try to sit, before jitter.
-const CASTLE_ANCHORS: Array[Vector2i] = [Vector2i(6, 11), Vector2i(23, 11), Vector2i(4, 4), Vector2i(25, 4)]
+## Free rows between any castle and the map edge: room to wall it in.
+const CASTLE_MARGIN := 3
+## Where the four neutral castles of a side try to sit on the 34-tile map, before jitter.
+const CASTLE_ANCHORS: Array[Vector2i] = [Vector2i(8, 13), Vector2i(25, 13), Vector2i(6, 6), Vector2i(27, 6)]
 
 
 ## Each player starts with a walled-in castle; with two players, four neutral
@@ -98,27 +100,28 @@ const CASTLE_ANCHORS: Array[Vector2i] = [Vector2i(6, 11), Vector2i(23, 11), Vect
 func _place_castles() -> void:
 	var n := players.size()
 	var t: Array = map.tiles
-	if map.sizeX < 12 or map.sizeZ < 12:
+	# a start castle at a quarter of the map keeps the margin
+	if map.sizeX < 4 * (CASTLE_MARGIN + 1) or map.sizeZ < 4 * (CASTLE_MARGIN + 1):
 		push_error("Map too small for %d players!" % n)
 		return
+	var dx: int = map.sizeX / 4
+	var dz: int = map.sizeZ / 4
 	match n:
 		1:
 			players[0].build_start_castle(t[map.sizeX / 2][map.sizeZ / 2])
 		2:
-			players[0].build_start_castle(t[map.sizeX / 2][map.sizeZ / 4])
-			players[1].build_start_castle(t[map.sizeX / 2][map.sizeZ - map.sizeZ / 4])
+			players[0].build_start_castle(t[map.sizeX / 2][dz])
+			players[1].build_start_castle(t[map.sizeX / 2][map.sizeZ - 1 - dz])
 		_:
-			var dx: int = map.sizeX / 4
-			var dz: int = map.sizeZ / 4
 			players[0].build_start_castle(t[dx][dz])
-			players[1].build_start_castle(t[dx][map.sizeZ - dz])
-			players[2].build_start_castle(t[map.sizeX - dx][dz])
+			players[1].build_start_castle(t[dx][map.sizeZ - 1 - dz])
+			players[2].build_start_castle(t[map.sizeX - 1 - dx][dz])
 			if n == 4:
-				players[3].build_start_castle(t[map.sizeX - dx][map.sizeZ - dz])
+				players[3].build_start_castle(t[map.sizeX - 1 - dx][map.sizeZ - 1 - dz])
 	if n != 2:
 		return
 	var castle := Catalog.get_def("castle")
-	var placed: Array = [Vector2i(map.sizeX / 2, map.sizeZ / 4), Vector2i(map.sizeX / 2, map.sizeZ - map.sizeZ / 4)]
+	var placed: Array = [Vector2i(map.sizeX / 2, dz), Vector2i(map.sizeX / 2, map.sizeZ - 1 - dz)]
 	for anchor in CASTLE_ANCHORS:
 		var c := _neutral_castle_spot(anchor, placed)
 		map.place_neutral(castle, c.x - 1, c.y - 1)
@@ -129,14 +132,15 @@ func _place_castles() -> void:
 
 
 ## A jittered castle centre: up to 2 tiles off the anchor from the game's
-## random numbers, inside the bottom half, at Chebyshev distance at least 5
-## from every castle already placed. The exact mirror has to keep its
-## distance too. Falls back to the anchor itself.
+## random numbers, inside the bottom half and off the margin, at Chebyshev
+## distance at least 5 from every castle already placed. The exact mirror has
+## to keep its distance too. Falls back to the anchor itself.
 func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
+	var lo := CASTLE_MARGIN + 1  # the centre of a 3x3 whose edge sits on the margin
 	var max_z: int = map.sizeZ / 2 - 3  # keeps the exact mirror 5 tiles away too
 	for i in 25:
 		var c := anchor + Vector2i(U.rint(-2, 3), U.rint(-2, 3))
-		if c.x < 1 or c.y < 1 or c.x > map.sizeX - 2 or c.y > max_z:
+		if c.x < lo or c.y < lo or c.x > map.sizeX - 1 - lo or c.y > max_z:
 			continue
 		var m := Vector2i(c.x, map.sizeZ - 1 - c.y)
 		if _castle_far(c, placed) and _castle_far(m, placed):

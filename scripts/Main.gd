@@ -16,13 +16,13 @@ const MODES := {
 	# Assets/Scenes/singlePlayer.unity: one human against the ship fleet
 	"single": {"players": ["human"], "size": 20, "round": 250.0, "pitch": 71.42, "fov": 37.44, "ships": 7},
 	# Assets/Scenes/multiPlayer.unity: human against one AI; rules v3: 45 s build, 30 s battle
-	"versus": {"players": ["human", "ai"], "size": 30, "round": 45.0, "battle": 30.0, "pitch": 60.0, "fov": 30.0, "ships": 7},
+	"versus": {"players": ["human", "ai"], "size": 34, "round": 45.0, "battle": 30.0, "pitch": 60.0, "fov": 30.0, "ships": 7},
 	# two AIs (handy to watch / for tests)
-	"ai2": {"players": ["ai", "ai"], "size": 30, "round": 45.0, "battle": 30.0, "pitch": 60.0, "fov": 30.0, "ships": 7},
+	"ai2": {"players": ["ai", "ai"], "size": 34, "round": 45.0, "battle": 30.0, "pitch": 60.0, "fov": 30.0, "ships": 7},
 	# Assets/Scenes/4ai.unity: four AIs
 	"ai4": {"players": ["ai", "ai", "ai", "ai"], "size": 60, "round": 25.0, "pitch": 71.42, "fov": 37.44, "ships": 7},
 	# practice: you against a dormant AI on the standard map; Enter switches between build and battle, no timer
-	"practice": {"players": ["human", "ai"], "size": 30, "round": 1e9, "battle": 1e9, "pitch": 60.0, "fov": 30.0, "ships": 0,
+	"practice": {"players": ["human", "ai"], "size": 34, "round": 1e9, "battle": 1e9, "pitch": 60.0, "fov": 30.0, "ships": 0,
 		"practice": true},
 }
 # The team set of the art kit, game/art-direction/palette.json in the blender-ai repo (D21): main, highlight plus, highlight minus.
