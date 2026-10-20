@@ -41,8 +41,8 @@
   "limits_ok": true,
   "limit_failures": [],
   "critic": null,
-  "approved_by": null,
-  "approved": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-20",
   "cost_usd": 0,
   "created": "2026-10-20T14:22:26+02:00"
 }

@@ -81,3 +81,5 @@ for the full-tile block. Spend: six sketches at 0.25 USD and one critique at 0.0
   without neighbors and some walls connecting on 2, 3 and 4 sides. I want to see if the walkways all still
   work!" [pieces.jpg](pieces.jpg): the seven pieces alone, a corner, a 2 x 2, a filled 3 x 3 and a 4 x 4 ring,
   straight down and at the game's angle, under the shipped colours.
+- **Passed.** Sebastian on [pieces.jpg](pieces.jpg): "looks great! lets go!" The eight wall models (four looks,
+  each with its storey) are approved in their manifests; C15 is ticked.

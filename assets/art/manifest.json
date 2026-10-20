@@ -637,8 +637,8 @@
     ],
     "tris": 308,
     "source_sha": "bffae4393aaf",
-    "approved_by": null,
-    "synced": "2026-10-20T14:22:28+02:00"
+    "approved_by": "Sebastian",
+    "synced": "2026-10-20T15:00:19+02:00"
   },
   "wall_corbel": {
     "size": [
@@ -652,8 +652,8 @@
     ],
     "tris": 468,
     "source_sha": "625b983677af",
-    "approved_by": null,
-    "synced": "2026-10-20T14:22:28+02:00"
+    "approved_by": "Sebastian",
+    "synced": "2026-10-20T15:00:19+02:00"
   },
   "wall_corbel_upper": {
     "size": [
@@ -667,8 +667,8 @@
     ],
     "tris": 468,
     "source_sha": "6bf2ffa9d83d",
-    "approved_by": null,
-    "synced": "2026-10-20T14:22:28+02:00"
+    "approved_by": "Sebastian",
+    "synced": "2026-10-20T15:00:19+02:00"
   },
   "wall_course": {
     "size": [
@@ -682,8 +682,8 @@
     ],
     "tris": 524,
     "source_sha": "4cfa17d633e4",
-    "approved_by": null,
-    "synced": "2026-10-20T14:22:28+02:00"
+    "approved_by": "Sebastian",
+    "synced": "2026-10-20T15:00:19+02:00"
   },
   "wall_course_upper": {
     "size": [
@@ -697,8 +697,8 @@
     ],
     "tris": 524,
     "source_sha": "794ad0576786",
-    "approved_by": null,
-    "synced": "2026-10-20T14:22:28+02:00"
+    "approved_by": "Sebastian",
+    "synced": "2026-10-20T15:00:19+02:00"
   },
   "wall_cross_base": {
     "size": [
@@ -802,8 +802,8 @@
     ],
     "tris": 390,
     "source_sha": "989792f67d12",
-    "approved_by": null,
-    "synced": "2026-10-20T14:22:28+02:00"
+    "approved_by": "Sebastian",
+    "synced": "2026-10-20T15:00:19+02:00"
   },
   "wall_pilaster_upper": {
     "size": [
@@ -817,8 +817,8 @@
     ],
     "tris": 390,
     "source_sha": "01eca2960494",
-    "approved_by": null,
-    "synced": "2026-10-20T14:22:28+02:00"
+    "approved_by": "Sebastian",
+    "synced": "2026-10-20T15:00:19+02:00"
   },
   "wall_tri_base": {
     "size": [
@@ -862,7 +862,7 @@
     ],
     "tris": 308,
     "source_sha": "156f1575822f",
-    "approved_by": null,
-    "synced": "2026-10-20T14:22:28+02:00"
+    "approved_by": "Sebastian",
+    "synced": "2026-10-20T15:00:19+02:00"
   }
 }
