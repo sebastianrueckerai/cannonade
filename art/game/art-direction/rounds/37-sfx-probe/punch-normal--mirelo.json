@@ -1,0 +1,18 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, no music, no voice. A small iron cannon on a castle wall fires once: a punchy cannon shot with a hard tight transient and a deep chest-hitting thump, compressed and close-miked. Over in about a second.",
+  "params": {
+    "num_samples": 2,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds",
+    "duration": 1.5
+  },
+  "seed": 3699105409,
+  "duration": null,
+  "label": "punch-normal--mirelo",
+  "est_cost_usd": 0.015,
+  "created": "2026-10-20T22:28:02",
+  "outputs": [
+    "punch-normal--mirelo-1.wav",
+    "punch-normal--mirelo-2.wav"
+  ]
+}

@@ -264,10 +264,11 @@ def cmd_page(a):
         d = json.loads(p.read_text())
         if "est_cost_usd" not in d or "model" not in d:
             continue
-        clip = rd / d["outputs"][0]
-        if not clip.exists():
-            continue
-        metas.append({**d, "file": clip.name, **measure(clip)})
+        for i, name in enumerate(d["outputs"]):
+            clip = rd / name
+            if clip.exists():
+                label = d["label"] if len(d["outputs"]) == 1 else f"{d['label']}-{i + 1}"
+                metas.append({**d, "label": label, "file": clip.name, **measure(clip)})
     rows = ["| clip | model | s | LUFS | LRA | peak dBTP | words | USD |", "|---|---|---|---|---|---|---|---|"]
     cards = []
     for m in metas:

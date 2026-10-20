@@ -1,0 +1,18 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, no music, no voice. A huge heavy siege cannon fires once: a cannon shot with heavy low-end: a sub-bass thump under the bang, a short low boom tail, like a kick drum and an explosion in one, but massive, much bigger and deeper than a normal cannon, a window-shaking sub-bass boom with a long low rumble tail and a faint metallic ring of the barrel.",
+  "params": {
+    "num_samples": 2,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds",
+    "duration": 3
+  },
+  "seed": 2485716587,
+  "duration": null,
+  "label": "thump-big--mirelo",
+  "est_cost_usd": 0.03,
+  "created": "2026-10-20T22:28:13",
+  "outputs": [
+    "thump-big--mirelo-1.wav",
+    "thump-big--mirelo-2.wav"
+  ]
+}

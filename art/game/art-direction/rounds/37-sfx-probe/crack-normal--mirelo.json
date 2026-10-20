@@ -1,0 +1,18 @@
+{
+  "model": "mirelo-ai/sfx2.0/text-to-audio",
+  "prompt": "Game sound effect, no music, no voice. A small iron cannon on a castle wall fires once: a cannon shot with a sharp crack on top and a deep punch underneath, powerful and dry, recorded next to the barrel. Over in about a second.",
+  "params": {
+    "num_samples": 2,
+    "negative_prompt": "music, melody, voice, speech, crowd, birds",
+    "duration": 1.5
+  },
+  "seed": 3571111650,
+  "duration": null,
+  "label": "crack-normal--mirelo",
+  "est_cost_usd": 0.015,
+  "created": "2026-10-20T22:28:18",
+  "outputs": [
+    "crack-normal--mirelo-1.wav",
+    "crack-normal--mirelo-2.wav"
+  ]
+}

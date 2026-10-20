@@ -82,6 +82,13 @@ per cue, 0.5 to 2 s.
 Every clip gets normalised to its bus level before it enters the game, so the levels above do not
 decide. The clipped Stable Audio clips did: a clip over 0 dBTP has lost its peaks already.
 
+Sebastian on the first cannon shots: "not great, make a few more, make them have umpf, and have a normal
+one and a really big one for the big gun." The second config of the round, `cannons.json`, runs four
+angles (punch, thump, boom, crack) times a normal and a big gun on ElevenLabs and on Mirelo with two
+takes each, 24 clips for 0.40 USD, on the same page so his tabs stay open. The prompts ask for a hard
+transient, a sub-bass thump, a round boom or a crack over a punch, dry and close, and the big gun adds
+a long low rumble tail and a metallic ring at 3 s against 1.5 s.
+
 ## The versions, round 38
 
 The menu, win and lose cues as remixes of one build theme through `fal-ai/ace-step/audio-to-audio`,

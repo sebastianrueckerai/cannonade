@@ -1,5 +1,23 @@
 | clip | model | s | LUFS | LRA | peak dBTP | words | USD |
 |---|---|---|---|---|---|---|---|
+| boom-big--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -8.8 | 20.0 | 0.4 |  | 0.006 |
+| boom-big--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -15.8 | 20.0 | -1.0 |  | 0.030 |
+| boom-big--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -23.5 | 20.0 | -1.0 |  | 0.030 |
+| boom-normal--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -9.2 | 0.0 | 1.0 |  | 0.003 |
+| boom-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -18.9 | 0.0 | -0.9 |  | 0.015 |
+| boom-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -20.3 | 0.0 | -1.0 |  | 0.015 |
+| crack-big--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -8.0 | 20.0 | 0.7 |  | 0.006 |
+| crack-big--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -21.8 | 20.0 | -1.0 |  | 0.030 |
+| crack-big--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -24.4 | 20.0 | -1.0 |  | 0.030 |
+| crack-normal--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -14.3 | 0.0 | 0.3 |  | 0.003 |
+| crack-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -20.6 | 0.0 | -0.9 |  | 0.015 |
+| crack-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -20.8 | 0.0 | -0.9 |  | 0.015 |
+| punch-big--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -11.3 | 20.0 | 0.7 |  | 0.006 |
+| punch-big--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -22.4 | 20.0 | -1.0 |  | 0.030 |
+| punch-big--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -25.2 | 20.0 | -1.0 |  | 0.030 |
+| punch-normal--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -10.5 | 0.0 | 0.6 |  | 0.003 |
+| punch-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -19.7 | 0.0 | -1.0 |  | 0.015 |
+| punch-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -25.0 | 0.0 | -1.0 |  | 0.015 |
 | sfx-cannon-shot--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -11.0 | 0.0 | 0.2 |  | 0.003 |
 | sfx-cannon-shot--mirelo | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -15.6 | 0.0 | -1.0 |  | 0.015 |
 | sfx-castle-claim--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -9.4 | 0.0 | 0.3 |  | 0.003 |
@@ -24,5 +42,11 @@
 | sfx-ship-sink--mirelo | mirelo-ai/sfx2.0/text-to-audio | 2.0 | -29.0 | 0.0 | -0.9 |  | 0.020 |
 | sfx-ui-click--eleven | fal-ai/elevenlabs/sound-effects/v2 | 0.5 | -16.5 | 0.0 | 1.4 |  | 0.001 |
 | sfx-ui-click--mirelo | mirelo-ai/sfx2.0/text-to-audio | 0.3 | -70.0 | 0.0 | -2.8 |  | 0.003 |
+| thump-big--eleven | fal-ai/elevenlabs/sound-effects/v2 | 3.0 | -8.4 | 20.0 | 0.5 |  | 0.006 |
+| thump-big--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -17.9 | 20.0 | -1.0 |  | 0.030 |
+| thump-big--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 3.0 | -20.9 | 20.0 | -1.0 |  | 0.030 |
+| thump-normal--eleven | fal-ai/elevenlabs/sound-effects/v2 | 1.5 | -25.2 | 0.0 | -5.0 |  | 0.003 |
+| thump-normal--mirelo-1 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -19.7 | 0.0 | -1.0 |  | 0.015 |
+| thump-normal--mirelo-2 | mirelo-ai/sfx2.0/text-to-audio | 1.5 | -18.4 | 0.0 | -1.0 |  | 0.015 |
 
-24 clips, ~$0.18
+48 clips, ~$0.58
