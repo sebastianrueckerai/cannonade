@@ -160,5 +160,6 @@ gun_destroyed x3 (the metallic set, used untested on his word). Open from the A 
 candidates on the page.
 
 D84, from round 36: the build and the battle theme are the age-of-sail chiptune from ACE-Step,
-`build.ogg` and `battle.ogg`, full clips not yet cut to loops. Menu, win and lose are open, as versions
-of them in round 38.
+`build.ogg` and `battle.ogg`, full clips not yet cut to loops. D85, from round 38: `menu.ogg` is the
+build theme as a slow waltz, `win.ogg` the battle theme happy, `lose.ogg` the build theme mournful, all
+full length. The five music cues are picked.

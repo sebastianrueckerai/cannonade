@@ -507,3 +507,13 @@ tuba-like triangle bass, a hornpipe lilt, 8-bit through and through. ACE-Step 1.
 [assets/audio/music/](/home/womb/repos/grid-cannons/assets/audio/music), not yet cut to loops. The menu,
 win and lose cues come as versions of them, round 38. [PICKS.md](../game/art-direction/rounds/36-music-probe/PICKS.md).
 
+## D85. The menu, win and lose music are versions of the sail themes (2026-10-20, Sebastian)
+
+On the round 38 page: "Use these 3". The menu is the build theme as a slow waltz through the ACE-Step remix,
+the win music is the battle theme happy and triumphant through the same remix, and the lose music is the
+build theme slow and mournful through Stable Audio 2.5 audio-to-audio at strength 0.6, the one time that
+route beat the ACE-Step remix of the same clip. So a remix of a finished theme does work as a version, on
+both routes. `menu.ogg`, `win.ogg` and `lose.ogg` in the game's
+[assets/audio/music/](/home/womb/repos/grid-cannons/assets/audio/music), full length.
+[PICKS.md](../game/art-direction/rounds/38-theme-versions/PICKS.md).
+
