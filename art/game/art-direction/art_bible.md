@@ -120,7 +120,7 @@ Each player has a team colour. The game shows it on the player's base building a
 | teal | #197059 |
 | olive | #8c7a1f |
 
-The rule: at the default view, a base in each team colour reads apart from the other three, on grass, sand, stone and sea. Every base shows its team colour on a flag and a coloured roof (D42). Every wall block shows its owner's colour on its walkway, the stone lerped 0.6 toward the team colour, and the walkway runs only toward the own walls beside the block (D78); the merlons and the stone stay cream.
+The rule: at the default view, a base in each team colour reads apart from the other three, on grass, sand, stone and sea. Every base shows its team colour on a flag and a coloured roof (D42). Every wall block shows its owner's colour on its walkway, the stone lerped 0.6 toward the team colour, and the walkway runs only toward the own walls beside the block (D78); the merlons and the stone stay cream. The ground a ring encloses takes the mud lerped 0.25 toward the colour of the player whose walls border it most (D79).
 
 The game's old deep blue and purple looked like the same dark block at 13 px. The bible corrected them, and the game now uses this set (roadmap F10).
 

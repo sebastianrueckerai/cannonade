@@ -32,6 +32,7 @@ func _ready() -> void:
 	_check_walkways()
 	_check_storey()
 	_check_piece()
+	_check_ground()
 	print("WALLS TEST PASSED" if failures.is_empty() else "WALLS TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
 
@@ -88,8 +89,10 @@ func _check_looks() -> void:
 			"four looks, one per player number")
 	for go in [a, b, bare]:
 		var c := _colors(go)
-		check(c[0] == Color.WHITE and c[WallComp.RIM] == WallComp.STONE and c[10] == WallComp.STONE,
-				"the body, the deck corners and the rim stay stone on %s" % _look(go))
+		var p = U.comp(go, "BuildingBlock").player
+		check(c[0] == Color.WHITE and c[10] == WallComp.STONE and c[WallComp.BAND] == Color.WHITE,
+				"the body, the merlons, the deck corners and the band stay stone on %s" % _look(go))
+		check(c[WallComp.RIM] == WallComp.STONE, "the rim round the deck stays stone on %s (D79)" % _look(go))
 
 
 func _check_walkways() -> void:
@@ -153,3 +156,33 @@ func _check_piece() -> void:
 			"player 2's piece shows the corbel look")
 	piece.free()
 	piece2.free()
+
+
+## A closed ring tints the ground it encloses toward its owner's colour; open it and the mud comes back.
+func _check_ground() -> void:
+	var inside = _tile(23, 3)
+	var mud: Color = inside.enclosedColor
+	check(inside.ringOwner == null and U.get_color(inside.model()) == inside.openColor, "open ground wears the open colour")
+	for c in [[22, 2], [23, 2], [24, 2], [25, 2], [22, 3], [25, 3], [22, 4], [23, 4], [24, 4], [25, 4]]:
+		_build(p1, c[0], c[1])
+	check(inside.ringOwner == p1 and map.is_tile_enclosed(23, 3), "the 4 x 2 ring's inside belongs to player 1's ring")
+	check(U.get_color(inside.model()).is_equal_approx(mud.lerp(p1.mainColor, 0.25)),
+			"the enclosed ground is the mud lerped 0.25 toward player 1's colour")
+	_tile(23, 2).un_build()
+	check(inside.ringOwner == null and U.get_color(inside.model()) == inside.openColor,
+			"with the ring opened the ground is open mud again")
+	_build(p2, 23, 2)
+	check(inside.ringOwner == p1 and U.get_color(inside.model()).is_equal_approx(mud.lerp(p1.mainColor, 0.25)),
+			"one enemy block in the ring: the ground still follows the majority, player 1")
+	# the corners border no inside tile: six blocks count, and three more of player 2's make four of six
+	for c in [[24, 2], [22, 3], [25, 3]]:
+		_tile(c[0], c[1]).un_build()
+		_build(p2, c[0], c[1])
+	check(inside.ringOwner == p2 and U.get_color(inside.model()).is_equal_approx(mud.lerp(p2.mainColor, 0.25)),
+			"with most of the bordering blocks player 2's, the ground turns to player 2's colour")
+	inside.reset_color()
+	check(U.get_color(inside.model()).is_equal_approx(mud.lerp(p2.mainColor, 0.25)),
+			"a plain recolour of the tile keeps its ring owner's tint")
+	_tile(25, 3).un_build()
+	_build(p1, 25, 3)
+	check(inside.ringOwner == p1, "three blocks each: the tie goes to the lower player number")

@@ -15,9 +15,11 @@ extends Node
 ##   --tile=id    swap the ground slab model first (e.g. tile_mud), so the colour lands on it
 ##   --align      at the first shot, print each gun's mount centre minus its plate centre in metres, the placed
 ##                gate of assets-3d.md: under 0.02 on both axes
-##   --team=walk=K,rim=K,band=K,floor=K   the walkway, the rim line round the deck and the band round the body
-##                tinted toward the owner's team colour by K (Wall.gd's knobs, walk 0.6 by default), and the
-##                enclosed ground by the ring owner the check computes
+##   --team=walk=K,rim=K,band=K,floor=K   the walkway, the rim line round the deck, the band round the body and
+##                the enclosed ground tinted toward the owner's team colour by K (the knobs of Wall.gd and
+##                BuildingPlace.gd; walk 0.6, rim 0, band 0, floor 0.25 by default)
+##   --pieces     side 0's fort becomes a layout of every hand piece standing alone, a corner, a 2 x 2, a filled
+##                3 x 3 and a 4 x 4 ring, to check the walkways at every junction (D79)
 
 const SandboxScene = preload("res://scenes/sandbox.tscn")
 const SIZE := 30
@@ -30,6 +32,7 @@ var paving := ""
 var tile_id := ""
 var team := {}
 const WallComp = preload("res://scripts/components/Wall.gd")
+const BuildingPlaceComp = preload("res://scripts/components/BuildingPlace.gd")
 
 
 func _ready() -> void:
@@ -47,8 +50,9 @@ func _ready() -> void:
 	for kv in str(args.get("team", "")).split(",", false):
 		team[kv.get_slice("=", 0)] = float(kv.get_slice("=", 1))
 	WallComp.walk_tint = team.get("walk", WallComp.walk_tint)
-	WallComp.rim_tint = team.get("rim", 0.0)
-	WallComp.band_tint = team.get("band", 0.0)
+	WallComp.rim_tint = team.get("rim", WallComp.rim_tint)
+	WallComp.band_tint = team.get("band", WallComp.band_tint)
+	BuildingPlaceComp.ground_tint = team.get("floor", BuildingPlaceComp.ground_tint)
 	if args.has("artseed"):
 		Art._rng.seed = int(args["artseed"])
 	if args.has("reload"):  # stretch every gun's reload at spawn, so a mid-reload frame exists to shoot
@@ -58,7 +62,7 @@ func _ready() -> void:
 	sb.ui.visible = false
 	sb.scenario.map_size = SIZE
 	sb.scenario.seed = int(args.get("seed", "1"))
-	sb.scenario.items.assign(_fort(0, 2) + _fort(1, SIZE - 10))
+	sb.scenario.items.assign((_pieces(0) if args.has("pieces") else _fort(0, 2)) + _fort(1, SIZE - 10))
 	sb._enter_edit()
 	sb.play()
 	Indicators.own_player = sb.player(0)  # both sandbox sides are AI: draw side 0's arcs as a human's
@@ -113,9 +117,6 @@ func _process(_delta: float) -> void:
 	if paving != "":  # at shot time the walls stand, so the enclosures are final
 		_apply_paving(paving)
 		paving = ""
-	if team.has("floor"):
-		_tint_floor(team["floor"])
-		team.erase("floor")
 	var t: float = shots.pop_front()
 	if align:
 		align = false
@@ -140,13 +141,26 @@ func _apply_paving(spec: String) -> void:
 			t.reset_color()
 
 
-## The enclosed ground tinted toward its ring owner's colour (the owner the check computes).
-func _tint_floor(k: float) -> void:
-	var regions: Dictionary = sb.game._ring_regions()
-	for t in regions:
-		if regions[t] > 0:
-			t.enclosedColor = t.enclosedColor.lerp(sb.game.players[regions[t] - 1].mainColor, k)
-			t.reset_color()
+## Every hand piece alone, then the junctions a wall makes: a corner, a 2 x 2, a filled 3 x 3 and a 4 x 4 ring,
+## with the side's castle at the right. Tiles (x, z) in the near half of the map.
+func _pieces(side: int) -> Array:
+	var groups := {
+		"wall_1": [[0, 0]], "wall_2": [[0, 0], [1, 0]], "wall_3": [[0, 0], [1, 0], [2, 0]],
+		"wall_4": [[0, 0], [1, 0], [2, 0], [3, 0]], "wall_s": [[0, 0], [1, 0], [1, 1], [2, 1]],
+		"wall_t": [[0, 0], [1, 0], [2, 0], [1, 1]], "wall_x": [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]],
+		"corner": [[0, 0], [1, 0], [1, 1]], "square": [[0, 0], [1, 0], [0, 1], [1, 1]],
+		"block": [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [2, 2]],
+		"ring": [[0, 0], [1, 0], [2, 0], [3, 0], [0, 1], [3, 1], [0, 2], [3, 2], [0, 3], [1, 3], [2, 3], [3, 3]],
+	}
+	var at := {"wall_1": [3, 2], "wall_2": [6, 2], "wall_3": [10, 2], "wall_4": [15, 2],
+		"wall_s": [3, 5], "wall_t": [8, 5], "wall_x": [13, 5], "corner": [18, 5],
+		"square": [3, 10], "block": [7, 9], "ring": [12, 9]}
+	var items: Array = []
+	for g in groups:
+		for c in groups[g]:
+			items.append({"side": side, "id": "wall", "x": at[g][0] + c[0], "z": at[g][1] + c[1], "rot": 0})
+	items.append({"side": side, "id": "castle", "x": 22, "z": 9, "rot": 0})
+	return items
 
 
 func _print_align() -> void:

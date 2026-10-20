@@ -180,8 +180,8 @@ func next_phase() -> void:
 
 
 # ------------------------------------------------------------- the check
-## Regions of enclosed, non-wall tiles. Each region maps to the player with
-## the most walls on its border; a tie goes to the lower playerID, 0 to none.
+## Regions of enclosed, non-wall tiles. Each region maps to the player number of its ring owner
+## (Map.ring_owner), 0 to none.
 func _ring_regions() -> Dictionary:
 	var seen := PackedByteArray()
 	seen.resize(map.sizeX * map.sizeZ)
@@ -198,7 +198,6 @@ func _ring_regions() -> Dictionary:
 			var queue: Array[Vector2i] = [Vector2i(x, z)]
 			var head := 0
 			var tiles: Array = []
-			var border := {}
 			seen[i] = 1
 			while head < queue.size():
 				var c: Vector2i = queue[head]
@@ -208,22 +207,12 @@ func _ring_regions() -> Dictionary:
 					var n: Vector2i = c + d
 					if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ:
 						continue
-					var nt = map.tiles[n.x][n.y]
-					if nt.isWall:
-						var bb := U.comp(nt.structure, "BuildingBlock")
-						if bb != null and U.alive(bb.player):
-							border[bb.player.playerID] = border.get(bb.player.playerID, 0) + 1
-					elif seen[n.x * map.sizeZ + n.y] == 0 and map.is_tile_enclosed(n.x, n.y):
+					if not map.tiles[n.x][n.y].isWall and seen[n.x * map.sizeZ + n.y] == 0 and map.is_tile_enclosed(n.x, n.y):
 						seen[n.x * map.sizeZ + n.y] = 1
 						queue.append(n)
-			var owner := 0
-			var best := -1
-			for pid in border:
-				if border[pid] > best or (border[pid] == best and pid < owner):
-					best = border[pid]
-					owner = pid
+			var owner = map.ring_owner(tiles)
 			for t2 in tiles:
-				regions[t2] = owner
+				regions[t2] = owner.playerID if owner != null else 0
 	return regions
 
 

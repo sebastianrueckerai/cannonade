@@ -266,3 +266,29 @@ func _average_tile_color_from_neighbours(x: int, z: int) -> void:
 
 func is_tile_enclosed(x: int, z: int) -> bool:
 	return statesMap.is_closed(x * 3, z * 3)
+
+
+## The player whose walls border the enclosed region `tiles` most, a tie to the lower player number, null with no
+## bordering wall. The check gives the region's castles to this player and the ground wears their colour (D79).
+func ring_owner(tiles: Array):
+	var border := {}
+	for t in tiles:
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var x: int = t.idxX + d.x
+			var z: int = t.idxZ + d.y
+			if x < 0 or z < 0 or x >= sizeX or z >= sizeZ:
+				continue
+			var n = tiles_at(x, z)
+			if n.isWall:
+				var bb := U.comp(n.structure, "BuildingBlock")
+				if bb != null and U.alive(bb.player):
+					border[bb.player] = border.get(bb.player, 0) + 1
+	var owner = null
+	for p in border:
+		if owner == null or border[p] > border[owner] or (border[p] == border[owner] and p.playerID < owner.playerID):
+			owner = p
+	return owner
+
+
+func tiles_at(x: int, z: int):
+	return tiles[x][z]

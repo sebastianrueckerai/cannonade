@@ -213,16 +213,20 @@ func waterflow(start_x: int, start_z: int, use_initial_open := false) -> void:
 	var v_closed := 0 if found_edge else 1
 	var touched := PackedByteArray()
 	touched.resize(tileFull.size())
+	var tiles: Array = []
 	for ci in cells:
 		open[ci] = v_open
 		closed[ci] = v_closed
 		var t := (ci / fz / 3) * zs + (ci % fz) / 3
 		if touched[t] == 0:
 			touched[t] = 1
-			var tile = map.tiles[t / zs][t % zs]
-			tile.reset_color(not found_edge)
-			if not found_edge:
-				tile.destroy_decorations()
+			tiles.append(map.tiles[t / zs][t % zs])
+	var owner = map.ring_owner(tiles) if not found_edge else null
+	for tile in tiles:
+		tile.ringOwner = owner
+		tile.reset_color(not found_edge)
+		if not found_edge:
+			tile.destroy_decorations()
 
 
 func _enqueue(ci: int, cells: PackedInt32Array, queue: PackedInt32Array, zs: int, start: bool) -> void:

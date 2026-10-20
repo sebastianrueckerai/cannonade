@@ -73,7 +73,11 @@ for the full-tile block. Spend: six sketches at 0.25 USD and one critique at 0.0
   on the wall, not the lego like blocks on the walls ... a walkway presumes a direction, and the direction is
   guided by the neighbouring walls. A single standing cell of 1x1 walls should then only have the inner square
   colored." Shipped at 0.6, the session's call.
-- **Open: the accents.** "If there are other accents like lines around the wall that lend themselves to be
-  colored, experiment with that as well!" [accents.jpg](accents.jpg) shows the shipped walkway against a rim line
-  round the deck, a band round the body's top, both, and the enclosed ground, blue near on the plain look and
-  red far on the corbel look; [ai4.png](ai4.png) shows all four looks and colours in one four-player frame.
+- **Accents: scheme 8 of [accents.jpg](accents.jpg), the ground (D79).** "9 looks great", then "Actually,
+  I like 8 better! Switch to 8, rest stays." The walkway as shipped and the enclosed ground at 0.25 toward its
+  ring owner's colour. The rim line and the band are unpicked. [ai4.png](ai4.png) shows all four looks and
+  colours in one four-player frame.
+- **The walkways at every junction:** "show me some variations with each existing individual piece placed
+  without neighbors and some walls connecting on 2, 3 and 4 sides. I want to see if the walkways all still
+  work!" [pieces.jpg](pieces.jpg): the seven pieces alone, a corner, a 2 x 2, a filled 3 x 3 and a 4 x 4 ring,
+  straight down and at the game's angle, under the shipped colours.

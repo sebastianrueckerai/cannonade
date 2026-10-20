@@ -16,7 +16,7 @@ const BAND := 12
 const REGIONS := 13
 ## How far the walkway goes from the stone toward the owner's colour (session 26's call).
 static var walk_tint := 0.6
-## The rim line round the deck and the band round the body's top, 0 = stone. Tool knobs for round 35's boards.
+## The rim line round the deck and the band round the body's top, both unpicked (D79), 0 = stone. Tool knobs.
 static var rim_tint := 0.0
 static var band_tint := 0.0
 

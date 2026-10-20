@@ -26,6 +26,10 @@ var disabled := false
 var enclosedColor := Color.WHITE
 var openColor := Color.WHITE
 var wallColor := Color.WHITE
+## The player whose ring encloses this tile (Map.ring_owner), set by the enclosure flood; null in the open.
+var ringOwner = null
+## How far the enclosed ground goes from the mud toward its ring owner's colour (D79).
+static var ground_tint := 0.25
 
 var shakeSecondsPassed := 0.0
 var shakeDuration := 4.0
@@ -223,6 +227,8 @@ func reset_color(enclosed = null) -> void:
 	var c := wallColor
 	if not isWall:
 		c = enclosedColor if enclosed else openColor
+		if enclosed and ringOwner != null:
+			c = c.lerp(ringOwner.mainColor, ground_tint)
 	set_tile_color(c)
 
 

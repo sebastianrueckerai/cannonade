@@ -171,3 +171,23 @@ its corridors. `tests/human` and `tests/preview_test` read the shader's shade no
 
 **Result.** Triangles: plain 308, pilaster 390, corbel 468, course 524. The walkway reads at the default view
 on both forts as a line through the ring that turns at the corners. Suite green, 19 entries.
+
+## Third pass: the ground, and the walkways at every junction
+
+Sebastian: "9 looks greeat... but show me some variations with each existing individual piece places without
+neighbors and some walls connecting on 2, 3 and 4 sides. I want to see if the walkways all still work!", then
+mid-work "Actually, I like 8 better! Switch to 8, rest stays". Recorded as D79.
+
+**Shipped.** The ground: the enclosure flood already finds
+every closed region and recolours its tiles, so it now asks `Map.ring_owner` for the region's owner, the
+check's majority rule moved out of `GameController._ring_regions` into the one shared helper, and the tile
+keeps that owner in `ringOwner` for every later recolour (a burnt tile cooling, a tool repaint). The tint is
+`BuildingPlace.ground_tint`, 0.25. The rim line and the band stay knobs at 0.
+
+**Watched red.** Two breaks on the walls test's new ground checks: the tint ignored in `reset_color`, and the
+flood never naming an owner. One wrong expectation in the test itself: a ring's corner blocks border no
+inside tile, so the majority counts the six side blocks, not ten.
+
+**The board.** [pieces.jpg](../../game/art-direction/rounds/35-faction-walls/pieces.jpg): the battle tool's
+`--pieces` layout, every hand piece alone (1, 2, 3, 4 in a row, S, T, X), a corner, a 2 x 2, a filled 3 x 3
+and a 4 x 4 ring, straight down and at the game's angle.
