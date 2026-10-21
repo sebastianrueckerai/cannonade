@@ -431,6 +431,7 @@ func _run() -> void:
 	check(human.activeCannons.size() == 1, "gun inside the walls is active")
 	game.timeLeftInRound = -1.5  # the cannon phase ends: the check, then the battle
 	await frames(2)
+	game.timeLeftInRound = 1e6  # the battle holds: the script shoots at tree, ground and wall in turn
 	var enemy = null
 	for c in map.castles:
 		if c.owner() == game.players[1]:

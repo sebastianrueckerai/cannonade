@@ -151,3 +151,9 @@ func _run() -> void:
 	check(Sound.playing("horn_battle") and Sound.music_cue() == "battle", "the battle starts with its horn and music")
 	await press("act")
 	check(human.stats.get("shots", 0) == 1, "a left click fires")
+	check(not U.projectiles.is_empty(), "the fired shell is airborne")
+	var flying := U.projectiles.duplicate()
+	game.next_phase()  # the battle's clock runs out under it
+	await frames(2)
+	check(flying.all(func(s): return not U.alive(s)), "the round's end shoots down every shell still in flight")
+	check(_says("BUILD WALLS", "3"), "the next round opens on its banner")
