@@ -81,8 +81,6 @@ func _ready() -> void:
 		fire = Vector2i(int(f[0]), int(f[1]))
 	firegun = args.has("firegun")
 	wet = args.has("wet")
-	if args.has("fxstyle"):
-		preload("res://scripts/FX.gd").style = args["fxstyle"]
 	if args.has("aim"):
 		var p: PackedStringArray = str(args["aim"]).split(",")
 		aim = Vector2i(int(p[0]), int(p[1]))
