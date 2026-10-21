@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="PackedScene" path="res://prefabs/Cannon.tscn" id="1_cannon"]
 [ext_resource type="Script" path="res://tools/fx_check.gd" id="2_script"]
+[ext_resource type="PackedScene" path="res://tools/fx_check_cannon.tscn" id="3_cannon"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
 size = Vector2(10, 10)
@@ -13,8 +13,8 @@ roughness = 1.0
 [node name="FxCheck" type="Node3D"]
 script = ExtResource("2_script")
 
+[node name="Cannon" parent="." instance=ExtResource("3_cannon")]
+
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_ground")
 surface_material_override/0 = SubResource("Material_ground")
-
-[node name="Cannon" parent="." instance=ExtResource("1_cannon")]
