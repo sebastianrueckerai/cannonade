@@ -68,6 +68,8 @@ var stats := {}
 var mousePosition := Vector2.ZERO
 ## castles currently faded for blocking the cursor piece
 var fadedCastles: Array = []
+## the tile carrying the aim light while the battle runs (the aim indicator, I77)
+var _aimedTile = null
 
 
 func setup() -> void:
@@ -249,6 +251,8 @@ func update_point_and_tile_selected() -> void:
 				next_wall_to_hand()
 			next_building_to_hand()
 	_fade_blocking_castles()
+	# the battle's only highlight: the aim light rides the tile under the cursor (I77)
+	_aim_light(buildableTileSelected if game != null and game.phase == game.Phase.BATTLE else null)
 
 
 ## Castles between the camera and the cursor fade out while a piece previews
@@ -274,6 +278,17 @@ func _fade_blocking_castles() -> void:
 		if not fadedCastles.has(c):
 			U.set_alpha(c.go, 0.35)
 	fadedCastles = blocking
+
+
+## The aim light: exactly the aimed tile, gone when the cursor leaves the map or the battle ends.
+func _aim_light(t) -> void:
+	if t == _aimedTile:
+		return
+	if U.alive(_aimedTile):
+		_aimedTile.target_off()
+	_aimedTile = t
+	if t != null:
+		t.target_on(mainColor)
 
 
 func _light(tiles: Array, ok: bool) -> void:

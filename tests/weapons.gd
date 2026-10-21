@@ -223,6 +223,17 @@ func _run() -> void:
 	var sh := U.shooter(shooter_tile.structure)
 	sh.nextBulletTime = 0.0
 	check(sh.try_shoot(bare.go.global_position, bare), "the shell fires at bare ground")
+	var shell = U.projectiles.back()
+	check(U.alive(shell) and shell.destinationTile == bare, "the shell flies at the bare tile")
+	var trail = shell.go.find_child("Trail", true, false)
+	check(trail is TrailLine and trail.color == Color.WHITE,
+			"the shell trails its flight path behind it in white")
+	for i in 6:
+		await get_tree().process_frame
+	if is_instance_valid(shell) and trail != null:
+		check(trail.positions[0].distance_to(shell.go.global_position) < 1.0
+				and trail.positions[0].distance_to(trail.positions[19]) > 1.5,
+				"the trail ribbon follows the shell along its flight")
 	end = U.time + 15.0
 	while U.time < end and bare.ground_stage() == 0:
 		await get_tree().process_frame
