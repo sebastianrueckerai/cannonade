@@ -81,8 +81,20 @@ func press_key(key: Key) -> void:
 	for pressed in [true, false]:
 		var k := InputEventKey.new()
 		k.keycode = key
+		k.physical_keycode = key
 		k.pressed = pressed
 		Input.parse_input_event(k)
+		await frames(1)
+
+
+## Presses and releases a mouse button at the cursor.
+func press_mouse(button: MouseButton) -> void:
+	for pressed in [true, false]:
+		var mb := InputEventMouseButton.new()
+		mb.button_index = button
+		mb.position = mouse
+		mb.pressed = pressed
+		Input.parse_input_event(mb)
 		await frames(1)
 
 
@@ -152,6 +164,12 @@ func _run() -> void:
 	check(bb.cells == _v([[0, 1], [0, 0], [0, -1], [1, 0]]), "X turns the T clockwise, its stem to the right %s" % [bb.cells])
 	await press("rotate_ccw")
 	check(bb.cells == _v([[-1, 0], [0, 0], [1, 0], [0, 1]]), "Y turns it back %s" % [bb.cells])
+
+	# space and the right mouse button turn it clockwise as well
+	await press_key(KEY_SPACE)
+	check(bb.cells == _v([[0, 1], [0, 0], [0, -1], [1, 0]]), "Space turns the T clockwise %s" % [bb.cells])
+	await press_mouse(MOUSE_BUTTON_RIGHT)
+	check(bb.cells == _v([[1, 0], [0, 0], [-1, 0], [0, -1]]), "the right mouse button turns it again %s" % [bb.cells])
 
 	# left click stamps one block per cell, on the tiles the ghost covered; the piece is used up.
 	# Upright three west of the ring: its tiles sit two from the ring's west side.
@@ -407,6 +425,22 @@ func _run() -> void:
 	await point_at_tile(free)
 	await press("act")
 	check(U.alive(building) and map.tiles[free.x][free.y].structure == building, "a left click places the building")
+
+	# rapid building: the next gun is dealt at once, so a click right after a placement
+	# places again (the deal once waited 0.3 s and swallowed the clicks between)
+	_offer_building("cannon")
+	var quick1 := free_tile_in_range()
+	await point_at_tile(quick1)
+	await press("act")
+	check(U.alive(map.tiles[quick1.x][quick1.y].structure), "the first gun of the burst places")
+	await frames(2)
+	check(U.alive(human.nextBuilding), "the next gun is in hand at once, no deal wait")
+	var quick2 := free_tile_in_range()
+	await point_at_tile(quick2)
+	await press("act")
+	check(U.alive(map.tiles[quick2.x][quick2.y].structure), "the click right after a placement places again")
+	map.tiles[quick1.x][quick1.y].un_build()  # they would count as active guns below
+	map.tiles[quick2.x][quick2.y].un_build()
 
 	# a left click with a cannon on the fourth tile of a 2x2 fuses the heavy gun
 	var quad := free_quad_in_range()
