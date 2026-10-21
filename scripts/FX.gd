@@ -30,7 +30,7 @@ static func muzzle(pos: Vector3, dir: Vector3) -> void:
 	var drift := (dir + Vector3.UP * 0.75).normalized()
 	match style:
 		"fire":
-			_burst(root, pos, {"tex": FLASH_BIG, "count": 3, "life": 0.16, "s": [0.5, 0.7],
+			_burst(root, pos + dir * 0.2, {"tex": FLASH_BIG, "count": 3, "life": 0.16, "s": [0.42, 0.58],
 					"grow": false, "col": Color(3.2, 2.6, 1.6), "add": true, "hold": 1.0})
 			_burst(root, pos + dir * 0.12, {"tex": FIRE2, "count": 4, "life": 0.35, "s": [0.3, 0.45],
 					"col": Color(2.6, 1.4, 0.5), "add": true, "dir": drift, "spread": 20.0,
@@ -39,13 +39,13 @@ static func muzzle(pos: Vector3, dir: Vector3) -> void:
 					"col": Color(0.78, 0.75, 0.71), "dir": drift, "spread": 28.0, "v": [0.7, 1.7],
 					"damp": 1.4, "ang": 160.0, "hold": 0.35})
 		"soft":
-			_burst(root, pos + dir * 0.1, {"tex": FLASH, "count": 1, "life": 0.13, "s": [0.26, 0.38],
+			_burst(root, pos + dir * 0.16, {"tex": FLASH, "count": 1, "life": 0.13, "s": [0.22, 0.32],
 					"grow": false, "col": Color(2.4, 2.1, 1.5), "add": true, "hold": 1.0})
 			_burst(root, pos, {"tex": SMOKE_SOFT, "count": 3, "life": 2.2, "s": [0.2, 0.45],
 					"col": Color(0.88, 0.86, 0.83), "dir": drift, "spread": 18.0, "v": [0.4, 0.9],
 					"damp": 0.8, "ang": 60.0, "hold": 0.5})
 		_:
-			_burst(root, pos, {"tex": FLASH, "count": 2, "life": 0.17, "s": [0.4, 0.6],
+			_burst(root, pos + dir * 0.16, {"tex": FLASH, "count": 2, "life": 0.17, "s": [0.34, 0.5],
 					"grow": false, "col": Color(2.8, 2.3, 1.5), "add": true, "hold": 1.0})
 			_burst(root, pos + dir * 0.12, {"tex": SPARK, "count": 5, "life": 0.4, "s": [0.06, 0.1],
 					"col": Color(2.2, 1.7, 0.9), "add": true, "dir": dir, "spread": 24.0,

@@ -59,7 +59,18 @@ FX.ENABLED stays false (3ab3d04) until the pick; tools/screenshot.gd --fxstyle t
 on for a render and --muzzlecam frames the firing gun's muzzle in profile. The smoke look's
 landing carries no sparks (streak sprites read as electric arcs there, so it lands as flash,
 dust, smoke and ring) and the water splash is falling droplets, a fast column and a low crown,
-not floating puffs. Every board was
+not floating puffs. Sebastian read the fire board's flash as coming out of the cannon's back:
+the Kenney muzzle sprites carry their glow low in the frame (muzzle_05's content centroid sat
+20% below the quad centre), so the flash core rendered below the muzzle anchor and, being
+centred on it, wrapped the barrel. Every sprite is now content-centred in its quad (which also
+stops the spin wobble), and all three muzzle flashes sit forward along the aim and smaller
+(smoke +0.16 m and 0.34 to 0.5 m, fire +0.2 m and 0.42 to 0.58 m, soft +0.16 m and 0.22 to
+0.32 m); boards 10, 12, 14, 16 and 17 re-shot. The flash cores measure at or above the muzzle
+anchor in all of them (board 12's was 60 px below it before), checked by anchor diffs, a
+flash-only diagnostic render and a vision pass. [fx_check.tscn](../../../tools/fx_check.tscn)
+is Sebastian's own check for the same question: the catalog's cannon aims and fires the muzzle
+effect in a loop, one look per shot, with the anchor and the flash centre marked by spheres
+and printed, so the placement can be verified live in the editor. Every board was
 checked before it went to Sebastian: each frame diffs against an effects-off render of the
 same seed, so the effect sits on the muzzle and impact points the tool prints, and a vision
 pass read each frame for texture and placement first. Boards 10 to 18 in
