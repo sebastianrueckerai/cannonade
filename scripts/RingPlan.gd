@@ -1,8 +1,9 @@
 extends RefCounted
 ## A region the AI wants inside a closed wall ring: a castle with the free ground one tile round
-## it, or a 3x3 yard of free ground for guns. The ring is the cheapest 4-connected closed loop round
-## the target on the board as it stands (own walls free, free ground 1, enemy walls 2, own enclosed
-## ground 3; water, castles, guns and ground another player's ring closes cannot carry a wall). A
+## it, or a yard of free ground of an odd size, for guns or as a territory room. The ring is the cheapest 4-connected closed loop round
+## the target on the board as it stands (own walls free, free ground 1, own enclosed ground 3;
+## a wall of another faction cannot carry the ring, for a ring two factions share closes for
+## neither (I75), and neither can water, castles, guns or ground another player's ring closes). A
 ## target already inside own closed ground is done whatever its loop says. Coordinates are
 ## Vector2i(x, z).
 
@@ -17,6 +18,12 @@ var map = null
 var castle = null
 ## A yard's lower left tile
 var yard := Vector2i.ZERO
+## The yard's size in tiles, odd; 3 is the gun yard
+var yardSize := YARD
+## Set by refresh when the game itself has the target in the player's closed ground: the plan is
+## done however its loop looks, and a ring that stands but does not seal (a diagonal pinch round
+## existing walls) is a dud the caller replaces.
+var done := false
 ## Vector2i -> true
 var target := {}
 var ring := {}
@@ -25,12 +32,13 @@ var inside := {}
 var cost := INF
 
 
-## A castle plan, or with `c` null the yard whose lower left tile is `lower_left`.
-func _init(p, c = null, lower_left := Vector2i.ZERO) -> void:
+## A castle plan, or with `c` null the yard of size `s` whose lower left tile is `lower_left`.
+func _init(p, c = null, lower_left := Vector2i.ZERO, s := YARD) -> void:
 	player = p
 	map = p.map
 	castle = c
 	yard = lower_left
+	yardSize = s
 
 
 ## Nothing left to build: the castle sits in own closed ground already, or the loop stands.
@@ -45,7 +53,7 @@ func possible() -> bool:
 func centre() -> Vector2i:
 	if castle != null:
 		return map.tile_index_at(castle.go.global_position)
-	return yard + Vector2i(1, 1)
+	return yard + Vector2i(yardSize / 2, yardSize / 2)
 
 
 ## The target as it stands: a castle's 3x3 and the tiles one round it that are not walls (a claim
@@ -54,7 +62,7 @@ func centre() -> Vector2i:
 func _find_target() -> void:
 	target = {}
 	var c := centre()
-	var r := 2 if castle != null else 1
+	var r := 2 if castle != null else yardSize / 2
 	var mine: bool = castle != null and castle.owner() == player
 	for x in range(c.x - r, c.x + r + 1):
 		for z in range(c.y - r, c.y + r + 1):
@@ -74,7 +82,7 @@ func _find_target() -> void:
 func _tile_cost(x: int, z: int) -> int:
 	var t = map.tiles[x][z]
 	if t.isWall:
-		return 0 if map.get_mini(x, z) == player.playerID else 2
+		return 0 if map.get_mini(x, z) == player.playerID else -1
 	if U.alive(t.structure) or t.water or t.disabled or player.enemy_ground(t):
 		return -1
 	if map.is_tile_enclosed(x, z) and t.ringOwner == player:
@@ -91,6 +99,7 @@ func refresh() -> void:
 	gaps = {}
 	inside = {}
 	cost = INF
+	done = false
 	if target.is_empty():
 		return
 	var lo := Vector2i(map.sizeX, map.sizeZ)
@@ -105,6 +114,7 @@ func refresh() -> void:
 	var cc := centre()
 	if map.is_tile_enclosed(cc.x, cc.y) and map.tiles[cc.x][cc.y].ringOwner == player:
 		cost = 0
+		done = true
 		_flood_inside(x0, z0, x1, z1, true)
 		return
 	var w: int = x1 - x0 + 1

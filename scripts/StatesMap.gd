@@ -209,24 +209,79 @@ func waterflow(start_x: int, start_z: int, use_initial_open := false) -> void:
 						found_edge = true
 					if (ring_x or nz == bz - 1 or nz == bz + 3) and visited[ni] == 0 and accessible[ni] != 0:
 						_enqueue(ni, cells, queue, zs, false)
-	var v_open := 1 if found_edge else 0
-	var v_closed := 0 if found_edge else 1
 	var touched := PackedByteArray()
 	touched.resize(tileFull.size())
 	var tiles: Array = []
 	for ci in cells:
-		open[ci] = v_open
-		closed[ci] = v_closed
 		var t := (ci / fz / 3) * zs + (ci % fz) / 3
 		if touched[t] == 0:
 			touched[t] = 1
 			tiles.append(map.tiles[t / zs][t % zs])
-	var owner = map.ring_owner(tiles) if not found_edge else null
+	var owner = null
+	var sealed := false
+	if not found_edge:
+		var border: Dictionary = map.ring_border(tiles)
+		if border.size() == 1:
+			sealed = true
+			owner = border.keys()[0]
+		elif border.size() > 1:
+			owner = _sealing_faction(border, cells)
+			sealed = owner != null
+	var v_open := 0 if sealed else 1
+	var v_closed := 1 if sealed else 0
+	for ci in cells:
+		open[ci] = v_open
+		closed[ci] = v_closed
 	for tile in tiles:
 		tile.ringOwner = owner
-		tile.reset_color(not found_edge)
-		if not found_edge:
+		tile.reset_color(sealed)
+		if sealed:
 			tile.destroy_decorations(Vector3.INF, false)
+
+
+## A region whose border carries several factions' walls belongs to the one whose walls
+## encircle it alone (D88: a ring two factions share closes for neither); null keeps it open.
+func _sealing_faction(border: Dictionary, cells: PackedInt32Array):
+	var factions: Array = border.keys().filter(func(p): return p != null)
+	factions.sort_custom(func(a, b): return a.playerID < b.playerID)
+	for p in factions:
+		if _seals(cells, p.playerID):
+			return p
+	return null
+
+
+## Whether a flood from the region's fine cells that may cross any wall but this player's is
+## stopped short of the map rim: it is not, when another faction's walls lend the seal.
+func _seals(cells: PackedInt32Array, player_id: int) -> bool:
+	var seen := PackedByteArray()
+	seen.resize(sizeFineX * sizeFineZ)
+	var queue := PackedInt32Array()
+	for ci in cells:
+		seen[ci] = 1
+		queue.append(ci)
+	var head := 0
+	while head < queue.size():
+		var q := queue[head]
+		head += 1
+		var x := q / sizeFineZ
+		var z := q % sizeFineZ
+		if x == 0 or z == 0 or x == sizeFineX - 1 or z == sizeFineZ - 1:
+			return false
+		for nx in range(x - 1, x + 2):
+			var row := nx * sizeFineZ
+			for nz in range(z - 1, z + 2):
+				var ni := row + nz
+				if seen[ni] != 0:
+					continue
+				seen[ni] = 1
+				if accessible[ni] != 0:
+					queue.append(ni)
+					continue
+				var ti: int = (ni / sizeFineZ / 3) * map.sizeZ + (ni % sizeFineZ) / 3
+				var tile = map.tiles[ti / map.sizeZ][ti % map.sizeZ]
+				if tile.isWall and map.get_mini(tile.idxX, tile.idxZ) != player_id:
+					queue.append(ni)
+	return true
 
 
 func _enqueue(ci: int, cells: PackedInt32Array, queue: PackedInt32Array, zs: int, start: bool) -> void:

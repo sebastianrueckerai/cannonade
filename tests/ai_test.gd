@@ -2,7 +2,8 @@ extends Node
 ## The AI's building: a ring plan per castle and per yard, the held piece placed where it covers
 ## the most gap tiles, guns only inside own closed ground, a neutral castle ringed and claimed, a
 ## breach patched, a shooter over the parts cap kept in hand while the walls keep coming, and the
-## reaction time after every action.
+## reaction time after every action. With every claim taken and every plan closed the AI keeps
+## gaining territory: the largest room it can, sited toward the castles it does not hold.
 ##   godot --headless --fixed-fps 30 res://tests/ai_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -96,6 +97,15 @@ func flying_buildings() -> Array:
 	var out: Array = []
 	for fv in get_tree().root.find_children("FlyAndVanish", "", true, false):
 		if fv.fly and not fv.isWall:
+			out.append(fv)
+	return out
+
+
+## Live FlyAndVanish flights of wall pieces: an AI with plans for its piece drops none.
+func flying_walls() -> Array:
+	var out: Array = []
+	for fv in get_tree().root.find_children("FlyAndVanish", "", true, false):
+		if fv.fly and fv.isWall:
 			out.append(fv)
 	return out
 
@@ -321,4 +331,36 @@ func _run() -> void:
 	game.phase = game.Phase.BATTLE
 	game.timeLeftInRound = 1e6
 	check_pace(await action_times(6.0), 0.8, "battle", 0.1)
+
+	# 8: every claim taken and every plan closed, the AI keeps gaining territory: it walls the
+	# largest room it can, sited toward the castles it does not hold (I74)
+	game.phase = game.Phase.WALLS
+	game.timeLeftInRound = 1e6
+	enemy.secondsBetweenBuilds = 0.5
+	enemy.dormant = false
+	enemy.nextAction = 0.0
+	var t0 := U.time
+	while U.time - t0 < 60.0:
+		enemy.update_plans()
+		if (enemy.tiers[0] + enemy.tiers[1] + enemy.tiers[2]).all(func(p): return p.closed()):
+			break
+		await seconds(2.0)
+	check((enemy.tiers[0] + enemy.tiers[1] + enemy.tiers[2]).all(func(p): return p.closed()),
+			"after %.0f s every castle, yard and claim stands closed" % [U.time - t0])
+	var ground_before: int = enemy._closed_tiles()
+	var walls_before: int = enemy.wallTiles.size()
+	enemy.nextAction = 0.0
+	await seconds(12.0)
+	check(enemy.wallTiles.size() >= walls_before + 12,
+			"with nothing left to claim the AI keeps placing walls (%d blocks in 12 s)" % [enemy.wallTiles.size() - walls_before])
+	check(flying_walls().size() <= 3, "pieces are placed, almost none dropped (%d flying)" % flying_walls().size())
+	check(ground_before + 9 <= enemy._closed_tiles(),
+			"its closed ground grew by a room (%d tiles)" % [enemy._closed_tiles() - ground_before])
+	check(not enemy.rooms.is_empty() and enemy.rooms[-1].possible(), "an expansion room is planned")
+	var room = enemy.rooms[-1]
+	check(room.yardSize == 5 or room.yardSize == 3, "the room is a large one (%d x %d)" % [room.yardSize, room.yardSize])
+	var to_enemy: int = enemy._enemy_castle_distance(room.centre())
+	var to_own: int = enemy._castle_distance(room.centre())
+	check(to_enemy <= to_own, "the room sits no nearer the AI's castles than the enemy's (%d to theirs, %d to its own)" % [to_enemy, to_own])
+	check(enemy.rooms.any(func(r): return r.closed()), "a room closed in the window")
 	await frames(2)

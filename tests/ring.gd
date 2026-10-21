@@ -17,3 +17,18 @@ static func build_rect(player, map, x0: int, z0: int, x1: int, z1: int, after_ea
 			player.build_wall(t, Catalog.spawn("wall"))
 			if after_each.is_valid():
 				after_each.call(t)
+
+
+## Lower left tile of the first free w x h rectangle, scanning from (1, 1); (-1, -1) when none.
+static func free_rect(map, w: int, h: int) -> Vector2i:
+	for x in range(1, map.sizeX - w):
+		for z in range(1, map.sizeZ - h):
+			var ok := true
+			for dx in w:
+				for dz in h:
+					var t = map.tiles[x + dx][z + dz]
+					if U.alive(t.structure) or t.water:
+						ok = false
+			if ok:
+				return Vector2i(x, z)
+	return Vector2i(-1, -1)
