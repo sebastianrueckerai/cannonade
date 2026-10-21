@@ -9,6 +9,7 @@ const UpgradeCluster = preload("res://scripts/UpgradeCluster.gd")
 @export var highlightPosColorHexCode := "#aaaadd"
 @export var highlightNegColorHexCode := "#ad3030"
 @export var discardFlySeconds := 1.0
+## How long a discarded gun leaves the hand empty before the next one is dealt.
 @export var secondsBetweenBuildings := 0.3
 
 ## Above the top of every wall block and storey: where the view ray starts looking for blocks.
@@ -59,6 +60,7 @@ var map = null
 var reach := PackedByteArray()
 ## set by reach_changed(); the next read rebuilds `reach`
 var _reachStale := true
+## When the last gun was discarded (0 while one is held or none is due)
 var secondsLastBuilding := 0.0
 var game = null
 var voidSelected := false
@@ -358,7 +360,8 @@ func _combination(placed: Node3D, tile) -> BuildingDef:
 	return Catalog.combination(a.id, b.id)
 
 
-## The gun phase deals a gun, the next one 0.3 s after a placement.
+## The gun phase deals a gun at once: a placement hands the next one straight
+## over, only a discard (FlyAndVanish) waits out secondsBetweenBuildings first.
 func try_get_next_building() -> void:
 	if game != null and game.phase != game.Phase.GUNS:
 		return
@@ -577,7 +580,6 @@ func combine_building(tile) -> Node3D:
 	var combined := Catalog.spawn(def)
 	U.destroy(nextBuilding)
 	nextBuilding = null
-	secondsLastBuilding += U.time
 	tile.un_build(true)
 	build_building(tile, combined)
 	Sound.play("fuse_heavy", sound_db())
@@ -593,7 +595,6 @@ func build_next_building(tile = null) -> void:
 	build_building(tile, nextBuilding)
 	Sound.play("place_gun", sound_db())
 	nextBuilding = null
-	secondsLastBuilding += U.time
 
 
 func build_building(tile, building: Node3D) -> void:
