@@ -287,8 +287,9 @@ changed on purpose:
 * The enclosure flood fill treats fully walkable tiles as 3×3 blocks; it gives the same
   results as the original algorithm (see `tests/flood_test.gd`) but keeps GDScript fast.
 
-Not ported: particle effects / trails, the Amplify force-field shader (the shield is a
-transparent sphere), the second-player gamepad controls and the custom cursor.
+Not ported: particle effects (the shells trail their flight as a white ribbon instead), the
+Amplify force-field shader (the shield is a transparent sphere), the second-player gamepad
+controls and the custom cursor.
 
 ## Tests
 

@@ -439,6 +439,12 @@ func _run() -> void:
 	var ec: Vector2i = map.tile_index_at(enemy.go.global_position)
 	var enemy_wall = map.tiles[ec.x][ec.y - 2]  # the ring wall south of the 3x3 castle
 	await point_at_tile(Vector2i(enemy_wall.idxX, enemy_wall.idxZ))
+	# the aim is the only highlight: the light rides the tile under the cursor, and no
+	# flight path is drawn ahead of the shot (I74)
+	check(enemy_wall._target_tints == 1, "the hover lights the aimed tile as the aim")
+	var hover_cannon = human.activeCannons[0]
+	check(hover_cannon.renderArc == null or not hover_cannon.renderArc.line.enabled,
+			"the flight path is not drawn ahead of the shot")
 	await press("act")
 	await seconds(12.0)
 	check(not U.alive(enemy_wall.structure), "a left click fires a shell that destroys the aimed enemy wall")
@@ -456,8 +462,16 @@ func _run() -> void:
 			"the shell annihilates the tile's two trees (%d heaps)" % heaps.size())
 	var bare_tile = shot_spot(gp, [tree_tile])
 	await point_at_tile(Vector2i(bare_tile.idxX, bare_tile.idxZ))
-	check(await shoot_at(bare_tile), "a click on bare ground fires a shell at it")
-	check(bare_tile.is_free(), "bare ground stays bare under its shell")
+	check(tree_tile._target_tints == 0 and bare_tile._target_tints == 1,
+			"the aim light rides the cursor, off the last aimed tile")
+	await press("act")
+	await frames(2)
+	var bare_shell = null
+	for p in U.projectiles:
+		if is_instance_valid(p) and p.player == human and p.destinationTile == bare_tile:
+			bare_shell = p
+			break
+	check(bare_shell != null, "a click on bare ground fires a shell at it")
 	var own_wall_tile = null
 	for t in human.wallTiles:
 		var wd := gp.distance_to(t.go.global_position)
@@ -466,6 +480,19 @@ func _run() -> void:
 			break
 	check(own_wall_tile != null, "an own wall sits in gun range")
 	await point_at_tile(Vector2i(own_wall_tile.idxX, own_wall_tile.idxZ))
+	check(bare_tile._target_tints == 0 and own_wall_tile._target_tints == 1,
+			"the flying shell does not light its landing tile, the cursor's tile does")
+	var lit := 0
+	for column in map.tiles:
+		for t in column:
+			lit += 1 if t._target_tints > 0 else 0
+	check(lit == 1, "the flying shell lights only the tile under the cursor (%d lit)" % lit)
+	var deadline := U.time + 15.0
+	while is_instance_valid(bare_shell) and U.time < deadline:
+		await frames(1)
+	await frames(2)
+	check(not is_instance_valid(bare_shell), "the shell at the bare tile lands")
+	check(bare_tile.is_free(), "bare ground stays bare under its shell")
 	check(await shoot_at(own_wall_tile), "a click on an own wall fires a shell at it")
 	check(not U.alive(own_wall_tile.structure),
 			"your own shell fells your own wall (10 damage meets 10 health)")

@@ -4,9 +4,9 @@ class_name Indicators
 ## Reload: a ring flat on the gun's plate, round the gun's foot, in the gun's iron shifted a
 ## little toward the owner's team colour. Its band thins outward to nothing over the reload,
 ## then the plate pulses red once at ready (scripts/components/Cooldown.gd).
-## Aim: a thin arc fading toward the landing (Shooter, RenderArc) and a cube of light on the
-## aimed-at tile (TileImpactor, BuildingPlace.target_on), own guns only. The arc clears when the
-## shell flies and the next aim draws it again; the light goes when the last shell aimed there lands.
+## Aim: a cube of light on the tile under the cursor (PlayerController, BuildingPlace.target_on),
+## own guns only; it is the aim indicator while the battle runs. The shells' white trails
+## (Catalog, GPUParticles3D) show where they flew; the predicted-path arc is kept but off (I77).
 
 ## Only this player's guns show their aim. Main sets it to the human player at the start of every
 ## game; null (no human, as in AI against AI) lets every side show.

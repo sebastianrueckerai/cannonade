@@ -24,6 +24,9 @@ var flyTime := 0.0
 var distance := 0.0
 var stunned := false
 var stunnedUntil := 0.0
+## The predicted flight path drawn ahead of the shot (RenderArc): kept but switched off, the
+## shell's trail shows where it flew (I77).
+const ARC_ENABLED := false
 var renderArc = null
 var arc: Node3D
 var _barrel_rot_y := 0.0
@@ -100,7 +103,7 @@ func try_aim(destination: Vector3) -> bool:
 			go.rotation = Vector3(0.0, go.rotation.y, 0.0)
 			go.scale = s
 		_set_barrel_x(angleDegrees)
-		if Indicators.shows(player):
+		if Indicators.shows(player) and ARC_ENABLED:
 			renderArc.draw_arc(10, _spawn().global_position, destination, distance, angleRads, ascendingPart)
 		else:
 			renderArc.switch_on_or_off(false)

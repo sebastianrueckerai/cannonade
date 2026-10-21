@@ -10,6 +10,7 @@ extends Node
 const BUILDINGS_DIR := "res://data/buildings"
 const C := "res://scripts/components/"
 const ARC := preload("res://prefabs/ArcRenderer.tscn")
+const TrailLine := preload("res://scripts/TrailLine.gd")
 ## components a model scene may carry that are replaced by the def's
 const BUILDING_COMPONENTS := ["BuildingBlock", "Wall", "FlyAndVanish", "Upgrade", "Combinable",
 	"UpgradedStructure", "Shooter", "RocketLauncher", "Flak", "ShieldGenerator", "SupplyBuilding",
@@ -420,7 +421,16 @@ func spawn_projectile(pdef: ProjectileDef, parent: Node, pos: Vector3, basis: Ba
 		c.clusterRange = pdef.cluster_range
 	parent.add_child(go)
 	go.global_transform = Transform3D(basis * go.transform.basis, pos)
+	_add_trail(go)
 	return c
+
+
+## The white ribbon trailing every projectile (I77): the flight path as a fading LineRenderer
+## ribbon (the compatibility renderer has no particle trails).
+func _add_trail(go: Node3D) -> void:
+	var t: TrailLine = TrailLine.new()
+	t.name = "Trail"
+	go.add_child(t)
 
 
 func _add(go: Node3D, script_name: String) -> Node:
