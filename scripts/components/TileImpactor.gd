@@ -1,4 +1,6 @@
 extends "res://scripts/components/Component.gd"
+
+const FX = preload("res://scripts/FX.gd")
 ## Port of TileImpactor (Projectile.cs): base class of everything that flies
 ## towards a tile and damages it. Implements the IProjectile interface.
 
@@ -54,6 +56,7 @@ func impact() -> void:
 			Sound.play("hit_water")
 		elif not U.alive(destinationTile.structure) and not U.alive(destinationTile.ship):
 			Sound.play("hit_ground")
+		FX.impact(go.global_position, destinationTile.water, damage)
 		for tile in destinationTile.get_surrounding_tiles(splashRange):
 			_effect_tile(tile)
 		if tileDestroyer:

@@ -20,6 +20,10 @@ var kill_target = null
 var eye := Vector3(0, 9, 6)
 var scorch := 0
 var _scorch_done := false
+var fire := Vector2i(-1, -1)
+var firegun := false
+var wet := false
+var _fired := false
 var look_target = null
 
 
@@ -72,6 +76,13 @@ func _ready() -> void:
 			kill_target = target
 	if args.has("scorch"):
 		scorch = int(args["scorch"])
+	if args.has("fire"):
+		var f: PackedStringArray = str(args["fire"]).split(",")
+		fire = Vector2i(int(f[0]), int(f[1]))
+	firegun = args.has("firegun")
+	wet = args.has("wet")
+	if args.has("fxstyle"):
+		preload("res://scripts/FX.gd").style = args["fxstyle"]
 	if args.has("aim"):
 		var p: PackedStringArray = str(args["aim"]).split(",")
 		aim = Vector2i(int(p[0]), int(p[1]))
@@ -92,6 +103,10 @@ func _process(_delta: float) -> void:
 		var t: float = shots.pop_front()
 		if kill_kind != "":
 			_kill()
+		if fire.x >= 0 and not _fired:
+			_fired = true
+			_fire(t)
+			return
 		if scorch > 0 and not _scorch_done:
 			_scorch_done = true
 			var where: Vector3 = look_target if look_target != null else Vector3.ZERO
@@ -154,3 +169,60 @@ static func _kind_of(t) -> String:
 	if U.comp(t.structure, "Castle") != null:
 		return "castle"
 	return "gun" if U.shooter(t.structure) != null else ""
+
+## Fires the first gun that reaches tile --fire=x,z through the real try_shoot
+## and schedules the muzzle and impact captures. --firegun re-aims the camera
+## to the gun instead of keeping it on the --look target.
+func _fire(t0: float) -> void:
+	var tile = main.game.map.tiles[fire.x][fire.y]
+	if wet:
+		tile.water = true
+	var guns: Array = []
+	for col in main.game.map.tiles:
+		for t in col:
+			if U.alive(t.structure):
+				var sh = U.shooter(t.structure)
+				if sh != null:
+					guns.append([t.go.global_position.distance_squared_to(look_target if look_target != null else tile.go.global_position), sh, t])
+	guns.sort_custom(func(x, y): return x[0] < y[0])
+	for g in guns:
+		if g[1].try_shoot(tile.go.global_position, tile):
+			_sched(g[1], g[2], t0)
+			return
+	# board scaffolding: no AI gun in reach yet - place a cannon that is
+	var spot = null
+	for col in main.game.map.tiles:
+		for t in col:
+			if t.is_free() and not t.water and not main.game.map.is_tile_enclosed(t.idxX, t.idxZ):
+				var d2: float = t.go.global_position.distance_squared_to(tile.go.global_position)
+				if d2 < 6.25 or d2 > 361.0:
+					continue
+				var near: float = t.go.global_position.distance_squared_to(look_target) if look_target != null else 1e9
+				if spot == null or near < spot[0]:
+					spot = [near, t]
+	if spot == null:
+		print("fire: no gun reached %d,%d and no ground to place one" % [fire.x, fire.y])
+		get_tree().quit(1)
+		return
+	main.game.players[0].build_building(spot[1], Catalog.spawn("cannon"))
+	var sh = U.shooter(spot[1].structure)
+	sh.nextBulletTime = 0.0
+	if sh.try_shoot(tile.go.global_position, tile):
+		_sched(sh, spot[1], t0)
+		return
+	print("fire: the placed cannon at %d,%d cannot reach %d,%d" % [spot[1].idxX, spot[1].idxZ, fire.x, fire.y])
+	get_tree().quit(1)
+
+
+## Schedules the muzzle and impact captures and prints the board times.
+func _sched(sh, gtile, t0: float) -> void:
+	if firegun:
+		_look_at(gtile.go.global_position)
+	var t_m := t0 + 0.12
+	var t_i: float = t0 + sh.flyTime + 0.3
+	for tt: float in [t_m, t_i]:
+		var i := 0
+		while i < shots.size() and shots[i] < tt:
+			i += 1
+		shots.insert(i, tt)
+	print("fire: gun at %d,%d -> %d,%d fly=%.2f muzzle@%.2f impact@%.2f" % [gtile.idxX, gtile.idxZ, fire.x, fire.y, sh.flyTime, t_m, t_i])

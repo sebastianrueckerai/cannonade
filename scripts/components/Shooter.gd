@@ -1,4 +1,6 @@
 extends "res://scripts/components/Component.gd"
+
+const FX = preload("res://scripts/FX.gd")
 ## Port of Shooter.cs: ballistic cannon (implements IShooter).
 
 @export var projectileSpawn: NodePath
@@ -153,6 +155,11 @@ func try_shoot(destination: Vector3, destination_tile) -> bool:
 		var shell := Catalog.spawn_projectile(projectile, U.world(), _spawn().global_position, rot)
 		shell.player = player
 		Sound.play(shot_cue(), 0.0 if player == null or not player.is_ai() else Sound.OTHER_DB)
+		var spawn_pos := _spawn().global_position
+		var flat := destination - spawn_pos
+		flat.y = 0.0
+		flat = -go.global_transform.basis.z if flat.length_squared() < 0.0001 else flat.normalized()
+		FX.muzzle(spawn_pos, (flat * cos(angleRads) + Vector3.UP * sin(angleRads)).normalized())
 		shell.fly_towards(destination, destination_tile, distance, vOpt, angleRads, flyTime, gravity,
 				ascendingPart, damage)
 	return shot

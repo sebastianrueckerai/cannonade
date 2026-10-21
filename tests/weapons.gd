@@ -247,3 +247,48 @@ func _run() -> void:
 	check(U.alive(ship_go), "a ship survives a light hit")
 	water.damage_building_place(10.0)
 	check(not U.alive(ship_go) and not game.fleet.ships.has(ship), "a ship sinks when its health is used up")
+
+	# fire and impact effects: firing pops a muzzle effect at the barrel, the
+	# landing raises a plume on bare ground and a splash on water, both clean
+	# themselves up (I74)
+	var fx_bare = open_patch(9, 14)
+	check(fx_bare != null, "an fx patch of bare ground exists in the gun's reach")
+	var fx_water = map.tiles[fx_bare.idxX + 1][fx_bare.idxZ]
+	fx_water.water = true
+	var fx_gun := U.shooter(shooter_tile.structure)
+	fx_gun.nextBulletTime = 0.0
+	check(fx_gun.try_shoot(fx_bare.go.global_position, fx_bare), "the fx gun fires at bare ground")
+	check(_fx_at("muzzle") != null, "firing pops a muzzle effect at the barrel")
+	var fx_end: float = U.time + 15.0
+	var plume = null
+	while U.time < fx_end and plume == null:
+		await get_tree().process_frame
+		plume = _fx_at("impact")
+	check(plume != null, "the landing raises a plume on bare ground")
+	await seconds(3.0)
+	check(_fx_count() == 0, "the effects clean themselves up")
+	fx_gun.nextBulletTime = 0.0
+	check(fx_gun.try_shoot(fx_water.go.global_position, fx_water), "the fx gun fires at water")
+	var splash = null
+	fx_end = U.time + 15.0
+	while U.time < fx_end and splash == null:
+		await get_tree().process_frame
+		splash = _fx_at("impact")
+	check(splash != null, "a water landing raises a splash")
+	await seconds(3.0)
+	check(_fx_count() == 0, "the splash cleans itself up")
+
+
+func _fx_at(kind: String) -> Node:
+	for c in U.world().get_children():
+		if c.has_meta("fx") and c.get_meta("fx") == kind:
+			return c
+	return null
+
+
+func _fx_count() -> int:
+	var n := 0
+	for c in U.world().get_children():
+		if c.has_meta("fx"):
+			n += 1
+	return n

@@ -339,4 +339,8 @@ The runner fails on any engine or script error output and times out hung tests.
 
 ```sh
 tools/godot_render.sh res://tools/screenshot.tscn -- --mode=ai2 --at=5,30 --out=/tmp/shot
+tools/godot_render.sh res://tools/screenshot.tscn -- --mode=ai2 --at=6 --fire=26,16 --look=20,16 --eye=2.2,2.2 --firegun --out=/tmp/shot
 ```
+
+`--fire=x,z` fires the first gun that reaches the tile (or places a cannon that does) and captures the muzzle and the landing; `--firegun` re-aims the camera to the gun, `--wet` makes the target water.
+
