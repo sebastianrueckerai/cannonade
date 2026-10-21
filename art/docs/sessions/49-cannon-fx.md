@@ -1,4 +1,4 @@
-# Session 47: fire and impact effects
+# Session 49: fire and impact effects
 Sebastian, 2026-10-21: "I would like to add a particle effect or similar to the canon firing
 (explosion and smoke at barrel) and hitting (plume of smoke at impact). Do a first version,
 maky try different approahces and show me in game, including close uip so I can decide!", then
@@ -37,7 +37,7 @@ a forced-water tile (the ships check's precedent) raises a splash, and both clea
 up. Watched red on the old code by neutralizing each hook and the self-free timer.
 ## The boards
 All shots came from tools/screenshot.gd --fire on the ai2 map (the firing gun is a cannon the
-tool placed, --look/--eye frame the camera), in [rounds/49-cannon-fx/](../../game/art-direction/rounds/46-cannon-fx/):
+tool placed, --look/--eye frame the camera), in [rounds/49-cannon-fx/](../../game/art-direction/rounds/49-cannon-fx/):
 - board 1 / 2: puffs, the muzzle and the landing close up
 - board 3 / 4: smoke, the muzzle and the landing close up
 - board 5 / 6: shock ring, the muzzle and the landing close up
@@ -46,3 +46,24 @@ tool placed, --look/--eye frame the camera), in [rounds/49-cannon-fx/](../../gam
 Sebastian's pick by number decides the shipped look; until then the default is the art bible's
 round puffs. A pick is one line in scripts/FX.gd, or the look's builder comes back from the
 first commit's FX.gd - all three builders live there.
+
+## Round 2: the reference looks
+Sebastian rejected the round-1 boards ("absolute horse shit... 4 white balls seem to be flying
+away which is crap"); only the board-6 dust ring stayed. Two references then: Kenney's CC0
+particle pack (smoke, fire, muzzle, spark and dirt sprites, [assets/art/fx/](../../../assets/art/fx/)
+with the license) and Godot's official 3D particles demo (the material recipe: unshaded alpha
+billboards, spin, damping, scale curves, colour ramps). scripts/FX.gd rebuilds every effect as
+one-shot CPUParticles3D bursts on those sprites in three looks - smoke (the demo look), fire
+(fireball, dirt, dark column), soft (three slow puffs) - and keeps the ring on every landing.
+FX.ENABLED stays false (3ab3d04) until the pick; tools/screenshot.gd --fxstyle turns one look
+on for a render and --muzzlecam frames the firing gun's muzzle in profile. The smoke look's
+landing carries no sparks (streak sprites read as electric arcs there, so it lands as flash,
+dust, smoke and ring) and the water splash is falling droplets, a fast column and a low crown,
+not floating puffs. Every board was
+checked before it went to Sebastian: each frame diffs against an effects-off render of the
+same seed, so the effect sits on the muzzle and impact points the tool prints, and a vision
+pass read each frame for texture and placement first. Boards 10 to 18 in
+[rounds/49-cannon-fx/](../../game/art-direction/rounds/49-cannon-fx/): 10/11 smoke, the muzzle
+and the landing close up; 12/13 fire; 14/15 soft; 16/17 smoke at the battle camera, firing and
+landing; 18 the water splash (--wet makes the target tile water). The pick by number names the
+look; FX.ENABLED = true and FX.style land it in one commit.

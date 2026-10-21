@@ -264,8 +264,9 @@ changed on purpose:
 * Combining an upgrade block into a building uses the block up (Unity kept it, so it
   could be combined again and again).
 * Firing and landings carry effects (Unity's unported particles, K3): a muzzle flash and
-  smoke at the barrel, a plume of round puffs where a shell lands, a white splash on water,
-  each gone in about two seconds. scripts/FX.gd builds them in code, no assets.
+  smoke at the barrel, a plume where a shell lands, a white splash on water, each gone in
+  about two seconds. scripts/FX.gd builds them on Kenney's CC0 particle sprites; they stay
+  off until the look is picked from the boards.
 * Any single-tile building can be part of an upgrade pattern, not only upgrade blocks.
 * There are no 3×3 guns for now. A 3×3 square merges only when a building in the game has
   its pattern. Otherwise one of its 2×2 squares merges. Unity made a 3×3 cannon of any 3×3

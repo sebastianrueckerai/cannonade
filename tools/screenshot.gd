@@ -8,8 +8,12 @@ extends Node
 ##                  camera turns to it; the later times show its rubble
 ##   --scorch=N     at the first --at time, N shells' worth of ground damage on the bare tiles nearest the
 ##                  target, piled nearest first up to stage 3, and each scar printed
+##   --fire=x,z     fires the first gun that reaches the tile (places a cannon that does if none),
+##                  --firegun re-aims the camera to the gun, --muzzlecam frames its muzzle in profile,
+##                  --wet makes the target water, --fxstyle=smoke|fire|soft turns the effects on in that look
 
 const Main = preload("res://scripts/Main.gd")
+const FX = preload("res://scripts/FX.gd")
 
 var main: Node
 var shots: Array = []
@@ -22,6 +26,7 @@ var scorch := 0
 var _scorch_done := false
 var fire := Vector2i(-1, -1)
 var firegun := false
+var muzzlecam := false
 var wet := false
 var _fired := false
 var look_target = null
@@ -80,7 +85,11 @@ func _ready() -> void:
 		var f: PackedStringArray = str(args["fire"]).split(",")
 		fire = Vector2i(int(f[0]), int(f[1]))
 	firegun = args.has("firegun")
+	muzzlecam = args.has("muzzlecam")
 	wet = args.has("wet")
+	if args.has("fxstyle"):
+		FX.style = str(args["fxstyle"])
+		FX.ENABLED = true
 	if args.has("aim"):
 		var p: PackedStringArray = str(args["aim"]).split(",")
 		aim = Vector2i(int(p[0]), int(p[1]))
@@ -216,6 +225,19 @@ func _fire(t0: float) -> void:
 func _sched(sh, gtile, t0: float) -> void:
 	if firegun:
 		_look_at(gtile.go.global_position)
+	var sp: Node3D = sh.get_node_or_null(sh.projectileSpawn)
+	if muzzlecam and sp != null:
+		var mp := sp.global_position
+		var aim3: Vector3 = main.game.map.tiles[fire.x][fire.y].go.global_position - mp
+		aim3.y = 0.0
+		aim3 = aim3.normalized() if aim3.length_squared() > 0.0001 else Vector3.FORWARD
+		var perp := aim3.cross(Vector3.UP).normalized()
+		main.camera.global_position = mp + perp * 2.6 + Vector3.UP * 1.15
+		main.camera.look_at(mp + aim3 * 0.6)
+	var ipos: Vector3 = main.game.map.tiles[fire.x][fire.y].go.global_position
+	if sp != null:
+		print("muzzle screen ", main.camera.unproject_position(sp.global_position))
+	print("impact screen ", main.camera.unproject_position(ipos))
 	var t_m := t0 + 0.12
 	var t_i: float = t0 + sh.flyTime + 0.3
 	for tt: float in [t_m, t_i]:
