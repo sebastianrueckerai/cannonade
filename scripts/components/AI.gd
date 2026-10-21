@@ -1,6 +1,8 @@
 extends "res://scripts/components/PlayerController.gd"
 ## Port of AI.cs: computer player. Rings castles and yards with whatever piece it holds, builds
-## guns inside its closed ground and shoots at what the rules make worth shooting.
+## guns inside its closed ground and shoots at what the rules make worth shooting. Once nothing
+## is left to ring or claim it walls the largest room it can toward the castles it does not
+## hold: territory for its guns, staging for a claim once the walls before it fall (I76).
 
 const RingPlan = preload("res://scripts/RingPlan.gd")
 
@@ -18,6 +20,10 @@ var claimsAtOnce := 3
 var castlePlans := {}
 ## RingPlans of the 3x3 yards the AI walls for its guns
 var yards: Array = []
+## RingPlans of the free rooms the AI walls for territory once castles, yards and claims are
+## done: the largest site that fits, sited toward a castle it does not hold. A ring that stands
+## but does not seal is replaced (I76)
+var rooms: Array = []
 ## The plans the held piece serves, in order: own castles, yards, claims
 var activePlans: Array = []
 ## activePlans split by tier: [own castles, yards, claims]
@@ -78,9 +84,10 @@ func update_plans() -> void:
 			own.append(plan)
 		elif _claimable(c):
 			ranked.append([_anchor_distance(plan.centre()), plan])
-	for plan in own + yards:
+	for plan in own + yards + rooms:
 		plan.refresh()
 	yards = yards.filter(func(y): return y.possible())
+	rooms = rooms.filter(func(r): return r.possible() and (r.done or not r.gaps.is_empty()))
 	ranked.sort_custom(func(a, b): return a[0] < b[0])
 	var claims: Array = []
 	var open := 0
@@ -95,13 +102,24 @@ func update_plans() -> void:
 	var need: int = partsCap - parts_used()
 	if need > 0 and not yards.any(func(y): return not y.closed()) and gun_room() < need:
 		var avoid := {}
-		for plan in own + yards + claims:
+		for plan in own + yards + claims + rooms:
 			avoid.merge(plan.inside)
 		var y = _pick_yard(avoid)
 		if y != null:
 			yards.append(y)
-	tiers = [own, yards, claims]
-	activePlans = own + yards + claims
+	# nothing left to ring or claim: the largest room that fits, sited toward a castle not the
+	# AI's — ground for the guns a bigger cap will pay for, and a step toward a later claim (I76)
+	if (own + yards + claims).all(func(p): return p.closed()) and rooms.all(func(r): return r.closed()):
+		var avoid := {}
+		for plan in own + yards + claims + rooms:
+			avoid.merge(plan.inside)
+		for s in [5, 3]:
+			var room = _pick_room(avoid, s, true)
+			if room != null:
+				rooms.append(room)
+				break
+	tiers = [own, yards, claims, rooms]
+	activePlans = own + yards + claims + rooms
 
 
 ## A castle worth ringing: not the AI's, and not sitting in another player's closed ring.
@@ -132,6 +150,16 @@ func _castle_distance(k: Vector2i) -> int:
 	return d
 
 
+## Chebyshev distance from k to the nearest live castle the player does not hold.
+func _enemy_castle_distance(k: Vector2i) -> int:
+	var d := RingPlan.INF
+	for c in map.castles:
+		if U.alive(c) and not c.is_ruin() and c.owner() != self:
+			var cc: Vector2i = map.tile_index_at(c.go.global_position)
+			d = mini(d, maxi(absi(cc.x - k.x), absi(cc.y - k.y)))
+	return d
+
+
 ## A free tile in reach inside the AI's closed ground.
 func _gun_spot(t) -> bool:
 	return t.is_free() and in_reach(t.idxX, t.idxZ) and map.is_tile_enclosed(t.idxX, t.idxZ) \
@@ -147,40 +175,58 @@ func gun_room() -> int:
 	return n
 
 
-## The 3x3 of free open ground outside every plan whose ring shares the most own walls, nearest an
-## own castle on ties; the four best by that proxy are costed for real.
+## The gun yard: a 3x3 of free open ground.
 func _pick_yard(avoid: Dictionary):
+	return _pick_room(avoid, RingPlan.YARD)
+
+
+## The s x s of free open ground outside every plan whose ring shares the most own walls, nearest
+## an own castle on ties; the four best by that proxy are costed for real. A territory room
+## (`enemy_first`) instead takes the site nearest a castle the player does not hold, so its
+## walls walk toward the castles a later claim may take (I76).
+func _pick_room(avoid: Dictionary, s: int, enemy_first := false):
 	var cands: Array = []
-	var y: int = RingPlan.YARD
-	for x in range(1, map.sizeX - y):
-		for z in range(1, map.sizeZ - y):
-			if not _yard_free(x, z, avoid):
+	for x in range(1, map.sizeX - s):
+		for z in range(1, map.sizeZ - s):
+			if not _yard_free(x, z, avoid, s):
 				continue
 			var shared := 0
 			var reached := false
-			for bx in range(x - 1, x + y + 1):
-				for bz in range(z - 1, z + y + 1):
-					if bx != x - 1 and bx != x + y and bz != z - 1 and bz != z + y:
+			for bx in range(x - 1, x + s + 1):
+				for bz in range(z - 1, z + s + 1):
+					if bx != x - 1 and bx != x + s and bz != z - 1 and bz != z + s:
 						continue
 					var t = map.tiles[bx][bz]
 					if t.isWall and map.get_mini(bx, bz) == playerID:
 						shared += 1
 					reached = reached or in_reach(bx, bz)
 			if reached:
-				cands.append([shared, _castle_distance(Vector2i(x + 1, z + 1)), Vector2i(x, z)])
-	cands.sort_custom(func(a, b): return a[0] > b[0] if a[0] != b[0] else a[1] < b[1])
+				var k := Vector2i(x + s / 2, z + s / 2)
+				cands.append([shared, _castle_distance(k), _enemy_castle_distance(k), Vector2i(x, z)])
+	if enemy_first:
+		cands.sort_custom(func(a, b): return a[2] < b[2] if a[2] != b[2] else a[0] > b[0])
+	else:
+		cands.sort_custom(func(a, b): return a[0] > b[0] if a[0] != b[0] else a[1] < b[1])
 	var best = null
-	for i in mini(4, cands.size()):
-		var plan = RingPlan.new(self, null, cands[i][2])
+	var costed := 0
+	for c in cands:
+		var plan = RingPlan.new(self, null, c[3], s)
 		plan.refresh()
-		if plan.possible() and (best == null or plan.cost < best.cost):
+		costed += 1
+		if not plan.possible():
+			continue
+		if enemy_first:
+			return plan  # the first buildable site down the ranking is the closest one to the enemy
+		if best == null or plan.cost < best.cost:
 			best = plan
+		if costed >= 4:
+			break
 	return best
 
 
-func _yard_free(x: int, z: int, avoid: Dictionary) -> bool:
-	for dx in RingPlan.YARD:
-		for dz in RingPlan.YARD:
+func _yard_free(x: int, z: int, avoid: Dictionary, s: int) -> bool:
+	for dx in s:
+		for dz in s:
 			var t = map.tiles[x + dx][z + dz]
 			if U.alive(t.structure) or t.water or t.disabled or map.is_tile_enclosed(x + dx, z + dz) \
 					or avoid.has(Vector2i(x + dx, z + dz)):

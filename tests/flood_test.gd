@@ -163,11 +163,7 @@ func _rect_free(map, x0: int, z0: int, x1: int, z1: int) -> bool:
 
 ## Lower left tile of the first free w x h rectangle, scanning from (1, 1); (-1, -1) when none.
 func _free_rect(map, w: int, h: int) -> Vector2i:
-	for x in range(1, map.sizeX - w):
-		for z in range(1, map.sizeZ - h):
-			if _rect_free(map, x, z, x + w - 1, z + h - 1):
-				return Vector2i(x, z)
-	return Vector2i(-1, -1)
+	return Ring.free_rect(map, w, h)
 
 
 func _inner(_map, x0: int, z0: int, x1: int, z1: int) -> Array:

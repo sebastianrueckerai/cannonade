@@ -62,8 +62,9 @@ into the ground. So do a gun, the castle as it falls to ruins, and the trees, bu
 boulders of a tile that is shot or built on.
 Every game deals each player a different wall look of four. The walkway along the top of a wall carries the
 owner's colour, running toward the neighbouring blocks of the same wall, and the ground inside
-a closed ring takes a wash of the colour of the player whose walls surround it most, so a
-glance tells whose wall and whose ground is whose.
+a closed ring takes a wash of the colour of the player whose walls encircle it alone — a ring
+two factions share encircles nothing and the ground stays open — so a glance tells whose wall
+and whose ground is whose.
 
 A round is three phases: **build walls** (45 s), **place cannons** (15 s) and the
 **battle** (30 s). A small banner in the middle counts each phase in for 3 seconds; nobody
@@ -95,7 +96,9 @@ repairs. A gun costs parts (1×1 one part, 2×2 four); four basic cannons placed
 worth four (40 damage against the cannon's 10) at the cannon's 2 s reload. The upgrade
 blocks are parked with the 3×3 guns.
 
-A shell on a tile whose building is already gone hits the ground instead: the tile cracks
+The blow that flattens a building scars the ground under it at once — a shell leaves a
+stage-1 crater, the heavy shell's 40 damage a stage-2 one — and the shells after it escalate
+from there. A shell on a tile whose building is already gone hits the ground instead: the tile cracks
 in three stages (the first hit already shows a crater, stage 2 at 25 damage, stage 3 at 50,
 water never scars), its look follows the ground — stamped paving cracks inside walls, open
 ground churns — and building on the tile heals it back to plain ground.
@@ -281,7 +284,9 @@ changed on purpose:
   places whatever piece it holds where it covers the most of that loop's gaps, bulging
   outward freely, and walks towards a loop out of reach. That is how it claims neutral
   castles and patches its breaches. Guns go only into its closed ground, and a gun over
-  the parts cap waits in its hand until a gun dies.
+  the parts cap waits in its hand until a gun dies. Once nothing is left to ring or claim
+  it keeps building: the largest room it can, sited toward the castles it does not hold —
+  territory for its guns and staging for later captures.
 * The enclosure flood fill treats fully walkable tiles as 3×3 blocks; it gives the same
   results as the original algorithm (see `tests/flood_test.gd`) but keeps GDScript fast.
 

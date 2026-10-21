@@ -539,3 +539,11 @@ under it and the phase clock stands, so the 45, 15 and 30 s stay whole; the phas
 runs out. One button, the left mouse, places the wall piece, places the cannon and fires, the phase deciding which;
 Space and the right mouse lose their jobs. The calls for the wall and the cannon phase, a bell and a whistle from the
 round 37 page, are in unheard for his ear, not picks. Session 41, roadmap I70.
+
+## D88. A room closes for one faction only (2026-10-21, Sebastian)
+
+"Currently if there is a room that is closed by partially mine and partially the enemies walls, it becomes a closed
+room (not sure who it belongs to) this is wroing, it should be open until walls from one faction encirlce it." This
+revises D79's majority rule: the ground inside a closed ring takes its owner's colour only when that owner's walls
+encircle the region alone; a ring two factions share encircles nothing and the room stays open. Where one faction's
+ring runs round a smaller ring of the other, the ground between stays the outer faction's. Session 47, roadmap I75.

@@ -115,6 +115,8 @@ func damage_structure(damage: float, from := Vector3.INF) -> void:
 		if bb.health <= 0:
 			Crumble.crumble(tile.structure, from)
 			un_build_upgrade()
+			for bp in upgradedTiles:
+				bp.damage_ground(damage)   # the killing blow scars every tile it frees (I74)
 
 
 ## One structure, one sound: the first tile's un_build plays it.

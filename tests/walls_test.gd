@@ -7,6 +7,7 @@ extends Node
 
 const Main = preload("res://scripts/Main.gd")
 const WallComp = preload("res://scripts/components/Wall.gd")
+const Ring = preload("res://tests/ring.gd")
 
 var main: Node
 var game
@@ -173,7 +174,8 @@ func _check_piece() -> void:
 	piece2.free()
 
 
-## A closed ring tints the ground it encloses toward its owner's colour; open it and the mud comes back.
+## A closed ring tints the ground it encloses toward its owner's colour; a ring two factions
+## share encircles nothing (I73), and opened the mud comes back.
 func _check_ground() -> void:
 	var inside = _tile(23, 3)
 	var mud: Color = inside.enclosedColor
@@ -187,20 +189,44 @@ func _check_ground() -> void:
 	check(inside.ringOwner == null and U.get_color(inside.model()) == inside.openColor,
 			"with the ring opened the ground is open mud again")
 	_build(p2, 23, 2)
-	check(inside.ringOwner == p1 and U.get_color(inside.model()).is_equal_approx(mud.lerp(p1.mainColor, 0.25)),
-			"one enemy block in the ring: the ground still follows the majority, player 1")
-	# the corners border no inside tile: six blocks count, and three more of player 2's make four of six
-	for c in [[24, 2], [22, 3], [25, 3]]:
-		_tile(c[0], c[1]).un_build()
-		_build(p2, c[0], c[1])
-	check(inside.ringOwner == p2 and U.get_color(inside.model()).is_equal_approx(mud.lerp(p2.mainColor, 0.25)),
-			"with most of the bordering blocks player 2's, the ground turns to player 2's colour")
-	inside.reset_color()
-	check(U.get_color(inside.model()).is_equal_approx(mud.lerp(p2.mainColor, 0.25)),
-			"a plain recolour of the tile keeps its ring owner's tint")
-	_tile(25, 3).un_build()
-	_build(p1, 25, 3)
-	check(inside.ringOwner == p1, "three blocks each: the tie goes to the lower player number")
+	check(inside.ringOwner == null and not map.is_tile_enclosed(23, 3) and U.get_color(inside.model()) == inside.openColor,
+			"a ring one block of which is the enemy's encircles nothing: the room stays open")
+	_tile(23, 2).un_build()
+	_build(p1, 23, 2)
+	check(inside.ringOwner == p1 and map.is_tile_enclosed(23, 3) \
+			and U.get_color(inside.model()).is_equal_approx(mud.lerp(p1.mainColor, 0.25)),
+			"the ring all player 1's once more: the ground and its colour return")
+	_check_nested_rings()
+
+
+## An outer ring of one faction round a smaller ring of another still holds the ground between
+## the two: that faction's walls encircle it alone. One swapped outer block and exactly the
+## annulus opens; the inner ring's heart stays the inner faction's.
+func _check_nested_rings() -> void:
+	var q: Vector2i = Ring.free_rect(map, 6, 5)
+	check(q.x >= 0, "a free 6 x 5 rectangle exists for the nested rings")
+	for x in range(q.x, q.x + 6):
+		for z in range(q.y, q.y + 5):
+			if x != q.x and x != q.x + 5 and z != q.y and z != q.y + 4:
+				continue
+			_build(p1, x, z)
+	for x in range(q.x + 1, q.x + 4):
+		for z in range(q.y + 1, q.y + 4):
+			if x == q.x + 2 and z == q.y + 2:
+				continue
+			_build(p2, x, z)
+	var between = _tile(q.x + 4, q.y + 2)
+	var heart = _tile(q.x + 2, q.y + 2)
+	check(between.ringOwner == p1 and map.is_tile_enclosed(q.x + 4, q.y + 2),
+			"the outer ring round the inner one holds the ground between for its own faction")
+	check(heart.ringOwner == p2 and map.is_tile_enclosed(q.x + 2, q.y + 2),
+			"the inner ring's heart is the inner faction's")
+	_tile(q.x + 5, q.y + 2).un_build()
+	_build(p2, q.x + 5, q.y + 2)
+	check(between.ringOwner == null and not map.is_tile_enclosed(q.x + 4, q.y + 2),
+			"one outer block now the enemy's: no faction encircles the annulus alone, it is open")
+	check(heart.ringOwner == p2 and map.is_tile_enclosed(q.x + 2, q.y + 2),
+			"the inner ring still pure: its heart stays the inner faction's")
 
 
 ## The deal: five art seeds give five permutations of the four looks, not all alike, and a four-player game hands

@@ -9,6 +9,7 @@ The game is quick strategy, tower defence meets Tetris. Matches are short, every
 The Rampart rule replaces today's rule, under which the first breach switches off the whole fort and a battle is decided in about 6 s.
 
 - Enclosure is checked once, at the end of the build phase. A building inside a closed wall at that moment is active for the whole battle. A breach during the battle changes nothing until the next check.
+- A ring closes for one side only: ground walled in by two sides' walls together stays open until one side's walls encircle it alone. Where one side's ring runs round a smaller ring of the other, the ground between stays the outer side's (2026-10-21, I75).
 - The base is the flag. At the end of a build phase, a side whose base is not inside a closed wall is out. In a match of four sides the last side in wins. In single player the fleet mode ends when the seven ships are sunk or when the base is open.
 - A shot kills whatever stands on the tile it hits: a wall piece, a gun, a block, a depot, a flak, a ship. The base takes no damage. On a double wall the upper storey goes first, the lower wall on the next hit.
 - The cap: after round 8 the outer ring of tiles floods, one ring per round, until a base is open. A dial. Craters end most long matches before it.
@@ -91,6 +92,7 @@ Why counts and not shapes: a 2x2 has six patterns, a 3x3 has 140. Nobody learns 
 - The same draws, the same hold slots, the same queue and skip.
 - Two reaction times in seconds in [AI.gd](/home/womb/repos/grid-cannons/scripts/components/AI.gd), never 0. `secondsBetweenShots`, 0.5 by default, is the wait after every shot, the aim move and the click: a human lands about one shot per 0.5 to 0.8 s. `secondsBetweenBuilds`, 1.0 by default, is the wait after every build action, whether a placed piece or gun, a stacked block, a dropped piece or a discarded gun: a human turns and places a piece slower than it fires. D76 had one wait of 0.5 for both, which built too fast (2026-10-20, I63); the two waits planned here before, `reaction` and `switch`, stay replaced.
 - It shoots, best first: the enemy's guns, then the castles the enemy holds, the nearest to ruin first, then the enemy's walls, the most walled-in first. Every loaded gun fires at the first of these in its reach, so the guns gang up on what decides the game. A neutral castle it rings and claims, never shoots (2026-10-20, I65).
+- When nothing is left to ring or claim, it keeps building: the largest room it can, sited toward the castles it does not hold — territory for its guns, and staging for a claim once the walls before it fall (2026-10-21, I76).
 - It knows every recipe of section 7 and can lay a 3x3. Today its integer square root returns 4 for 9.
 - Personalities: swarm, heavy, mortar, flak, siege, mixed. Each defends with small guns and spends the rest of its land on its kind. Mixed may build everything.
 

@@ -1,10 +1,10 @@
-# Session 44: fire and impact effects
+# Session 46: fire and impact effects
 Sebastian, 2026-10-21: "I would like to add a particle effect or similar to the canon firing
 (explosion and smoke at barrel) and hitting (plume of smoke at impact). Do a first version,
 maky try different approahces and show me in game, including close uip so I can decide!", then
 "You can also use other options, not only particle effects... its basically up to you how to do
 it!"
-Roadmap: I74, the first slice of K3's unported effects.
+Roadmap: I77, the first slice of K3's unported effects.
 ## The hooks
 Two, and only two: Shooter.try_shoot spawns the muzzle effect at the barrel spawn node, aimed
 along the ballistic launch direction; TileImpactor.impact spawns the landing effect for every
@@ -37,7 +37,7 @@ a forced-water tile (the ships check's precedent) raises a splash, and both clea
 up. Watched red on the old code by neutralizing each hook and the self-free timer.
 ## The boards
 All shots came from tools/screenshot.gd --fire on the ai2 map (the firing gun is a cannon the
-tool placed, --look/--eye frame the camera), in [rounds/46-cannon-fx/](../../game/art-direction/rounds/46-cannon-fx/):
+tool placed, --look/--eye frame the camera), in [rounds/48-cannon-fx/](../../game/art-direction/rounds/46-cannon-fx/):
 - board 1 / 2: puffs, the muzzle and the landing close up
 - board 3 / 4: smoke, the muzzle and the landing close up
 - board 5 / 6: shock ring, the muzzle and the landing close up
