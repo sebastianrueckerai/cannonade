@@ -140,6 +140,7 @@ func damage_structure(damage: float, from := Vector3.INF) -> void:
 			if U.alive(wallStacked):
 				Crumble.crumble(wallStacked, from)
 			un_build()
+			damage_ground(damage)   # the killing blow also scars the ground it frees (I74)
 		else:
 			Sound.play("hit_gun" if U.shooter(structure) != null else "hit_wall")
 

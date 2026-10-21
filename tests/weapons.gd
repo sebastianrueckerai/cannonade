@@ -176,9 +176,14 @@ func _run() -> void:
 	check(U.alive(ftile.structure), "the fused gun survives seven shells")
 	ftile.damage_building_place(10.0)
 	check(not U.alive(ftile.structure), "the eighth shell destroys the fused gun")
+	var quad_tiles: Array = [map.tiles[fspot.x][fspot.y], map.tiles[fspot.x + 1][fspot.y],
+			map.tiles[fspot.x][fspot.y + 1], map.tiles[fspot.x + 1][fspot.y + 1]]
+	check(quad_tiles.all(func(t): return not U.alive(t.structure) and t.ground_stage() == 1),
+			"the fused gun's killing blow scars all four freed tiles (I74)")
 
-	# ground damage: a building soaks every hit while it stands, bare ground takes
-	# the hits in three stages, the family follows the tile's enclosure (I73)
+	# ground damage: a building soaks every hit while it stands, the killing blow then
+	# scars the freed ground, bare ground takes the hits in three stages, the family
+	# follows the tile's enclosure (I73, I74)
 	var gt = open_patch(9, 9)
 	check(gt != null, "a patch of free open ground with all its neighbours exists")
 	gt.damage_building_place(10.0)
@@ -189,13 +194,12 @@ func _run() -> void:
 		gt.damage_building_place(10.0)
 	check(U.alive(gt.structure) and gt.ground_stage() == 0,
 			"a building on the tile heals its scar and soaks the hits")
-	gt.damage_building_place(1e6)
-	check(not U.alive(gt.structure) and gt.ground_stage() == 0, "the killing blow is soaked too")
+	gt.damage_building_place(10.0)
+	check(not U.alive(gt.structure) and gt.ground_stage() == 1 and gt._ground_look == "tile_dirt_d1",
+			"the killing blow scars the freed ground at once")
 	gt.damage_building_place(15.0)
-	check(gt.ground_stage() == 1 and gt._ground_look == "tile_dirt_d1", "15 damage reaches stage 1")
-	gt.damage_building_place(30.0)
-	check(gt.ground_stage() == 2 and gt._ground_look == "tile_dirt_d2", "45 damage reaches stage 2")
-	gt.damage_building_place(30.0)
+	check(gt.ground_stage() == 2 and gt._ground_look == "tile_dirt_d2", "25 damage reaches stage 2")
+	gt.damage_building_place(25.0)
 	check(gt.ground_stage() == 3 and gt._ground_look == "tile_dirt_d3", "50 damage reaches stage 3")
 	gt.damage_building_place(30.0)
 	check(gt.ground_stage() == 3, "past 50 the ground cannot look worse")
