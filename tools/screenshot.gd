@@ -6,6 +6,8 @@ extends Node
 ##   --kill[=wall|gun|castle|tree]   at the first --at time, a shot from the camera kills the wall (the whole stack), the
 ##                  gun, the castle or the decorated tile nearest the --look or --castle target as it stands then, and the
 ##                  camera turns to it; the later times show its rubble
+##   --scorch=N     at the first --at time, N shells' worth of ground damage on the bare tiles nearest the
+##                  target, piled nearest first up to stage 3, and each scar printed
 
 const Main = preload("res://scripts/Main.gd")
 
@@ -16,6 +18,9 @@ var aim = null
 var kill_kind := ""
 var kill_target = null
 var eye := Vector3(0, 9, 6)
+var scorch := 0
+var _scorch_done := false
+var look_target = null
 
 
 func _ready() -> void:
@@ -58,12 +63,15 @@ func _ready() -> void:
 				target = c.go.global_position
 				break
 	if target != null:
+		look_target = target
 		var e: PackedStringArray = str(args.get("eye", "9,6")).split(",")
 		eye = Vector3(0, float(e[0]), float(e[1]))
 		_look_at(target)
 		if args.has("kill"):
 			kill_kind = args["kill"] if args["kill"] != "true" else "wall"
 			kill_target = target
+	if args.has("scorch"):
+		scorch = int(args["scorch"])
 	if args.has("aim"):
 		var p: PackedStringArray = str(args["aim"]).split(",")
 		aim = Vector2i(int(p[0]), int(p[1]))
@@ -84,6 +92,27 @@ func _process(_delta: float) -> void:
 		var t: float = shots.pop_front()
 		if kill_kind != "":
 			_kill()
+		if scorch > 0 and not _scorch_done:
+			_scorch_done = true
+			var where: Vector3 = look_target if look_target != null else Vector3.ZERO
+			var bare: Array = []
+			for col in main.game.map.tiles:
+				for bt in col:
+					if bt.is_free() and not bt.water:
+						bare.append(bt)
+			bare.sort_custom(func(a, b):
+				return a.go.global_position.distance_to(where) < b.go.global_position.distance_to(where))
+			var i := 0
+			var scarred: Array = []
+			for _n in scorch:
+				var hit = bare[i % bare.size()]
+				hit.damage_building_place(10.0, main.camera.global_position)
+				if hit.groundDamage >= 50.0:
+					i += 1
+				if not scarred.has(hit):
+					scarred.append(hit)
+			for hit in scarred:
+				print("scorch: %d,%d stage %d %s" % [hit.idxX, hit.idxZ, hit.ground_stage(), hit._ground_look])
 		await RenderingServer.frame_post_draw
 		var img := get_viewport().get_texture().get_image()
 		var path := "%s_%03d.png" % [out, int(t)] if t == floorf(t) else "%s_%05.2f.png" % [out, t]

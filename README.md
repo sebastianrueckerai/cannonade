@@ -95,6 +95,11 @@ repairs. A gun costs parts (1×1 one part, 2×2 four); four basic cannons placed
 worth four (40 damage against the cannon's 10) at the cannon's 2 s reload. The upgrade
 blocks are parked with the 3×3 guns.
 
+A shell on a tile whose building is already gone hits the ground instead: the tile cracks
+in three stages (the first hit already shows a crater, stage 2 at 25 damage, stage 3 at 50,
+water never scars), its look follows the ground — stamped paving cracks inside walls, open
+ground churns — and building on the tile heals it back to plain ground.
+
 ## Buildings are data
 
 Every building is a file in `data/buildings/` (the file name is its id); projectiles are

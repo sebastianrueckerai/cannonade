@@ -864,5 +864,77 @@
     "source_sha": "156f1575822f",
     "approved_by": "Sebastian",
     "synced": "2026-10-20T16:27:26+02:00"
+  },
+  "tile_mud_d1": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_mud_d2": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_mud_d3": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_dirt_d1": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_dirt_d2": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_dirt_d3": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
   }
 }

@@ -31,6 +31,13 @@ var ringOwner = null
 ## How far the enclosed ground goes from the mud toward its ring owner's colour (D79).
 static var ground_tint := 0.25
 
+## Ground damage (I73): a hit on a bare tile adds up here, the building above it soaks the hit instead.
+## Three stages at 1 / 25 / 50 damage, building on the tile heals it, water takes none.
+var groundDamage := 0.0
+var _ground_look := "tile_mud"
+const GROUND_STAGE2 := 25.0
+const GROUND_STAGE3 := 50.0
+
 var shakeSecondsPassed := 0.0
 var shakeDuration := 4.0
 var shakeMagnitude := 1.0
@@ -77,6 +84,22 @@ func damage_building_place(damage: float, from := Vector3.INF) -> void:
 		upgradeCluster.damage_structure(damage, from)
 	elif U.alive(structure):
 		damage_structure(damage, from)
+	elif not water:
+		damage_ground(damage)
+
+
+func damage_ground(damage: float) -> void:
+	groundDamage = minf(groundDamage + damage, GROUND_STAGE3)
+	reset_color()
+
+
+## 0 untouched, then the three damage stages of the ground.
+func ground_stage() -> int:
+	if groundDamage >= GROUND_STAGE3:
+		return 3
+	if groundDamage >= GROUND_STAGE2:
+		return 2
+	return 1 if groundDamage > 0.0 else 0
 
 
 ## The decorations go. Once the game runs, each crumbles away from `from` unless `crumble` is off (a ring closing
@@ -183,6 +206,8 @@ func build(building: Node3D, p) -> void:
 	U.set_parent(building, go)
 	player = p
 	structure = building
+	groundDamage = 0.0   # building on a tile heals its ground (I73)
+	reset_color()
 	if isWall:
 		_wall_body(building)
 	# 255 marks a building no player owns (a neutral castle or a ruin)
@@ -272,12 +297,27 @@ func set_on_fire(burn_for_seconds: float) -> void:
 func reset_color(enclosed = null) -> void:
 	if enclosed == null:
 		enclosed = map.is_tile_enclosed(idxX, idxZ)
+	_apply_ground_look(enclosed)
 	var c := wallColor
 	if not isWall:
 		c = enclosedColor if enclosed else openColor
 		if enclosed and ringOwner != null:
 			c = c.lerp(ringOwner.mainColor, ground_tint)
 	set_tile_color(c)
+
+
+## The damaged slab of the tile's stage and family: the stamped mud cracks when enclosed, open nature
+## ground is churned, picked with the same enclosure state as the colour, so no repaint can desync them.
+func _apply_ground_look(enclosed) -> void:
+	var stage := ground_stage()
+	var id := "tile_mud" if stage == 0 else ("tile_mud_d%d" if enclosed else "tile_dirt_d%d") % stage
+	if id == _ground_look:
+		return
+	_ground_look = id
+	if Art.swap_mesh(model(), id):
+		_applied_color = null   # the fresh mesh lost its override material, the tint must go back on
+	else:
+		_ground_look = ""   # no file yet: try again on the next repaint
 
 
 var _applied_color = null

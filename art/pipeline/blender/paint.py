@@ -56,6 +56,25 @@ PAINTERS = {
         "stipples": (16, (4.0, 7.0), (0.8, 1.0), (-50, -25)),   # pebbles and dirt flecks
         "edge": (1.0, 36.0, 0.32),       # soft stamped border, darker toward the piece edge
     },
+    "mud_hit": {   # the enclosed stamped paving shelled (I73): cracked and pocked, near-white for the Map colour
+        "stops": [(0.0, "#ffffff"), (1.0, "#f6f1e7")],
+        "grain": (0.07, 0.035),
+        "ground": None,
+        "patches": [(6, (14, 30), (0.25, 0.45), (-45, -25))],
+        "streaks": None,
+        "stipples": (22, (3.0, 6.0), (0.7, 1.0), (-45, -20)),   # rubble and dirt flecks
+        "cracks": (7, (18, 40), (1.5, 3.0), -70),   # count, segment count, half width px, darkening
+        "edge": (1.0, 36.0, 0.32),
+    },
+    "dirt_hit": {  # open nature ground blasted (I73): churned earth and char, near-white for the Map colour
+        "stops": [(0.0, "#ffffff"), (1.0, "#f2ede2")],
+        "grain": (0.09, 0.045),
+        "ground": None,
+        "patches": [(5, (20, 44), (0.35, 0.6), (-55, -30)), (4, (10, 20), (0.2, 0.4), (-25, -12))],
+        "streaks": None,
+        "stipples": (18, (2.5, 5.0), (0.7, 1.0), (-40, -18)),
+        "edge": (0.8, 30.0, 0.28),
+    },
 }
 
 
@@ -154,10 +173,21 @@ def paint_texture(params, seed):
             o = (y * W + x) * 4
             flat[o:o + 3] = c
             flat[o + 3] = 255
+    for cx, cy, r, a, chg in params.get("dabs_at") or []:   # fixed dabs, e.g. the scorch over its crater
+        dab(flat, rng, cx, cy, r, a, chg)
     for count, (rlo, rhi), (alo, ahi), chg in params["patches"]:
         for _ in range(count):
             dab(flat, rng, rng.randrange(W), int(rng.random() * H),
                 rng.uniform(rlo, rhi), rng.uniform(alo, ahi), rng.uniform(*chg))
+    if params.get("cracks"):   # a random walk of small dark dabs, the crack a line of them
+        count, (llo, lhi), (wlo, whi), dark = params["cracks"]
+        for _ in range(count):
+            x, y = rng.randrange(W), rng.randrange(H)
+            ang = rng.random() * 6.28
+            for _ in range(rng.randrange(llo, lhi + 1)):
+                dab(flat, rng, x, y, rng.uniform(wlo, whi), 1.0, dark)
+                ang += rng.uniform(-0.7, 0.7)
+                x, y = (x + int(math.cos(ang) * 4)) % W, max(0, min(H - 1, y + int(math.sin(ang) * 4)))
     if params["streaks"]:
         count, (v0lo, v0hi), (llo, lhi), (wlo, whi), (alo, ahi), dark = params["streaks"]
         for _ in range(count):

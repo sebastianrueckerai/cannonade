@@ -27,6 +27,23 @@ func seconds(t: float) -> void:
 		await get_tree().process_frame
 
 
+## The first tile in a 4x4 box from (x0, z0) that is free, open and not water, with all eight
+## neighbours the same, so a wall ring can close round it.
+func open_patch(x0: int, z0: int):
+	var ring := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+			Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)]
+	for x in range(x0, x0 + 4):
+		for z in range(z0, z0 + 4):
+			var t = map.tiles[x][z]
+			var ok: bool = t.is_free() and not t.water and not map.is_tile_enclosed(t.idxX, t.idxZ)
+			for d in ring:
+				var n = map.tiles[x + d.x][z + d.y]
+				ok = ok and n.is_free() and not n.water
+			if ok:
+				return t
+	return null
+
+
 func _ready() -> void:
 	Main.requested_mode = "ai2"
 	Main.requested_args = {"seed": "21", "no-decorations": "true"}
@@ -159,6 +176,64 @@ func _run() -> void:
 	check(U.alive(ftile.structure), "the fused gun survives seven shells")
 	ftile.damage_building_place(10.0)
 	check(not U.alive(ftile.structure), "the eighth shell destroys the fused gun")
+
+	# ground damage: a building soaks every hit while it stands, bare ground takes
+	# the hits in three stages, the family follows the tile's enclosure (I73)
+	var gt = open_patch(9, 9)
+	check(gt != null, "a patch of free open ground with all its neighbours exists")
+	gt.damage_building_place(10.0)
+	check(gt.ground_stage() == 1 and gt._ground_look == "tile_dirt_d1",
+			"the first hit on bare ground dents it (stage 1, the open family)")
+	p1.build_building(gt, Catalog.spawn("cannon"))
+	for i in 3:
+		gt.damage_building_place(10.0)
+	check(U.alive(gt.structure) and gt.ground_stage() == 0,
+			"a building on the tile heals its scar and soaks the hits")
+	gt.damage_building_place(1e6)
+	check(not U.alive(gt.structure) and gt.ground_stage() == 0, "the killing blow is soaked too")
+	gt.damage_building_place(15.0)
+	check(gt.ground_stage() == 1 and gt._ground_look == "tile_dirt_d1", "15 damage reaches stage 1")
+	gt.damage_building_place(30.0)
+	check(gt.ground_stage() == 2 and gt._ground_look == "tile_dirt_d2", "45 damage reaches stage 2")
+	gt.damage_building_place(30.0)
+	check(gt.ground_stage() == 3 and gt._ground_look == "tile_dirt_d3", "50 damage reaches stage 3")
+	gt.damage_building_place(30.0)
+	check(gt.ground_stage() == 3, "past 50 the ground cannot look worse")
+	p1.build_wall(gt, Catalog.spawn("wall"))
+	check(gt.ground_stage() == 0 and gt._ground_look == "tile_mud", "building on the tile heals the ground")
+	gt.un_build(true)
+	for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+			Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)]:
+		var n = map.tiles[gt.idxX + d.x][gt.idxZ + d.y]
+		p1.build_wall(n, Catalog.spawn("wall"))
+	check(map.is_tile_enclosed(gt.idxX, gt.idxZ), "the wall ring closes round the patch")
+	gt.damage_building_place(10.0)
+	check(gt._ground_look == "tile_mud_d1",
+			"a hit on enclosed ground scars it with the enclosed family")
+
+	# a real shell that lands on bare ground scars it
+	var bare = open_patch(13, 8)
+	var shooter_tile = open_patch(14, 12)
+	check(bare != null and shooter_tile != null, "two more free open patches exist")
+	p1.build_building(shooter_tile, Catalog.spawn("cannon"))
+	var sh := U.shooter(shooter_tile.structure)
+	sh.nextBulletTime = 0.0
+	check(sh.try_shoot(bare.go.global_position, bare), "the shell fires at bare ground")
+	end = U.time + 15.0
+	while U.time < end and bare.ground_stage() == 0:
+		await get_tree().process_frame
+	check(bare.ground_stage() == 1 and bare._ground_look == "tile_dirt_d1",
+			"a shell that lands on bare ground scars it")
+
+	# water takes no ground damage
+	var wtile = null
+	for col in map.tiles:
+		for t in col:
+			if t.water and wtile == null:
+				wtile = t
+	if wtile != null:
+		wtile.damage_building_place(30.0)
+		check(wtile.ground_stage() == 0, "water takes no ground damage")
 
 	# ships take damage and sink
 	var water = map.tiles[0][map.sizeZ - 1]
