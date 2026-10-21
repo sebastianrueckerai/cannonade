@@ -443,6 +443,33 @@ func _run() -> void:
 	await seconds(12.0)
 	check(not U.alive(enemy_wall.structure), "a left click fires a shell that destroys the aimed enemy wall")
 
+	# the battle fires at any tile: a tree tile, bare ground, an own wall (I72)
+	var gp: Vector3 = human.activeCannons[0].go.global_position
+	var tree_tile = shot_spot(gp)
+	check(tree_tile != null, "a free tile sits in gun range")
+	_decorate(tree_tile)
+	await point_at_tile(Vector2i(tree_tile.idxX, tree_tile.idxZ))
+	check(human.litTiles.is_empty(), "the battle hover lights no tile as placeable")
+	check(await shoot_at(tree_tile), "a click on a tree tile fires a shell at it")
+	var heaps: Array = tree_tile.go.get_children().filter(func(n): return n is Crumble)
+	check(tree_tile.decorations.is_empty() and heaps.size() == 2,
+			"the shell annihilates the tile's two trees (%d heaps)" % heaps.size())
+	var bare_tile = shot_spot(gp, [tree_tile])
+	await point_at_tile(Vector2i(bare_tile.idxX, bare_tile.idxZ))
+	check(await shoot_at(bare_tile), "a click on bare ground fires a shell at it")
+	check(bare_tile.is_free(), "bare ground stays bare under its shell")
+	var own_wall_tile = null
+	for t in human.wallTiles:
+		var wd := gp.distance_to(t.go.global_position)
+		if wd >= 2.5 and wd <= 8.0:
+			own_wall_tile = t
+			break
+	check(own_wall_tile != null, "an own wall sits in gun range")
+	await point_at_tile(Vector2i(own_wall_tile.idxX, own_wall_tile.idxZ))
+	check(await shoot_at(own_wall_tile), "a click on an own wall fires a shell at it")
+	check(not U.alive(own_wall_tile.structure),
+			"your own shell fells your own wall (10 damage meets 10 health)")
+
 	# with every own wall gone the castle alone anchors reach; a ruined castle anchors nothing
 	var own = null
 	for c in map.castles:
@@ -553,3 +580,44 @@ func _pocket() -> void:
 		human.build_wall(map.tiles[b.x + 4][z], Catalog.spawn("wall"))
 	human.build_wall(map.tiles[b.x + 4][b.y + 2], Catalog.spawn("wall"))
 	human.build_wall(map.tiles[b.x + 3][b.y + 2], Catalog.spawn("wall"))
+
+
+## A free, dry tile 3 to 8 m from the pocket gun, none of `taken`.
+func shot_spot(gp: Vector3, taken: Array = []):
+	for x in range(map.sizeX):
+		for z in range(map.sizeZ):
+			var t = map.tiles[x][z]
+			if t.disabled or t.water or not t.is_free() or taken.has(t):
+				continue
+			var d := gp.distance_to(t.go.global_position)
+			if d >= 3.0 and d <= 8.0:
+				return t
+	return null
+
+
+## Two leaf trees on `t`, as the map's decorator places them.
+func _decorate(t) -> void:
+	var maker: Node3D = U.instantiate(preload("res://prefabs/Maker_LeafTree.tscn"), main)
+	for i in 2:
+		var deco: Node3D = U.comp(maker, "CustomModelMaker").get_randomized_model(t.go)
+		deco.position = Vector3(0.25 * i - 0.125, Art.SLAB_TOP, 0.0)
+		t.decorations.append(deco)
+
+
+## Fires at the tile under the cursor and waits for the shell to land; false when nothing flew
+## or the shell did not land within 15 s.
+func shoot_at(tile) -> bool:
+	await press("act")
+	await frames(2)
+	var shell = null
+	for p in U.projectiles:
+		if is_instance_valid(p) and p.player == human and p.destinationTile == tile:
+			shell = p
+			break
+	if shell == null:
+		return false
+	var end := U.time + 15.0
+	while is_instance_valid(shell) and U.time < end:
+		await frames(1)
+	await frames(2)
+	return not is_instance_valid(shell)

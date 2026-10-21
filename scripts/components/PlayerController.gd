@@ -219,7 +219,8 @@ func update_point_and_tile_selected() -> void:
 	if voidSelected:
 		next_wall_to_hand()
 		next_building_to_hand()
-	if buildableTileSelected != null:
+	# the battle aims the gun, nothing is held: no tile previews or lights as placeable
+	if buildableTileSelected != null and (game == null or game.phase != game.Phase.BATTLE):
 		var x: int = buildableTileSelected.idxX
 		var z: int = buildableTileSelected.idxZ
 		freeTileSelected = buildableTileSelected.is_free()

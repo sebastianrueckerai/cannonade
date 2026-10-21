@@ -84,7 +84,10 @@ At the end of every cannon phase the **check** runs:
   3 → 13, 4 → 15, 5 → 17; a cap below your placed guns blocks new placement only,
 - a player holding no castle is out; both out in the same check is a draw.
 
-Guns always fire, walled in or not, and every building is a legal target. A gun takes
+Guns always fire, walled in or not, and every building is a legal target. A shell lands
+on any tile you click — bare ground, a tree, an enemy's or your own wall — and whatever
+stands there takes the hit, so a stray shot wastes itself on empty ground and a careless
+one fells your own wall. A gun takes
 4 shells and fires 1.5× slower for each shell it survives; a castle takes 12 shells
 through four damage states and ends as a ruin nobody claims or builds on. Nothing
 repairs. A gun costs parts (1×1 one part, 2×2 four); four basic cannons placed in a
