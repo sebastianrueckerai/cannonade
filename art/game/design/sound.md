@@ -138,7 +138,8 @@ Counts: 33 clip sets in A, 21 in B, about 70 files with the variations.
 
 ## Mixing rules
 
-- Three buses: music, effects, UI. Each with its own slider in the menu later.
+- Three buses: music, effects, UI. The menu's Volume panel carries three sliders (session 43):
+  master on the Master bus, music on Music, and sound on SFX and UI together.
 - The battle fires many shells at once. Each effect gets a maximum of three voices, and a new one
   steals the oldest. The whistle ducks under the shots.
 - Enemy and AI actions play the same clips, 6 dB quieter and panned to the side of the map they come
@@ -186,5 +187,5 @@ shot by projectile and ship), TileImpactor (water, ground), BuildingPlace (hits,
 UpgradeCluster (one sound for one structure), Ship (hit, sink), Main (win, lose, the end buttons).
 [tests/sound_test.gd](/home/womb/repos/grid-cannons/tests/sound_test.gd) drives them.
 
-Not in yet: panning by map side, volume sliders, the loop cut of the music, the B list.
+Not in yet: panning by map side, the loop cut of the music, the B list.
 

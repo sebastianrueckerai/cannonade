@@ -1,5 +1,5 @@
 extends Node
-## Sound (autoload): the game's clips by cue, the three buses and one call per event.
+## Sound (autoload): the game's clips by cue, the three buses, the menu's volumes and one call per event.
 ##
 ## A clip is res://assets/audio/<bus>/<cue>.wav or <cue>_<n>.wav for a cue with variants, picked at random and
 ## never the same twice in a row. A cue without a clip plays nothing, so a hook may stand before its clip lands.
@@ -8,6 +8,9 @@ extends Node
 
 const DIRS := {"SFX": "res://assets/audio/sfx", "UI": "res://assets/audio/ui"}
 const MUSIC_DIR := "res://assets/audio/music"
+const VOLUME_PATH := "user://volume.cfg"
+## One slider of the menu's Volume panel; "sound" is both effect buses, the battle clips and the UI clicks.
+const VOLUME_BUSES := {"master": ["Master"], "sound": ["SFX", "UI"], "music": ["Music"]}
 ## A cue played with another cue's clip while it has none of its own: cue -> [clip cue, dB].
 const ALIAS := {
 	"ui_hover": ["ui_click", -8.0],
@@ -27,6 +30,7 @@ var _last := {}  # cue -> the variant played last
 var _voices: Array[AudioStreamPlayer] = []
 var _music := AudioStreamPlayer.new()
 var _music_cue := ""
+var _volume := {}  # setting of VOLUME_BUSES -> linear 0 to 1, 1 when never saved
 var _rng := RandomNumberGenerator.new()
 ## Headless runs (tests, the lab) have no audio device: the voices keep their books by the clock and never
 ## start a playback, which the server would hold past the resource cache at exit and report as a leak.
@@ -34,6 +38,7 @@ var _silent := DisplayServer.get_name() == "headless"
 
 
 func _ready() -> void:
+	load_volumes()
 	for bus in DIRS:
 		for f in _files(DIRS[bus]):
 			var stem: String = f.get_basename()
@@ -142,6 +147,42 @@ func music(cue: String) -> void:
 
 func music_cue() -> String:
 	return _music_cue
+
+
+## The setting's linear volume, 1 when never saved.
+func volume(kind: String) -> float:
+	return _volume.get(kind, 1.0)
+
+
+## Sets one setting, applies its buses and saves the file.
+func set_volume(kind: String, linear: float) -> void:
+	_volume[kind] = clampf(linear, 0.0, 1.0)
+	_apply(kind)
+	var cfg := ConfigFile.new()
+	for k in VOLUME_BUSES:
+		cfg.set_value("volume", k, _volume[k])
+	cfg.save(VOLUME_PATH)
+
+
+## Reads the saved volumes and applies them. A missing or broken file leaves everything at full.
+func load_volumes() -> void:
+	var cfg := ConfigFile.new()
+	for kind in VOLUME_BUSES:
+		_volume[kind] = 1.0
+	if cfg.load(VOLUME_PATH) == OK:
+		for kind in VOLUME_BUSES:
+			var v = cfg.get_value("volume", kind, 1.0)
+			if v is int or v is float:
+				_volume[kind] = clampf(float(v), 0.0, 1.0)
+	for kind in VOLUME_BUSES:
+		_apply(kind)
+
+
+## The setting's buses at its linear volume; the maxf is the -80 dB floor, a mute for the 0 slider.
+func _apply(kind: String) -> void:
+	var db := linear_to_db(maxf(_volume[kind], 0.0001))
+	for bus in VOLUME_BUSES[kind]:
+		AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus), db)
 
 
 ## Every Button under `root` clicks and ticks on hover.

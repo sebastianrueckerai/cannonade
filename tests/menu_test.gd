@@ -16,7 +16,7 @@ func _ready() -> void:
 	await _frames(3)
 	var menu := get_tree().current_scene
 	var buttons := menu.find_children("*", "Button", true, false)
-	_check(buttons.size() == 6, "menu has 6 buttons (3 modes, Tutorial & Controls, Sandbox, Quit)")
+	_check(buttons.size() == 7, "menu has 7 buttons (3 modes, Tutorial & Controls, Volume, Sandbox, Quit)")
 	_check(buttons.any(func(b): return b.text.contains("Player vs. AI"))
 			and buttons.any(func(b): return b.text.contains("Practice"))
 			and not buttons.any(func(b): return b.text.contains("Single player"))
@@ -108,7 +108,7 @@ func _ready() -> void:
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	await _frames(3)
 	menu = get_tree().current_scene
-	_check(menu.find_children("*", "Button", true, false).size() == 6,
+	_check(menu.find_children("*", "Button", true, false).size() == 7,
 			"menu builds with a corrupt input_remap.cfg")
 	tut = null
 	for b in menu.find_children("*", "Button", true, false):
@@ -193,6 +193,67 @@ func _ready() -> void:
 	x_key.device = -1
 	x_key.physical_keycode = KEY_X
 	InputMap.action_add_event("rotate_cw", x_key)
+	# the Volume panel: three sliders, live on the buses, saved and reloaded through the file
+	var volume: Button = null
+	for b in menu.find_children("*", "Button", true, false):
+		if b.text == "Volume":
+			volume = b
+	_check(volume != null, "the menu has a Volume button")
+	volume.pressed.emit()
+	await _frames(2)
+	var sliders := {}
+	for kind in ["master", "sound", "music"]:
+		sliders[kind] = menu.find_children(kind, "HSlider", true, false)[0]
+		_check(sliders[kind].value == 100.0, "the %s slider starts at full (%s, Sound %s)"
+				% [kind, sliders[kind].value, Sound.volume(kind)])
+	await _drag_slider(sliders["master"], 0.25)
+	_check(absf(sliders["master"].value - 25.0) < 8.0,
+			"a drag to a quarter of the track sets the master slider near 25 (%s)" % sliders["master"].value)
+	_check(absf(_bus_db("Master") - linear_to_db(sliders["master"].value / 100.0)) < 0.01,
+			"the master drag moves the Master bus to the slider's level (%.1f dB)" % _bus_db("Master"))
+	_check(_bus_db("SFX") == 0.0 and _bus_db("UI") == 0.0 and _bus_db("Music") == 0.0,
+			"the master drag leaves the other buses at full")
+	await _drag_slider(sliders["sound"], 0.1)
+	_check(absf(_bus_db("SFX") - linear_to_db(sliders["sound"].value / 100.0)) < 0.01
+			and absf(_bus_db("UI") - linear_to_db(sliders["sound"].value / 100.0)) < 0.01,
+			"the sound slider moves the SFX and UI buses together to its level (%.1f dB)" % _bus_db("SFX"))
+	await _drag_slider(sliders["music"], 0.6)
+	_check(absf(_bus_db("Music") - linear_to_db(sliders["music"].value / 100.0)) < 0.01,
+			"the music slider moves the Music bus alone")
+	var pct: Label = menu.find_children("master_value", "Label", true, false)[0]
+	_check(pct.text == "%d%%" % sliders["master"].value,
+			"the row's percent follows its slider (%s)" % pct.text)
+	var saved := {}
+	var vol_cfg := ConfigFile.new()
+	_check(vol_cfg.load("user://volume.cfg") == OK, "the sliders save to user://volume.cfg")
+	for kind in ["master", "sound", "music"]:
+		saved[kind] = sliders[kind].value / 100.0
+		_check(absf(float(vol_cfg.get_value("volume", kind, 1.0)) - saved[kind]) < 0.002,
+				"the file holds the %s volume %.2f" % [kind, saved[kind]])
+	_esc()
+	await _frames(2)
+	# a fresh menu load reads the file back and applies it
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	await _frames(3)
+	menu = get_tree().current_scene
+	volume = null
+	for b in menu.find_children("*", "Button", true, false):
+		if b.text == "Volume":
+			volume = b
+	volume.pressed.emit()
+	await _frames(2)
+	for kind in ["master", "sound", "music"]:
+		var reloaded: HSlider = menu.find_children(kind, "HSlider", true, false)[0]
+		_check(absf(reloaded.value / 100.0 - saved[kind]) < 0.005,
+				"the saved %s volume survives a menu reload (%.2f)" % [kind, reloaded.value / 100.0])
+	_check(absf(_bus_db("Master") - linear_to_db(saved["master"])) < 0.01
+			and absf(_bus_db("Music") - linear_to_db(saved["music"])) < 0.01,
+			"a fresh menu applies the saved volumes to the buses")
+	for kind in ["master", "sound", "music"]:
+		Sound.set_volume(kind, 1.0)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://volume.cfg"))
+	_esc()
+	await _frames(2)
 	for b in menu.find_children("*", "Button", true, false):
 		if b.text.contains("AI vs. AI"):
 			b.pressed.emit()
@@ -251,6 +312,34 @@ func _key(k: int) -> void:
 	ev.physical_keycode = k
 	ev.pressed = true
 	Input.parse_input_event(ev)
+
+
+## One bus's volume in dB, the number the slider writes.
+func _bus_db(bus: String) -> float:
+	return AudioServer.get_bus_volume_db(AudioServer.get_bus_index(bus))
+
+
+## Drags a slider with the mouse from three quarters of its track to `ratio` of it, then waits a
+## frame for the queued input to reach the control.
+func _drag_slider(s: HSlider, ratio: float) -> void:
+	var r := s.get_global_rect()
+	var y := r.get_center().y
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = Vector2(r.position.x + r.size.x * 0.75, y)
+	press.global_position = press.position
+	Input.parse_input_event(press)
+	var motion := InputEventMouseMotion.new()
+	motion.position = Vector2(r.position.x + r.size.x * ratio, y)
+	motion.global_position = motion.position
+	motion.button_mask = MOUSE_BUTTON_MASK_LEFT
+	Input.parse_input_event(motion)
+	var release := press.duplicate()
+	release.pressed = false
+	Input.parse_input_event(release)
+	await get_tree().process_frame
+	await get_tree().process_frame
 
 
 func _frames(n: int) -> void:

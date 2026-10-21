@@ -236,7 +236,9 @@ can be repeated and compared.
 * `scripts/Sound.gd` (autoload) plays the clips of `assets/audio/`: `sfx/` and `ui/` by cue, a cue's
   variants from a `_1`, `_2` suffix, one at random and never the same twice, three voices a cue; the music
   of `music/` loops per phase and screen. The buses are Master, Music, SFX and UI
-  (`default_bus_layout.tres`). A cue with no clip plays nothing, so a new sound is a file dropped into the
+  (`default_bus_layout.tres`). The menu's Volume panel sets master, sound (SFX and UI together) and
+  music, saved in `user://volume.cfg` and applied at startup. A cue with no clip plays nothing, so a new
+  sound is a file dropped into the
   folder under its cue's name. The cue list is `art/game/design/sound.md`.
 
 ### Behaviour changes compared to the Unity code

@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=5 format=3]
+[gd_resource type="Theme" load_steps=7 format=3]
 
 [sub_resource type="StyleBoxFlat" id="btn_normal"]
 content_margin_left = 16.0
@@ -44,6 +44,29 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
+[sub_resource type="StyleBoxFlat" id="slider"]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.91, 0.863, 0.784, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.227, 0.18, 0.157, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="slider_fill"]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.227, 0.18, 0.157, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [resource]
 default_font_size = 20
 Button/colors/font_color = Color(0.227, 0.18, 0.157, 1)
@@ -54,5 +77,8 @@ Button/styles/focus = SubResource("btn_hover")
 Button/styles/hover = SubResource("btn_hover")
 Button/styles/normal = SubResource("btn_normal")
 Button/styles/pressed = SubResource("btn_pressed")
+HSlider/styles/grabber_area = SubResource("slider_fill")
+HSlider/styles/grabber_area_highlight = SubResource("slider_fill")
+HSlider/styles/slider = SubResource("slider")
 Label/colors/font_color = Color(0.227, 0.18, 0.157, 1)
 PanelContainer/styles/panel = SubResource("panel")

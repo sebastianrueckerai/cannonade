@@ -23,9 +23,15 @@ const FIXED := [
 ]
 const INTRO := "You and the AI each start with a walled castle. A round is three phases: build walls, place cannons, battle.\n\nTurn and drop wall pieces. Pieces that share a side join; corners do not. Build within two tiles of your walls or a castle you hold.\n\nRing in neutral castles to claim them and raise your parts cap. Place cannons; fuse four in a 2x2 square into a heavy gun. Buildings outside your walls burn when the battle starts.\n\nRuin the enemy's last castle before yours falls."
 const REMAP_PATH := "user://input_remap.cfg"
+## The Volume panel's sliders: setting id -> label. "sound" is both effect buses.
+const VOLUMES := [
+	["master", "Master"],
+	["sound", "Sound"],
+	["music", "Music"],
+]
 
-## The help overlay while open, null when closed.
-var _help: Control = null
+## The open overlay (its dim root), null when closed.
+var _overlay: Control = null
 var _note: Label = null
 var _capturing := ""
 var _capture_btn: Button = null
@@ -33,6 +39,7 @@ var _capture_btn: Button = null
 
 func _ready() -> void:
 	_load_remap()
+	Sound.load_volumes()
 	Sound.music("menu")
 	theme = Art.theme()
 	var bg := Art.texture("menu_background.png")
@@ -80,6 +87,11 @@ func _ready() -> void:
 	help.custom_minimum_size = Vector2(0, 44)
 	help.pressed.connect(_show_help)
 	box.add_child(help)
+	var volume := Button.new()
+	volume.text = "Volume"
+	volume.custom_minimum_size = Vector2(0, 44)
+	volume.pressed.connect(_show_volume)
+	box.add_child(volume)
 	if not web:
 		var sandbox := Button.new()
 		sandbox.text = "Sandbox (build & test battles)"
@@ -109,8 +121,8 @@ func _start(mode: String) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _help != null and event.is_action_pressed("ui_cancel"):
-		_close_help()
+	if _overlay != null and event.is_action_pressed("ui_cancel"):
+		_close_overlay()
 		get_viewport().set_input_as_handled()
 
 
@@ -138,21 +150,8 @@ func _input(event: InputEvent) -> void:
 
 
 func _show_help() -> void:
-	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.6)
-	dim.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-	dim.gui_input.connect(func(e: InputEvent) -> void:
-		if e is InputEventMouseButton and e.pressed:
-			_close_help())
-	add_child(dim)
-	var panel := PanelContainer.new()
-	panel.set_anchors_preset(PRESET_CENTER)
-	panel.grow_horizontal = GROW_DIRECTION_BOTH
-	panel.grow_vertical = GROW_DIRECTION_BOTH
-	dim.add_child(panel)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 12)
-	panel.add_child(box)
 	var title := Label.new()
 	title.text = "Tutorial & Controls"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -210,20 +209,82 @@ func _show_help() -> void:
 	var close := Button.new()
 	close.text = "Close"
 	close.custom_minimum_size = Vector2(0, 44)
-	close.pressed.connect(_close_help)
+	close.pressed.connect(_close_overlay)
 	box.add_child(close)
-	Sound.buttons(dim)
+	_open_panel(box)
 	close.grab_focus()
-	_help = dim
 
 
-func _close_help() -> void:
-	if _help == null:
+## The Volume panel: one slider a setting, live on the buses and saved on every change.
+func _show_volume() -> void:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 12)
+	var title := Label.new()
+	title.text = "Volume"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 32)
+	box.add_child(title)
+	for row in VOLUMES:
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", 12)
+		box.add_child(line)
+		var what := Label.new()
+		what.text = row[1]
+		what.custom_minimum_size = Vector2(110, 0)
+		line.add_child(what)
+		var slider := HSlider.new()
+		slider.name = row[0]
+		slider.min_value = 0
+		slider.max_value = 100
+		slider.step = 1
+		slider.scrollable = false
+		slider.custom_minimum_size = Vector2(220, 32)
+		slider.value = round(Sound.volume(row[0]) * 100)
+		line.add_child(slider)
+		var pct := Label.new()
+		pct.name = row[0] + "_value"
+		pct.custom_minimum_size = Vector2(56, 0)
+		pct.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		pct.text = "%d%%" % slider.value
+		line.add_child(pct)
+		slider.value_changed.connect(func(v: float) -> void:
+			Sound.set_volume(row[0], v / 100.0)
+			pct.text = "%d%%" % roundi(v))
+	var close := Button.new()
+	close.text = "Close"
+	close.custom_minimum_size = Vector2(0, 44)
+	close.pressed.connect(_close_overlay)
+	box.add_child(close)
+	_open_panel(box)
+	close.grab_focus()
+
+
+## One centred panel over a dim that fills the screen; a click on the dim closes it.
+func _open_panel(box: VBoxContainer) -> void:
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.6)
+	dim.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	dim.gui_input.connect(func(e: InputEvent) -> void:
+		if e is InputEventMouseButton and e.pressed:
+			_close_overlay())
+	add_child(dim)
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(PRESET_CENTER)
+	panel.grow_horizontal = GROW_DIRECTION_BOTH
+	panel.grow_vertical = GROW_DIRECTION_BOTH
+	dim.add_child(panel)
+	panel.add_child(box)
+	Sound.buttons(dim)
+	_overlay = dim
+
+
+func _close_overlay() -> void:
+	if _overlay == null:
 		return
 	_capturing = ""
 	_capture_btn = null
-	_help.queue_free()
-	_help = null
+	_overlay.queue_free()
+	_overlay = null
 	_note = null
 
 
