@@ -6,6 +6,7 @@ extends Node
 ##   godot --headless --fixed-fps 30 res://tests/weapons.tscn
 
 const Main = preload("res://scripts/Main.gd")
+const FX = preload("res://scripts/FX.gd")
 
 var main: Node
 var game
@@ -266,6 +267,7 @@ func _run() -> void:
 	# fire and impact effects: firing pops a muzzle effect at the barrel, the
 	# landing raises a plume on bare ground and a splash on water, both clean
 	# themselves up (I74)
+	FX.ENABLED = true
 	var fx_bare = open_patch(9, 14)
 	check(fx_bare != null, "an fx patch of bare ground exists in the gun's reach")
 	var fx_water = map.tiles[fx_bare.idxX + 1][fx_bare.idxZ]

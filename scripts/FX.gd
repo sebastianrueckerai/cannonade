@@ -2,8 +2,10 @@ extends Object
 ## Battle effects: the muzzle flash and smoke at the barrel when a gun fires
 ## (Shooter), the plume or water splash where a shell lands (TileImpactor).
 ## The art bible's fairground look: round puffs that pop in, drift, pop away.
-## The smoke and shock-ring looks of the boards live in this file's first
-## commit (7fd5437) for the day Sebastian picks one of them instead.
+## Off until the look is picked: the first boards drew white balls, so the
+## builders wait for the reference-based round (I78).
+
+static var ENABLED := false
 
 const FLASH := Color(1.0, 0.93, 0.62)
 const SMOKE := Color(0.84, 0.81, 0.76)
@@ -13,6 +15,8 @@ const FOAM := Color(0.95, 0.98, 1.0)
 
 
 static func muzzle(pos: Vector3, dir: Vector3) -> void:
+	if not ENABLED:
+		return
 	var root := _root("muzzle", 1.4)
 	_toon(root, pos, 0.17, FLASH, 0.0, dir * 0.3, true)
 	var side := dir.cross(Vector3.UP)
@@ -24,6 +28,8 @@ static func muzzle(pos: Vector3, dir: Vector3) -> void:
 
 
 static func impact(pos: Vector3, water: bool, damage: float) -> void:
+	if not ENABLED:
+		return
 	var s := clampf(damage / 10.0, 0.7, 2.2)
 	var root := _root("impact", 2.2)
 	if water:
