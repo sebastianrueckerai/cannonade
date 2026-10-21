@@ -10,6 +10,7 @@ import os
 import bmesh
 import bpy
 from mathutils import Matrix, Vector
+from mathutils.bvhtree import BVHTree
 
 CONTAIN_GAP = 0.02  # metres between the farthest reach of a gun and the edge of its plate
 
@@ -149,6 +150,58 @@ def axis_of(ps):
     lo, hi = box(ps)
     yc, zc = (lo.y + hi.y) / 2, (lo.z + hi.z) / 2
     return yc, zc, max((hi.y - lo.y), (hi.z - lo.z)) / 2, lo.x, hi.x
+
+
+def bore_centre(barrel, ex, yc, zc, r, sign):
+    """The centre of the mouth hole, where the shots leave: a grid of rays down the muzzle maps the
+    face, and the mean of the cells that fall deep into the bore is the centre of the visible ring.
+    The box centre sits off the hole when the drilled bore runs off the axis: 4.8 cm on the cannon,
+    16.6 cm on the mortar. Returns the (y, z) centre and where it came from."""
+    bm = bmesh.new()
+    bm.from_mesh(barrel.data)
+    bm.transform(barrel.matrix_world)
+    tree = BVHTree.FromBMesh(bm)
+    pitch, half = 0.002, r + 0.01
+    n = int(half * 2 / pitch) + 1
+    org_y, org_z = yc - half, zc - half
+    start = Vector((ex + 0.2 * sign, 0.0, 0.0))
+    down = Vector((-sign, 0.0, 0.0))
+    t1 = []
+    for i in range(n):
+        row = []
+        for j in range(n):
+            start.y, start.z = org_y + i * pitch, org_z + j * pitch
+            hit = tree.ray_cast(start, down)
+            row.append(hit[3] if hit[0] is not None else math.inf)
+        t1.append(row)
+    hits = sorted(t for row in t1 for t in row if t < math.inf)
+    if not hits:
+        return yc, zc, "axis"
+    deep_level = hits[len(hits) // 2] + 0.04
+    deep = [[t > deep_level for t in row] for row in t1]
+    seen = [[False] * n for _ in range(n)]
+    best = None
+    for i in range(n):
+        for j in range(n):
+            if seen[i][j] or not deep[i][j]:
+                continue
+            comp, stack = [], [(i, j)]
+            seen[i][j] = True
+            while stack:
+                a, b = stack.pop()
+                comp.append((a, b))
+                for na, nb in ((a + 1, b), (a - 1, b), (a, b + 1), (a, b - 1)):
+                    if 0 <= na < n and 0 <= nb < n and deep[na][nb] and not seen[na][nb]:
+                        seen[na][nb] = True
+                        stack.append((na, nb))
+            floor = max(t1[a][b] for a, b in comp)
+            if best is None or floor > best[0]:
+                best = (floor, comp)
+    if best is None or len(best[1]) < 100:
+        return yc, zc, "axis"
+    cy = sum(org_y + a * pitch for a, _ in best[1]) / len(best[1])
+    cz = sum(org_z + b * pitch for _, b in best[1]) / len(best[1])
+    return cy, cz, "mouth"
 
 
 def muzzle_sign(ps, yc, zc, x0, x1, anchor=None):
@@ -488,8 +541,10 @@ else:
         pivot_from = "trunnion pins" if pins_x(barrel, yc, r) is not None else "footprint centre"
     # The muzzle turns to +Y, which the glTF export makes -Z, the game's forward. The trunnion axis is then X.
     turn = Matrix.Rotation(math.pi / 2 if sign > 0 else -math.pi / 2, 4, "Z")
+    ex = x1 if sign > 0 else x0
+    myc, mzc, bore_from = bore_centre(barrel, ex, yc, zc, r, sign)
     piv = turn @ Vector((px, yc, zc))
-    muzzle = turn @ Vector((x1 if sign > 0 else x0, yc, zc))
+    muzzle = turn @ Vector((ex, myc, mzc))
     for ob in (barrel, mount):
         for v in ob.data.vertices:
             v.co = turn @ (ob.matrix_world @ v.co)
@@ -531,12 +586,21 @@ else:
     barrel.data.update()
     barrel.rotation_mode = "XYZ"
     barrel.location = piv
+    # Hand-placed spawn anchors (session 49): the projectile_spawn empty dragged to the bore
+    # mouth in tools/spawn_place_<gun>.tscn, saved scenes in the game repo. The values are the
+    # glb's barrel-local positions converted to blend space (glb (x, y, z) -> blend (x, -z, y)).
+    # Guns without an entry keep the bore_centre search below.
+    HAND_SPAWN = {
+        "cannon": Vector((0.0, 0.3444088, 0.04847598)),
+        "cannon22a": Vector((-0.02959942, 0.8090769, 0.058987617)),
+    }
     # The flak's guns have no spawn: the game shoots the ball down where it flies.
     spawn = None if JOB.get("part") == "guns" else bpy.data.objects.new("projectile_spawn", None)
     if spawn:
         bpy.context.scene.collection.objects.link(spawn)
         spawn.parent = barrel
-        spawn.location = muzzle - piv
+        hand = HAND_SPAWN.get(JOB.get("gun"))
+        spawn.location = hand if hand is not None else muzzle - piv  # hand is barrel-local already
     plate = make_plate(JOB["plate"], JOB["footprint"], mount, barrel) if JOB.get("plate") else None
 
     out = JOB["out_dir"]
@@ -577,6 +641,7 @@ else:
     stats = {"mode": JOB["mode"], "barrel_tris": tri(barrel), "mount_tris": tri(mount),
              "plate_tris": tri(plate) if plate else 0,
              "barrel_open_edges": nm(barrel), "mount_open_edges": nm(mount), "pivot_from": pivot_from,
+             "bore_from": bore_from, "spawn_from": "hand" if JOB.get("gun") in HAND_SPAWN else bore_from, "bore_m": [round(myc, 3), round(mzc, 3)],
              "pivot_m": [round(v, 3) for v in piv], "barrel_length_m": round(x1 - x0, 3),
              "part": JOB.get("part", "barrel"), "tilts": JOB["tilts"]}
     with open(os.path.join(out, "stats.json"), "w") as f:

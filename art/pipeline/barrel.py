@@ -55,6 +55,7 @@ def final(d):
     spec = json.loads((d / "split.json").read_text())
     part = spec.get("part", "barrel")
     blender({"mode": "parts", "footprint": FOOTPRINT[d.name], "tilts": TILTS[part], "part": part, "pitch": spec.get("pitch"),
+             "gun": d.name,
              "out_dir": str(d / "previews" / "barrel" / "final"),
              "glb": str(d / "raw" / f"{spec['source']}.glb"), "barrel": spec["barrel"], "fixes": spec.get("fixes", []),
              "pivot_x": spec.get("pivot_x"), "pivot_pieces": spec.get("pivot_pieces"), "plate": spec.get("plate"),

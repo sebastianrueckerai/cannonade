@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://dh6sedfexpqxa"]
+
+[ext_resource type="PackedScene" uid="uid://m7855cffedqw" path="res://assets/art/3d/cannon22a.glb" id="1_gun"]
+
+[node name="SpawnPlace" type="Node3D" unique_id=503511944]
+
+[node name="gun" parent="." unique_id=2008058772 instance=ExtResource("1_gun")]
+
+[node name="projectile_spawn" parent="gun/barrel" parent_id_path=PackedInt32Array(2008058772, 476873067) index="0" unique_id=1980521889]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.02959942, 0.058987617, -0.8090769)
+
+[editable path="gun"]

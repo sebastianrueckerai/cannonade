@@ -82,3 +82,18 @@ pass read each frame for texture and placement first. Boards 10 to 18 in
 and the landing close up; 12/13 fire; 14/15 soft; 16/17 smoke at the battle camera, firing and
 landing; 18 the water splash (--wet makes the target tile water). The pick by number names the
 look; FX.ENABLED = true and FX.style land it in one commit.
+
+## Round 3: the anchors by hand
+Sebastian placed the spawns himself (his words: "I place the spawn point since you are unable"):
+two bare scenes, [tools/spawn_place_cannon.tscn](../../../../tools/spawn_place_cannon.tscn) and
+[tools/spawn_place_cannon22a.tscn](../../../../tools/spawn_place_cannon22a.tscn), each only the game's
+glb with its `projectile_spawn` empty; he dragged the empty to the middle of each barrel mouth and
+saved. The saved positions are the `HAND_SPAWN` table in
+[art/pipeline/blender/barrel.py](../../pipeline/blender/barrel.py) (glb (x, y, z) -> blend (x, -z, y),
+the value is barrel-local, so no pivot math), `final` rebuilds with them, and the bore-mouth search
+stays as the fallback for guns without an entry (22b and 33a keep it). Verified by reading the rebuilt
+glbs back: both empties match his saved positions to 0.0, and the game's fx_check anchor moved
+with them. Boards 10, 12, 14, 16 and 17 re-shot on the new anchors; every flash core measures at or
+above the printed muzzle anchor (bright-core diff against an effects-off render of the same seed:
+10 +123 px above, 12 +81, 14 +63, 16 +12), the same anchor-diff method as round 2, this time without
+a vision pass. The pick by board number is still Sebastian's.
