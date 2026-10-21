@@ -204,9 +204,13 @@ func _update_round_time(delta: float) -> void:
 
 
 ## Ends the current phase: walls turn into cannons, cannons into the battle (through the rules check), the
-## battle into walls. The hand follows the phase: the wall piece flies away when the cannons come, the gun
+## battle into walls, shooting down every shell still in flight so none lands in the build round. The hand
+## follows the phase: the wall piece flies away when the cannons come, the gun
 ## when the battle starts, and a fresh wall is drawn when the walls return. Then the banner counts the new phase in.
 func next_phase() -> void:
+	if phase == Phase.BATTLE:
+		for projectile in U.projectiles.duplicate():
+			projectile.shoot_down()
 	roundNumber += 1
 	phase = ((phase + 1) % Phase.size()) as Phase
 	timeLeftInRound = duration()
