@@ -156,6 +156,49 @@ func _run() -> void:
 	var b := base_xz()
 	check(map.is_tile_enclosed(b.x, b.y), "player starts with a walled-in castle")
 
+	# Esc opens the pause menu and play stands still while it is open: the volume sliders, Resume,
+	# Restart and Menu; Esc or a click on the dim resumes
+	game.timeLeftInRound = 200.0
+	await press_key(KEY_ESCAPE)
+	check(get_tree().paused and main.get_node("UI/Pause") != null,
+			"Esc opens the pause menu and pauses the game")
+	var frozen := U.time
+	var round_frozen: float = game.timeLeftInRound
+	await frames(5)
+	check(U.time == frozen and game.timeLeftInRound == round_frozen,
+			"play stands still while the pause menu is open (U.time %.3f, round %.1f)"
+			% [U.time, game.timeLeftInRound])
+	var pause: Control = main.get_node("UI/Pause")
+	check(pause.find_children("*", "HSlider", true, false).size() == 3,
+			"the pause menu holds the three volume sliders")
+	var vol_file_existed := FileAccess.file_exists("user://volume.cfg")
+	var vol_before: float = Sound.volume("master")
+	var master: HSlider = pause.find_children("master", "HSlider", true, false)[0]
+	master.value = 41.0
+	var vol_cfg := ConfigFile.new()
+	check(absf(Sound.volume("master") - 0.41) < 0.002 and vol_cfg.load("user://volume.cfg") == OK
+			and absf(float(vol_cfg.get_value("volume", "master", 1.0)) - 0.41) < 0.002,
+			"the pause menu's master slider sets the volume live and saves the file")
+	Sound.set_volume("master", vol_before)
+	if not vol_file_existed:
+		DirAccess.open("user://").remove("volume.cfg")
+	var wired := {}
+	for btn in pause.find_children("*", "Button", true, false):
+		wired[btn.text] = btn.pressed.get_connections()[0]["callable"]
+	check(wired.has("Resume") and wired.has("Restart") and wired.has("Menu")
+			and wired["Restart"] == Callable(main, "_retry")
+			and wired["Menu"] == Callable(main, "_to_menu"),
+			"the pause menu offers Resume, Restart (replays the seed) and Menu (%s)" % [wired.keys()])
+	await press_key(KEY_ESCAPE)
+	check(not get_tree().paused and main.get_node_or_null("UI/Pause") == null and U.time > frozen,
+			"Esc closes the pause menu and play runs again")
+	await press_key(KEY_ESCAPE)
+	mouse = Vector2(10, 10)
+	await press_mouse(MOUSE_BUTTON_LEFT)
+	check(not get_tree().paused and main.get_node_or_null("UI/Pause") == null,
+			"a click on the dim closes the pause menu")
+	game.timeLeftInRound = 1e6
+
 	# rotating the held piece with X / Y (a T: no quarter turn maps it onto itself)
 	_hold("wall_t")
 	var bb = U.comp(human.nextWall, "BuildingBlock")

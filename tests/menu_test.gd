@@ -1,5 +1,5 @@
 extends Node
-## Menu -> game -> Esc -> menu flow, the Tutorial & Controls panel, remapping.
+## Menu -> game -> Esc -> pause menu -> menu flow, the Tutorial & Controls panel, remapping.
 ##   godot --headless --fixed-fps 30 res://tests/menu_test.tscn
 
 var ok := true
@@ -284,7 +284,19 @@ func _ready() -> void:
 	await _frames(30)
 	_esc()
 	await _frames(5)
-	_check(get_tree().current_scene.name == "Menu", "Esc returns to the menu")
+	var pause: Node = main.get_node_or_null("UI/Pause")
+	_check(pause != null and get_tree().paused, "Esc in the game opens the pause menu and pauses play")
+	var leave: Button = null
+	if pause != null:
+		for b in pause.find_children("*", "Button", true, false):
+			if b.text == "Menu":
+				leave = b
+	_check(leave != null, "the pause menu has a Menu button")
+	if leave != null:
+		leave.pressed.emit()
+	await _frames(5)
+	_check(get_tree().current_scene.name == "Menu" and not get_tree().paused,
+			"the pause menu's Menu button returns to the menu unpaused")
 	print("MENU TEST PASSED" if ok else "MENU TEST FAILED")
 	get_tree().quit(0 if ok else 1)
 

@@ -41,9 +41,9 @@ const PHASE_NAMES := ["BUILD WALLS", "PLACE CANNONS", "BATTLE"]
 ## Space between a plaque and the window's edge
 const HUD_GAP := 6.0
 const HELP := [
-	"LMB: place the piece, or stack it on your walls   X / Y: rotate   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: menu",
-	"LMB: place the cannon (costs parts), on a cannon: fuse   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: menu",
-	"LMB: fire at the cursor   Wheel: zoom   MMB drag: pan   Esc: menu",
+	"LMB: place the piece, or stack it on your walls   X / Y: rotate   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: pause",
+	"LMB: place the cannon (costs parts), on a cannon: fuse   click off the board: discard   Wheel: zoom   MMB drag: pan   Esc: pause",
+	"LMB: fire at the cursor   Wheel: zoom   MMB drag: pan   Esc: pause",
 ]
 # The team set of the art kit, game/art-direction/palette.json in the blender-ai repo (D21): main, highlight plus, highlight minus.
 const PLAYER_COLORS := [
@@ -73,6 +73,8 @@ var _bannerPhase: Label
 var _bannerCount: Label
 var _help: Label
 var _huds: Array = []
+## The pause menu while it is open (its root Control), null while closed.
+var _pause: Control = null
 ## Set before adding the node to build from this config instead of a mode
 ## (used by the sandbox). Extra keys: "seed", "decorate", "colors" (hex per
 ## player), "hud" (timer / phase / help, default true), "band" (the share of the
@@ -412,8 +414,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_K, KEY_L]:
 		_test_end(event.keycode == KEY_K)
 	if event.is_action_pressed("ui_cancel"):
-		Engine.time_scale = 1.0
-		get_tree().change_scene_to_file("res://scenes/menu.tscn")
+		if config.is_empty() and game != null and game.started:
+			_open_pause()
+			get_viewport().set_input_as_handled()
+		else:
+			_to_menu()
 
 
 ## Testing keys: K wins the running game for the human, L loses it to the first other player.
@@ -422,6 +427,63 @@ func _test_end(win: bool) -> void:
 	if own == null or not game.started:
 		return
 	game.end(own if win else game.players.filter(func(p): return p != own)[0])
+
+
+## The pause menu (Esc in a running game): the volume sliders, Resume, Restart (replays the seed) and
+## Menu over a dim. The paused tree stands still while it is open; this overlay is the one branch that
+## still takes input. Esc rides the Resume button's shortcut, a click on the dim resumes too.
+func _open_pause() -> void:
+	get_tree().paused = true
+	var root := Control.new()
+	root.name = "Pause"
+	root.theme = Art.theme()
+	root.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.6)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.gui_input.connect(func(e: InputEvent) -> void:
+		if e is InputEventMouseButton and e.pressed:
+			_close_pause())
+	root.add_child(dim)
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	dim.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 12)
+	panel.add_child(box)
+	var title := _label("Title", 32)
+	title.text = "Paused"
+	box.add_child(title)
+	box.add_child(Sound.volume_rows())
+	var resume: Button = null
+	for entry in [["Resume", _close_pause], ["Restart", _retry], ["Menu", _to_menu]]:
+		var b := Button.new()
+		b.text = entry[0]
+		b.custom_minimum_size = Vector2(0, 44)
+		b.pressed.connect(entry[1])
+		box.add_child(b)
+		if resume == null:
+			resume = b
+			var esc := InputEventKey.new()
+			esc.physical_keycode = KEY_ESCAPE
+			var cut := Shortcut.new()
+			cut.events = [esc]
+			resume.shortcut = cut
+	Sound.buttons(box)
+	ui.add_child(root)
+	resume.grab_focus()
+	_pause = root
+
+
+func _close_pause() -> void:
+	if _pause == null:
+		return
+	_pause.queue_free()
+	_pause = null
+	get_tree().paused = false
 
 
 ## Rules v3 end: VICTORY / DEFEAT against the human's side (the winner's name in watch mode, DRAW on a draw)
@@ -491,6 +553,7 @@ func _on_game_over(winner) -> void:
 
 func _retry() -> void:
 	Engine.time_scale = 1.0
+	get_tree().paused = false
 	requested_mode = mode
 	requested_args = {"seed": str(_used_seed)}
 	get_tree().reload_current_scene()
@@ -498,6 +561,7 @@ func _retry() -> void:
 
 func _to_menu() -> void:
 	Engine.time_scale = 1.0
+	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 
