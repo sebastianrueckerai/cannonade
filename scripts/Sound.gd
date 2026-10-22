@@ -11,6 +11,8 @@ const MUSIC_DIR := "res://assets/audio/music"
 const VOLUME_PATH := "user://volume.cfg"
 ## One slider of the menu's Volume panel; "sound" is both effect buses, the battle clips and the UI clicks.
 const VOLUME_BUSES := {"master": ["Master"], "sound": ["SFX", "UI"], "music": ["Music"]}
+## The settings' labels in the sliders, for the menu's Volume panel and the game's pause menu.
+const VOLUME_LABELS := {"master": "Master", "sound": "Sound", "music": "Music"}
 ## A cue played with another cue's clip while it has none of its own: cue -> [clip cue, dB].
 const ALIAS := {
 	"ui_hover": ["ui_click", -8.0],
@@ -183,6 +185,40 @@ func _apply(kind: String) -> void:
 	var db := linear_to_db(maxf(_volume[kind], 0.0001))
 	for bus in VOLUME_BUSES[kind]:
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus), db)
+
+
+## The Volume rows the menu's Volume panel and the game's pause menu share: one slider a setting, live on
+## the buses and saved on every change.
+func volume_rows() -> VBoxContainer:
+	var rows := VBoxContainer.new()
+	rows.add_theme_constant_override("separation", 12)
+	for kind in VOLUME_BUSES:
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", 12)
+		rows.add_child(line)
+		var what := Label.new()
+		what.text = VOLUME_LABELS[kind]
+		what.custom_minimum_size = Vector2(110, 0)
+		line.add_child(what)
+		var slider := HSlider.new()
+		slider.name = kind
+		slider.min_value = 0
+		slider.max_value = 100
+		slider.step = 1
+		slider.scrollable = false
+		slider.custom_minimum_size = Vector2(220, 32)
+		slider.value = round(volume(kind) * 100)
+		line.add_child(slider)
+		var pct := Label.new()
+		pct.name = kind + "_value"
+		pct.custom_minimum_size = Vector2(56, 0)
+		pct.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		pct.text = "%d%%" % slider.value
+		line.add_child(pct)
+		slider.value_changed.connect(func(v: float) -> void:
+			set_volume(kind, v / 100.0)
+			pct.text = "%d%%" % roundi(v))
+	return rows
 
 
 ## Every Button under `root` clicks and ticks on hover.

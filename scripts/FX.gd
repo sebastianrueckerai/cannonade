@@ -207,5 +207,5 @@ static func _root(kind: String, life: float) -> Node3D:
 	root.name = "FX %s" % kind.capitalize()
 	root.set_meta("fx", kind)
 	U.world().add_child(root)
-	root.get_tree().create_timer(life).timeout.connect(root.queue_free)
+	root.get_tree().create_timer(life, false).timeout.connect(root.queue_free)
 	return root

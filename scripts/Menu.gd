@@ -23,12 +23,6 @@ const FIXED := [
 ]
 const INTRO := "You and the AI each start with a walled castle. A round is three phases: build walls, place cannons, battle.\n\nTurn and drop wall pieces. Pieces that share a side join; corners do not. Build within two tiles of your walls or a castle you hold.\n\nRing in neutral castles to claim them and raise your parts cap. Place cannons; fuse four in a 2x2 square into a heavy gun. Buildings outside your walls burn when the battle starts.\n\nRuin the enemy's last castle before yours falls."
 const REMAP_PATH := "user://input_remap.cfg"
-## The Volume panel's sliders: setting id -> label. "sound" is both effect buses.
-const VOLUMES := [
-	["master", "Master"],
-	["sound", "Sound"],
-	["music", "Music"],
-]
 
 ## The open overlay (its dim root), null when closed.
 var _overlay: Control = null
@@ -192,7 +186,7 @@ func _show_help() -> void:
 	var fixed: Array = FIXED.duplicate()
 	if not OS.has_feature("web"):
 		fixed.append(["next phase (Practice)", "Enter"])
-	fixed.append(["back to the menu", "Esc"])
+	fixed.append(["pause the game (in play)", "Esc"])
 	for row in fixed:
 		var what := Label.new()
 		what.text = row[0]
@@ -215,7 +209,7 @@ func _show_help() -> void:
 	close.grab_focus()
 
 
-## The Volume panel: one slider a setting, live on the buses and saved on every change.
+## The Volume panel: the shared slider rows (Sound.volume_rows), live on the buses and saved on every change.
 func _show_volume() -> void:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 12)
@@ -224,32 +218,7 @@ func _show_volume() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 32)
 	box.add_child(title)
-	for row in VOLUMES:
-		var line := HBoxContainer.new()
-		line.add_theme_constant_override("separation", 12)
-		box.add_child(line)
-		var what := Label.new()
-		what.text = row[1]
-		what.custom_minimum_size = Vector2(110, 0)
-		line.add_child(what)
-		var slider := HSlider.new()
-		slider.name = row[0]
-		slider.min_value = 0
-		slider.max_value = 100
-		slider.step = 1
-		slider.scrollable = false
-		slider.custom_minimum_size = Vector2(220, 32)
-		slider.value = round(Sound.volume(row[0]) * 100)
-		line.add_child(slider)
-		var pct := Label.new()
-		pct.name = row[0] + "_value"
-		pct.custom_minimum_size = Vector2(56, 0)
-		pct.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		pct.text = "%d%%" % slider.value
-		line.add_child(pct)
-		slider.value_changed.connect(func(v: float) -> void:
-			Sound.set_volume(row[0], v / 100.0)
-			pct.text = "%d%%" % roundi(v))
+	box.add_child(Sound.volume_rows())
 	var close := Button.new()
 	close.text = "Close"
 	close.custom_minimum_size = Vector2(0, 44)

@@ -44,7 +44,7 @@ Extra options after `--`: `--seed=N`, `--walls=SECONDS`, `--guns=SECONDS`,
 | Enter             | step to the next phase (`practice` only)                 |
 | K / L             | testing keys: win / lose the running game at once         |
 | click outside map | discard the current piece / building                      |
-| Esc               | back to the menu                                          |
+| Esc               | pause menu (volume, restart, menu); Esc again resumes     |
 
 Walls come as **pieces**, Rampart style: one block, two, three or four in a row, an S, a T
 or a cross, drawn at random (small pieces more often) and turned with X / Y. A piece stamps
@@ -316,7 +316,7 @@ controls and the custom cursor.
   the left click places the piece, places the cannon and fires.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
   cluster bombs, rockets, shield, flak and ships behave as in the game.
-* `tests/menu_test` – menu → chosen game mode → Esc → menu. The loading screen shows concept
+* `tests/menu_test` – menu → chosen game mode → Esc → pause menu → menu. The loading screen shows concept
   art, not the splash, and stays up with a moving bar until the game is built. It keeps
   input away from the game meanwhile.
 * `tests/practice_test` – practice mode: Enter switches the phase, the dormant enemy
