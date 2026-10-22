@@ -127,6 +127,21 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-20T15:07:07+02:00"
   },
+  "castle.2": {
+    "size": [
+      2.9,
+      1.3044,
+      2.2663
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "castle"
+    ],
+    "tris": 3116,
+    "source_sha": "b4668c099c31",
+    "approved_by": null,
+    "synced": "2026-10-22T22:48:11+02:00"
+  },
   "castle_d1": {
     "size": [
       2.4841,

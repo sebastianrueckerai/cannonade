@@ -5,6 +5,7 @@
   "team": true,
   "fit": 2.9,
   "max_tris": 3500,
+  "paint": {"kind": "stone", "seed": 66},
   "team_deck": {
     "z": [
       0.9,
@@ -14,6 +15,7 @@
   },
   "why": {
     "team": "the four royal blue turret roofs are the team part, read at the default view (D68)",
+    "paint": "the D49 painted stone the seven other castle looks wear (D73, C20); Sebastian passed this keep on its raw Meshy texture (D71), the paint joins it to the family",
     "fit": "uniform scale, proportions kept: the reference e-view-1 and the mesh are already half as tall as wide, so nothing is squashed; the longer side of the footprint becomes the 2.9 m of the 3x3 tiles less 5 cm per side",
     "team_deck": "the deck inside the battlements is this keep's roof; the game paints it in the team colour like the base's keep (D42). The z band is carried over from the last run and must be re-checked against the new mesh"
   }

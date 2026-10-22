@@ -5,9 +5,12 @@ extends "res://scripts/components/Component.gd"
 
 const RUIN := 4
 const NEUTRAL_COLOR := Color("#9c7a4f")
-const STATES := ["castle", "castle_d1", "castle_d2", "castle_d3", "castle_d4"]
+const BASE_STATES := ["castle", "castle_d1", "castle_d2", "castle_d3", "castle_d4"]
 
 var state := 0
+## The art look the placement drew (castle, castle.2, ...), pinned for the castle's life so its
+## damage states stay its own (C20).
+var look := 0
 var map = null
 var _bounds := AABB()
 var _bounds_known := false
@@ -50,7 +53,8 @@ func become_ruin(from := Vector3.INF) -> void:
 	if holder != null:
 		holder.count("castles_lost")
 	Sound.play("castle_ruin")
-	Crumble.crumble(go, from, STATES[RUIN - 1])
+	_pin_look()
+	Crumble.crumble(go, from, state_model(RUIN - 1))
 	set_state(RUIN)
 	hold_tiles(null)
 
@@ -95,12 +99,28 @@ func my_tiles() -> Array:
 	return out
 
 
+## The model of state `n` in this castle's own look.
+func state_model(n: int) -> String:
+	return BASE_STATES[n] if look <= 1 else "%s.%d" % [BASE_STATES[n], look]
+
+
+## Reads the look the placement drew off the art, once; every state resolves through it.
+## The art wears the drawn look until the first swap, so the pin must happen before it goes.
+func _pin_look() -> void:
+	if look != 0:
+		return
+	var art := go.get_node_or_null("Art")
+	var worn: String = art.get_meta("art_look", "") if art != null else ""
+	look = worn.get_slice(".", 1).to_int() if worn.begins_with("castle.") else 1
+
+
 func set_state(n: int) -> void:
+	_pin_look()
 	state = n
 	for child in go.get_children():
 		if child.has_meta("art_id"):
 			U.destroy(child)
-	Art.attach(go, STATES[n])
+	Art.attach(go, state_model(n))
 	_bounds = AABB()
 	_bounds_known = false
 	repaint()
