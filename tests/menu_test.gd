@@ -26,6 +26,8 @@ func _ready() -> void:
 	for b in buttons:
 		if b.text == "Tutorial & Controls":
 			tut = b
+	_check(menu.modes_for(true) == [["versus", "Player vs. AI"], ["ai2", "Watch: AI vs. AI"]],
+			"the web build ships Player vs. AI and the watch mode only, practice stays desktop")
 	_check(tut != null, "the menu has a Tutorial & Controls button")
 	# the menu and the help overlay both fit the 1280x720 canvas, the smallest any window shows
 	var panels: Array = menu.find_children("*", "PanelContainer", true, false)

@@ -1,9 +1,10 @@
 extends Node
 ## The AI's building: a ring plan per castle and per yard, the held piece placed where it covers
-## the most gap tiles, guns only inside own closed ground, a neutral castle ringed and claimed, a
-## breach patched, a shooter over the parts cap kept in hand while the walls keep coming, and the
-## reaction time after every action. With every claim taken and every plan closed the AI keeps
-## gaining territory: the largest room it can, sited toward the castles it does not hold.
+## the most gap tiles, guns only inside own closed ground — packed only as the four of a big
+## cannon, spread a 3x3 apart otherwise — a neutral castle ringed and claimed, a breach patched, a
+## shooter over the parts cap kept in hand while the walls keep coming, and the reaction time
+## after every action. With every claim taken and every plan closed the AI keeps gaining
+## territory: the largest room it can, sited toward the castles it does not hold.
 ##   godot --headless --fixed-fps 30 res://tests/ai_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -72,6 +73,44 @@ func neutrals() -> Array:
 ## The tile sits in a closed ring whose owner is p.
 func enclosed_by(xz: Vector2i, p) -> bool:
 	return map.is_tile_enclosed(xz.x, xz.y) and map.tiles[xz.x][xz.y].ringOwner == p
+
+
+## The tiles p's guns stand on, grouped by the structure standing there: a fused big is one group
+## of four, a small cannon a group of one.
+func gun_groups(p) -> Array:
+	var groups := {}
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			var t = map.tiles[x][z]
+			if t.player == p and U.alive(t.structure) and U.shooter(t.structure) != null:
+				var s: int = t.structure.get_instance_id()
+				if not groups.has(s):
+					groups[s] = []
+				groups[s].append(Vector2i(x, z))
+	return groups.values()
+
+
+## How many of p's guns are fused big cannons.
+func bigs(p) -> int:
+	var n := 0
+	for k in p.cannons:
+		var c = p.cannons[k]
+		if U.alive(c) and Catalog.def_of(c.go).size == 2:
+			n += 1
+	return n
+
+
+## No two of p's guns share a 3x3: tiles of different guns keep Chebyshev distance 3, the span of
+## one heavy-shell splash.
+func guns_spread(p) -> bool:
+	var groups := gun_groups(p)
+	for i in groups.size():
+		for j in range(i + 1, groups.size()):
+			for a in groups[i]:
+				for b in groups[j]:
+					if maxi(absi(a.x - b.x), absi(a.y - b.y)) < 3:
+						return false
+	return true
 
 
 ## A neutral castle with nothing but free dry ground within Chebyshev 3 of its centre.
@@ -268,6 +307,8 @@ func _run() -> void:
 		guns_inside = guns_inside and enclosed_by(k, enemy)
 	check(enemy.cannons.size() >= 3 and guns_inside,
 			"in 5 s of cannons %d guns are placed, all inside own closed ground" % enemy.cannons.size())
+	check(bigs(enemy) == 1, "the only packed four are the big's own: one big cannon fused (%d)" % bigs(enemy))
+	check(guns_spread(enemy), "every other gun stands its own 3x3")
 	check(flying_buildings().is_empty(), "no building ever flies away from the AI's hand")
 	var castles_before: int = enemy.castle_count()
 	var guns_before: int = enemy.cannons.size()
@@ -275,6 +316,54 @@ func _run() -> void:
 	check(enemy.castle_count() == castles_before + ringed.size(),
 			"the check claims the ringed castles: %d held" % enemy.castle_count())
 	check(enemy.cannons.size() == guns_before, "no gun burns at the check")
+
+	# 9a: a second big cannon (I89): the cap can pay for one and no 2x2 of own closed ground stands
+	# far enough from the first, so a yard is planned off every own gun; closed, four smalls fuse
+	# the second big, a 3x3 away from the first
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			var t = map.tiles[x][z]
+			if t.player == enemy and U.alive(t.structure) and U.shooter(t.structure) != null \
+					and Catalog.def_of(t.structure).size == 1:
+				t.un_build()
+	check(bigs(enemy) == 1 and enemy.parts_used() == 4, "only the big cannon is left standing")
+	enemy.partsCap = 10
+	enemy.update_plans()
+	var open_yards: Array = enemy.yards.filter(func(y): return not y.closed())
+	check(open_yards.size() == 1, "a second yard is planned for the next big (%d open)" % open_yards.size())
+	if open_yards.size() == 1:
+		var y2 = open_yards[0]
+		var off := true
+		for g in enemy._own_gun_tiles():
+			for k in y2.inside:
+				if maxi(absi(k.x - g.x), absi(k.y - g.y)) < 3:
+					off = false
+		check(off, "every tile of the new yard stands a 3x3 from every own gun")
+		for k in y2.gaps:
+			enemy.build_wall(map.tiles[k.x][k.y], Catalog.spawn("wall", null, enemy))
+		y2.refresh()
+		check(y2.closed() and enclosed_by(y2.yard, enemy), "the new yard is closed and the AI's")
+		for i in 4:
+			U.destroy(enemy.nextBuilding)
+			enemy.nextBuilding = Catalog.spawn("cannon", enemy.hand)
+			enemy.execute_building_plan()
+		check(bigs(enemy) == 2 and enemy.parts_used() == 8,
+				"four smalls fuse the second big (bigs %d, parts %d)" % [bigs(enemy), enemy.parts_used()])
+		check(guns_spread(enemy), "the two bigs share no 3x3")
+		# the scripted bigs leave the board: their heavy 3x3 would ruin the human's one castle in
+		# the battle below and end the game, freezing every later check
+		var clusters := {}
+		for x in map.sizeX:
+			for z in map.sizeZ:
+				var t = map.tiles[x][z]
+				if t.player == enemy and U.alive(t.structure) and U.shooter(t.structure) != null:
+					if t.upgradeCluster != null:
+						clusters[t.upgradeCluster] = true
+					else:
+						t.un_build(true)
+		for c in clusters:
+			c.un_build_upgrade()
+	enemy.recompute_parts_cap()
 	game.next_phase()  # the walls
 	game.timeLeftInRound = 1e6
 

@@ -1,10 +1,16 @@
 extends "res://scripts/components/PlayerController.gd"
 ## Port of AI.cs: computer player. Rings castles and yards with whatever piece it holds, builds
-## guns inside its closed ground and shoots at what the rules make worth shooting. Once nothing
-## is left to ring or claim it walls the largest room it can toward the castles it does not
-## hold: territory for its guns, staging for a claim once the walls before it fall (I76).
+## guns inside its closed ground and shoots at what the rules make worth shooting. Its guns stand
+## apart so one enemy 3x3 splash never lands on two of them; the only guns packed together are the
+## four of a deliberate big cannon (I89). Once nothing is left to ring or claim it walls the
+## largest room it can toward the castles it does not hold: territory for its guns, staging for a
+## claim once the walls before it fall (I76).
 
 const RingPlan = preload("res://scripts/RingPlan.gd")
+
+## Chebyshev distance two own guns keep: an enemy heavy shell splashes a 3x3, so tiles closer than
+## this share one splash (I84, I89).
+const SPLASH_SEPARATION := 3
 
 ## Reaction time: the pause after every shot, the aim move and the click. Must stay above 0.
 var secondsBetweenShots := 0.5
@@ -100,11 +106,17 @@ func update_plans() -> void:
 			if open >= claimsAtOnce:
 				break
 	var need: int = partsCap - parts_used()
-	if need > 0 and not yards.any(func(y): return not y.closed()) and gun_room() < need:
+	# a big cannon needs a 2x2, and castle rings are one tile thick: when the cap can pay for one
+	# and no site stands yet, plan a yard off every own gun, so no enemy 3x3 catches the new big
+	# with another gun (I89)
+	var big_yard := need >= 4 and _big_sites().is_empty()
+	if need > 0 and not yards.any(func(y): return not y.closed()) and (gun_room() < need or big_yard):
 		var avoid := {}
 		for plan in own + yards + claims + rooms:
 			avoid.merge(plan.inside)
-		var y = _pick_yard(avoid)
+		var y = _pick_yard(avoid, big_yard)
+		if y == null and big_yard:
+			y = _pick_yard(avoid)
 		if y != null:
 			yards.append(y)
 	# nothing left to ring or claim: the largest room that fits, sited toward a castle not the
@@ -175,21 +187,127 @@ func gun_room() -> int:
 	return n
 
 
-## The gun yard: a 3x3 of free open ground.
-func _pick_yard(avoid: Dictionary):
-	return _pick_room(avoid, RingPlan.YARD)
+## Every tile an own gun stands on: a small cannon one, a fused big all four.
+func _own_gun_tiles() -> Array:
+	var out: Array = []
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			var t = map.tiles[x][z]
+			if t.player == self and U.alive(t.structure) and U.shooter(t.structure) != null:
+				out.append(Vector2i(x, z))
+	return out
+
+
+## Chebyshev distance from k to the nearest own gun tile (INF with none).
+func _nearest_gun(k: Vector2i, guns: Array) -> int:
+	var d := RingPlan.INF
+	for g in guns:
+		d = mini(d, maxi(absi(g.x - k.x), absi(g.y - k.y)))
+	return d
+
+
+## The 2x2 squares of own closed ground a big cannon can be fused on, best first: every cell free
+## or holding an own small cannon, the whole square at least SPLASH_SEPARATION from every own gun
+## outside it. Best is the square with the most cannons already standing (finish the big in the
+## making), then the most isolated, then the deepest in own ground. An entry is
+## [smalls, margin, castle distance, anchor x, anchor z, free cells].
+func _big_sites() -> Array:
+	var guns := _own_gun_tiles()
+	var sites: Array = []
+	for x in map.sizeX - 1:
+		for z in map.sizeZ - 1:
+			var smalls := 0
+			var free: Array = []
+			var ok := true
+			for dx in 2:
+				for dz in 2:
+					var t = map.tiles[x + dx][z + dz]
+					if _gun_spot(t):
+						free.append(Vector2i(x + dx, z + dz))
+					elif t.player == self and U.alive(t.structure) and U.shooter(t.structure) != null \
+							and Catalog.def_of(t.structure).size == 1:
+						smalls += 1
+					else:
+						ok = false
+						break
+				if not ok:
+					break
+			if not ok or free.is_empty():
+				continue
+			var margin := RingPlan.INF
+			for g in guns:
+				if g.x >= x and g.x <= x + 1 and g.y >= z and g.y <= z + 1:
+					continue  # one of the square's own cannons
+				for dx in 2:
+					for dz in 2:
+						margin = mini(margin, maxi(absi(g.x - x - dx), absi(g.y - z - dz)))
+			if margin < SPLASH_SEPARATION:
+				continue
+			var k := Vector2i(x + 1, z + 1)
+			sites.append([smalls, margin, _castle_distance(k), x, z, free])
+	sites.sort_custom(func(a, b): return a[0] > b[0] if a[0] != b[0] else \
+			(a[1] > b[1] if a[1] != b[1] else a[2] < b[2]))
+	return sites
+
+
+## The free spot inside own closed ground with the most ground to the nearest own gun: no two of
+## the AI's guns share a 3x3 unless the ground runs out. Ties go to the deeper plans — an own
+## castle's ground, then a yard's, then a claim's, then a room's.
+func _spread_spot():
+	var guns := _own_gun_tiles()
+	var best = null
+	var best_d := -1
+	for tier in tiers:
+		for plan in tier:
+			for k in plan.inside:
+				var t = map.tiles[k.x][k.y]
+				if not _gun_spot(t):
+					continue
+				var d := _nearest_gun(k, guns)
+				if d > best_d:
+					best_d = d
+					best = t
+	if best == null:
+		for x in map.sizeX:
+			for z in map.sizeZ:
+				if not _gun_spot(map.tiles[x][z]):
+					continue
+				var d := _nearest_gun(Vector2i(x, z), guns)
+				if d > best_d:
+					best_d = d
+					best = map.tiles[x][z]
+	return best
+
+
+## The gun yard: a 3x3 of free open ground; `off_guns` keeps every tile SPLASH_SEPARATION from own
+## guns, so one of its 2x2s hosts a big cannon no enemy 3x3 shares with another gun.
+func _pick_yard(avoid: Dictionary, off_guns := false):
+	return _pick_room(avoid, RingPlan.YARD, false, off_guns)
 
 
 ## The s x s of free open ground outside every plan whose ring shares the most own walls, nearest
 ## an own castle on ties; the four best by that proxy are costed for real. A territory room
 ## (`enemy_first`) instead takes the site nearest a castle the player does not hold, so its
-## walls walk toward the castles a later claim may take (I76).
-func _pick_room(avoid: Dictionary, s: int, enemy_first := false):
+## walls walk toward the castles a later claim may take (I76). `off_guns` keeps every tile of the
+## site SPLASH_SEPARATION from own guns (a big cannon's yard, I89).
+func _pick_room(avoid: Dictionary, s: int, enemy_first := false, off_guns := false):
+	var guns := _own_gun_tiles() if off_guns else []
 	var cands: Array = []
 	for x in range(1, map.sizeX - s):
 		for z in range(1, map.sizeZ - s):
 			if not _yard_free(x, z, avoid, s):
 				continue
+			if off_guns:
+				var clear := true
+				for dx in s:
+					for dz in s:
+						if _nearest_gun(Vector2i(x + dx, z + dz), guns) < SPLASH_SEPARATION:
+							clear = false
+							break
+					if not clear:
+						break
+				if not clear:
+					continue
 			var shared := 0
 			var reached := false
 			for bx in range(x - 1, x + s + 1):
@@ -247,23 +365,24 @@ func execute_building_plan() -> void:
 	nextAction = U.time + (secondsBetweenBuilds if did else secondsIdleRetry)
 
 
-## The held building goes inside the AI's closed ground, an own castle's first, then a yard's, then
-## any; it waits in hand until a free tile is there, so the check never burns it, and over the parts
-## cap it waits for a gun to die.
+## The held building goes inside the AI's closed ground: onto the best big-cannon site the parts can
+## finish (four smalls packed on purpose — the only neighbours its guns ever have, I89), else to the
+## free spot with the most ground to the nearest own gun. It waits in hand until a free tile is
+## there, so the check never burns it, and over the parts cap it waits for a gun to die.
 func try_build_gun() -> bool:
 	if not U.alive(nextBuilding) or over_parts_cap(nextBuilding):
 		return false
 	update_plans()
-	for plan in activePlans:
-		for k in plan.inside:
-			if _gun_spot(map.tiles[k.x][k.y]):
-				build_next_building(map.tiles[k.x][k.y])
-				return true
-	for x in map.sizeX:
-		for z in map.sizeZ:
-			if _gun_spot(map.tiles[x][z]):
-				build_next_building(map.tiles[x][z])
-				return true
+	var budget: int = partsCap - parts_used()
+	for site in _big_sites():
+		if 4 - site[0] <= budget:
+			var k: Vector2i = site[5][0]
+			build_next_building(map.tiles[k.x][k.y])
+			return true
+	var spot = _spread_spot()
+	if spot != null:
+		build_next_building(spot)
+		return true
 	return false
 
 

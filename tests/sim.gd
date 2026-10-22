@@ -103,6 +103,7 @@ func _process(_delta: float) -> void:
 		_max_active[k] = maxi(_max_active.get(k, 0), p.activeCannons.size())
 	var t0 := Time.get_ticks_usec()
 	_check_ai_rules(g)
+	_check_gun_spacing(g)
 	_rules_usec = Time.get_ticks_usec() - t0
 	if autobuild and U.time >= _next_autobuild:
 		_next_autobuild = U.time + 0.5
@@ -305,6 +306,31 @@ func _check_ai_rules(g) -> void:
 				if m.is_tile_enclosed(x, z) and t.ringOwner != null and t.ringOwner != p:
 					enemy[Vector2i(x, z)] = true
 		_rules_last[p] = {"placed": placed, "reach": reach, "enemy": enemy}
+
+
+## The AI keeps its big cannons apart (I89): two fused bigs never share a 3x3, so one enemy heavy
+## shell never lands on both. Grouped by the structure standing there, not by tile.
+func _check_gun_spacing(g) -> void:
+	for p in g.players:
+		if not p.is_ai():
+			continue
+		var bigs := {}
+		for x in g.map.sizeX:
+			for z in g.map.sizeZ:
+				var t = g.map.tiles[x][z]
+				if t.player == p and U.alive(t.structure) and U.shooter(t.structure) != null \
+						and Catalog.def_of(t.structure).size == 2:
+					var s: int = t.structure.get_instance_id()
+					if not bigs.has(s):
+						bigs[s] = []
+					bigs[s].append(Vector2i(x, z))
+		var groups: Array = bigs.values()
+		for i in groups.size():
+			for j in range(i + 1, groups.size()):
+				for a in groups[i]:
+					for b in groups[j]:
+						if maxi(absi(a.x - b.x), absi(a.y - b.y)) < 3:
+							_fail("player %d has two big cannons at %s and %s in one 3x3" % [p.playerID, a, b])
 
 
 func _finish() -> void:
