@@ -57,8 +57,10 @@ func _run() -> void:
 		check(Art.has_model(state_id(v, 3) + "_rubble"), "%s owns its d3 rubble for the fall" % id)
 
 	# every placed castle keeps its dealt look through the whole chain
+	var dealt := {}
 	for c in map.castles:
-		var v := worn_look(c)
+		dealt[c] = worn_look(c)
+		var v: int = dealt[c]
 		for n in [1, 2, 3]:
 			c.set_state(n)
 			var art: Node3D = c.go.get_node_or_null("Art")
@@ -66,7 +68,7 @@ func _run() -> void:
 			check(worn == state_id(v, n), "the castle in look %d swaps to %s, not %s" % [v, state_id(v, n), worn])
 	# the fall: the ruin art is the same look's
 	var victim = map.castles[0]
-	var v0 := worn_look(victim)
+	var v0: int = dealt[victim]
 	victim.become_ruin()
 	var ruin_art: Node3D = victim.go.get_node_or_null("Art")
 	var ruin: String = ruin_art.get_meta("art_look", "no art") if ruin_art != null else "no art"

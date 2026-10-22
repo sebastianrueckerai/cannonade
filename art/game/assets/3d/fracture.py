@@ -16,6 +16,7 @@ from mathutils import Matrix, Vector
 ROOT = Path(os.environ.get("GAME_REPO", "/home/womb/repos/grid-cannons"))
 ## model id: pieces, shared among its parts by bounding-box volume, at least 3 a part
 MODELS = {"wall": 16, "wall_upper": 14, "cannon": 12, "cannon22a": 18, "cannon22b": 18, "flak22": 12, "castle_d3": 36,
+          "castle_d3.2": 36,
           "nature_leaf_tree": 8, "nature_leaf_tree.2": 8, "nature_leaf_tree.3": 8, "nature_bush": 5, "nature_bush.2": 5,
           "nature_bush.3": 5, "nature_boulder": 6, "nature_boulder.2": 6, "nature_boulder.3": 6}
 SKIP = {"plate"}

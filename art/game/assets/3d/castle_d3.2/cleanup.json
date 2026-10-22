@@ -1,0 +1,14 @@
+{
+  "source": "meshy-c2-d3",
+  "part": "castle_d3.2",
+  "turn": 0,
+  "team": false,
+  "fit": 2.9,
+  "max_tris": 3500,
+  "paint": {"kind": "stone", "seed": 69},
+  "why": {
+    "team": "no blue survives this state: the turret roofs are gone and the fragments are bare stone",
+    "paint": "the D49 painted stone, as on this look's healthy keep (D73, C20)",
+    "fit": "the same uniform 2.9 m plan as the healthy keep, so the states swap on one 3x3 plot"
+  }
+}

@@ -120,7 +120,7 @@ func set_state(n: int) -> void:
 	for child in go.get_children():
 		if child.has_meta("art_id"):
 			U.destroy(child)
-	Art.attach(go, state_model(n))
+	Art.attach(go, state_model(n), Art.SLAB_TOP, true)
 	_bounds = AABB()
 	_bounds_known = false
 	repaint()
