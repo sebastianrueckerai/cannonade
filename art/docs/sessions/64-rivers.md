@@ -101,5 +101,14 @@ terrain then seats around it, as before.
 - Rivers resurrected a dead block in sound_test: its sea landing had never run, because a
   versus board held no water before rivers (`_set_water_areas` is single-player only), and it
   reached for a `TileImpactor` component `spawn_projectile` never makes (it adds `Projectile`,
-  which extends it). Now it runs on a river tile and was fixed to the real component; watched
-  red against the wet check in `TileImpactor.impact()`.
+  which extends it). Now it runs on a river tile and was fixed to what spawn_projectile
+  actually returns - the component itself, a TileImpactor; watched red against the wet check
+  in `TileImpactor.impact()`.
+- Merge round: master had run ahead with I100 (hills/rocks drapes), I102 (flat arc) and
+  I103 (gun looks), so the branch merged master in before shipping. One content conflict
+  (the terrain section header in GameController.gd); weapons and terrain_test auto-merged
+  with both sides standing. The first merge commit kept a `<<<<<<< HEAD` line and the suite
+  caught it at the scripts check - amended at once. The bridge and the drape do not meet:
+  terrain never seats on river ground (`_terrain_fits` through `is_free`), and a river tile
+  counts as no terrain for `_backed`, so no shoulder hangs over the water. The river itself
+  is unchanged by the merge: castles and map shape feed its carve, terrain seats around it.
