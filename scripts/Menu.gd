@@ -27,6 +27,8 @@ const REMAP_PATH := "user://input_remap.cfg"
 ## The open overlay (its dim root), null when closed.
 var _overlay: Control = null
 var _note: Label = null
+## The sound icon in the painting's bottom-right corner, a TextureButton with the art layer.
+var _mute: BaseButton = null
 var _capturing := ""
 var _capture_btn: Button = null
 
@@ -97,6 +99,7 @@ func _ready() -> void:
 		quit.pressed.connect(get_tree().quit)
 		box.add_child(quit)
 	Sound.buttons(box)
+	_add_mute()
 	var errors: Array[String] = []
 	errors.append_array(Catalog.errors)
 	errors.append_array(Art.validate())
@@ -116,6 +119,47 @@ static func modes_for(web: bool) -> Array:
 func _start(mode: String) -> void:
 	Main.requested_mode = mode
 	Loading.go("res://scenes/game.tscn")
+
+
+## The sound icon over the painting's bottom-right corner: one click mutes everything, one more restores it.
+func _add_mute() -> void:
+	var on := Art.texture("sound_on.svg")
+	var off := Art.texture("sound_off.svg")
+	_mute = TextureButton.new() if on != null and off != null else Button.new()
+	_mute.name = "Mute"
+	_mute.tooltip_text = "Sound"
+	_mute.focus_mode = Control.FOCUS_NONE
+	_mute.set_anchors_and_offsets_preset(PRESET_BOTTOM_RIGHT)
+	_mute.offset_left = -68
+	_mute.offset_top = -68
+	_mute.offset_right = -24
+	_mute.offset_bottom = -24
+	_mute.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_mute.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_mute.modulate.a = 0.55
+	_mute.mouse_entered.connect(func(): _mute.modulate.a = 1.0)
+	_mute.mouse_exited.connect(func(): _mute.modulate.a = 0.55)
+	_mute.pressed.connect(_toggle_mute)
+	if _mute is TextureButton:
+		var icon := _mute as TextureButton
+		icon.ignore_texture_size = true
+		icon.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	add_child(_mute)
+	_refresh_mute()
+
+
+func _toggle_mute() -> void:
+	Sound.set_muted(not Sound.muted())
+	_refresh_mute()
+
+
+## The icon shows the state: the muted glyph, or a text button when the art layer is absent.
+func _refresh_mute() -> void:
+	if _mute is TextureButton:
+		(_mute as TextureButton).texture_normal = Art.texture(
+				"sound_off.svg" if Sound.muted() else "sound_on.svg")
+	else:
+		_mute.text = "Muted" if Sound.muted() else "Sound"
 
 
 func _unhandled_input(event: InputEvent) -> void:

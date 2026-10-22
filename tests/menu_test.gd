@@ -256,6 +256,56 @@ func _ready() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://volume.cfg"))
 	_esc()
 	await _frames(2)
+	# the sound icon: a subtle speaker over the painting's bottom-right corner, one click mutes everything
+	var mutes: Array = menu.find_children("Mute", "BaseButton", true, false)
+	_check(mutes.size() == 1, "the menu carries one sound icon (%d)" % mutes.size())
+	var mute: BaseButton = mutes[0] if mutes.size() == 1 else null
+	if mute != null:
+		var rect: Rect2 = mute.get_global_rect()
+		var gap: Vector2 = menu.size - rect.end
+		_check(gap.x >= 16.0 and gap.x <= 36.0 and gap.y >= 16.0 and gap.y <= 36.0,
+				"the sound icon sits in the bottom-right corner (%s off the edge)" % gap)
+		_check(rect.size.x >= 32.0 and rect.size.x <= 64.0,
+				"the sound icon stays subtle (%s)" % rect.size)
+		var icon: TextureButton = mute if mute is TextureButton else null
+		_check(icon != null and icon.modulate.a < 0.75,
+				"the icon idles at low opacity (%.2f)" % (icon.modulate.a if icon != null else 1.0))
+		_click(rect.get_center())
+		await _frames(2)
+		_check(AudioServer.is_bus_mute(AudioServer.get_bus_index("Master")),
+				"one click on the icon mutes the Master bus")
+		_check(icon != null and icon.texture_normal != null
+				and icon.texture_normal.resource_path.ends_with("sound_off.svg"),
+				"the icon shows the muted glyph")
+		var mute_cfg := ConfigFile.new()
+		mute_cfg.load("user://volume.cfg")
+		_check(mute_cfg.get_value("volume", "muted", false) == true, "the mute saves to volume.cfg")
+		# a slider move rewrites the file; the mute must survive it
+		for b in menu.find_children("*", "Button", true, false):
+			if b.text == "Volume":
+				b.pressed.emit()
+		await _frames(2)
+		await _drag_slider(menu.find_children("master", "HSlider", true, false)[0], 0.25)
+		mute_cfg.load("user://volume.cfg")
+		_check(mute_cfg.get_value("volume", "muted", false) == true
+				and mute_cfg.get_value("volume", "master", 1.0) < 0.5,
+				"a slider move saves its own volume and keeps the mute in the file")
+		_esc()
+		await _frames(2)
+	# a fresh menu opens with the sound muted, and a second click restores it
+	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+	await _frames(3)
+	menu = get_tree().current_scene
+	_check(AudioServer.is_bus_mute(AudioServer.get_bus_index("Master")),
+			"a fresh menu opens with the sound muted")
+	mutes = menu.find_children("Mute", "BaseButton", true, false)
+	if mutes.size() == 1:
+		_click(mutes[0].get_global_rect().get_center())
+		await _frames(2)
+		_check(not AudioServer.is_bus_mute(AudioServer.get_bus_index("Master")),
+				"a second click restores the sound")
+	Sound.set_volume("master", 1.0)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://volume.cfg"))
 	for b in menu.find_children("*", "Button", true, false):
 		if b.text.contains("AI vs. AI"):
 			b.pressed.emit()

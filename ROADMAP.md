@@ -239,6 +239,8 @@ I85 to I87 ship together; plan: [56-battle-pacing.md](art/docs/sessions/56-battl
 
 I90 to I92 ship together; plan: [59-terrain.md](art/docs/sessions/59-terrain.md).
 
+- [x] I94 **must** **game** A sound icon on the menu (Sebastian, 2026-10-22: "When the main menu shows, can you give it a subtle icon in the lower right over the BG image, to turn sound on and off completely?"). `muted`/`set_muted` in [Sound.gd](scripts/Sound.gd): the Master bus muted, which every slider's buses flow into, so one flag silences the whole game while the sliders keep their own settings - saved as `volume/muted` in user://volume.cfg through `_save_volumes`, the one write the sliders and the mute share, so a slider move keeps the flag, and read and applied by `load_volumes`, so a fresh menu opens as it was left. The icon: a TextureButton named Mute anchored 24 px off the bottom-right corner over the painting, [sound_on.svg / sound_off.svg](assets/art/ui) drawn by hand (96 px glyphs shown at 44) in the theme's cream - the corner's olive measures luminance 91, cream reads where the panels' dark ink would sink - idling at 55 % opacity, full on hover, the glyph swapped on the click; a text Button (`Sound`/`Muted`) stands in without the art layer. tests/menu_test: the icon sits in the corner at low opacity, one real click mutes the Master bus and saves the flag, a slider move keeps the mute in the file, a fresh menu opens muted, a second click restores the sound. Plan: [60-menu-mute.md](art/docs/sessions/60-menu-mute.md).
+
 
 ## J. Game ideas to try, all game
 
