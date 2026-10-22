@@ -67,9 +67,8 @@ func _ready() -> void:
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		title.add_theme_font_size_override("font_size", 44)
 		box.add_child(title)
-	# the shipped web build carries the two showcase modes only
 	var web := OS.has_feature("web")
-	var modes: Array = [MODES[1], MODES[2]] if web else MODES
+	var modes: Array = modes_for(web)
 	for entry in modes:
 		var b := Button.new()
 		b.text = entry[1]
@@ -107,6 +106,11 @@ func _ready() -> void:
 		problems.add_theme_color_override("font_color", Color(1, 0.45, 0.4))
 		problems.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		box.add_child(problems)
+
+
+## The shipped web build carries the two duel modes only; practice, Sandbox and Quit stay desktop.
+static func modes_for(web: bool) -> Array:
+	return [MODES[0], MODES[1]] if web else MODES
 
 
 func _start(mode: String) -> void:

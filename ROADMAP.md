@@ -78,10 +78,12 @@ Sections A to H cover the art and the process that makes it, sections I to K the
 
 - [x] E1 **must** Key art from approved hero renders, gameplay screenshots and the marketing anchor. Session 05: a painted key art instead (D24, D25), [marketing_style.png](art/game/art-direction/anchors/marketing_style.png).
 - [x] E2 **must** Store set composited by script: splash 1920 by 1080, cover 1280 by 720, icon 512, banner 1920 by 480. Platform-specific sizes once the platform is decided. Session 05: [storeset.py](art/pipeline/storeset.py) makes the Steam and itch.io sizes.
-- [ ] E3 **decide** Platform for the demo: hosted web page only, itch.io, or Steam page later.
+- [x] E3 **decide** Platform for the demo: hosted web page only, itch.io, or Steam page later. Decided 2026-10-22: itch.io first, free and played in the browser (moonlightart.itch.io/cannonade), pushed by butler to the HTML5 channel; a Steam page stays E5's later work.
 - [ ] E4 **idea** A 20 second gameplay GIF or clip for the page.
 - [ ] E5 **must** Steam page set: capsules, library assets and screenshots at the sizes in the Steam partner docs. Sebastian, 2026-10-11: yes, but after the art exists. Session 05: capsules and library assets done, screenshots wait for the game art.
-- [ ] E6 **must** itch.io page set: cover, banner, screenshots. Same note as E5. Session 05: the cover is done.
+- [x] E6 **must** itch.io page set: cover, banner, screenshots. Same note as E5. Session 05: the cover is done. The full set ships in [art/game/assets/marketing/itch/](art/game/assets/marketing/itch) (e0af62c): round-15 style-b cover 630x500, page banner and background, profile banner and avatar, and the four screenshots Sebastian picked. Uploading it in the page and theme editors is browser work.
+
+- [ ] E7 **must** Fill the itch.io page in the browser: cover, four screenshots, the agreed copy, theme (banner, background, colours BG #dddbc8 / BG2 #ebead5 / text #1a0800 / link #8a5a2b / button #bc8b50, fonts, Page layout Sidebar), embed options 1280x720 fullscreen only, AI disclosure ticked, tags, then publish.
 
 ## F. Game integration, all game
 
@@ -221,6 +223,8 @@ Note: Godot does not write values equal to a field's default into `.tres` files,
 - [x] I87 **must** **game** The cannon phase lasts a second per cannon the fullest hand can place (Sebastian, 2026-10-22: "The time for placing cannons should be 1 second per cannon the player can place!"). `gunDuration = 0` derives it at the flip: the widest parts cap on the table (6 s at one castle, 10 at two, then 13, 15, 17), so the phase grows as the castles do; versus, ai2 and ai4 drop their pinned `guns` in [Main.gd](scripts/Main.gd), single player keeps 50 s, practice and the sandbox stay untimed, and `--guns=SECONDS` still pins. tests/phase_test: the versus gun clock opens at exactly 6.0 s. Session 56.
 
 I85 to I87 ship together; plan: [56-battle-pacing.md](art/docs/sessions/56-battle-pacing.md).
+
+- [x] I88 **must** **game** The shipped web menu carries the two duel modes only (Sebastian, 2026-10-22, from the live page: the menu should have Player VS AI, Watch AI vs AI, Tutorial & Controls and Volume, and no Quit in the browser). The old web gate shipped the two showcase modes instead, so Player vs. AI was missing from the released build: [Menu.gd](scripts/Menu.gd) `modes_for(web)` picks versus and ai2 for the web, every mode for the desktop, and Sandbox and Quit keep their `not web` gate. tests/menu_test: `modes_for(true)` returns exactly versus and watch, watched red on the old showcase pair. Session 57.
 
 ## J. Game ideas to try, all game
 
