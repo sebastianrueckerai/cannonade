@@ -65,8 +65,16 @@ game/assets/3d/*/refs/*
 !game/assets/3d/base/refs/a-sketch.png
 !game/assets/3d/base/refs/b-view.png
 !game/assets/3d/cannon/raw/meshy-b-1000.glb
+!game/assets/3d/cannon/raw/meshy-chunky-post-1000.glb
+!game/assets/3d/cannon/raw/meshy-chunky-mortar-1000.glb
+!game/assets/3d/cannon/raw/meshy-chunky-carriage-1000.glb
+!game/assets/3d/cannon/raw/meshy-chunky-iron-1000.glb
 !game/assets/3d/cannon/refs/a-sketch.png
 !game/assets/3d/cannon/refs/b-clean.png
+!game/assets/3d/cannon/refs/chunky-post.png
+!game/assets/3d/cannon/refs/chunky-mortar.png
+!game/assets/3d/cannon/refs/chunky-carriage.png
+!game/assets/3d/cannon/refs/chunky-iron.png
 !game/assets/3d/cannon22a/raw/meshy-v1-left-1500.glb
 !game/assets/3d/cannon22a/refs/a-sketch.png
 !game/assets/3d/cannon22a/refs/c-left.png
