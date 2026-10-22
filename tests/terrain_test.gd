@@ -204,7 +204,7 @@ func _versus_board() -> void:
 			break
 	var fits_u: bool = mouth.x >= 0
 	if fits_u:
-		var u_go: Node3D = game._terrain_go("crate", u_cells)
+		var u_go: Node3D = game._terrain_go("rock", u_cells)
 		map.claim_terrain(u_go, u_cells)
 		var hole_ok: Node3D = me.place(Catalog.get_def("wall"), mouth.x, mouth.y)
 		var on_block: Node3D = me.place(Catalog.get_def("wall"), mouth.x - 2, mouth.y - 1)
@@ -219,28 +219,38 @@ func _versus_board() -> void:
 	var victim = null
 	for go in map.terrain_features:
 		var terr = U.comp(go, "Terrain")
-		if terr != null and terr.destructible and (victim == null or terr.tiles.size() < victim.tiles.size()):
+		if terr == null or not terr.destructible:
+			continue
+		var tallest := 0
+		for t in terr.tiles:
+			tallest = maxi(tallest, terr.columns[t])
+		if tallest >= 2 and (victim == null or terr.tiles.size() < victim.tiles.size()):
 			victim = terr
-	check(victim != null, "a destructible feature stands on the map")
+	check(victim != null, "a destructible feature with a stacked column stands on the map")
 	if victim != null:
 		var first = victim.tiles[0]
 		for t in victim.tiles:
-			if victim.columns[t].size() > victim.columns[first].size():
+			if victim.columns[t] > victim.columns[first]:
 				first = t
 		var blocks := 0
 		for t in victim.tiles:
-			blocks += victim.columns[t].size()
+			blocks += victim.columns[t]
 		check(is_equal_approx(victim.health, 10.0 * blocks),
 				"a feature holds 10 health a block (%d blocks, %s hp)" % [blocks, victim.health])
 		check(not me.can_place(Catalog.get_def("wall"), first.idxX, first.idxZ)
 				and me.place(Catalog.get_def("wall"), first.idxX, first.idxZ) == null,
 				"no wall can be placed on a terrain tile")
-		var column: int = victim.columns[first].size()
+		var mass: MeshInstance3D = victim.go.get_node_or_null("Mass")
+		check(mass != null and mass.mesh != null, "a feature wears one merged drape mesh")
+		var cut: Mesh = mass.mesh if mass != null else null
+		var column: int = victim.columns[first]
 		for i in column - 1:
 			first.damage_building_place(10.0)
 		check(map.terrain_features.has(victim.go) and first.structure == victim.go
-				and victim.columns[first].size() == 1,
+				and victim.columns[first] == 1,
 				"a column steps down block by block without freeing its tile")
+		check(mass != null and mass.mesh != null and mass.mesh != cut,
+				"a block's fall re-cuts the drape")
 		first.damage_building_place(10.0)
 		await frames(2)
 		check(first.structure == null and first.is_free() and map.get_mini(first.idxX, first.idxZ) == 0
@@ -251,7 +261,7 @@ func _versus_board() -> void:
 		var vtiles: Array = victim.tiles.duplicate()  # the dying go frees its Terrain with it
 		var vgo: Node3D = victim.go
 		for t in vtiles:
-			for i in victim.columns[t].size():
+			for i in victim.columns[t]:
 				t.damage_building_place(10.0)
 		await frames(2)
 		var freed := true
@@ -278,7 +288,7 @@ func _versus_board() -> void:
 			stone.damage_building_place(30.0)
 		var stone_blocks := 0
 		for t in mountain.tiles:
-			stone_blocks += mountain.columns[t].size()
+			stone_blocks += mountain.columns[t]
 		check(map.terrain_features.has(mountain.go) and stone.structure == mountain.go
 				and is_equal_approx(mountain.health, 10.0 * stone_blocks),
 				"an indestructible feature soaks every shell without a scratch")
@@ -296,6 +306,7 @@ func _seed_sweep() -> void:
 	var pairs := 0
 	var crossing := 0
 	var tall := 0
+	var draped := 0
 	for s in range(10, 18):
 		_start("versus", s)
 		var mismatch := 0
@@ -384,13 +395,19 @@ func _seed_sweep() -> void:
 					var terr2 = U.comp(t2.structure, "Terrain") if U.alive(t2.structure) else null
 					if terr2 == null:
 						continue
-					if terr2.top_of(t2) - t2.go.position.y > (z2 - z - 0.5) * rise:
+					if terr2.surface_at(t2.idxX, t2.idxZ - 0.5) - t2.go.position.y > (z2 - z - 0.5) * rise:
 						views += 1
 		for go in map.terrain_features:
 			var terr3 := U.comp(go, "Terrain")
+			var m3: MeshInstance3D = go.get_node_or_null("Mass")
+			var hmax := 0
 			for t in terr3.tiles:
-				if terr3.columns[t].size() >= 2:
+				if terr3.columns[t] >= 2:
 					tall += 1
+				hmax = maxi(hmax, terr3.columns[t])
+			var top3 := m3.mesh.get_aabb().end.y if m3 != null and m3.mesh != null else -1.0
+			if not (top3 > 0.6 and top3 < hmax * 0.75 + 0.3):
+				draped += 1
 		check(enclosed == 0 and views == 0,
 				"seed %d: no free tile walled in (%d), no column hides the ground behind it (%d)" % [s, enclosed, views])
 		main.free()
@@ -401,6 +418,7 @@ func _seed_sweep() -> void:
 	check(pairs >= 20, "features gather in clusters (%d touching pairs across the seeds)" % [pairs])
 	check(crossing >= 4, "features sit across the midline (%d across the seeds)" % [crossing])
 	check(tall >= 100, "terrain rises in stacked levels (%d columns two high or more across the seeds)" % [tall])
+	check(draped == 0, "every drape stands inside its levels (%d features out of band)" % [draped])
 	_start("versus", 19, 3)
 	check(map.terrain_features.size() == 6,
 			"--terrain=3 draws three shapes, one seat a side each (%d features)" % [map.terrain_features.size()])
@@ -455,7 +473,7 @@ func _ai_board() -> void:
 	var cells: Array = []
 	for x in map.sizeX:
 		cells.append(Vector2i(x, zline))
-	var wall: Node3D = game._terrain_go("crate", cells)
+	var wall: Node3D = game._terrain_go("rock", cells)
 	map.claim_terrain(wall, cells)
 	check(not _rings_reach(), "a full-width rock line really cuts the rings (the detector sees it)")
 	var gun_spot := Vector2i(-1, -1)
