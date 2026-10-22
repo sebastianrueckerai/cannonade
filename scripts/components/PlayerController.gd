@@ -27,6 +27,8 @@ var partsCap := 0
 var mainColor := Color.WHITE
 ## The wall look this game dealt the player (Catalog.WALL_LOOKS, D81), empty for the first look
 var wallLook := ""
+## The gun look this game dealt the player (Catalog.GUN_LOOKS, C20), empty for the first look
+var gunLook := ""
 var highlightPosColor := Color.WHITE
 var highlightNegColor := Color.RED
 ## GameObject (Node3D) of the next wall / building to place

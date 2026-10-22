@@ -28,7 +28,7 @@ from img import font  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 # A barrel rests 10 degrees down and fires from 45 up. The flak's guns aim from level to near the sky.
 TILTS = {"barrel": [-10, 45], "guns": [0, 80]}
-FOOTPRINT = {"cannon": 1, "cannon22a": 2, "cannon22b": 2, "flak22": 2, "cannon33a": 3}
+FOOTPRINT = {"cannon": 1, "cannon.2": 1, "cannon.3": 1, "cannon.4": 1, "cannon22a": 2, "cannon22b": 2, "flak22": 2, "cannon33a": 3}
 
 
 def blender(job):

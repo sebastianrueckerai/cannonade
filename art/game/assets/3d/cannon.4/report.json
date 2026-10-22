@@ -1,0 +1,69 @@
+{
+  "asset_id": "cannon.4",
+  "parts": {
+    "barrel": {
+      "verts": 1015,
+      "tris": 603,
+      "non_manifold_edges": 997,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.002,
+        0.0014,
+        0.4368
+      ]
+    },
+    "mount": {
+      "verts": 905,
+      "tris": 484,
+      "non_manifold_edges": 904,
+      "materials": [
+        "Material_0"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "plate": {
+      "verts": 40,
+      "tris": 20,
+      "non_manifold_edges": 40,
+      "materials": [
+        "plate_plate"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 1960,
+  "tris": 1107,
+  "non_manifold_edges": 1941,
+  "materials": [
+    "Material_0",
+    "plate_plate"
+  ],
+  "dims_m": [
+    0.9,
+    0.9,
+    0.6817
+  ],
+  "bbox_min": [
+    -0.45,
+    -0.45,
+    0.0
+  ],
+  "bbox_max": [
+    0.45,
+    0.45,
+    0.6817
+  ],
+  "solidity": 0.597,
+  "limits_ok": true,
+  "limit_failures": []
+}

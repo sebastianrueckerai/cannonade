@@ -1,0 +1,80 @@
+{
+  "source": "meshy-chunky-post-1000",
+  "barrel": [
+    16,
+    17,
+    18
+  ],
+  "pivot_pieces": [
+    17
+  ],
+  "fixes": [
+    {
+      "op": "drop",
+      "pieces": [
+        14
+      ],
+      "why": "the cradle disc under the breech sat 6 cm off the barrel's round side at every tilt, a floating chip; the fork holds the barrel without it"
+    },
+    {
+      "op": "shorten",
+      "pieces": [
+        16
+      ],
+      "base": [
+        18
+      ],
+      "by": 0.2,
+      "why": "the breech overhung half a metre behind the pin and at full raise swung down through the fork column's solid base; 18 cm off the rear keeps the swing inside the fork's slot"
+    },
+    {
+      "op": "raise_top",
+      "piece": 13,
+      "to": [
+        15
+      ],
+      "why": "the post's top stood 2.6 cm below the fork crown, a gap in the column",
+      "y": 0.19,
+      "z": [
+        0.6,
+        0.86
+      ]
+    },
+    {
+      "op": "slot",
+      "piece": 15,
+      "x": [
+        -0.1,
+        0.12
+      ],
+      "y": 0.19,
+      "z": [
+        0.6,
+        0.92
+      ],
+      "why": "the fork head was solid across the middle, and the fat barrel's flank rolled through it at every tilt; the opened yoke lets the barrel swing free while its arms and floor still carry the pin"
+    },
+    {
+      "op": "lift",
+      "pieces": [
+        16,
+        17,
+        18
+      ],
+      "by": 0.02,
+      "why": "lifted a touch, the pin rides with 3 cm of fork arm above it on each side, so the fork visibly captures the pin at every tilt"
+    }
+  ],
+  "notes": "Board 2 of the chunky pick (C20), the swivel gun with more girth. p16 the fat barrel, p18 the ring at its muzzle. p17 the trunnion pin through the barrel's centre, the pivot. p14 the cradle under the breech was dropped: it floated beside the barrel at every tilt. p15 the fork crown, p13 the banded post, p0 the wide iron foot, the rest bands and bolts: mount",
+  "plate": {
+    "height": 0.1,
+    "margin": 0.05,
+    "chamfer": 0.03,
+    "colour": "#544d52",
+    "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. Painted in the D39 grey since session 11",
+    "paint": {
+      "kind": "plate",
+      "seed": 56
+    }
+  }
+}
