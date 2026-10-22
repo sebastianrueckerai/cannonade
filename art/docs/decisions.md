@@ -553,3 +553,6 @@ ring runs round a smaller ring of the other, the ground between stays the outer 
 "12 looks good." The muzzle and landing effects of I78 turn on with FX.style = fire: the muzzle flash and burst of
 [board 12](game/art-direction/rounds/49-cannon-fx/board-12-fire-muzzle.png), the landing plume of board 13. The
 spawns they ride are his hand placements (round 3). Session 49, roadmap I78.
+
+## D90. The heavy shell splashes a 3x3 at 20 a tile (2026-10-22, Sebastian)
+"Hm, how about the big cannon does twice the damage per field but damages all field in a 3x3 radius (including friendly ones and neutral one) with a impact effect over all 3 fields?" The heavy shell leaves the plus of five of rules v2 for a full 3x3 at twice a small shell's damage a tile, friends and bare ground included, and the landing effect covers the square. Rules v2's "damage stays 10 everywhere" now holds only for the small shells. Session 54, roadmap I84.

@@ -30,12 +30,12 @@ The job column names what nothing else does. A gun without a job is cut.
 | id | footprint | fired | blast | range tiles | reload s | supply | job |
 |---|---|---|---|---|---|---|---|
 | `cannon`, small | 1 | by hand | one tile | 8 | 4 | 0 | fires from the first turn, the safe bet |
-| `cannon22a`, heavy | 2x2 | by hand | a plus of five. Both storeys on the centre tile, the upper storey only on the four arms | 14 | 6 | 4 | a hole three wide, which needs three pieces in a row |
+| `cannon22a`, heavy | 2x2 | by hand | a 3x3 square at 20 a tile, the shooter's own side and bare ground included (D90) | 14 | 6 | 4 | a hole three wide, which needs three pieces in a row |
 | `cannon22b`, mortar | 2x2 | by hand | five shards on five distinct tiles of the 5x5 round the target, one tile each. Every hit tile burns | 14 | 8 | 4 | holes that cannot close this rebuild |
 | `flak22` | 2x2 | itself | shoots down one ball every 2 s within 4 tiles. Not shards, not the siege shell | 4 | 2 | 4 | the answer to a swarm, beaten by volume or by the siege |
 | `cannon33a`, siege | 3x3 | by hand | 3x3, both storeys on every tile, a crater on the centre tile | the whole map, nothing under 8 | 10 | 9 | the finisher, a hole that needs a detour and a map that shrinks |
 
-Every shell flies a flat arc of about 2 s. Today a shell takes 4 to 5.7 s on a steep arc for any distance. Damage stays 10 against 10 health everywhere, so a hit is a kill.
+Every shell flies a flat arc of about 2 s. Today a shell takes 4 to 5.7 s on a steep arc for any distance. Damage stays 10 against 10 health everywhere, so a hit is a kill (the heavy shell is the exception since D90: 20 a tile over a 3x3).
 
 Why the siege gun is worth nine blocks: nine small guns on nine tiles kill nine walls per round of shots, but only where they reach, and only as fast as one hand presses. The siege gun reaches everything from the back row, and each shell leaves a crater that stays.
 

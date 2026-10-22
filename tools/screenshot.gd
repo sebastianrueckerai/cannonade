@@ -8,7 +8,8 @@ extends Node
 ##                  camera turns to it; the later times show its rubble
 ##   --scorch=N     at the first --at time, N shells' worth of ground damage on the bare tiles nearest the
 ##                  target, piled nearest first up to stage 3, and each scar printed
-##   --fire=x,z     fires the first gun that reaches the tile (places a cannon that does if none),
+##   --fire=x,z     fires the first gun that reaches the tile (places a cannon that does if none,
+##                  --firewith=DEF places that building def instead of the basic cannon),
 ##                  --firegun re-aims the camera to the gun, --muzzlecam frames its muzzle in profile,
 ##                  --wet makes the target water, --fxstyle=smoke|fire|soft turns the effects on in that look
 
@@ -25,6 +26,7 @@ var eye := Vector3(0, 9, 6)
 var scorch := 0
 var _scorch_done := false
 var fire := Vector2i(-1, -1)
+var firewith := "cannon"
 var firegun := false
 var muzzlecam := false
 var wet := false
@@ -84,6 +86,8 @@ func _ready() -> void:
 	if args.has("fire"):
 		var f: PackedStringArray = str(args["fire"]).split(",")
 		fire = Vector2i(int(f[0]), int(f[1]))
+	if args.has("firewith"):
+		firewith = str(args["firewith"])
 	firegun = args.has("firegun")
 	muzzlecam = args.has("muzzlecam")
 	wet = args.has("wet")
@@ -197,6 +201,23 @@ func _fire(t0: float) -> void:
 			_sched(g[1], g[2], t0)
 			return
 	# board scaffolding: no AI gun in reach yet - place a cannon that is
+	if firewith != "cannon":
+		var def = load("res://data/buildings/%s.tres" % firewith)
+		for col in main.game.map.tiles:
+			for t in col:
+				if not (t.is_free() and not t.water):
+					continue
+				var placed: Node3D = main.game.players[0].place(def, t.idxX, t.idxZ)
+				if not U.alive(placed):
+					continue
+				var psh = U.shooter(placed)
+				if psh != null and psh.try_shoot(tile.go.global_position, tile):
+					_sched(psh, t, t0)
+					return
+				U.destroy(placed)
+		print("fire: no placed %s reached %d,%d" % [firewith, fire.x, fire.y])
+		get_tree().quit(1)
+		return
 	var spot = null
 	for col in main.game.map.tiles:
 		for t in col:

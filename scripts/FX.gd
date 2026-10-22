@@ -55,12 +55,19 @@ static func muzzle(pos: Vector3, dir: Vector3) -> void:
 					"damp": 1.5, "ang": 150.0, "hold": 0.35})
 
 
-static func impact(pos: Vector3, water: bool, damage: float) -> void:
+static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0) -> void:
 	if not ENABLED:
 		return
-	var s := clampf(damage / 10.0, 0.7, 2.2)
+	var s := clampf(damage / 10.0, 0.7, 2.2) * (1.0 + 0.5 * splash)
 	var q := sqrt(s)
 	var root := _root("impact", 2.6)
+	## A splash shell also puffs every tile it hit round the point.
+	if splash > 0.0:
+		for d in [Vector3(splash, 0, 0), Vector3(-splash, 0, 0), Vector3(0, 0, splash), Vector3(0, 0, -splash),
+				Vector3(splash, 0, splash), Vector3(splash, 0, -splash), Vector3(-splash, 0, splash), Vector3(-splash, 0, -splash)]:
+			_burst(root, pos + d, {"tex": DIRT, "count": 4, "life": 0.8, "s": [0.12, 0.24],
+					"col": Color(0.85, 0.72, 0.55), "spread": 75.0, "v": [1.2, 2.4],
+					"grav": Vector3(0, -6, 0), "hold": 0.15})
 	if water:
 		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 14, "life": 0.9, "s": [0.1 * s, 0.22 * s],
 				"col": Color(0.9, 0.95, 1.0), "spread": 15.0, "v": [2.5 * q, 4.5 * q],

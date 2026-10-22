@@ -49,7 +49,7 @@ func impact() -> void:
 			Sound.play("hit_water")
 		elif not U.alive(destinationTile.structure) and not U.alive(destinationTile.ship):
 			Sound.play("hit_ground")
-		FX.impact(go.global_position, destinationTile.water, damage)
+		FX.impact(go.global_position, destinationTile.water, damage, splashRange * destinationTile.map.tileSize)
 		for tile in destinationTile.get_surrounding_tiles(splashRange):
 			_effect_tile(tile)
 		if tileDestroyer:

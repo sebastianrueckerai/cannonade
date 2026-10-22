@@ -132,7 +132,28 @@ func _run() -> void:
 	await seconds(10.0)
 	check(not U.alive(plain.structure), "an unprotected structure is destroyed by the same shells")
 
-	# the fused gun's heavy shell hits like the four cannons it was made of, and
+	# the heavy shell splashes a 3x3 at twice a small shell's damage a tile, the
+	# shooter's own side, enemy walls and bare ground included (I84)
+	var sc = map.tiles[26][15]
+	var own = map.tiles[25][15]
+	var foe_wall = map.tiles[27][16]
+	p1.build_building(own, Catalog.spawn("cannon"))
+	p2.build_building(sc, Catalog.spawn("cannon"))
+	p2.build_wall(foe_wall, Catalog.spawn("wall"))
+	check(U.alive(own.structure) and U.alive(sc.structure) and U.alive(foe_wall.structure),
+			"the splash patch stands: own gun, enemy gun, enemy wall")
+	gun.nextBulletTime = 0.0
+	check(gun.try_shoot(sc.go.global_position, sc), "the fused gun fires at the splash patch")
+	await seconds(10.0)
+	check(U.alive(own.structure) and U.comp(own.structure, "BuildingBlock").health == 20.0,
+			"the shooter's own gun on a splash tile keeps 20 of its 40 health")
+	check(U.alive(sc.structure) and U.comp(sc.structure, "BuildingBlock").health == 20.0,
+			"the enemy gun on the hit tile keeps 20 of its 40 health")
+	check(not U.alive(foe_wall.structure), "the 10-health wall on a splash tile dies")
+	check(map.tiles[25][14].groundDamage == 20.0 and map.tiles[28][15].groundDamage == 0.0,
+			"bare splash tiles scar by 20, the tile outside the 3x3 stays clean")
+
+	# the fused gun's heavy shell hits each tile like two small cannon shells, and
 	# the pointed shell flies nose first: up while it climbs, down while it falls
 	p2.build_building(plain, Catalog.spawn("cannon"))
 	gun.nextBulletTime = 0.0
@@ -161,7 +182,12 @@ func _run() -> void:
 	check(nose_up > 0.3 and nose_down < -0.3, "the nose climbs and dips with the arc (up %.2f, down %.2f)" % [nose_up, nose_down])
 	check(heading > 0.9, "the nose points along the flight, not back (%.2f)" % heading)
 	await seconds(0.5)
-	check(not U.alive(plain.structure), "one heavy shell destroys a basic gun, four cannon shells' worth")
+	check(U.alive(plain.structure) and U.comp(plain.structure, "BuildingBlock").health == 20.0,
+			"one heavy shell halves a basic gun, a small cannon shell's worth twice")
+	gun.nextBulletTime = 0.0
+	check(gun.try_shoot(plain.go.global_position, plain), "the fused gun fires the second shell")
+	await seconds(10.0)
+	check(not U.alive(plain.structure), "two heavy shells destroy a basic gun")
 
 	# gun health: a basic gun dies on the fourth shell, the fused gun on the eighth
 	var single = map.tiles[12][14]
