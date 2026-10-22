@@ -112,7 +112,7 @@ func _rings_reach() -> bool:
 			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or seen.has(n):
 				continue
 			var t = map.tiles[n.x][n.y]
-			if t.water or _blocked(n.x, n.y):
+			if (t.water and not t.river) or _blocked(n.x, n.y):  # a wall bridges a river (I104)
 				continue
 			seen[n] = true
 			queue.append(n)
@@ -441,7 +441,7 @@ func _ai_board() -> void:
 		var clear := true
 		for x in map.sizeX:
 			var t = map.tiles[x][z]
-			if U.alive(t.structure) or t.water or t.disabled or U.alive(t.ship):
+			if U.alive(t.structure) or (t.water and not t.river) or t.disabled or U.alive(t.ship):
 				clear = false
 				break
 		if clear:

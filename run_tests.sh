@@ -30,6 +30,7 @@ run loading      --fixed-fps 30 res://tests/loading_test.tscn
 run practice     --fixed-fps 30 res://tests/practice_test.tscn
 run check        --fixed-fps 30 res://tests/check_test.tscn
 run terrain      --fixed-fps 30 res://tests/terrain_test.tscn
+run rivers       --fixed-fps 30 res://tests/river_test.tscn
 run camera       --fixed-fps 30 res://tests/camera_test.tscn
 run previews     --fixed-fps 30 res://tests/preview_test.tscn
 run phases       --fixed-fps 30 res://tests/phase_test.tscn

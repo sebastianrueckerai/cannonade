@@ -20,6 +20,8 @@ var map = null
 var burning := false
 var shaking := false
 var water := false
+## Water a wall may stand on (I104): the wall there is a bridge, and the enclosure flood runs under it.
+var river := false
 var isWall := false
 ## hit by a tile destroying rocket (Unity disabled renderers and colliders)
 var disabled := false
@@ -71,6 +73,11 @@ func buildable() -> bool:
 ## Nothing stands here and a piece may go down now.
 func is_free() -> bool:
 	return not U.alive(structure) and buildable()
+
+
+## A wall piece may go down here: free ground, or a river it bridges (I104).
+func wall_free() -> bool:
+	return not U.alive(structure) and not burning and not shaking and not disabled and (river or not water)
 
 
 ## `from` is where the shot came from (Vector3.INF: nowhere); a wall killed here crumbles away from it.
@@ -308,7 +315,7 @@ func reset_color(enclosed = null) -> void:
 		enclosed = map.is_tile_enclosed(idxX, idxZ)
 	_apply_ground_look(enclosed)
 	var c := wallColor
-	if not isWall:
+	if not isWall or water:  # a bridge shows the river under its arches
 		c = enclosedColor if enclosed else openColor
 		if enclosed and ringOwner != null:
 			c = c.lerp(ringOwner.mainColor, ground_tint)

@@ -454,5 +454,6 @@ func _run() -> void:
 	var to_enemy: int = enemy._enemy_castle_distance(room.centre())
 	var to_own: int = enemy._castle_distance(room.centre())
 	check(to_enemy <= to_own, "the room sits no nearer the AI's castles than the enemy's (%d to theirs, %d to its own)" % [to_enemy, to_own])
+	await seconds(24.0)  # a river board spends its walls on a claim first, so the room closes later
 	check(enemy.rooms.any(func(r): return r.closed()), "a room closed in the window")
 	await frames(2)

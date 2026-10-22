@@ -100,7 +100,8 @@ func _check_looks() -> void:
 	check(_look(b) == p2.wallLook, "player 2's block wears player 2's look (got %s)" % _look(b))
 	var bare := Catalog.spawn("wall")
 	check(_look(bare) == "wall", "a block spawned without an owner wears the first look")
-	p2.build_wall(_tile(12, 5), bare)
+	var bare_spot := _dry_near(12, 5, [])  # on a river tile it would wear the bridge look instead
+	p2.build_wall(_tile(bare_spot.x, bare_spot.y), bare)
 	check(_look(bare) == p2.wallLook, "built by player 2, the ownerless block changes into player 2's look")
 	check(Catalog.WALL_LOOKS.size() == 4, "four looks")
 	for go in [a, b, bare]:
@@ -236,8 +237,10 @@ func _check_nested_rings() -> void:
 ## A cannon, the castle falling to ruins and the decorations of a tile shot or built on crumble too (I69).
 func _check_crumble() -> void:
 	Art._rng.seed = 11
-	var used := [[19, 0], [20, 0], [17, 0], [31, 2], [33, 2], [44, 1], [45, 1], [46, 1], [44, 2], [45, 2], [46, 2],
-			[44, 3], [45, 3], [46, 3]]
+	var gun_spot := _dry_near(17, 0, [])
+	var shot_spot := _dry_near(31, 2, [[33, 2]])
+	var used := [[19, 0], [20, 0], [gun_spot.x, gun_spot.y], [shot_spot.x, shot_spot.y], [33, 2],
+			[44, 1], [45, 1], [46, 1], [44, 2], [45, 2], [46, 2], [44, 3], [45, 3], [46, 3]]
 	var free: Array = used.filter(func(c): return not _tile(c[0], c[1]).water and not U.alive(_tile(c[0], c[1]).structure))
 	check(free.size() == used.size(), "the crumble checks' %d tiles are free and dry (taken or wet: %s)"
 			% [used.size(), used.filter(func(c): return not free.has(c))])
@@ -280,7 +283,7 @@ func _check_crumble() -> void:
 					low = minf(low, mi.to_global(v).y - slab)
 		check(low > -0.1, "no piece of the heap sinks through the slab (lowest vertex %.2f m over it)" % low)
 	# a cannon: its mount's pieces in the mount's material, its barrel's where the barrel stands
-	var gun_tile = _tile(17, 0)
+	var gun_tile = _tile(gun_spot.x, gun_spot.y)
 	var gun := Catalog.spawn("cannon")
 	p1.build_building(gun_tile, gun)
 	var mount_mat: Material = (gun.find_child("mount", true, false) as MeshInstance3D).get_active_material(0)
@@ -315,7 +318,7 @@ func _check_crumble() -> void:
 			"the castle's pieces wear the severe look's stone (%d of %d)" % [stone, stones.size()])
 	d3.free()
 	# a shot clears a decorated tile, and a wall placed on decorations clears another, each decoration in pieces
-	var shot_tile = _tile(31, 2)
+	var shot_tile = _tile(shot_spot.x, shot_spot.y)
 	var walled_tile = _tile(33, 2)
 	var ringed_tile = _tile(45, 2)
 	for t in [shot_tile, walled_tile, ringed_tile]:
@@ -339,6 +342,16 @@ func _check_crumble() -> void:
 	for t in [tile, gun_tile, ctile, shot_tile, walled_tile]:
 		left += t.go.get_children().filter(func(n): return n is Crumble).size()
 	check(left == 0, "the rubble is gone after %.0f s (%d heaps left)" % [Crumble.LIFE, left])
+
+
+## The first free dry tile east of (x, z) in its row, skipping `avoid`: the river and the
+## terrain seated round it move with the board, so these crumble spots cannot stay fixed.
+func _dry_near(x: int, z: int, avoid: Array) -> Vector2i:
+	for e in range(x, map.sizeX):
+		var t = map.tiles[e][z]
+		if not t.water and not U.alive(t.structure) and not t.disabled and not avoid.has([e, z]):
+			return Vector2i(e, z)
+	return Vector2i(x, z)
 
 
 ## Two leaf trees of the art layer on `t`, by hand: the test's game has no decorations.

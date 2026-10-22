@@ -47,11 +47,12 @@ func count_hit() -> void:
 func impact() -> void:
 	count_hit()
 	if U.alive(destinationTile):
-		if destinationTile.water:
+		var wet: bool = destinationTile.water and not U.alive(destinationTile.structure)  # a bridge takes it dry
+		if wet:
 			Sound.play("hit_water")
 		elif not U.alive(destinationTile.structure) and not U.alive(destinationTile.ship):
 			Sound.play("hit_ground")
-		FX.impact(go.global_position, destinationTile.water, damage, splashRange * destinationTile.map.tileSize, smokePuff)
+		FX.impact(go.global_position, wet, damage, splashRange * destinationTile.map.tileSize, smokePuff)
 		for tile in destinationTile.get_surrounding_tiles(splashRange):
 			_effect_tile(tile)
 		if tileDestroyer:

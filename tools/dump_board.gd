@@ -1,6 +1,6 @@
 extends Node
 ## Prints the board as ASCII for one mode+seed (# crate, M stone, N neutral castle, w wall,
-## digits player castles).  godot --headless --fixed-fps 30 res://tools/dump_board.tscn -- --mode=versus --seed=4 --terrain=6
+## ~ river, = bridge, digits player castles).  godot --headless --fixed-fps 30 res://tools/dump_board.tscn -- --mode=versus --seed=4 --terrain=6
 const Main = preload("res://scripts/Main.gd")
 
 func _ready() -> void:
@@ -35,7 +35,7 @@ func _ready() -> void:
 				elif castle != null:
 					ch = "N" if castle.owner() == null else str(castle.owner().playerID)
 				elif U.comp(t.structure, "BuildingBlock") != null:
-					ch = "w"
+					ch = "=" if t.water else "w"
 				else:
 					ch = "?"
 			row += ch

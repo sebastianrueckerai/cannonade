@@ -130,7 +130,7 @@ func _update_tile_in_accessible_grid(bp) -> void:
 	var x: int = bp.idxX * 3
 	var z: int = bp.idxZ * 3
 	var full := 1
-	var bb = U.comp(bp.structure, "BuildingBlock") if U.alive(bp.structure) else null
+	var bb = U.comp(bp.structure, "BuildingBlock") if U.alive(bp.structure) and not bp.river else null  # the flood runs under a bridge
 	if bb != null:
 		var grid: Array = bb.accessGrid
 		for dx in 3:
