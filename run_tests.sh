@@ -3,7 +3,7 @@
 #   ./run_tests.sh            (uses `godot` from PATH, or set GODOT=/path/to/godot)
 set -u
 cd "$(dirname "$0")"
-GODOT=${GODOT:-$(command -v godot || echo "$HOME/Applications/Godot_v4.7.1-stable_linux.x86_64")}
+GODOT=${GODOT:-$(command -v godot || echo "$HOME/Applications/Godot_v4.7.2-stable_linux.x86_64")}
 "$GODOT" --headless --import >/dev/null 2>&1
 fail=0
 run() {

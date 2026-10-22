@@ -5,7 +5,7 @@ set -eu
 cd "$(dirname "$0")/../../../../.."   # repo root
 R=art/game/art-direction/rounds/30-menu-look
 UI=assets/art/ui
-GODOT=${GODOT:-$(command -v godot || echo "$HOME/Applications/Godot_v4.7.1-stable_linux.x86_64")}
+GODOT=${GODOT:-$(command -v godot || echo "$HOME/Applications/Godot_v4.7.2-stable_linux.x86_64")}
 
 python3 "$R/build_candidates.py"
 mkdir -p "$R/shots"

@@ -19,6 +19,7 @@ Sections A to H cover the art and the process that makes it, sections I to K the
 - [x] A9 **decide** Git LFS for `.blend`, `.glb` and `.png` once the repo passes about 500 MB. Session 06: LFS for new binaries, the history stays (D35).
 - [x] A10 **spike** Image model probe on game prompts: the same 3 prompts (world from the gameplay camera, cannon close, menu) through the portfolio's shortlist. Pick one model per job, write it into [providers.md](art/docs/providers.md).
 
+- [x] A11 **must** Godot 4.7.2 is the binary everywhere: `run_tests.sh`, [tools/godot_render.sh](tools/godot_render.sh), [tools/export_web.sh](tools/export_web.sh), the round 30 [stage_and_shoot.sh](art/game/art-direction/rounds/30-menu-look/stage_and_shoot.sh), the engine facts in [grid-cannons.md](art/docs/grid-cannons.md) and the start-menu entry; 4.7.2 Web export templates installed. Session 55.
 ## B. Art direction
 
 - [x] B1 **must** Gameplay contract measured in the game repo: tile size in metres, camera angle, FOV and distance, pixel height of a wall and a cannon at 1280 by 720, current material colours from `materials/*.tres`, poly budget per asset class. Into [game/art-direction/gameplay_contract.yaml](art/game/art-direction/gameplay_contract.yaml).

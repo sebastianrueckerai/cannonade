@@ -8,7 +8,7 @@ The game is released as Cannonade (D26). Every player-facing string says Cannona
 
 - Only change what the session plan names. The art layer, the export pipeline and the tools are ours. Gameplay code is not.
 - Its `.env.tools` holds a GitHub token. Never copy it, read it or print it.
-- `godot` is not on PATH. The scripts fall back to `~/Applications/Godot_v4.7.1-stable_linux.x86_64`, or set `GODOT`.
+- `godot` is not on PATH. The scripts fall back to `~/Applications/Godot_v4.7.2-stable_linux.x86_64`, or set `GODOT`.
 - Godot runs `--headless` or under `xvfb-run`, never with a window on the real display (Sebastian, session 02). [tools/godot_render.sh](/home/womb/repos/grid-cannons/tools/godot_render.sh) wraps Xvfb for every tool that saves a screenshot. Ask before anything that needs the real display.
 - [run_tests.sh](/home/womb/repos/grid-cannons/run_tests.sh) is the gate. It imports, then runs 17 headless scenes including the art check. The three sims take a few minutes.
 
@@ -20,7 +20,7 @@ A Godot port of a Unity game in the spirit of Rampart. A round is a wall phase, 
 
 | fact | value |
 |---|---|
-| Godot | 4.7, binary 4.7.1 in `~/Applications`, Web templates installed for 4.7.1 |
+| Godot | 4.7, binary 4.7.2 in `~/Applications`, Web templates installed for 4.7.2 |
 | renderer | gl_compatibility on desktop and mobile, the renderer the Web export needs |
 | window | 1280 by 720, stretch aspect expand |
 | main scene | `res://scenes/splash.tscn`, then `menu.tscn`, then `loading.tscn`, then `game.tscn` or `sandbox.tscn` |
