@@ -64,7 +64,7 @@ func _check_setup() -> void:
 			voices += 1
 	check(voices == Sound.VOICES, "a cue holds %d voices at most, holds %d" % [Sound.VOICES, voices])
 	Sound.play("not_a_cue")
-	check(true, "an unknown cue plays nothing and raises nothing")
+	check(not Sound.playing("not_a_cue"), "an unknown cue plays nothing and raises nothing")
 
 
 func _check_build() -> void:

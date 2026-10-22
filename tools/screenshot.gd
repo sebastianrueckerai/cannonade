@@ -93,7 +93,6 @@ func _ready() -> void:
 	wet = args.has("wet")
 	if args.has("fxstyle"):
 		FX.style = str(args["fxstyle"])
-		FX.ENABLED = true
 	if args.has("aim"):
 		var p: PackedStringArray = str(args["aim"]).split(",")
 		aim = Vector2i(int(p[0]), int(p[1]))

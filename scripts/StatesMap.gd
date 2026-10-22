@@ -22,10 +22,6 @@ func idx(x: int, z: int) -> int:
 	return x * sizeFineZ + z
 
 
-func is_open(x: int, z: int) -> bool:
-	return open[x * sizeFineZ + z] != 0
-
-
 func is_closed(x: int, z: int) -> bool:
 	return closed[x * sizeFineZ + z] != 0
 

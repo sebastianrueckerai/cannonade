@@ -6,8 +6,6 @@ extends Object
 ## board 12, session 49); `style` names the look: smoke (the demo
 ## look), fire, soft. Particle seeds make the randomness, never the game RNG.
 
-static var ENABLED := true
-
 static var style := "fire"
 
 const RING := preload("res://materials/fx_ring.gdshader")
@@ -24,8 +22,6 @@ const DIRT := preload("res://assets/art/fx/dirt_01.png")
 
 
 static func muzzle(pos: Vector3, dir: Vector3) -> void:
-	if not ENABLED:
-		return
 	var root := _root("muzzle", 2.6)
 	var drift := (dir + Vector3.UP * 0.75).normalized()
 	match style:
@@ -56,8 +52,6 @@ static func muzzle(pos: Vector3, dir: Vector3) -> void:
 
 
 static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0) -> void:
-	if not ENABLED:
-		return
 	var s := clampf(damage / 10.0, 0.7, 2.2) * (1.0 + 0.5 * splash)
 	var q := sqrt(s)
 	var root := _root("impact", 2.6)

@@ -74,14 +74,6 @@ func instantiate(scene: PackedScene, parent: Node = null) -> Node3D:
 	return n
 
 
-## Instantiate at a world position / rotation (Unity Instantiate(prefab, pos, rot)).
-func instantiate_at(scene: PackedScene, parent: Node, pos: Vector3, basis: Basis = Basis.IDENTITY) -> Node3D:
-	var n := scene.instantiate() as Node3D
-	parent.add_child(n)
-	n.global_transform = Transform3D(basis * n.transform.basis, pos)
-	return n
-
-
 ## Unity's transform.SetParent(parent, false): keeps the local transform.
 func set_parent(n: Node3D, parent: Node) -> void:
 	if not alive(n) or n.get_parent() == parent:
@@ -169,19 +161,6 @@ func set_alpha(root: Node, a: float) -> void:
 ## renderer.materials[i].color = c
 func set_surface_color(mi: MeshInstance3D, surface: int, c: Color) -> void:
 	_unique_material(mi, surface).albedo_color = c
-
-
-## Emission glow on every mesh below root (the targeting marker); energy 0 turns it off.
-func set_emission(root: Node, c: Color, energy: float) -> void:
-	if not alive(root):
-		return
-	for mi in meshes(root):
-		if mi.get_script() != null or mi.mesh == null or mi.mesh.get_surface_count() == 0:
-			continue
-		var m := _unique_material(mi, 0)
-		m.emission_enabled = energy > 0.0
-		m.emission = c
-		m.emission_energy_multiplier = energy
 
 
 ## Colour of the first visible mesh (a placeholder the art layer hid does not count).

@@ -104,7 +104,6 @@ func _aim_dir(sp: Node3D) -> Vector3:
 	return (flat * cos(shooter.angleRads) + Vector3.UP * sin(shooter.angleRads)).normalized()
 
 func _fire(forced: String) -> void:
-	FX.ENABLED = true
 	FX.style = forced if forced != "" else STYLES[i % STYLES.size()]
 	i += 1
 	shooter.try_aim(TARGET)

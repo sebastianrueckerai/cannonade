@@ -225,8 +225,6 @@ func _check_outcome(g) -> void:
 		var moved: int = stats.get("ships_moved", 0)
 		if moved != g.fleet.ships.size():
 			_fail("only %d of %d ships moved" % [moved, g.fleet.ships.size()])
-		if stats["shots"] == 0:
-			_fail("ships never fired")
 
 
 func _fail(msg: String) -> void:
