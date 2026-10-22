@@ -1,12 +1,13 @@
 extends Node
-## Terrain on the battlefield (I90-I96): both sides hold the same amount of blocked tiles
+## Terrain on the battlefield (I90-I97): both sides hold the same amount of blocked tiles
 ## in different arrangements and features cross the midline, every
-## feature is a clumped shape inside 7x7 whose holes stay buildable ground, a mass five
-## tiles across or more is never a filled rectangle, neighbours gather in clusters, the
-## count is a knob (--terrain=N), castle rings keep their reach round every feature, a destructible
-## feature falls to its shells and frees its ground, an indestructible one absorbs every
-## hit, placement refuses the tiles, and the AI shoots the crates that block its own way
-## but never the ones that would open the enemy's.
+## feature is a solid clumped shape inside 7x7 that walls no free ground in, a mass five
+## tiles across or more is never a filled rectangle, neighbours gather in clusters,
+## columns rise in stacked levels that hide no ground behind them, the count is a knob
+## (--terrain=N), castle rings keep their reach round every feature, a destructible
+## feature shatters block by block and frees its ground tile by tile, an indestructible
+## one absorbs every hit, placement refuses the tiles, and the AI shoots the crates that
+## block its own way but never the ones that would open the enemy's.
 ##   godot --headless --fixed-fps 30 res://tests/terrain_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -125,6 +126,14 @@ func _rings_reach() -> bool:
 	return true
 
 
+## Floods a border tile into `seen` unless terrain stands on it (I97: only terrain walls
+## ground in; water is crossed, castles and walls are the players' own doing).
+func _open_seed(p: Vector2i, seen: Dictionary, queue: Array) -> void:
+	if not _blocked(p.x, p.y) and not seen.has(p):
+		seen[p] = true
+		queue.append(p)
+
+
 ## The generated versus board (seed 4, the enemy idle): the layout rules and the damage.
 ## The board is already up (built deferred in _ready); later boards use _start.
 func _versus_board() -> void:
@@ -175,15 +184,25 @@ func _versus_board() -> void:
 
 	# a clump's holes stay ground (I93): a horseshoe claimed on open tiles leaves its mouth
 	# buildable while its own cells refuse a wall
-	var mouth := Vector2i(30, 16)
+	var mouth := Vector2i(-1, -1)
 	var u_cells: Array = []
-	for x in range(mouth.x - 2, mouth.x + 3):
-		u_cells.append(Vector2i(x, mouth.y - 1))
-	u_cells.append(Vector2i(mouth.x - 2, mouth.y))
-	u_cells.append(Vector2i(mouth.x + 2, mouth.y))
-	var fits_u := true
-	for c in u_cells:
-		fits_u = fits_u and map.tiles[c.x][c.y].is_free() and not map.tiles[c.x][c.y].water
+	for z in range(6, map.sizeZ - 2):
+		for x in range(2, map.sizeX - 3):
+			var cells: Array = []
+			for dx in range(-2, 3):
+				cells.append(Vector2i(x + dx, z - 1))
+			cells.append(Vector2i(x - 2, z))
+			cells.append(Vector2i(x + 2, z))
+			var fits := true
+			for c in cells:
+				fits = fits and map.tiles[c.x][c.y].is_free() and not map.tiles[c.x][c.y].water
+			if fits and map.tiles[x][z].is_free():
+				mouth = Vector2i(x, z)
+				u_cells = cells
+				break
+		if mouth.x >= 0:
+			break
+	var fits_u: bool = mouth.x >= 0
 	if fits_u:
 		var u_go: Node3D = game._terrain_go("crate", u_cells)
 		map.claim_terrain(u_go, u_cells)
@@ -205,17 +224,35 @@ func _versus_board() -> void:
 	check(victim != null, "a destructible feature stands on the map")
 	if victim != null:
 		var first = victim.tiles[0]
-		check(is_equal_approx(victim.health, 10.0 * victim.tiles.size()),
-				"a feature holds 10 health a tile (%d tiles, %s hp)" % [victim.tiles.size(), victim.health])
+		for t in victim.tiles:
+			if victim.columns[t].size() > victim.columns[first].size():
+				first = t
+		var blocks := 0
+		for t in victim.tiles:
+			blocks += victim.columns[t].size()
+		check(is_equal_approx(victim.health, 10.0 * blocks),
+				"a feature holds 10 health a block (%d blocks, %s hp)" % [blocks, victim.health])
 		check(not me.can_place(Catalog.get_def("wall"), first.idxX, first.idxZ)
 				and me.place(Catalog.get_def("wall"), first.idxX, first.idxZ) == null,
 				"no wall can be placed on a terrain tile")
-		for i in victim.tiles.size() - 1:
+		var column: int = victim.columns[first].size()
+		for i in column - 1:
 			first.damage_building_place(10.0)
-		check(map.terrain_features.has(victim.go), "the feature survives all but the last of its shells")
+		check(map.terrain_features.has(victim.go) and first.structure == victim.go
+				and victim.columns[first].size() == 1,
+				"a column steps down block by block without freeing its tile")
+		first.damage_building_place(10.0)
+		await frames(2)
+		check(first.structure == null and first.is_free() and map.get_mini(first.idxX, first.idxZ) == 0
+				and map.terrain_features.has(victim.go),
+				"the column's last block frees its tile alone, the feature stands")
+		check(is_equal_approx(first.groundDamage, 10.0),
+				"the freed tile carries the killing shell's scar")
 		var vtiles: Array = victim.tiles.duplicate()  # the dying go frees its Terrain with it
 		var vgo: Node3D = victim.go
-		first.damage_building_place(10.0)
+		for t in vtiles:
+			for i in victim.columns[t].size():
+				t.damage_building_place(10.0)
 		await frames(2)
 		var freed := true
 		var scarred := true
@@ -225,7 +262,7 @@ func _versus_board() -> void:
 			if t.groundDamage != 10.0:
 				scarred = false
 		check(not map.terrain_features.has(vgo) and freed,
-				"the killing shell frees every tile of the feature")
+				"the last column's fall takes the feature with it, every tile freed")
 		check(scarred, "each freed tile carries the killing shell's scar")
 
 	var mountain = null
@@ -239,8 +276,11 @@ func _versus_board() -> void:
 		var stone = mountain.tiles[0]
 		for i in 10:
 			stone.damage_building_place(30.0)
+		var stone_blocks := 0
+		for t in mountain.tiles:
+			stone_blocks += mountain.columns[t].size()
 		check(map.terrain_features.has(mountain.go) and stone.structure == mountain.go
-				and is_equal_approx(mountain.health, 10.0 * mountain.tiles.size()),
+				and is_equal_approx(mountain.health, 10.0 * stone_blocks),
 				"an indestructible feature soaks every shell without a scratch")
 
 	main.free()
@@ -255,6 +295,7 @@ func _seed_sweep() -> void:
 	var solid_big := 0
 	var pairs := 0
 	var crossing := 0
+	var tall := 0
 	for s in range(10, 18):
 		_start("versus", s)
 		var mismatch := 0
@@ -304,6 +345,54 @@ func _seed_sweep() -> void:
 					pairs += 1
 		check(map.terrain_features.size() > 0 and counts[0] == counts[1] and mismatch > 0 and _rings_reach(),
 				"seed %d: terrain grows, the sides level and different, the rings connected (%d features)" % [s, map.terrain_features.size()])
+		# I97: solid shapes and open ground. No free tile is walled in by terrain (a ring
+		# would strand the tiles inside it); every column stands on levels that leave the
+		# ground behind it visible from the 60-degree play camera: a column hides the centre
+		# of the tile k tiles behind it once its height beats that tile's half-tile climb.
+		var open_seen := {}
+		var open_queue: Array = []
+		for x in map.sizeX:
+			for z in [0, map.sizeZ - 1]:
+				_open_seed(Vector2i(x, z), open_seen, open_queue)
+		for z in map.sizeZ:
+			for x in [0, map.sizeX - 1]:
+				_open_seed(Vector2i(x, z), open_seen, open_queue)
+		var head := 0
+		while head < open_queue.size():
+			var p: Vector2i = open_queue[head]
+			head += 1
+			for v in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				var n: Vector2i = p + v
+				if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or open_seen.has(n):
+					continue
+				if _blocked(n.x, n.y):
+					continue
+				open_seen[n] = true
+				open_queue.append(n)
+		var enclosed := 0
+		var views := 0
+		var rise := tan(deg_to_rad(60.0))
+		for x in map.sizeX:
+			for z in map.sizeZ:
+				var t = map.tiles[x][z]
+				if t.structure == null and not t.water and not t.disabled and not open_seen.has(Vector2i(x, z)):
+					enclosed += 1
+				if t.structure != null or t.water or t.disabled:
+					continue
+				for z2 in range(z + 1, map.sizeZ):
+					var t2 = map.tiles[x][z2]
+					var terr2 = U.comp(t2.structure, "Terrain") if U.alive(t2.structure) else null
+					if terr2 == null:
+						continue
+					if terr2.top_of(t2) - t2.go.position.y > (z2 - z - 0.5) * rise:
+						views += 1
+		for go in map.terrain_features:
+			var terr3 := U.comp(go, "Terrain")
+			for t in terr3.tiles:
+				if terr3.columns[t].size() >= 2:
+					tall += 1
+		check(enclosed == 0 and views == 0,
+				"seed %d: no free tile walled in (%d), no column hides the ground behind it (%d)" % [s, enclosed, views])
 		main.free()
 	check(kinds[true] > 0 and kinds[false] > 0,
 			"across the seeds both sorts appear (breakable %d, standing %d)" % [kinds[true], kinds[false]])
@@ -311,6 +400,7 @@ func _seed_sweep() -> void:
 			"bigger masses appear (%d of five tiles across or more) and none is a filled rectangle (%d solid)" % [big, solid_big])
 	check(pairs >= 20, "features gather in clusters (%d touching pairs across the seeds)" % [pairs])
 	check(crossing >= 4, "features sit across the midline (%d across the seeds)" % [crossing])
+	check(tall >= 100, "terrain rises in stacked levels (%d columns two high or more across the seeds)" % [tall])
 	_start("versus", 19, 3)
 	check(map.terrain_features.size() == 6,
 			"--terrain=3 draws three shapes, one seat a side each (%d features)" % [map.terrain_features.size()])

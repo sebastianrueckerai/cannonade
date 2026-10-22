@@ -133,7 +133,7 @@ func damage_structure(damage: float, from := Vector3.INF) -> void:
 			return
 		var terrain := U.comp(structure, "Terrain")
 		if terrain != null:
-			terrain.take_damage(damage, from)
+			terrain.take_damage(damage, from, self)
 			return
 	var bb = block()
 	if bb != null:
@@ -240,9 +240,13 @@ func stack_wall(wall_go: Node3D) -> void:
 	_wall_body(wall_go)
 
 
-## World height of the top of the wall standing here, of its storey when stacked.
+## World height of the top of the wall standing here, of its storey when stacked, of the
+## terrain column's top block when terrain stands here (I97).
 func wall_top() -> float:
 	var n: Node3D = wallStacked if U.alive(wallStacked) else structure
+	var terrain := U.comp(n, "Terrain")
+	if terrain != null:
+		return terrain.top_of(self)
 	return n.global_position.y + Art.bounds(n).end.y
 
 

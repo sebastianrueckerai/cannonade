@@ -204,30 +204,25 @@ func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
 	return anchor
 
 
-# ------------------------------------------------------------- terrain (I90, I91, I93, I95, I96)
+# ------------------------------------------------------------- terrain (I90, I91, I93, I95, I96, I97)
 ## The shapes a feature can take, rows from its north-west cell ("up" the map is low z):
-## "#" a blocked cell, "." a hole that stays free ground a wall can stand in. Clumps with
-## holes and notches, not lines. The first ten sit inside 4x4; the I95 masses reach 7x7 -
-## corridors, curls and double clumps, none a plain rectangle.
+## "#" a blocked cell. Solid masses with bitten, irregular outlines (I97) - no rings or
+## discs, no plain rectangles; the first seven sit inside 4x4, the rest reach 7x7. Features
+## that cluster can still enclose free ground between them, which the placement rolls back.
 const TERRAIN_PATTERNS := [
-	"####/####/####/####",
 	"####/####/##../##..",
 	"####/.##./####",
-	"###/#.#/###",
-	"###/###/###",
 	"#.../####/...#/...#",
 	"##../##../.#..",
 	"#../###/..#",
 	"##./##./.##",
 	"##/##",
-	"#######/#.....#/#.....#/#.....#/#.....#/#.....#/#######",
-	"#######/#.....#/#.###.#/#.#.#.#/#.#...#/#.###.#/#######",
-	"##...##/##...##/##...##/##...##/##...##/##...##/#######",
+	"..##../.####./######/#####./.###../..#...",
+	"..####./.#####./#######/#####../###..../#......",
+	"####../#####./.####./.#####/..####",
 	"##...../##...../##...../##...../##...../#######/#######",
 	"###.###/###.###/#######/###.###",
-	"#####/...##/..##./.##../##.../#####/#####",
-	"#######/#######/#.#.#.#/#.#.#.#",
-	"#####/#...#/#...#/#...#/#####",
+	"#######/#######/..###../..###../..###..",
 ]
 ## Shapes the game draws, stone and crates alternating by shape: one seat a side with two
 ## players, one a quadrant with four, the same shape at every seat so the sides hold the
@@ -241,6 +236,9 @@ const TERRAIN_ATTEMPTS := 60
 const TERRAIN_CLUSTER := 0.5
 ## Terrain keeps this Chebyshev distance from a castle centre, so its 5x5 ring stays buildable.
 const TERRAIN_CASTLE_CLEAR := 3
+## The tallest box one level may stand: half a tile's climb at the shallowest play camera
+## (60 degrees, versus), the height from which a block starts hiding the tile behind it.
+const TERRAIN_LEVEL_MAX := 0.866
 
 
 ## Terrain features over the battlefield (I90, I91, I93, I96): each drawn shape takes one
@@ -271,6 +269,7 @@ func _place_terrain() -> void:
 	var clusters: Array = []
 	for i in terrainCount:
 		var shape: Array = _terrain_rotated(shapes[rng.randi_range(0, shapes.size() - 1)], rng.randi_range(0, 3))
+		var open_set := _border_reach()
 		var size := Vector2i.ONE
 		for c in shape:
 			size.x = maxi(size.x, c.x + 1)
@@ -292,12 +291,12 @@ func _place_terrain() -> void:
 						break
 				if cells.is_empty():
 					break
-				var go := _terrain_go(sort, cells)
+				var go := _terrain_go(sort, cells, rng)
 				map.claim_terrain(go, cells)
 				landed.append([go, cells])
 				if not _rings_connected():
 					break
-			if landed.size() == seats.size():
+			if landed.size() == seats.size() and _ground_open(open_set):
 				for l in landed:
 					clusters.append(l[1])
 				break
@@ -426,9 +425,46 @@ func _terrain_fits(cells: Array) -> bool:
 	return true
 
 
-## The feature's GameObject at the centre of its cells: the Terrain component and, a tile,
-## one box of the sort's family (I93) — a look each, so a mass reads as piled blocks.
-func _terrain_go(sort: String, all: Array) -> Node3D:
+## Column heights for a feature's cells (I97): one box a level, up to three. A level stacks
+## only where the feature itself, another feature or the board's north edge backs it: the
+## play camera (60 degrees up) sees over one level, but a two-level column hides the centre
+## of the tile directly behind it, so that tile must be terrain too. Profiles: flat,
+## terraces rising away from the camera, a peak with its shoulder.
+func _terrain_heights(rng: RandomNumberGenerator, all: Array) -> Dictionary:
+	var own := {}
+	var near := 0
+	var mid := Vector2i.ZERO
+	for c: Vector2i in all:
+		own[c] = true
+		near = maxi(near, c.y)
+		mid += c
+	mid /= all.size()
+	var peak: Vector2i = all[0]
+	for c: Vector2i in all:
+		if max(absi(c.x - mid.x), absi(c.y - mid.y)) < max(absi(peak.x - mid.x), absi(peak.y - mid.y)):
+			peak = c
+	var kind := rng.randi_range(0, 2)
+	var out := {}
+	for c: Vector2i in all:
+		var h := 1
+		if kind == 1:
+			h = 1 + mini(2, near - c.y)
+		elif kind == 2:
+			h = maxi(1, 3 - max(absi(c.x - peak.x), absi(c.y - peak.y)))
+		var behind := Vector2i(c.x, c.y - 1)
+		var backed: bool = c.y == 0 or own.has(behind)
+		if not backed:
+			var t = map.tiles[behind.x][behind.y]
+			backed = U.alive(t.structure) and U.comp(t.structure, "Terrain") != null
+		out[c] = mini(3, h) if backed else 1
+	return out
+
+
+## The feature's GameObject at the centre of its cells: the Terrain component and, per
+## tile, a column of level boxes of the sort's family (I93, I97) — a look each, so a mass
+## reads as piled steps. `rng` draws the column profile; without it every column is flat.
+func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) -> Node3D:
+	var heights := _terrain_heights(rng, all) if rng != null else {}
 	var go := Node3D.new()
 	go.name = sort.capitalize()
 	map.go.add_child(go)
@@ -439,19 +475,79 @@ func _terrain_go(sort: String, all: Array) -> Node3D:
 	terr.map = map
 	terr.tiles = all.map(func(c): return map.tiles[c.x][c.y])
 	terr.destructible = sort == "crate"
-	terr.health = terr.HEALTH_PER_TILE * all.size()
 	var centre := Vector3.ZERO
 	for c in all:
 		centre += map.tile_position(c.x, c.y)
 	go.position = centre / all.size()
 	for c in all:
-		var b := Art.instance("terrain_stone" if sort == "stone" else "terrain_crate")
-		if b == null:
-			continue
-		go.add_child(b)
-		b.position = map.tile_position(c.x, c.y) - go.position
-		b.position.y = map.tiles[c.x][c.y].go.position.y
+		var t = map.tiles[c.x][c.y]
+		var col: Array = []
+		var top: float = t.go.position.y
+		for i in heights.get(c, 1):
+			var b: Node3D = null
+			for draw in 8:  # a look this tall is not a level (I97); redraw for a fitting one
+				var cand := Art.instance("terrain_stone" if sort == "stone" else "terrain_crate")
+				if cand == null or Art.bounds(cand).size.y <= TERRAIN_LEVEL_MAX:
+					b = cand
+					break
+				U.destroy(cand)
+			if b == null:
+				break
+			go.add_child(b)
+			b.position = map.tile_position(c.x, c.y) - go.position
+			b.position.y = top - 0.01  # each box sinks into the one below, as the art kit unions
+			top += Art.bounds(b).size.y
+			col.append(b)
+		terr.set_column(t, col)
 	return go
+
+
+## The free, dry tiles that reach the board's border over ground no terrain and no water
+## blocks (I97): a pair may not strand free ground behind it.
+func _border_reach() -> PackedByteArray:
+	var seen := PackedByteArray()
+	seen.resize(map.sizeX * map.sizeZ)
+	var queue: Array[Vector2i] = []
+	for x in map.sizeX:
+		for z in [0, map.sizeZ - 1]:
+			_reach_seed(Vector2i(x, z), seen, queue)
+	for z in map.sizeZ:
+		for x in [0, map.sizeX - 1]:
+			_reach_seed(Vector2i(x, z), seen, queue)
+	var head := 0
+	while head < queue.size():
+		var p: Vector2i = queue[head]
+		head += 1
+		for v in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = p + v
+			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or seen[n.x * map.sizeZ + n.y]:
+				continue
+			var t = map.tiles[n.x][n.y]
+			if t.water or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
+				continue
+			seen[n.x * map.sizeZ + n.y] = 1
+			queue.append(n)
+	return seen
+
+
+func _reach_seed(p: Vector2i, seen: PackedByteArray, queue: Array[Vector2i]) -> void:
+	var t = map.tiles[p.x][p.y]
+	if t.water or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
+		return
+	seen[p.x * map.sizeZ + p.y] = 1
+	queue.append(p)
+
+
+## True when no free tile the board reached before this pair lost that reach (I97).
+func _ground_open(before: PackedByteArray) -> bool:
+	var now := _border_reach()
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			if before[x * map.sizeZ + z] and not now[x * map.sizeZ + z]:
+				var t = map.tiles[x][z]
+				if t.structure == null and not t.water and not t.disabled:
+					return false
+	return true
 
 
 ## The encirclement guarantee (I91): every castle's build ring (Chebyshev 2 of its centre)

@@ -175,3 +175,49 @@ twelve stone), which starved the crate damage checks; sorts alternate by shape n
 seat (0 tiles off the flip, the difference guards red on every seed), the partner copying
 the first seat's split instead of complementing it (56 against 112, the level guards red),
 and the first seat boxed into one half (0 crossings, the midline guard red).
+
+
+## Round 6
+
+Three asks in one round: no circles ("solid but have interesting shapes", his blob verbatim),
+mountains that block no view ("Lets represent elevation levels by number... You can form them
+procedurally from 1x1 blocks!"), and per-level destruction ("Each height level can take a shot.
+Blocks should shatter when being shot.").
+
+**Solid shapes.** The rings, donuts, spirals and discs left TERRAIN_PATTERNS; thirteen solid
+connected shapes stand, his blob among them. A big mass still never fills its bounding box.
+
+**Levels.** `_terrain_heights` gives a feature 1-3 levels (flat, terraces, peak at its centre),
+`_terrain_go` stacks 1x1 blocks per cell. The view rule came from the real camera: versus sits
+at 60 degrees and zoom slides along the same ray, so one slope standard covers all zoom - a
+column hides the centre of the tile behind it once it passes half a tile (0.866). Two gates:
+TERRAIN_LEVEL_MAX redraws any block look taller (stone.3 at 1.25, crate.3 at 1.05), and a
+column may rise past level 1 only where the tile behind it is terrain or off the north edge.
+Both his examples (XXX/111/121/111 and 111/222/333) are legal under the rule. The first green
+run failed 24-177 view checks until the redraw gate went in: the tall looks were still drawn.
+
+**Per-block damage.** Each block carries 10 health; a shell shatters the top block of the
+column it lands on, overflow bites the next; a tile frees alone when its column empties (the
+killing blow scars it), the feature falls with its last column. Stone stays the indestructible
+sort (his I90 two-kind design); say the word and one flag makes stone per-block too.
+`wall_top` reads the column top per cell, so the red ghost rides a stepped mass at the right
+height. Mid-game crate demolition can open a blocked view - accepted, the blocks are gone.
+
+**The pocket release is load-bearing.** F alone (release off, solid shapes only) walled in
+1-3 tiles on seeds 10, 12 and 17: clustered features strand open ground in real generation,
+the release is not spare insurance.
+
+**The round's own bug, in the harness not the game.** The watch-red script restored
+GameController.gd with `git checkout` after its first break - to HEAD, wiping the uncommitted
+round work (the script was written assuming a committed base). Recovered by replaying the
+transcript's five python edits (each assert-guarded) onto the HEAD file, proven by an
+identical green run (47 ok); a WIP commit went in at once so no restore can lose work again.
+The eighth `:=` bite predates it (`var top := t.go.position.y` through untyped t).
+
+**Break-checks** (each watched red then restored): the backing rule off (31/20 views), the
+heights flat (0 stacked columns), the level cap at 1.3 (33/21 views), a donut with the release
+off (18/19 walled in), the release off alone (above), one shell eating two blocks (the
+step-down guard - after the check learned to pick the tallest column of the victim, its first
+run sat on a one-block column and the scar guard caught the break instead; a pooled die() on
+the first block had failed the run on a freed-object script error, which the runner also
+counts as red).
