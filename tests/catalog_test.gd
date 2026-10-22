@@ -86,6 +86,23 @@ func _check_gun_looks() -> void:
 	check(players[0].gunLook in Catalog.GUN_LOOKS and players[0].gunLook != players[1].gunLook,
 			"two players, two different gun looks (%s, %s)" % [players[0].gunLook, players[1].gunLook])
 	var look := func(go: Node3D): return go.get_node("Art").get_meta("art_id")
+	# the hand draw is the real build path (try_get_next_building): the gun a player builds wears that
+	# player's look, not the first one
+	main.game.phase = main.game.Phase.GUNS
+	for p in players:
+		p.secondsBetweenBuildings = 0.0
+		var tries := 0
+		while tries < 60 and (not U.alive(p.nextBuilding) or Catalog.def_of(p.nextBuilding).id != "cannon"):
+			if U.alive(p.nextBuilding):
+				p.nextBuilding.free()
+			p.try_get_next_building()
+			tries += 1
+		check(U.alive(p.nextBuilding) and Catalog.def_of(p.nextBuilding).id == "cannon",
+				"a cannon reaches the hand within %d draws" % tries)
+		check(look.call(p.nextBuilding) == p.gunLook,
+				"the hand-drawn cannon wears the player's look (got %s, want %s)"
+				% [look.call(p.nextBuilding), p.gunLook])
+		p.nextBuilding.free()
 	players[1].gunLook = "cannon.3"  # the deal is random; the wear check needs an owner on a non-first look
 	var gun := Catalog.spawn("cannon", null, players[1])
 	check(look.call(gun) == players[1].gunLook,

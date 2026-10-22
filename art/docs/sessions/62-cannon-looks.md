@@ -43,3 +43,9 @@ bullet spawns"
   game layer and approved in the art manifest.
 
 Cost: none — the rebuilds are local Blender.
+
+His first game of it showed both factions with identical guns: `try_get_next_building` spawned the
+hand-drawn building without its player (`Catalog.spawn(def, hand)`), so every faction's cannon wore the
+first look. The draw now passes the player, and the catalog test drives the real hand path: phase GUNS,
+draw until the hand holds a cannon, the gun must wear its player's dealt look. Red against the old line:
+both hand guns wore `cannon` while seed 5 had dealt cannon.3 and cannon.4.
