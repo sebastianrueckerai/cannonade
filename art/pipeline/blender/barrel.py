@@ -290,7 +290,10 @@ def fix(pieces, op):
     lift: the pieces in `pieces` rise by `by` metres, and the upper half of each piece in `stretch` rises with them,
     lengthening it.
     shorten: each piece in `pieces` shrinks by the fraction `by` along its own long axis, toward its end nearer the
-    pieces in `base`."""
+    pieces in `base`.
+    drop: the pieces in `pieces` are deleted outright, a generated piece with no place in the gun.
+    slot: an axis-aligned box, `x` and `z` spans plus a `y` half-width, is cut out of `piece`, opening a grip
+    that clamps too tight for the barrel to swing through."""
     by = {int(o.name[1:]): o for o in pieces}
     if op["op"] == "lift":
         for i in op["pieces"]:
@@ -326,6 +329,33 @@ def fix(pieces, op):
             if v.co.z >= top - band:
                 v.co.z += target - top
         ob.data.update()
+    elif op["op"] == "slot":
+        ob = by[op["piece"]]
+        x, z = op["x"], op["z"]
+        cut = bpy.data.meshes.new("slot")
+        bm = bmesh.new()
+        bmesh.ops.create_cube(bm, size=1.0, matrix=Matrix.LocRotScale(
+            Vector(((x[0] + x[1]) / 2, 0, (z[0] + z[1]) / 2)), None,
+            Vector((x[1] - x[0], op["y"] * 2, z[1] - z[0]))))
+        bm.to_mesh(cut)
+        bm.free()
+        knife = bpy.data.objects.new("slot", cut)
+        bpy.context.scene.collection.objects.link(knife)
+        mod = ob.modifiers.new("slot", 'BOOLEAN')
+        mod.operation = 'DIFFERENCE'
+        mod.object = knife
+        dg = bpy.context.evaluated_depsgraph_get()
+        ev = ob.evaluated_get(dg)
+        out = ev.to_mesh()
+        ob.modifiers.remove(mod)
+        slotted = bpy.data.meshes.new("slotted")
+        slotted.from_pydata([v.co.copy() for v in out.vertices], [],
+                            [tuple(p.vertices) for p in out.polygons])
+        ev.to_mesh_clear()
+        ob.data = slotted
+        bpy.data.objects.remove(knife, do_unlink=True)
+        bpy.data.meshes.remove(cut)
+        ob.data.update()
     else:
         raise ValueError(f"unknown fix {op['op']}")
 
@@ -333,6 +363,12 @@ def fix(pieces, op):
 def barrel_from_parts(ob, job):
     pieces = numbered_pieces(ob)
     for op in job.get("fixes", []):
+        if op["op"] == "drop":
+            for i in op["pieces"]:
+                o = next(o for o in pieces if int(o.name[1:]) == i)
+                pieces.remove(o)
+                bpy.data.objects.remove(o, do_unlink=True)
+            continue
         fix(pieces, op)
     if job.get("barrel") is not None:
         barrel = [o for o in pieces if int(o.name[1:]) in job["barrel"]]

@@ -72,6 +72,12 @@ func _run() -> void:
 	# the scripted spots below were derived on bare ground: the generated terrain (I90) goes
 	for go in map.terrain_features.duplicate():
 		U.comp(go, "Terrain").die(Vector3.INF, 0.0)
+	# and the fleet's ships with them: they fire on their own, and the flat arc
+	# lands their shells inside the checks' waits (J6); the one ship this suite
+	# observes it spawns itself below
+	for ship in game.fleet.ships.duplicate():
+		U.destroy(ship.go)
+	game.fleet.ships.clear()
 
 	# the 2x2 specials placed directly from their files (their upgrade-block
 	# recipes are parked out of the game)
@@ -153,10 +159,15 @@ func _run() -> void:
 	U.destroy(built["shield22"])
 
 	# the heavy shell splashes a 3x3 at twice a small shell's damage a tile, the
-	# shooter's own side, enemy walls and bare ground included (I84)
-	var sc = map.tiles[26][15]
-	var own = map.tiles[25][15]
-	var foe_wall = map.tiles[27][16]
+	# shooter's own side, enemy walls and bare ground included (I84). The patch
+	# sits south of the flak's line: the flat arc crosses a box it used to fly
+	# over, and the flak would eat the splash shell (J6). open_patch, not pinned
+	# tiles: the AI's 3x3 start castle stands at (25,24)-(27,26), and building
+	# over its tiles would pool the splash into the castle's upgrade cluster
+	var sc = open_patch(28, 24)
+	check(sc != null, "a free open patch south of the flak's line exists")
+	var own = map.tiles[sc.idxX - 1][sc.idxZ]
+	var foe_wall = map.tiles[sc.idxX + 1][sc.idxZ + 1]
 	p1.build_building(own, Catalog.spawn("cannon"))
 	p2.build_building(sc, Catalog.spawn("cannon"))
 	p2.build_wall(foe_wall, Catalog.spawn("wall"))
@@ -177,14 +188,17 @@ func _run() -> void:
 	check(U.alive(sc.structure) and U.comp(sc.structure, "BuildingBlock").health == 20.0,
 			"the enemy gun on the hit tile keeps 20 of its 40 health")
 	check(not U.alive(foe_wall.structure), "the 10-health wall on a splash tile dies")
-	check(map.tiles[25][14].groundDamage == 20.0 and map.tiles[28][15].groundDamage == 0.0,
+	check(map.tiles[sc.idxX - 1][sc.idxZ - 1].groundDamage == 20.0 and map.tiles[sc.idxX + 2][sc.idxZ].groundDamage == 0.0,
 			"bare splash tiles scar by 20, the tile outside the 3x3 stays clean")
 
 	# the fused gun's heavy shell hits each tile like two small cannon shells, and
-	# the pointed shell flies nose first: up while it climbs, down while it falls
-	p2.build_building(plain, Catalog.spawn("cannon"))
+	# the pointed shell flies nose first: up while it climbs, down while it falls.
+	# A 42-tile far target: the flat arc's pitch swing shrinks with distance (J6),
+	# at the old 11-tile range it is a 5-degree waver, too shallow to observe
+	var far = map.tiles[45][30]
+	p2.build_building(far, Catalog.spawn("cannon"))
 	gun.nextBulletTime = 0.0
-	check(gun.try_shoot(plain.go.global_position, plain), "the fused gun fires at a basic gun")
+	check(gun.try_shoot(far.go.global_position, far), "the fused gun fires at a far basic gun")
 	var heavy = U.projectiles.back()
 	var meshes: Array = (heavy.get_node(heavy.body) as Node3D).find_children("*", "MeshInstance3D", true, false)
 	check(meshes.size() == 1 and meshes[0].visible and meshes[0].mesh != null,
@@ -209,12 +223,12 @@ func _run() -> void:
 	check(nose_up > 0.3 and nose_down < -0.3, "the nose climbs and dips with the arc (up %.2f, down %.2f)" % [nose_up, nose_down])
 	check(heading > 0.9, "the nose points along the flight, not back (%.2f)" % heading)
 	await seconds(0.5)
-	check(U.alive(plain.structure) and U.comp(plain.structure, "BuildingBlock").health == 20.0,
+	check(U.alive(far.structure) and U.comp(far.structure, "BuildingBlock").health == 20.0,
 			"one heavy shell halves a basic gun, a small cannon shell's worth twice")
 	gun.nextBulletTime = 0.0
-	check(gun.try_shoot(plain.go.global_position, plain), "the fused gun fires the second shell")
+	check(gun.try_shoot(far.go.global_position, far), "the fused gun fires the second shell")
 	await seconds(10.0)
-	check(not U.alive(plain.structure), "two heavy shells destroy a basic gun")
+	check(not U.alive(far.structure), "two heavy shells destroy a basic gun")
 
 	# gun health: a basic gun dies on the fourth shell, the fused gun on the eighth
 	var single = map.tiles[12][14]
@@ -346,6 +360,45 @@ func _run() -> void:
 	check(splash != null, "a water landing raises a splash")
 	await seconds(3.0)
 	check(_fx_count() == 0, "the splash cleans itself up")
+
+	# the shell flies the flat arc (J6): the low ballistic solution - the barrel
+	# never rises past 45 degrees, the 62-tile map diagonal lands in 0.6 of the
+	# steep arc's 5.8 s, and a mid-range shell stays low over the board. Both the
+	# arc gun and its target sit east of x=29, out of the flak's and the shield's
+	# boxes for every path between them
+	var arc_gun_tile = open_patch(28, 20)
+	check(arc_gun_tile != null, "a free patch for the arc gun exists")
+	if arc_gun_tile != null:
+		p1.build_building(arc_gun_tile, Catalog.spawn("cannon"))
+		var ag := U.shooter(arc_gun_tile.structure)
+		for d in [10.0, 30.0, 62.13]:
+			ag.try_aim(ag.go.global_position + Vector3(d, 0.0, 0.0))
+			check(ag.angleDegrees <= 45.0,
+					"the arc stays flat at %.0f tiles: the barrel at %.1f degrees" % [d, ag.angleDegrees])
+		ag.try_aim(ag.go.global_position + Vector3(62.13, 0.0, 0.0))
+		check(ag.flyTime > 3.35 and ag.flyTime < 3.55,
+				"the 62-tile map diagonal lands in %.2f s, 0.6 of the steep arc's 5.80 s" % ag.flyTime)
+		var arc_target = null
+		for x in range(29, map.sizeX):
+			for z in map.sizeZ:
+				var t = map.tiles[x][z]
+				var td: float = t.go.global_position.distance_to(ag.go.global_position)
+				if t.is_free() and not t.water and not map.is_tile_enclosed(t.idxX, t.idxZ) and td > 18.0 and td < 32.0:
+					arc_target = t
+					break
+			if arc_target != null:
+				break
+		check(arc_target != null, "a mid-range target tile exists")
+		if arc_target != null:
+			ag.nextBulletTime = 0.0
+			check(ag.try_shoot(arc_target.go.global_position, arc_target), "the arc gun fires at the mid-range tile")
+			var peak := 0.0
+			while not U.projectiles.is_empty():
+				await get_tree().process_frame
+				for pr in U.projectiles:
+					peak = maxf(peak, pr.go.global_position.y)
+			check(arc_target.ground_stage() == 1, "the flat-arc shell lands and scars its tile")
+			check(peak < 3.0, "the shell rides under 3 tiles of arc, peaked at %.2f (the steep arc lobbed ~30)" % peak)
 
 
 func _fx_at(kind: String) -> Node:

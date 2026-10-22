@@ -48,7 +48,7 @@ func _ready() -> void:
 		for x in map.sizeX:
 			var t = map.tiles[x][z]
 			var terr: Variant = U.comp(t.structure, "Terrain") if U.alive(t.structure) else null
-			row += str(terr.columns[t].size()) if terr != null and terr.columns.has(t) else "."
+			row += str(terr.columns[t]) if terr != null and terr.columns.has(t) else "."
 		heights.append("%2d %s" % [z, row])
 	for l in heights:
 		print(l)
@@ -56,10 +56,10 @@ func _ready() -> void:
 		var cc: Vector2i = map.tile_index_at(c.go.global_position)
 		print("castle owner=%s centre=(%d,%d)" % [c.owner().playerID if c.owner() != null else "neutral", cc.x, cc.y])
 	var blocked := {"top": 0, "bottom": 0}
-	var sorts := {"crate": 0, "stone": 0}
+	var sorts := {"rock": 0, "hill": 0}
 	for go in map.terrain_features:
 		var terr: Variant = U.comp(go, "Terrain")
-		sorts["crate" if terr.destructible else "stone"] += 1
+		sorts["rock" if terr.destructible else "hill"] += 1
 		for t in terr.tiles:
 			blocked["top" if t.idxZ < map.sizeZ / 2 else "bottom"] += 1
 	var touching := 0
@@ -81,11 +81,11 @@ func _ready() -> void:
 	for go in map.terrain_features:
 		var terr2: Variant = U.comp(go, "Terrain")
 		for t in terr2.tiles:
-			var h: int = terr2.columns[t].size()
+			var h: int = terr2.columns[t]
 			blocks += h
 			if h >= 2:
 				tall += 1
-	print("features=%d (%d crate, %d stone), blocked tiles: top %d, bottom %d of %d a half, touching pairs %d, columns 2+ high %d of %d blocks"
-			% [map.terrain_features.size(), sorts["crate"], sorts["stone"],
+	print("features=%d (%d rock, %d hill), blocked tiles: top %d, bottom %d of %d a half, touching pairs %d, columns 2+ high %d of %d blocks"
+			% [map.terrain_features.size(), sorts["rock"], sorts["hill"],
 				blocked["top"], blocked["bottom"], map.sizeX * map.sizeZ / 2, touching, tall, blocks])
 	get_tree().quit()

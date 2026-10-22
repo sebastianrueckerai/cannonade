@@ -581,6 +581,8 @@ func _run() -> void:
 	await point_at_tile(Vector2i(bare_tile.idxX, bare_tile.idxZ))
 	check(tree_tile._target_tints == 0 and bare_tile._target_tints == 1,
 			"the aim light rides the cursor, off the last aimed tile")
+	while human.activeCannons[0].nextBulletTime > U.time:  # the reload outlasts the flat arc's flight (J6)
+		await frames(1)
 	await press("act")
 	await frames(2)
 	var bare_shell = null
@@ -751,6 +753,10 @@ func _decorate(t) -> void:
 ## Fires at the tile under the cursor and waits for the shell to land; false when nothing flew
 ## or the shell did not land within 15 s.
 func shoot_at(tile) -> bool:
+	# the flat arc lands in under a second at close range, sooner than the reload:
+	# a player reads the cooldown ring before pressing (J6)
+	while human.activeCannons[0].nextBulletTime > U.time:
+		await frames(1)
 	await press("act")
 	await frames(2)
 	var shell = null

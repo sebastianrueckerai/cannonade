@@ -35,7 +35,7 @@ The job column names what nothing else does. A gun without a job is cut.
 | `flak22` | 2x2 | itself | shoots down one ball every 2 s within 4 tiles. Not shards, not the siege shell | 4 | 2 | 4 | the answer to a swarm, beaten by volume or by the siege |
 | `cannon33a`, siege | 3x3 | by hand | 3x3, both storeys on every tile, a crater on the centre tile | the whole map, nothing under 8 | 10 | 9 | the finisher, a hole that needs a detour and a map that shrinks |
 
-Every shell flies a flat arc of about 2 s. Today a shell takes 4 to 5.7 s on a steep arc for any distance. Damage stays 10 against 10 health everywhere, so a hit is a kill (the heavy shell is the exception since D90: 20 a tile over a 3x3).
+Every shell flies the low ballistic solution (I100): the arc rises just high enough to reach the farthest tile, a mid-range shot peaks under 3 tiles and lands in 1 to 2.5 s, the 62-tile map diagonal in 3.5 s. Damage stays 10 against 10 health everywhere, so a hit is a kill (the heavy shell is the exception since D90: 20 a tile over a 3x3).
 
 Why the siege gun is worth nine blocks: nine small guns on nine tiles kill nine walls per round of shots, but only where they reach, and only as fast as one hand presses. The siege gun reaches everything from the back row, and each shell leaves a crater that stays.
 
