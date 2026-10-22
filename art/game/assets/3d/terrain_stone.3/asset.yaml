@@ -1,0 +1,23 @@
+asset_id: terrain_stone.3
+route: procedural      # I93: one tile-size block of a battlefield stone mass, a family look
+class: nature
+dimensions:            # metres, Blender axes, Z up
+  max_x: 1.0
+  max_y: 1.0
+  max_z: 1.3
+budget:
+  max_tris: 400
+  max_materials: 1
+  min_solidity: 0.4
+parts:
+  - terrain_stone.3
+pivots:
+  origin: ground_centre
+build: ../terrain_build.py
+paint:
+  terrain_stone.3:
+    kind: stone
+    seed: 63
+    over:                  # the rock greys of the boulder family, off the castle cream
+      stops: [[0.0, "#7d7364"], [0.09, "#8a8072"], [0.72, "#94897a"], [1.0, "#a89d8b"]]
+      ground: [0.16, 0.08, "#6b6357"]

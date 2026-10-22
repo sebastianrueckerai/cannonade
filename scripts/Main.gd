@@ -117,7 +117,7 @@ func _ready() -> void:
 	for key in ["walls", "guns", "battle", "ready"]:
 		if args.has(key):
 			cfg[key] = float(args[key])
-	for key in ["size", "width"]:
+	for key in ["size", "width", "terrain"]:
 		if args.has(key):
 			cfg[key] = int(args[key])
 	build(cfg, not args.has("no-decorations"))
@@ -161,6 +161,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	game.initialShips = cfg["ships"]
 	game.castles = cfg.get("castles", true)
 	game.mapSeed = _used_seed   # the terrain layout draws from its own stream (I90)
+	game.terrainCount = int(cfg.get("terrain", game.terrainCount))  # features a side draws (I93)
 	game.map = map
 	game.fleet = fleet
 	game.hudBand = cfg.get("band", _hud_band() if cfg.get("hud", true) else Vector2.ZERO)

@@ -565,6 +565,96 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-14T23:48:59+02:00"
   },
+  "terrain_crate": {
+    "size": [
+      0.92,
+      0.835,
+      0.92
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "terrain_crate"
+    ],
+    "tris": 232,
+    "source_sha": "1cde50aee7b4",
+    "approved_by": null,
+    "synced": "2026-10-22T16:24:23+02:00"
+  },
+  "terrain_crate.2": {
+    "size": [
+      0.92,
+      0.585,
+      0.92
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "terrain_crate.2"
+    ],
+    "tris": 192,
+    "source_sha": "3c52ec7db629",
+    "approved_by": null,
+    "synced": "2026-10-22T16:24:23+02:00"
+  },
+  "terrain_crate.3": {
+    "size": [
+      0.92,
+      1.045,
+      0.92
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "terrain_crate.3"
+    ],
+    "tris": 502,
+    "source_sha": "5dc3cf5cbbbb",
+    "approved_by": null,
+    "synced": "2026-10-22T16:24:23+02:00"
+  },
+  "terrain_stone": {
+    "size": [
+      0.96,
+      0.85,
+      0.96
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "terrain_stone"
+    ],
+    "tris": 108,
+    "source_sha": "e47c3a7ab919",
+    "approved_by": null,
+    "synced": "2026-10-22T16:24:23+02:00"
+  },
+  "terrain_stone.2": {
+    "size": [
+      0.98,
+      0.55,
+      0.98
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "terrain_stone.2"
+    ],
+    "tris": 108,
+    "source_sha": "7efc9bec0619",
+    "approved_by": null,
+    "synced": "2026-10-22T16:24:23+02:00"
+  },
+  "terrain_stone.3": {
+    "size": [
+      0.9,
+      1.25,
+      0.9
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "terrain_stone.3"
+    ],
+    "tris": 108,
+    "source_sha": "4c6298b202a5",
+    "approved_by": null,
+    "synced": "2026-10-22T16:24:23+02:00"
+  },
   "tile": {
     "size": [
       1.0,
@@ -580,6 +670,42 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-14T17:25:45+02:00"
   },
+  "tile_dirt_d1": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_dirt_d2": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_dirt_d3": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
   "tile_mud": {
     "size": [
       1.0,
@@ -594,6 +720,42 @@
     "source_sha": "d23867eb4e40",
     "approved_by": "Sebastian",
     "synced": "2026-10-18T22:59:17+02:00"
+  },
+  "tile_mud_d1": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_mud_d2": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
+  },
+  "tile_mud_d3": {
+    "size": [
+      1.0,
+      0.2,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "tile"
+    ],
+    "tris": 524
   },
   "upgrade_a": {
     "size": [
@@ -864,77 +1026,5 @@
     "source_sha": "156f1575822f",
     "approved_by": "Sebastian",
     "synced": "2026-10-20T16:27:26+02:00"
-  },
-  "tile_mud_d1": {
-    "size": [
-      1.0,
-      0.2,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "tile"
-    ],
-    "tris": 524
-  },
-  "tile_mud_d2": {
-    "size": [
-      1.0,
-      0.2,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "tile"
-    ],
-    "tris": 524
-  },
-  "tile_mud_d3": {
-    "size": [
-      1.0,
-      0.2,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "tile"
-    ],
-    "tris": 524
-  },
-  "tile_dirt_d1": {
-    "size": [
-      1.0,
-      0.2,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "tile"
-    ],
-    "tris": 524
-  },
-  "tile_dirt_d2": {
-    "size": [
-      1.0,
-      0.2,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "tile"
-    ],
-    "tris": 524
-  },
-  "tile_dirt_d3": {
-    "size": [
-      1.0,
-      0.2,
-      1.0
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "tile"
-    ],
-    "tris": 524
   }
 }

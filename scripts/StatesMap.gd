@@ -210,11 +210,18 @@ func waterflow(start_x: int, start_z: int, use_initial_open := false) -> void:
 						found_edge = true
 					if (ring_x or nz == bz - 1 or nz == bz + 3) and visited[ni] == 0 and accessible[ni] != 0:
 						_enqueue(ni, cells, queue, zs, false)
+	_finish_flood(cells, found_edge)
+
+
+## Writes a flooded region's open / closed state: closed only for the one faction whose walls
+## encircle it alone, so a ring two factions share keeps the room open (D88).
+func _finish_flood(cells: PackedInt32Array, found_edge: bool) -> void:
+	var zs: int = map.sizeZ
 	var touched := PackedByteArray()
 	touched.resize(tileFull.size())
 	var tiles: Array = []
 	for ci in cells:
-		var t := (ci / fz / 3) * zs + (ci % fz) / 3
+		var t := (ci / sizeFineZ / 3) * zs + (ci % sizeFineZ) / 3
 		if touched[t] == 0:
 			touched[t] = 1
 			tiles.append(map.tiles[t / zs][t % zs])

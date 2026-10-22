@@ -1,9 +1,11 @@
 extends Node
-## Terrain on the battlefield (I90-I92): both halves hold the same blocked tiles, castle
-## rings keep their reach round every feature, a destructible feature falls to its shells
-## and frees its ground, an indestructible one absorbs every hit, placement refuses the
-## tiles, and the AI shoots the rocks that block its own way but never the ones that would
-## open the enemy's.   godot --headless --fixed-fps 30 res://tests/terrain_test.tscn
+## Terrain on the battlefield (I90-I93): both halves hold the same blocked tiles, every
+## feature is a clumped shape inside 4x4 whose holes stay buildable ground, the count is a
+## knob (--terrain=N), castle rings keep their reach round every feature, a destructible
+## feature falls to its shells and frees its ground, an indestructible one absorbs every
+## hit, placement refuses the tiles, and the AI shoots the crates that block its own way
+## but never the ones that would open the enemy's.
+##   godot --headless --fixed-fps 30 res://tests/terrain_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
 
@@ -55,9 +57,11 @@ func centre(c) -> Vector2i:
 ## Builds a game in place once frames are flowing: with no decorations the whole map goes
 ## up inside add_child, so the board is readable the line after (each sweep game is freed
 ## before a frame passes, so no AI coroutine starts either).
-func _start(mode: String, seed := 4) -> void:
+func _start(mode: String, seed := 4, terrain := -1) -> void:
 	Main.requested_mode = mode
 	Main.requested_args = {"seed": str(seed), "no-decorations": "true"}
+	if terrain >= 0:
+		Main.requested_args["terrain"] = str(terrain)
 	main = Main.new()
 	get_tree().root.add_child(main)
 	get_tree().current_scene = main
@@ -138,6 +142,23 @@ func _versus_board() -> void:
 	check(broken == 0,
 			"every feature tile is its structure, mini 255, dry, and Chebyshev 3 off every castle centre")
 
+	var oversize := 0
+	for go in map.terrain_features:
+		var terr := U.comp(go, "Terrain")
+		for half in [0, 1]:
+			var cells: Array = terr.tiles.filter(
+					func(t): return (0 if t.idxZ < map.sizeZ / 2 else 1) == half)
+			if cells.is_empty():
+				continue
+			var lo := Vector2i(map.sizeX, map.sizeZ)
+			var hi := Vector2i.ZERO
+			for t in cells:
+				lo = lo.min(Vector2i(t.idxX, t.idxZ))
+				hi = hi.max(Vector2i(t.idxX, t.idxZ))
+			if hi.x - lo.x > 3 or hi.y - lo.y > 3:
+				oversize += 1
+	check(oversize == 0, "every feature fits a 4x4 box on each half (%d oversize)" % [oversize])
+
 	var mismatch := 0
 	for x in map.sizeX:
 		for z in map.sizeZ:
@@ -145,6 +166,30 @@ func _versus_board() -> void:
 				mismatch += 1
 	check(mismatch == 0, "the halves mirror exactly (%d mismatched tiles)" % [mismatch])
 	check(_rings_reach(), "every castle's build ring reaches every other's round the terrain")
+
+	# a clump's holes stay ground (I93): a horseshoe claimed on open tiles leaves its mouth
+	# buildable while its own cells refuse a wall
+	var mouth := Vector2i(10, 20)
+	var u_cells: Array = []
+	for x in range(mouth.x - 2, mouth.x + 3):
+		u_cells.append(Vector2i(x, mouth.y - 1))
+	u_cells.append(Vector2i(mouth.x - 2, mouth.y))
+	u_cells.append(Vector2i(mouth.x + 2, mouth.y))
+	var fits_u := true
+	for c in u_cells:
+		fits_u = fits_u and map.tiles[c.x][c.y].is_free() and not map.tiles[c.x][c.y].water
+	if fits_u:
+		var u_go: Node3D = game._terrain_go("crate", u_cells)
+		map.claim_terrain(u_go, u_cells)
+		var hole_ok: Node3D = me.place(Catalog.get_def("wall"), mouth.x, mouth.y)
+		var on_block: Node3D = me.place(Catalog.get_def("wall"), mouth.x - 2, mouth.y - 1)
+		check(hole_ok != null and on_block == null,
+				"a wall places in a clump's mouth, never on its cells")
+		if hole_ok != null:
+			map.tiles[mouth.x][mouth.y].un_build(true)
+		U.comp(u_go, "Terrain").die(Vector3.INF, 0.0)
+	else:
+		check(false, "open ground for the horseshoe exists at the scripted spot")
 
 	var victim = null
 	for go in map.terrain_features:
@@ -214,6 +259,13 @@ func _seed_sweep() -> void:
 		main.free()
 	check(kinds[true] > 0 and kinds[false] > 0,
 			"across the seeds both sorts appear (breakable %d, standing %d)" % [kinds[true], kinds[false]])
+	_start("versus", 19, 3)
+	check(map.terrain_features.size() == 3,
+			"--terrain=3 draws three features a side (%d)" % [map.terrain_features.size()])
+	main.free()
+	_start("versus", 19, 0)
+	check(map.terrain_features.is_empty(), "--terrain=0 clears the battlefield")
+	main.free()
 	_start("ai4", 5)
 	var mismatch_z := 0
 	var mismatch_x := 0
@@ -264,7 +316,7 @@ func _ai_board() -> void:
 	var cells: Array = []
 	for x in map.sizeX:
 		cells.append(Vector2i(x, zline))
-	var wall: Node3D = game._terrain_go("rocks", cells)
+	var wall: Node3D = game._terrain_go("crate", cells)
 	map.claim_terrain(wall, cells)
 	check(not _rings_reach(), "a full-width rock line really cuts the rings (the detector sees it)")
 	var gun_spot := Vector2i(-1, -1)

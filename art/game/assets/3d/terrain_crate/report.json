@@ -1,0 +1,42 @@
+{
+  "asset_id": "terrain_crate",
+  "parts": {
+    "terrain_crate": {
+      "verts": 114,
+      "tris": 232,
+      "non_manifold_edges": 0,
+      "materials": [
+        "terrain_crate_stone"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.03
+      ]
+    }
+  },
+  "verts": 114,
+  "tris": 232,
+  "non_manifold_edges": 0,
+  "materials": [
+    "terrain_crate_stone"
+  ],
+  "dims_m": [
+    0.92,
+    0.92,
+    0.835
+  ],
+  "bbox_min": [
+    -0.46,
+    -0.46,
+    0.0
+  ],
+  "bbox_max": [
+    0.46,
+    0.46,
+    0.835
+  ],
+  "solidity": 0.452,
+  "limits_ok": true,
+  "limit_failures": []
+}

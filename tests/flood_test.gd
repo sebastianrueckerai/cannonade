@@ -10,7 +10,9 @@ const Ring = preload("res://tests/ring.gd")
 const OTHER := ["wall", "cannon"]
 
 
-## The original cell by cell flood fill (Unity StatesMap.Waterflow), as reference.
+## The original cell by cell flood fill (Unity StatesMap.Waterflow), as reference. Only the
+## flood is original: the open / closed verdict goes through the game's own _finish_flood, so
+## the reference guards the fill, not the sealing rule (D88, which walls_test guards).
 class ReferenceStatesMap extends StatesMap:
 	var willVisit := PackedByteArray()
 
@@ -40,17 +42,10 @@ class ReferenceStatesMap extends StatesMap:
 					if willVisit[ni] == 0 and visited[ni] == 0 and accessible[ni] != 0:
 						willVisit[ni] = 1
 						queue.append(Vector2i(nx, nz))
-		var touched := {}
+		var cells := PackedInt32Array()
 		for xz in queue:
-			var i := idx(xz.x, xz.y)
-			open[i] = 1 if found_edge else 0
-			closed[i] = 0 if found_edge else 1
-			var tile = map.tiles[xz.x / 3][xz.y / 3]
-			if not touched.has(tile):
-				touched[tile] = true
-				tile.reset_color(not found_edge)
-				if not found_edge:
-					tile.destroy_decorations()
+			cells.append(idx(xz.x, xz.y))
+		_finish_flood(cells, found_edge)
 
 var ok := true
 var mismatches := 0

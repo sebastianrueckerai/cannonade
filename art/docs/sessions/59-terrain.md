@@ -62,3 +62,42 @@ castle (the clear check; halving TERRAIN_CASTLE_CLEAR alone moved nothing on the
 never lands a feature near a castle), health halved (4), the shell routing into the feature removed (2),
 the indestructible absorb removed (1), the tiles unclaimed (5), clearing disabled (1), the not-helps
 clause dropped (1, on the no-neutral board). Suite green, 23 PASS.
+
+## Round 2: boxes, holes, a tunable count (I93)
+
+Sebastian, 2026-10-22, after seeing the placeholder render: "that looks terrible. The visible blocks are
+stretched and much bigger than the 4x4 i requested as maximum! I want shapes like these: [4x4 full block,
+a hook with holes, a 2x2-plus-tail clump, a 3x3 zigzag] and so on. Like bigger tetris shapes that have
+clumps not just lines. Model a bunch of these from blender primitives. Just assemble boxes the same size
+as our tiles in the patterns above and in other patterns. And use those as obstacles." And on fairness:
+the line between the parties is horizontal (each side owns the half its castle stands in — the castles
+already z-mirror this way, so the split was right in the data; the stretched 2.1-scale placeholder blobs
+made it unreadable), each side keeps the same blocked tiles (the exact mirrors do), the count becomes a
+tunable number tuned to "a good few but not too many", and the encirclement guarantee stays the upper
+bound.
+
+1. **A clumped shape library.** Ten shapes of 4 to 16 cells, all inside 4x4, clumps with holes and
+   notches instead of lines: the 4x4 solid, a 4x4 with a 2x2 corner bitten out, a horseshoe with a
+   one-tile hole, a 3x3 ring, the 3x3 solid, his hook, his 2x2-plus-tail, his zigzag, a fat S, the 2x2.
+   Hole tiles stay free ground — a wall can stand in a horseshoe's mouth.
+2. **One sort per feature, not per kind.** Each feature is stone (indestructible, absorbs every hit) or
+   crates (destructible, 10 health a tile), drawn 50/50; the sort is mirrored with the shape so the
+   halves stay identical.
+3. **Tile-size boxes from Blender.** One model family per sort, `terrain_stone` and `terrain_crate`, a
+   look each a different height block (three looks per family, picked per tile, so a mass reads as piled
+   blocks not one extrusion). C18's mountain/hill placeholder plan is superseded by this.
+4. **A tunable count.** `--terrain=N` (and the config key) sets the features a side draws; the default
+   was picked from board dumps and renders at several counts.
+
+## Round 2 check
+
+The new guards in tests/terrain_test, each watched red then restored: a shape widened past 4x4
+(the bbox check), the horseshoe's mouth claimed shut by its own cells (the hole check went red
+with the gap-filling break, n>=1 suffices), and the "terrain" key dropped from Main (both knob
+checks red). Suite green, 23 PASS — after one find the terrain layout flushed out: flood_test's
+reference still closed any enclosed region the pre-D88 way, and the round-2 board at seed 11
+grew the first two-faction border its random edits ever produced (test walls plus a start ring
+jointly enclosing 7 tiles: the game rightly open under D88, the reference closed). The D88
+verdict moved into StatesMap._finish_flood, called by both the optimised fill and the original
+cell-by-cell reference, so the reference guards the fill and walls_test guards the sealing rule;
+the block enqueue broken on purpose turned it red again before the restore.

@@ -204,68 +204,69 @@ func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
 	return anchor
 
 
-# ------------------------------------------------------------- terrain (I90, I91)
-## The shapes a feature can take, offsets from its north-west cell ("up" the map is low z):
-## a few that make sense to 4x4 and not just rectangles. Rocks and houses fall to shells
-## (10 health a tile), hills and mountains absorb every hit.
-const TERRAIN_SHAPES := {
-	"rocks": [[Vector2i(0, 0)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(2, 1)]],
-	"house": [[Vector2i(0, 0)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1),
-			Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2)]],
-	"hill": [[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(0, 2)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1),
-			Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2)]],
-	"mountain": [[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(1, 1)],
-		[Vector2i(0, 0), Vector2i(0, 1), Vector2i(0, 2), Vector2i(1, 2)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0)],
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1),
-			Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2)]],
-}
-## Features drawn per side's generation zone: one half with two players, one quadrant with
-## four (the mirrors fill the rest, so every side holds the same blocked tiles).
-const TERRAIN_COUNTS := {2: {"mountain": 3, "hill": 2, "rocks": 3, "house": 2},
-	4: {"mountain": 2, "hill": 1, "rocks": 2, "house": 1}}
+# ------------------------------------------------------------- terrain (I90, I91, I93)
+## The shapes a feature can take, rows from its north-west cell ("up" the map is low z):
+## "#" a blocked cell, "." a hole that stays free ground a wall can stand in. Clumps with
+## holes and notches, not lines, every one inside 4x4.
+const TERRAIN_PATTERNS := [
+	"####/####/####/####",
+	"####/####/##../##..",
+	"####/.##./####",
+	"###/#.#/###",
+	"###/###/###",
+	"#.../####/...#/...#",
+	"##../##../.#..",
+	"#../###/..#",
+	"##./##./.##",
+	"##/##",
+]
+## Features a side draws, stone half of them and crates the rest: one half with two players,
+## one quadrant with four (the mirrors fill in, so every side holds the same blocked tiles).
+## --terrain=N overrides.
+const TERRAIN_DEFAULT := 8
+@export var terrainCount := TERRAIN_DEFAULT
 ## Spots tried per feature before this map goes without it.
-const TERRAIN_ATTEMPTS := 40
+const TERRAIN_ATTEMPTS := 60
 ## Terrain keeps this Chebyshev distance from a castle centre, so its 5x5 ring stays buildable.
 const TERRAIN_CASTLE_CLEAR := 3
 
 
-## Terrain features over the battlefield (I90, I91): each drawn on one half (one quadrant,
+## Terrain features over the battlefield (I90, I91, I93): each drawn on one half (one quadrant,
 ## four players) and mirrored exactly by the castles' flips, so both sides hold the same
 ## blocked tiles. A feature never touches a castle's build ring, water or another structure,
 ## and a placement that would cut the last way between castle rings is rolled back.
 func _place_terrain() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = mapSeed if mapSeed != 0 else randomSeed
-	var counts: Dictionary = TERRAIN_COUNTS.get(players.size(), {})
+	var shapes: Array = []
+	for pat in TERRAIN_PATTERNS:
+		var cells: Array = []
+		var z := 0
+		for row: String in pat.split("/"):
+			for x in row.length():
+				if row[x] == "#":
+					cells.append(Vector2i(x, z))
+			z += 1
+		shapes.append(cells)
 	var zone := Vector2i(map.sizeX, map.sizeZ / 2)
 	if players.size() == 4:
 		zone.x = map.sizeX / 2
-	for kind in ["mountain", "hill", "rocks", "house"]:
-		for i in counts.get(kind, 0):
-			var shapes: Array = TERRAIN_SHAPES[kind]
-			var shape: Array = shapes[rng.randi_range(0, shapes.size() - 1)]
-			for attempt in TERRAIN_ATTEMPTS:
-				var anchor := Vector2i(rng.randi_range(0, zone.x - 1), rng.randi_range(0, zone.y - 1))
-				var cells: Array = []
-				for c in shape:
-					cells.append(anchor + c)
-				var all := _terrain_mirrors(cells)
-				if not _terrain_fits(all):
-					continue
-				var go := _terrain_go(kind, all)
-				map.claim_terrain(go, all)
-				if _rings_connected():
-					break
-				map.release_terrain(go, all)
+	for i in terrainCount:
+		var shape: Array = shapes[rng.randi_range(0, shapes.size() - 1)]
+		var sort := "stone" if rng.randf() < 0.5 else "crate"
+		for attempt in TERRAIN_ATTEMPTS:
+			var anchor := Vector2i(rng.randi_range(0, zone.x - 1), rng.randi_range(0, zone.y - 1))
+			var cells: Array = []
+			for c in shape:
+				cells.append(anchor + c)
+			var all := _terrain_mirrors(cells)
+			if not _terrain_fits(all):
+				continue
+			var go := _terrain_go(sort, all)
+			map.claim_terrain(go, all)
+			if _rings_connected():
+				break
+			map.release_terrain(go, all)
 
 
 ## The cells plus every mirror copy: the castles' z-flip, and with four players the x-flip
@@ -300,12 +301,11 @@ func _terrain_fits(cells: Array) -> bool:
 	return true
 
 
-## The feature's GameObject at the centre of its cells: the Terrain component and the art.
-## Rocks carry a boulder a tile; a house is one depot of its footprint; hills and mountains
-## are one stretched boulder each, placeholders until their own round builds them (C18).
-func _terrain_go(kind: String, all: Array) -> Node3D:
+## The feature's GameObject at the centre of its cells: the Terrain component and, a tile,
+## one box of the sort's family (I93) — a look each, so a mass reads as piled blocks.
+func _terrain_go(sort: String, all: Array) -> Node3D:
 	var go := Node3D.new()
-	go.name = kind.capitalize()
+	go.name = sort.capitalize()
 	map.go.add_child(go)
 	var terr := Node.new()
 	terr.name = "Terrain"
@@ -313,47 +313,20 @@ func _terrain_go(kind: String, all: Array) -> Node3D:
 	go.add_child(terr)
 	terr.map = map
 	terr.tiles = all.map(func(c): return map.tiles[c.x][c.y])
-	terr.destructible = kind == "rocks" or kind == "house"
+	terr.destructible = sort == "crate"
 	terr.health = terr.HEALTH_PER_TILE * all.size()
 	var centre := Vector3.ZERO
-	var lo := Vector2i(map.sizeX, map.sizeZ)
-	var hi := Vector2i.ZERO
 	for c in all:
 		centre += map.tile_position(c.x, c.y)
-		lo = lo.min(c)
-		hi = hi.max(c)
 	go.position = centre / all.size()
-	var span := Vector2(hi.x - lo.x + 1, hi.y - lo.y + 1)
-	match kind:
-		"rocks":
-			for c in all:
-				var b := Art.instance("nature_boulder")
-				if b == null:
-					continue
-				go.add_child(b)
-				b.position = map.tile_position(c.x, c.y) - go.position
-				b.position.y = map.tiles[c.x][c.y].go.position.y
-				b.rotation.y = Art._rng.randf_range(0.0, TAU)
-				b.scale = Vector3.ONE * Art._rng.randf_range(1.05, 1.2)
-		"house":
-			var h := Art.instance("supply" if span.x == 1.0 else ("supply22" if span.x == 2.0 else "supply33"))
-			if h != null:
-				go.add_child(h)
-		"hill":
-			_stretched_art(go, "nature_boulder", Vector3(span.x + 0.4, 0.55, span.y + 0.4))
-		"mountain":
-			_stretched_art(go, "nature_boulder", Vector3(span.x + 0.2, 2.1, span.y + 0.2))
+	for c in all:
+		var b := Art.instance("terrain_stone" if sort == "stone" else "terrain_crate")
+		if b == null:
+			continue
+		go.add_child(b)
+		b.position = map.tile_position(c.x, c.y) - go.position
+		b.position.y = map.tiles[c.x][c.y].go.position.y
 	return go
-
-
-## One model stretched to `size` (the placeholder mass of a hill or mountain, C18).
-func _stretched_art(parent: Node3D, id: String, size: Vector3) -> void:
-	var n := Art.instance(id)
-	if n == null:
-		return
-	var b := Art.bounds(n).size
-	n.scale = Vector3(size.x / b.x, size.y / b.y, size.z / b.z)
-	parent.add_child(n)
 
 
 ## The encirclement guarantee (I91): every castle's build ring (Chebyshev 2 of its centre)
