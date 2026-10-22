@@ -305,7 +305,7 @@ func _check_crumble() -> void:
 	var stones: Array = castle_heaps[0].get_children().filter(func(n): return n is RigidBody3D) if castle_heaps else []
 	check(castle.is_ruin() and castle_heaps.size() == 1 and stones.size() >= 20,
 			"the castle falls to ruins in %d pieces (%d heaps)" % [stones.size(), castle_heaps.size()])
-	var d3 := load(Art.model_path("castle_d3")).instantiate() as Node3D
+	var d3 := load(Art.model_path(castle.state_model(3))).instantiate() as Node3D
 	var d3_mat: Material = (d3.find_children("*", "MeshInstance3D", true, false)[0] as MeshInstance3D).get_active_material(0)
 	var stone := 0
 	for b in stones:

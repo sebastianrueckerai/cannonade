@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a16599-18c2-748b-862f-fb41182f550a",
+  "inputs": [
+    "game/assets/3d/castle.3/refs/dmg-d4.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle3 damage 4 meshy",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 37,
+  "created": "2026-10-22T23:52:10",
+  "outputs": {
+    "model": "meshy-c3-d4.glb",
+    "rendered_image": "meshy-c3-d4-preview.png"
+  }
+}

@@ -17,6 +17,7 @@ func _ready() -> void:
 	get_tree().root.size = Vector2i(1280, 720)  # headless windows are 64 x 64
 	Main.requested_mode = "versus"
 	Main.requested_args = {"seed": "4", "no-decorations": "true"}
+	Art._rng.seed = 4  # the castle look draw is part of the game under test, so deal it deterministically
 	main = Main.new()
 	get_tree().root.add_child.call_deferred(main)
 	await get_tree().process_frame
@@ -194,29 +195,31 @@ func _run() -> void:
 	var behind: Vector3 = cam.global_position + cdir * ground_t
 	check(neutral0.bounds().intersects_segment(cam.global_position, behind) != null,
 			"the picked ray really passes through the castle")
-	# a free tile at or past the ground point whose ray still pierces the castle
-	var bpos: Vector2i = map.tile_index_at(behind)
+	# a free tile whose ray pierces one of the neutral castles; the search walks them all because
+	# a squat look (castle.2) can hide nothing at this camera, and the fade needs one that can
 	var hide := Vector2i(-1, -1)
-	for d in range(0, 6):
-		for dx in range(-d, d + 1):
-			for dz in range(-d, d + 1):
-				if hide.x >= 0 or maxi(absi(dx), absi(dz)) != d:
-					continue
-				var q := bpos + Vector2i(dx, dz)
-				if q.x < 1 or q.y < 1 or q.x > map.sizeX - 2 or q.y > map.sizeZ - 2:
-					continue
-				var t = map.tiles[q.x][q.y]
+	var occluder = neutral0
+	for nc in neutrals():
+		if hide.x >= 0:
+			break
+		for x in range(1, map.sizeX - 1):
+			for z in range(1, map.sizeZ - 1):
+				var t = map.tiles[x][z]
 				if U.alive(t.structure) or t.water or t.disabled:
 					continue
-				if neutral0.bounds().intersects_segment(cam.global_position,
-						map.tile_position(q.x, q.y) + Vector3.UP * 0.1) != null:
-					hide = q
-	check(hide.x >= 0, "a free tile behind the castle exists")
+				if nc.bounds().intersects_segment(cam.global_position,
+						map.tile_position(x, z) + Vector3.UP * 0.1) != null:
+					hide = Vector2i(x, z)
+					occluder = nc
+					break
+			if hide.x >= 0:
+				break
+	check(hide.x >= 0, "a free tile behind a castle exists")
 	if hide.x >= 0:
 		human.mousePosition = cam.unproject_position(
 				map.tile_position(hide.x, hide.y) + Vector3.UP * 0.1)
 		human.update_point_and_tile_selected()
-		body_mat = U.meshes(neutral0.go)[0].get_surface_override_material(0)
+		body_mat = U.meshes(occluder.go)[0].get_surface_override_material(0)
 		check(body_mat != null and is_equal_approx(body_mat.albedo_color.a, 0.35),
 				"the castle behind the cursor piece fades out")
 		check(human.nextWall.get_parent() == map.tiles[hide.x][hide.y].go and not U.alive(human.nextBuilding),

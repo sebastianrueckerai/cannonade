@@ -1,0 +1,17 @@
+{
+  "source": "meshy-c7-d4",
+  "part": "castle_d4.7",
+  "turn": 0,
+  "team": false,
+  "fit": 2.9,
+  "max_tris": 3500,
+  "paint": {
+    "kind": "stone",
+    "seed": 95
+  },
+  "why": {
+    "team": "no blue survives this state: only a stub and footing stones remain",
+    "paint": "the D49 painted stone, as on this look's healthy model (D73, C20)",
+    "fit": "the same uniform 2.9 m plan as the healthy model, so the states swap on one 3x3 plot"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a1511b-cdd7-7101-8869-40dccfd1bcd7",
+  "inputs": [
+    "game/assets/3d/castle/refs/dmg-d1.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle damage state 1",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 31,
+  "created": "2026-10-19T00:22:48",
+  "outputs": {
+    "model": "meshy-c-d1.glb",
+    "rendered_image": "meshy-c-d1-preview.png"
+  }
+}

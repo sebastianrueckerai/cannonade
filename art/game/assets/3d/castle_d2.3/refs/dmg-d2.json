@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The damage has grown worse, still in the same clean chunky toy style. Exactly these: one big jagged bite missing from the top rim of the battlements, a clean sharp-edged gap in the stair turret's royal blue roof, the turret broken down to just above the battlements, one half of the annex roof caved in as a simple angled break, and one row of large blocky rubble pieces along the foot of the walls. The tower still stands at its full height otherwise. Everything else exactly as it is.\n\nSame building, exactly the same camera angle, framing and plain light grey background, same art style and colours. Damage is big simple shapes with clean sharp edges. No fine gravel, no scattered small stones, no cracks, no dirt. No fire, no smoke, no people. Royal blue stays only on the parts that still stand. The building must look strictly worse than before: nothing repaired, nothing cleaner.",
+  "refs": [
+    "game/assets/3d/castle.3/refs/dmg-d1.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": "castle3 damage state 2 chunky",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:46:31",
+  "outputs": [
+    "dmg-d2.png"
+  ]
+}

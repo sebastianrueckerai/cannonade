@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint the building on the grass tile as a clean reference picture for a 3D modeller. Keep exactly the same design, the same parts and the same colours, and leave out the grass tile it stands on: one wide low main hall of plain smooth warm cream stone with a stepped gable along its front wall, a cross wing attached directly at the back with its own ridge roof and small dormer windows, one small round turret on the corner where hall and wing meet, no taller than the roofs, with its own little royal blue pointed roof, one chimney on the hall and one on the wing, an arched wooden door with two steps, a few small dark windows, one royal blue flag on the turret. Every part touches the next with no gap: one connected building. Royal blue is only on the roofs and the flag.\nThe proportion is the most important rule: the building is low and wide. Its total height, from the ground to the very top of the highest roof ridge, is half of its total width. The turret does not rise above the roofs.\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 75 percent of the width of the picture and under half of its height. Plain flat light grey background. No grass tile, no ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture, roofs as smooth simple surfaces. Only this one building, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/castle.4/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle4 broad hall reference view",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:40:20",
+  "outputs": [
+    "b-view.png"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a165a1-e52b-7474-b676-c5d0d9cca893",
+  "inputs": [
+    "game/assets/3d/castle.8/refs/v-view.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle8 meshy",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 26,
+  "created": "2026-10-23T00:01:35",
+  "outputs": {
+    "model": "meshy-c8-v1.glb",
+    "rendered_image": "meshy-c8-v1-preview.png"
+  }
+}

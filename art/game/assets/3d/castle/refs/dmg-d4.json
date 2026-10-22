@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Almost destroyed. Only a jagged broken stub of the big round drum wall still stands, about one quarter of its original height. Of the rest only a few footing stones remain where the annex and the stair tower stood. Everything else has collapsed into a low mound of rubble that still shows the building's footprint. Everything else exactly as it is.\n\nSame building, exactly the same camera angle, framing and plain light grey background, same art style and colours. Only the described damage changes. No fire, no smoke, no people. Royal blue stays only on the parts that still stand. The building must look strictly worse than before: nothing repaired, nothing cleaner.",
+  "refs": [
+    "game/assets/3d/castle/refs/dmg-d3.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": "castle damage state 4",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-19T00:21:46",
+  "outputs": [
+    "dmg-d4.png"
+  ]
+}

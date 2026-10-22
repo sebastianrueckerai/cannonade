@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Keep the same clean reference-picture style, the same plain light grey background, the same camera angle and framing, the same warm cream stone and royal blue. Change the building's design: instead of the keep with its four corner turrets and wing, build a hall-and-gatehouse keep: one long low hall with a shallow pitched roof and small dormer windows, and one big gatehouse block standing at the middle of the hall's front, one storey taller than the hall, with crenellated battlements and two small royal blue pyramid roofs on its corners, and a big arched wooden gate with two steps under it, one chimney at the hall's end. One royal blue flag on the gatehouse. Every part touches the next with no gap: one connected building. The whole building stands half as tall as it is wide, long and low. A few small dark windows. Royal blue is only on the two pyramid roofs and the flag. No grass, no ground, no cast shadow, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/castle.2/refs/e-view-1.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle8 hall and gatehouse variation",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:58:48",
+  "outputs": [
+    "v-view.png"
+  ]
+}

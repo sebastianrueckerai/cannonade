@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a15122-1c0b-722b-bad6-76f6b1c10f2f",
+  "inputs": [
+    "game/assets/3d/castle/refs/dmg-d1b.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle damage state 1 chunky",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 37,
+  "created": "2026-10-19T00:29:48",
+  "outputs": {
+    "model": "meshy-c-d1b.glb",
+    "rendered_image": "meshy-c-d1b-preview.png"
+  }
+}

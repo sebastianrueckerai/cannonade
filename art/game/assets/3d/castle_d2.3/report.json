@@ -1,0 +1,44 @@
+{
+  "asset_id": "castle_d2.3",
+  "parts": {
+    "castle_d2.3": {
+      "verts": 8886,
+      "tris": 2966,
+      "non_manifold_edges": 8898,
+      "materials": [
+        "team",
+        "Mesh_0_stone"
+      ],
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "verts": 8886,
+  "tris": 2966,
+  "non_manifold_edges": 8898,
+  "materials": [
+    "Mesh_0_stone",
+    "team"
+  ],
+  "dims_m": [
+    2.8156,
+    2.9,
+    2.4572
+  ],
+  "bbox_min": [
+    -1.4078,
+    -1.45,
+    0.0
+  ],
+  "bbox_max": [
+    1.4078,
+    1.45,
+    2.4572
+  ],
+  "solidity": 0.145,
+  "limits_ok": true,
+  "limit_failures": []
+}

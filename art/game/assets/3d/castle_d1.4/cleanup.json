@@ -1,0 +1,17 @@
+{
+  "source": "meshy-c4-d1",
+  "part": "castle_d1.4",
+  "turn": 0,
+  "team": true,
+  "fit": 2.9,
+  "max_tris": 3500,
+  "paint": {
+    "kind": "stone",
+    "seed": 77
+  },
+  "why": {
+    "team": "the surviving royal blue roofs and the torn flag are the team part (D68)",
+    "paint": "the D49 painted stone, as on this look's healthy model (D73, C20)",
+    "fit": "the same uniform 2.9 m plan as the healthy model, so the states swap on one 3x3 plot"
+  }
+}

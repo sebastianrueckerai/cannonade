@@ -49,3 +49,24 @@ SESSION_CAP_USD 30.
 - d1 and d2 carry team parts, d3 and d4 are bare stone, paint kind stone, a seed a state, `fit` 2.9, max 3500
   tris, the flat team material first so the runtime paint keeps working (D73).
 - Every picture and mesh gets its sidecar; the chain states name their ref (the previous state's picture).
+
+## Result
+
+All eight looks ship, each with its four states and its d3 rubble: healthy heights 3.52 (castle), 1.30
+(castle.2), 2.90 (castle.3, the bergfried of design 1), 1.06 (castle.4, design 4's hall), 1.98 (castle.5,
+twin drums), 2.90 (castle.6, tower and drum), 1.99 (castle.7, one-turret keep), 1.17 (castle.8, hall and
+gatehouse) — tris 2456 to 3246, every state under 3500, every asset limits_ok. The rubbles run 23-33
+pieces. The paint seeds run 62-100 across the set, one a state. The pin and the exact-attach fix shipped
+mid-session (watched red: constant state ids fail 31 family checks across looks 2-8; green after).
+
+Two suites were still written for the one-look world and went red on the wider set, both fixed look-relative:
+walls_test compared the ruin's pieces against look 1's castle_d3 stone and now resolves the worn look's own
+severe model; check_test left the look draw unseeded and its hidden-tile search around one castle — a squat
+look (castle.2) hides no free tile at the game camera, so the fade check could not even stage — it now seeds
+Art._rng like its sibling tests and walks the neutrals for a castle that hides one. Suite green, 24 PASS.
+
+Spend ~$20.70 of the 30 cap: 8 healthy reference pictures, 24 chained damage edits, 30 Meshy runs.
+
+Boards for the pass: /tmp/damage_view.png (all eight looks × five states, team parts painted), and three
+ai4 battles at art seeds 11, 23, 37 (/tmp/board1_005.png to /tmp/board3_005.png). Not verified here: the
+look of any generated picture or mesh — no image judgement in this harness. Sebastian's pass closes C20.

@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Much worse now. The blue cone roof is gone completely. The big round drum is broken down to about two thirds of its height, ending in a jagged broken crown. The stair tower is a shorter broken stump. The annex is a ruined shell with only pieces of its walls standing. A wide field of rubble lies around the building. Everything else exactly as it is.\n\nSame building, exactly the same camera angle, framing and plain light grey background, same art style and colours. Only the described damage changes. No fire, no smoke, no people. Royal blue stays only on the parts that still stand. The building must look strictly worse than before: nothing repaired, nothing cleaner.",
+  "refs": [
+    "game/assets/3d/castle/refs/dmg-d2.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": "castle damage state 3",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-19T00:21:07",
+  "outputs": [
+    "dmg-d3.png"
+  ]
+}
