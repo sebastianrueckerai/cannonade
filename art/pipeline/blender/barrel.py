@@ -629,6 +629,9 @@ else:
     HAND_SPAWN = {
         "cannon": Vector((0.0, 0.3444088, 0.04847598)),
         "cannon22a": Vector((-0.02959942, 0.8090769, 0.058987617)),
+        "cannon.2": Vector((0.016620766, 0.24911745, -0.003967464)),  # out of the game (D92), kept for the parked asset
+        "cannon.3": Vector((0.008888461, 0.36502713, 0.0309878)),
+        "cannon.4": Vector((0.02382414, 0.3067669, 0.031394392)),
     }
     # The flak's guns have no spawn: the game shoots the ball down where it flies.
     spawn = None if JOB.get("part") == "guns" else bpy.data.objects.new("projectile_spawn", None)

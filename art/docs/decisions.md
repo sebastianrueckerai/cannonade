@@ -568,3 +568,13 @@ existing cannon" Board 2 (chunky-post) ships as
 [cannon.4](game/assets/3d/cannon.4), a 1:1 model exchange for the cannon — same behaviour, same shell,
 only the model swaps. Every game deals each player one of the four looks (the slender cannon among
 them), the whole faction wears it, like the wall looks (D81). Session 62, roadmap C20 and I103.
+
+## D92. cannon.2 out of the game (2026-10-23, Sebastian)
+
+"cannon 2 has an untestured holder, the thing that directly holds the barrel.ITs also not a solid piece
+but broken into 3 pieces. Just get rid of that one, we have enough." The chunky-post gun leaves the game's
+looks: `GUN_LOOKS` stands at three, the slender cannon, `cannon.3` and `cannon.4`, and every game deals one
+a player, one look now left undrawn. His hand-placed spawn anchors of the same round went into `HAND_SPAWN`
+([barrel.py](../pipeline/blender/barrel.py)) and the finals of cannon.3 and cannon.4 rebuilt with them;
+cannon.2's anchor is recorded too, for the parked asset whose files stay in art/. Session 62's follow-up
+round, roadmap I103.

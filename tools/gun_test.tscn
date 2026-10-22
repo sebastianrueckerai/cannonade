@@ -17,7 +17,6 @@
 [ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon22b-final.glb" id="m14"]
 [ext_resource type="PackedScene" path="res://tools/gun_test/models/flak22-final.glb" id="m15"]
 [ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon33a-final.glb" id="m16"]
-[ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon.2-final.glb" id="m17"]
 [ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon.3-final.glb" id="m18"]
 [ext_resource type="PackedScene" path="res://tools/gun_test/models/cannon.4-final.glb" id="m19"]
 
@@ -788,28 +787,6 @@ text = "cannon33a, the siege gun\nin the game, 2961 tris"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
 [node name="dot" type="MeshInstance3D" parent="game_guns/cannon33a/gun/barrel/projectile_spawn"]
-mesh = SubResource("dot")
-surface_material_override/0 = SubResource("red")
-
-[node name="cannon.2" type="Node3D" parent="game_guns"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, 0)
-
-[node name="tile_0_0" type="MeshInstance3D" parent="game_guns/cannon.2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("tile")
-surface_material_override/0 = SubResource("grass")
-
-[node name="label" type="Label3D" parent="game_guns/cannon.2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
-billboard = 1
-pixel_size = 0.004
-font_size = 48
-text = "cannon.2, the chunky swivel gun (post)\nin the game, 1100 tris"
-
-[node name="gun" parent="game_guns/cannon.2" instance=ExtResource("m17")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-
-[node name="dot" type="MeshInstance3D" parent="game_guns/cannon.2/gun/barrel/projectile_spawn"]
 mesh = SubResource("dot")
 surface_material_override/0 = SubResource("red")
 

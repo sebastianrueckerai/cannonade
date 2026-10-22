@@ -27,3 +27,19 @@ feeds:
 
 Cost: the two Meshy runs were round 1's; this round spent only critic calls (about $0.25) — well
 inside the $5 window set at session start.
+
+## Follow-up round: cannon.2 out, the hand-placed spawns in
+
+Sebastian, same day: "cannon 2 has an untestured holder, the thing that directly holds the barrel.ITs
+also not a solid piece but broken into 3 pieces. Just get rid of that one, we have enough. I places the
+bullet spawns"
+
+- **cannon.2 leaves the game** (D92): not surgery on the holder, the model goes. `GUN_LOOKS` stands at
+  three (cannon, cannon.3, cannon.4), the bench and tests went with it. The asset parks in art/, its
+  files and fixes kept — "we have enough" is about the looks, not about deleting work.
+- **His three spawn anchors went into `HAND_SPAWN`** and the finals of cannon.3 and cannon.4 rebuilt
+  with them (`"spawn_from": "hand"` in each build JSON); cannon.2's anchor is recorded too, so the
+  parked asset rebuilds with his placement if it ever returns. The rebuilt glbs are synced into the
+  game layer and approved in the art manifest.
+
+Cost: none — the rebuilds are local Blender.

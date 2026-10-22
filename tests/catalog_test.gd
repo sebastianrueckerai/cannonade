@@ -68,14 +68,14 @@ func _ready() -> void:
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 
-## The gun looks of C20: the game deals each player one of the four, a player's cannons wear it, and a cannon
-## without an owner wears the first.
+## The gun looks of C20, without cannon.2 (D92): the game deals each player one of the three, a player's
+## cannons wear it, and a cannon without an owner wears the first.
 func _check_gun_looks() -> void:
-	check(Catalog.GUN_LOOKS.size() == 4 and Catalog.GUN_LOOKS.all(func(id): return Art.has_model(id)),
-			"four gun looks and every model is in the game %s" % [Catalog.GUN_LOOKS])
+	check(Catalog.GUN_LOOKS.size() == 3 and Catalog.GUN_LOOKS.all(func(id): return Art.has_model(id)),
+			"three gun looks and every model is in the game %s" % [Catalog.GUN_LOOKS])
 	var dealt: Array = Catalog.deal_gun_looks()
 	check(dealt.all(func(l): return l in Catalog.GUN_LOOKS) and dealt.size() == Catalog.GUN_LOOKS.size(),
-			"the deal hands out the four looks, none twice (%s)" % [dealt])
+			"the deal hands out the three looks, none twice (%s)" % [dealt])
 	Main.requested_mode = "ai2"
 	Main.requested_args = {"seed": "5", "no-decorations": "true"}
 	var main := Main.new()
