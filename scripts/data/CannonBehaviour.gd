@@ -10,7 +10,9 @@ extends BuildingBehaviour
 @export var max_range := 65.0
 ## Seconds between shots
 @export var reload := 2.0
-@export var gravity := 5.0
+## The flat arc's pull (J6): with the low ballistic solution the 62-tile map
+## diagonal lands in 0.6 of the steep arc's time, mid-range shells hug the board.
+@export var gravity := 7.5
 ## Part of the flight spent going up (0..1)
 @export_range(0.05, 0.95) var ascending_part := 0.6
 ## Turns towards the target
