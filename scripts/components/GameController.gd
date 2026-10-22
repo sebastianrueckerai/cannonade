@@ -204,7 +204,7 @@ func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
 	return anchor
 
 
-# ------------------------------------------------------------- terrain (I90, I91, I93, I95)
+# ------------------------------------------------------------- terrain (I90, I91, I93, I95, I96)
 ## The shapes a feature can take, rows from its north-west cell ("up" the map is low z):
 ## "#" a blocked cell, "." a hole that stays free ground a wall can stand in. Clumps with
 ## holes and notches, not lines. The first ten sit inside 4x4; the I95 masses reach 7x7 -
@@ -229,9 +229,9 @@ const TERRAIN_PATTERNS := [
 	"#######/#######/#.#.#.#/#.#.#.#",
 	"#####/#...#/#...#/#...#/#####",
 ]
-## Features a side draws, stone half of them and crates the rest: one half with two players,
-## one quadrant with four (the mirrors fill in, so every side holds the same blocked tiles).
-## --terrain=N overrides.
+## Shapes the game draws, stone and crates alternating by shape: one seat a side with two
+## players, one a quadrant with four, the same shape at every seat so the sides hold the
+## same amount of blocked tiles (I96). --terrain=N overrides.
 const TERRAIN_DEFAULT := 6
 @export var terrainCount := TERRAIN_DEFAULT
 ## Spots tried per feature before this map goes without it.
@@ -243,10 +243,14 @@ const TERRAIN_CLUSTER := 0.5
 const TERRAIN_CASTLE_CLEAR := 3
 
 
-## Terrain features over the battlefield (I90, I91, I93): each drawn on one half (one quadrant,
-## four players) and mirrored exactly by the castles' flips, so both sides hold the same
-## blocked tiles. A feature never touches a castle's build ring, water or another structure,
-## and a placement that would cut the last way between castle rings is rolled back.
+## Terrain features over the battlefield (I90, I91, I93, I96): each drawn shape takes one
+## seat a side, its own anchor and rotation, so the sides hold the same amount of blocked
+## tiles in different arrangements - no mirrored board. A seat is anywhere on the
+## battlefield, across the midline too: with two players the shape's second seat must split
+## its tiles above and below the line the opposite of the first's, which keeps the sides
+## level; with four the shape lands once in each quadrant and stays off the quadrant lines.
+## A feature never touches a castle's build ring, water or another structure, and a
+## placement that would cut the last way between castle rings is rolled back.
 func _place_terrain() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = mapSeed if mapSeed != 0 else randomSeed
@@ -260,57 +264,147 @@ func _place_terrain() -> void:
 					cells.append(Vector2i(x, z))
 			z += 1
 		shapes.append(cells)
-	var zone := Vector2i(map.sizeX, map.sizeZ / 2)
-	if players.size() == 4:
-		zone.x = map.sizeX / 2
+	var half := Vector2i(map.sizeX / 2, map.sizeZ / 2)
+	var seats: Array = [[Vector2i.ZERO, Vector2i(map.sizeX, map.sizeZ)], null] if players.size() != 4 else [
+			[Vector2i.ZERO, half], [Vector2i(half.x, 0), Vector2i(map.sizeX, half.y)],
+			[Vector2i(0, half.y), Vector2i(half.x, map.sizeZ)], [half, Vector2i(map.sizeX, map.sizeZ)]]
 	var clusters: Array = []
 	for i in terrainCount:
-		var shape: Array = shapes[rng.randi_range(0, shapes.size() - 1)]
+		var shape: Array = _terrain_rotated(shapes[rng.randi_range(0, shapes.size() - 1)], rng.randi_range(0, 3))
 		var size := Vector2i.ONE
 		for c in shape:
 			size.x = maxi(size.x, c.x + 1)
 			size.y = maxi(size.y, c.y + 1)
-		var sort := "stone" if rng.randf() < 0.5 else "crate"
+		var sort := "stone" if i % 2 == 0 else "crate"  # alternating, so a board always holds both sorts
 		for attempt in TERRAIN_ATTEMPTS:
-			var anchor := Vector2i(rng.randi_range(0, zone.x - size.x), rng.randi_range(0, zone.y - size.y))
-			if rng.randf() < TERRAIN_CLUSTER and not clusters.is_empty():
-				var near: Array = clusters[rng.randi_range(0, clusters.size() - 1)]
-				var lo: Vector2i = near[0]
-				var hi: Vector2i = near[0]
-				for c in near:
-					lo = Vector2i(mini(lo.x, c.x), mini(lo.y, c.y))
-					hi = Vector2i(maxi(hi.x, c.x), maxi(hi.y, c.y))
-				match rng.randi_range(0, 3):  # flush against a side of the placed feature's bounding box
-					0: anchor = Vector2i(hi.x + 1, rng.randi_range(lo.y - size.y + 1, hi.y))
-					1: anchor = Vector2i(lo.x - size.x, rng.randi_range(lo.y - size.y + 1, hi.y))
-					2: anchor = Vector2i(rng.randi_range(lo.x - size.x + 1, hi.x), hi.y + 1)
-					_: anchor = Vector2i(rng.randi_range(lo.x - size.x + 1, hi.x), lo.y - size.y)
-				anchor = anchor.clamp(Vector2i.ZERO, zone - size)
-			var cells: Array = []
-			for c in shape:
-				cells.append(anchor + c)
-			var all := _terrain_mirrors(cells)
-			if not _terrain_fits(all):
-				continue
-			var go := _terrain_go(sort, all)
-			map.claim_terrain(go, all)
-			if _rings_connected():
-				clusters.append(cells)
+			var landed: Array = []
+			for seat in seats:
+				var cells: Array = []
+				if seat == null:
+					cells = _terrain_partner(rng, shape, landed[0][1], clusters)
+				else:
+					var anchor := _terrain_anchor(rng, size, seat[0], seat[1], clusters)
+					if anchor.x < 0:
+						break
+					for c in shape:
+						cells.append(anchor + c)
+					if not _terrain_fits(cells):
+						break
+				if cells.is_empty():
+					break
+				var go := _terrain_go(sort, cells)
+				map.claim_terrain(go, cells)
+				landed.append([go, cells])
+				if not _rings_connected():
+					break
+			if landed.size() == seats.size():
+				for l in landed:
+					clusters.append(l[1])
 				break
-			map.release_terrain(go, all)
+			for l in landed:
+				map.release_terrain(l[0], l[1])
 
 
-## The cells plus every mirror copy: the castles' z-flip, and with four players the x-flip
-## and both, so all sides hold the same blocked tiles (a shape crossing a flip line merges
-## with its mirror; the union stays symmetric).
-func _terrain_mirrors(cells: Array) -> Array:
+## A random anchor for the shape inside the box [lo, hi), flush against an earlier
+## feature's bounding box TERRAIN_CLUSTER of the time (I95); (-1, -1) when it cannot fit.
+func _terrain_anchor(rng: RandomNumberGenerator, size: Vector2i, lo: Vector2i, hi: Vector2i, clusters: Array) -> Vector2i:
+	if hi.x - lo.x < size.x or hi.y - lo.y < size.y:
+		return Vector2i(-1, -1)
+	var anchor := Vector2i(rng.randi_range(lo.x, hi.x - size.x), rng.randi_range(lo.y, hi.y - size.y))
+	if rng.randf() < TERRAIN_CLUSTER and not clusters.is_empty():
+		var near: Array = clusters[rng.randi_range(0, clusters.size() - 1)]
+		var nlo: Vector2i = near[0]
+		var nhi: Vector2i = near[0]
+		for c in near:
+			nlo = Vector2i(mini(nlo.x, c.x), mini(nlo.y, c.y))
+			nhi = Vector2i(maxi(nhi.x, c.x), maxi(nhi.y, c.y))
+		match rng.randi_range(0, 3):  # flush against a side of the placed feature's bounding box
+			0: anchor = Vector2i(nhi.x + 1, rng.randi_range(nlo.y - size.y + 1, nhi.y))
+			1: anchor = Vector2i(nlo.x - size.x, rng.randi_range(nlo.y - size.y + 1, nhi.y))
+			2: anchor = Vector2i(rng.randi_range(nlo.x - size.x + 1, nhi.x), nhi.y + 1)
+			_: anchor = Vector2i(rng.randi_range(nlo.x - size.x + 1, nhi.x), nlo.y - size.y)
+		anchor = anchor.clamp(lo, hi - size)
+	return anchor
+
+
+## The shape's other seat, anywhere its tiles above the midline number what the first
+## placed below it, so both sides keep the same amount of blocked tiles (I96). Seats flush
+## against a placed feature come first TERRAIN_CLUSTER of the time.
+func _terrain_partner(rng: RandomNumberGenerator, shape: Array, first: Array, clusters: Array) -> Array:
+	var mid: int = map.sizeZ / 2
+	var below := 0
+	for c: Vector2i in first:
+		if c.y >= mid:
+			below += 1
+	var cands: Array = []
+	for rot in 4:
+		var pat: Array = _terrain_rotated(shape, rot)
+		var size := Vector2i.ONE
+		var rows := {}
+		for c: Vector2i in pat:
+			size.x = maxi(size.x, c.x + 1)
+			size.y = maxi(size.y, c.y + 1)
+			rows[c.y] = rows.get(c.y, 0) + 1
+		for az in range(map.sizeZ - size.y + 1):
+			var above := 0
+			for r in rows:
+				if az + r < mid:
+					above += rows[r]
+			if above != below:
+				continue
+			for ax in range(map.sizeX - size.x + 1):
+				cands.append([Vector2i(ax, az), pat, size])
+	while cands.size() > 120:  # a bounded draw keeps the rng stream short
+		cands.remove_at(rng.randi_range(0, cands.size() - 1))
+	for i in range(cands.size() - 1, 0, -1):
+		var j := rng.randi_range(0, i)
+		var t = cands[i]
+		cands[i] = cands[j]
+		cands[j] = t
+	if rng.randf() < TERRAIN_CLUSTER and not clusters.is_empty():
+		var pri: Array = []
+		var sec: Array = []
+		for cand in cands:
+			if _terrain_flush(cand[0], cand[2], clusters):
+				pri.append(cand)
+			else:
+				sec.append(cand)
+		cands = pri + sec
+	for cand in cands:
+		var cells: Array = []
+		for c: Vector2i in cand[1]:
+			cells.append(cand[0] + c)
+		if _terrain_fits(cells):
+			return cells
+	return []
+
+
+## True when the shape's box at anchor stands flush against a placed feature's box.
+func _terrain_flush(anchor: Vector2i, size: Vector2i, clusters: Array) -> bool:
+	var hi := anchor + size - Vector2i.ONE
+	for near: Array in clusters:
+		var nlo: Vector2i = near[0]
+		var nhi: Vector2i = near[0]
+		for c in near:
+			nlo = Vector2i(mini(nlo.x, c.x), mini(nlo.y, c.y))
+			nhi = Vector2i(maxi(nhi.x, c.x), maxi(nhi.y, c.y))
+		if anchor.x <= nhi.x + 1 and hi.x + 1 >= nlo.x and anchor.y <= nhi.y + 1 and hi.y + 1 >= nlo.y:
+			return true
+	return false
+
+
+## The shape turned a quarter turn, this many times.
+func _terrain_rotated(cells: Array, turns: int) -> Array:
 	var out: Array = cells.duplicate()
-	var flips: Array = [[false, true]] if players.size() != 4 else [[false, true], [true, false], [true, true]]
-	for f in flips:
-		for c in cells:
-			var m := Vector2i(map.sizeX - 1 - c.x if f[0] else c.x, map.sizeZ - 1 - c.y if f[1] else c.y)
-			if not out.has(m):
-				out.append(m)
+	for t in turns:
+		var size := Vector2i.ONE
+		for c in out:
+			size.x = maxi(size.x, c.x + 1)
+			size.y = maxi(size.y, c.y + 1)
+		var nxt: Array = []
+		for c in out:
+			nxt.append(Vector2i(size.y - 1 - c.y, c.x))
+		out = nxt
 	return out
 
 

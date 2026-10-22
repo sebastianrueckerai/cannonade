@@ -147,3 +147,31 @@ time in the same fix (`var held := human.nextWall`): a parse error makes the sce
 the runner times out at 600 s with exit 124 instead of failing fast.
 
 **Renders:** /tmp/r3_versus_s4_005.png, /tmp/r3_versus_s11_005.png, /tmp/r3_ai4_s5_005.png.
+
+
+## Round 5
+
+One ask in two parts: the halves must stop looking symmetrical ("same amount but not the
+same configuration") and features may cross the midline while the sides stay level.
+
+**Independent seats.** `_terrain_mirrors` is gone. Each drawn shape lands twice (four
+players: once per quadrant) at its own anchor and rotation; with two players the second seat
+comes from `_terrain_partner`, a search over rotations and anchors whose tiles above the
+midline number what the first seat placed below it, so every standing pair contributes its
+tile count to each side. A pair that cannot seat (fit, ring guarantee) releases both members
+and redraws; TERRAIN_ATTEMPTS bounds the rounds. Measured: seed 4 holds 101/101 blocked
+tiles a side with 320 tiles off the flip, 22 features cross the midline across the 8 swept
+seeds, ai4 seed 5 holds 119 a quarter, clusters hold (37 touching pairs).
+
+**Bugs this round.** The first draft missed the `_terrain_fits` gate on the anchor seat: two
+features could share tiles, the shared tile counted once and the sides drifted (seed 4 stood
+124 to 118) while the tile-integrity check failed; the same stuck structure kept the rings
+cut and sank `_ai_board`'s last check with it. The seventh `:=` bite: `var mid :=
+map.sizeZ / 2` through untyped map - a parse error again, and the tool run poured 64 MB of
+cascading errors instead of failing clean. The rng sort could draw a one-sort board (seed 4:
+twelve stone), which starved the crate damage checks; sorts alternate by shape now.
+
+**Break-checks** (each watched red then restored): the partner z-flipped back to the first
+seat (0 tiles off the flip, the difference guards red on every seed), the partner copying
+the first seat's split instead of complementing it (56 against 112, the level guards red),
+and the first seat boxed into one half (0 crossings, the midline guard red).
