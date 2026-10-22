@@ -4,9 +4,9 @@ extends Node
 ## feature is a solid clumped shape inside 7x7 that walls no free ground in, a mass five
 ## tiles across or more is never a filled rectangle, neighbours gather in clusters,
 ## columns rise in stacked levels that hide no ground behind them, the count is a knob
-## (--terrain=N), castle rings keep their reach round every feature, a destructible
-## feature shatters block by block and frees its ground tile by tile, an indestructible
-## one absorbs every hit, placement refuses the tiles, and the AI shoots the crates that
+## (--terrain=N), castle rings keep their reach round every feature, every family
+## shatters block by block and frees its ground tile by tile, a family with its break flag
+## off absorbs every hit, placement refuses the tiles, and the AI shoots the rocks that
 ## block its own way but never the ones that would open the enemy's.
 ##   godot --headless --fixed-fps 30 res://tests/terrain_test.tscn
 
@@ -242,6 +242,25 @@ func _versus_board() -> void:
 				"no wall can be placed on a terrain tile")
 		var mass: MeshInstance3D = victim.go.get_node_or_null("Mass")
 		check(mass != null and mass.mesh != null, "a feature wears one merged drape mesh")
+		if mass != null and mass.mesh != null:
+			# the blanket's sides must face outward: a skirt wound the other way is culled from
+			# outside and the drape floats with see-through rims (found in play, 2026-10-23)
+			var wv: PackedVector3Array = mass.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+			var east := -1e9
+			for t3 in victim.tiles:
+				east = maxf(east, t3.go.position.x - victim.go.position.x)
+			var skirts := 0
+			var wrong := 0
+			for i in range(0, wv.size(), 3):
+				var wa := wv[i]
+				var wb := wv[i + 1]
+				var wc := wv[i + 2]
+				if (wa.y < -0.2 or wb.y < -0.2 or wc.y < -0.2) and (wa.x + wb.x + wc.x) / 3.0 > east + 0.4:
+					skirts += 1
+					if (wb - wa).cross(wc - wa).x <= 0.0:
+						wrong += 1
+			check(skirts > 0 and wrong == 0,
+					"the blanket's sides face outward (%d east skirts, %d wound inward)" % [skirts, wrong])
 		var cut: Mesh = mass.mesh if mass != null else null
 		var column: int = victim.columns[first]
 		for i in column - 1:
@@ -275,14 +294,21 @@ func _versus_board() -> void:
 				"the last column's fall takes the feature with it, every tile freed")
 		check(scarred, "each freed tile carries the killing shell's scar")
 
+	var flagged := 0
+	for go in map.terrain_features:
+		if U.comp(go, "Terrain").destructible:
+			flagged += 1
+	check(flagged == map.terrain_features.size(),
+			"every family's break flag ships on (%d of %d features break)" % [flagged, map.terrain_features.size()])
 	var mountain = null
 	for go in map.terrain_features:
 		var terr = U.comp(go, "Terrain")
-		if terr != null and not terr.destructible:
+		if terr != null and terr.tiles.size() > 1:
 			mountain = terr
 			break
-	check(mountain != null, "an indestructible feature stands on the map")
+	check(mountain != null, "a multi-tile feature stands on the map")
 	if mountain != null:
+		mountain.destructible = false  # what a flag-off family ships as
 		var stone = mountain.tiles[0]
 		for i in 10:
 			stone.damage_building_place(30.0)
@@ -291,7 +317,12 @@ func _versus_board() -> void:
 			stone_blocks += mountain.columns[t]
 		check(map.terrain_features.has(mountain.go) and stone.structure == mountain.go
 				and is_equal_approx(mountain.health, 10.0 * stone_blocks),
-				"an indestructible feature soaks every shell without a scratch")
+				"a flag-off family soaks every shell without a scratch")
+		mountain.destructible = true
+		var before: float = mountain.health
+		stone.damage_building_place(10.0)
+		check(is_equal_approx(mountain.health, before - 10.0),
+				"the same family with its flag on loses one block to one shell")
 
 	main.free()
 	await _seed_sweep()
@@ -300,7 +331,7 @@ func _versus_board() -> void:
 ## The layout over more seeds and the four-player flips, each game read and freed before a
 ## frame passes, so no AI coroutine starts.
 func _seed_sweep() -> void:
-	var kinds := {true: 0, false: 0}
+	var kinds := {"rock": 0, "hill": 0}
 	var big := 0
 	var solid_big := 0
 	var pairs := 0
@@ -318,7 +349,7 @@ func _seed_sweep() -> void:
 				if _blocked(x, z) != _blocked(x, map.sizeZ - 1 - z):
 					mismatch += 1
 		for go in map.terrain_features:
-			kinds[U.comp(go, "Terrain").destructible] += 1
+			kinds[U.comp(go, "Terrain").sort] += 1
 		# I95: the bigger masses (five tiles across or more) are never filled rectangles, and
 		# features gather: a pair touches when some two of their cells lie side by side.
 		# I96: a feature may sit across the midline, its split keeping the sides level.
@@ -411,8 +442,8 @@ func _seed_sweep() -> void:
 		check(enclosed == 0 and views == 0,
 				"seed %d: no free tile walled in (%d), no column hides the ground behind it (%d)" % [s, enclosed, views])
 		main.free()
-	check(kinds[true] > 0 and kinds[false] > 0,
-			"across the seeds both sorts appear (breakable %d, standing %d)" % [kinds[true], kinds[false]])
+	check(kinds["rock"] > 0 and kinds["hill"] > 0,
+			"across the seeds both sorts appear (%d rocks, %d hills)" % [kinds["rock"], kinds["hill"]])
 	check(big >= 4 and solid_big == 0,
 			"bigger masses appear (%d of five tiles across or more) and none is a filled rectangle (%d solid)" % [big, solid_big])
 	check(pairs >= 20, "features gather in clusters (%d touching pairs across the seeds)" % [pairs])

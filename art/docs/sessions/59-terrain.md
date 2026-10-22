@@ -272,3 +272,13 @@ before-state. The suite itself: 50 checks green.
 
 **Unverified.** The renders: the drape's look (green hills, grey craggy rocks) is Sebastian's
 call, boards open in his editor with the report.
+
+**Follow-up, same day.** He wants both families destructible for now, a flag for each
+("I might change it later"): `HILL_BREAKS` and `ROCK_BREAKS` on
+[Terrain.gd](../../scripts/components/Terrain.gd), both true, `_terrain_go` wiring the
+family's flag onto the feature. The AI's blocker filter still reads the feature's flag, so
+it only shoots what a flag lets it break. The soak mode stays a live, checked path: the test
+flips one feature's flag off (what a false flag ships as), ten shells leave no scratch, the
+flag back on and one shell takes one block. Breaks watched red: the wiring handing every
+family a false flag (the flag count and the victim pick), the soak path ignoring the flag,
+one sort never drawn.
