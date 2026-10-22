@@ -9,6 +9,8 @@ const FX = preload("res://scripts/FX.gd")
 @export var stunTime := 0.0
 @export var splashRange := 0
 @export var tileDestroyer := false
+## The landing smokes over every splash tile (the heavy shell)
+@export var smokePuff := false
 
 var player = null
 var damage := 0.0
@@ -49,7 +51,7 @@ func impact() -> void:
 			Sound.play("hit_water")
 		elif not U.alive(destinationTile.structure) and not U.alive(destinationTile.ship):
 			Sound.play("hit_ground")
-		FX.impact(go.global_position, destinationTile.water, damage, splashRange * destinationTile.map.tileSize)
+		FX.impact(go.global_position, destinationTile.water, damage, splashRange * destinationTile.map.tileSize, smokePuff)
 		for tile in destinationTile.get_surrounding_tiles(splashRange):
 			_effect_tile(tile)
 		if tileDestroyer:

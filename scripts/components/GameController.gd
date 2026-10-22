@@ -204,7 +204,7 @@ func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
 	return anchor
 
 
-# ------------------------------------------------------------- terrain (I90, I91, I93, I95, I96, I97)
+# ------------------------------------------------------------- terrain (I90, I91, I93, I95, I96, I97, I100)
 ## The shapes a feature can take, rows from its north-west cell ("up" the map is low z):
 ## "#" a blocked cell. Solid masses with bitten, irregular outlines (I97) - no rings or
 ## discs, no plain rectangles; the first seven sit inside 4x4, the rest reach 7x7. Features
@@ -224,7 +224,7 @@ const TERRAIN_PATTERNS := [
 	"###.###/###.###/#######/###.###",
 	"#######/#######/..###../..###../..###..",
 ]
-## Shapes the game draws, stone and crates alternating by shape: one seat a side with two
+## Shapes the game draws, hills and rocks alternating by shape: one seat a side with two
 ## players, one a quadrant with four, the same shape at every seat so the sides hold the
 ## same amount of blocked tiles (I96). --terrain=N overrides.
 const TERRAIN_DEFAULT := 6
@@ -236,10 +236,6 @@ const TERRAIN_ATTEMPTS := 60
 const TERRAIN_CLUSTER := 0.5
 ## Terrain keeps this Chebyshev distance from a castle centre, so its 5x5 ring stays buildable.
 const TERRAIN_CASTLE_CLEAR := 3
-## The tallest box one level may stand: half a tile's climb at the shallowest play camera
-## (60 degrees, versus), the height from which a block starts hiding the tile behind it.
-const TERRAIN_LEVEL_MAX := 0.866
-
 
 ## Terrain features over the battlefield (I90, I91, I93, I96): each drawn shape takes one
 ## seat a side, its own anchor and rotation, so the sides hold the same amount of blocked
@@ -274,7 +270,7 @@ func _place_terrain() -> void:
 		for c in shape:
 			size.x = maxi(size.x, c.x + 1)
 			size.y = maxi(size.y, c.y + 1)
-		var sort := "stone" if i % 2 == 0 else "crate"  # alternating, so a board always holds both sorts
+		var sort := "hill" if i % 2 == 0 else "rock"  # alternating, so a board always holds both sorts
 		for attempt in TERRAIN_ATTEMPTS:
 			var landed: Array = []
 			for seat in seats:
@@ -451,18 +447,29 @@ func _terrain_heights(rng: RandomNumberGenerator, all: Array) -> Dictionary:
 			h = 1 + mini(2, near - c.y)
 		elif kind == 2:
 			h = maxi(1, 3 - max(absi(c.x - peak.x), absi(c.y - peak.y)))
-		var behind := Vector2i(c.x, c.y - 1)
-		var backed: bool = c.y == 0 or own.has(behind)
-		if not backed:
-			var t = map.tiles[behind.x][behind.y]
-			backed = U.alive(t.structure) and U.comp(t.structure, "Terrain") != null
-		out[c] = mini(3, h) if backed else 1
+		out[c] = mini(3, h) if _backed(c, own) else 1
 	return out
 
 
-## The feature's GameObject at the centre of its cells: the Terrain component and, per
-## tile, a column of level boxes of the sort's family (I93, I97) — a look each, so a mass
-## reads as piled steps. `rng` draws the column profile; without it every column is flat.
+## A column may rise past level 1 only with an apron of terrain south and beside it -
+## west, east and both diagonals - or the map edge. The drape's corners pool every cell
+## they touch, so a tall column's shoulder would otherwise hang over free ground beside
+## it and hide that tile from the camera, which looks north over the board.
+func _backed(c: Vector2i, own: Dictionary) -> bool:
+	for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(-1, 0), Vector2i(1, 0)]:
+		var n: Vector2i = c + d
+		if n.x < 0 or n.x >= map.sizeX or n.y < 0 or own.has(n):
+			continue
+		var t = map.tiles[n.x][n.y]
+		if not (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
+			return false
+	return true
+
+
+## The feature's GameObject at the centre of its cells: the Terrain component holding the
+## standing column heights, and one merged mesh draped over them (I100) - a hill's gentle
+## green blanket or a rock's craggy grey one. `rng` draws the column profile; without it
+## every column is flat.
 func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) -> Node3D:
 	var heights := _terrain_heights(rng, all) if rng != null else {}
 	var go := Node3D.new()
@@ -473,32 +480,22 @@ func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) ->
 	terr.set_script(TerrainScript)
 	go.add_child(terr)
 	terr.map = map
+	terr.sort = sort
 	terr.tiles = all.map(func(c): return map.tiles[c.x][c.y])
-	terr.destructible = sort == "crate"
+	terr.destructible = sort == "rock"
 	var centre := Vector3.ZERO
+	var ground := 0.0
 	for c in all:
 		centre += map.tile_position(c.x, c.y)
+		ground += map.tiles[c.x][c.y].go.position.y
+	# the drape's feet stand on the ground it covers; the tiles under it flatten to the
+	# same height (the blanket hides them), so its rim never floats over a low neighbour
 	go.position = centre / all.size()
+	go.position.y = ground / all.size()
 	for c in all:
-		var t = map.tiles[c.x][c.y]
-		var col: Array = []
-		var top: float = t.go.position.y
-		for i in heights.get(c, 1):
-			var b: Node3D = null
-			for draw in 8:  # a look this tall is not a level (I97); redraw for a fitting one
-				var cand := Art.instance("terrain_stone" if sort == "stone" else "terrain_crate")
-				if cand == null or Art.bounds(cand).size.y <= TERRAIN_LEVEL_MAX:
-					b = cand
-					break
-				U.destroy(cand)
-			if b == null:
-				break
-			go.add_child(b)
-			b.position = map.tile_position(c.x, c.y) - go.position
-			b.position.y = top - 0.01  # each box sinks into the one below, as the art kit unions
-			top += Art.bounds(b).size.y
-			col.append(b)
-		terr.set_column(t, col)
+		map.tiles[c.x][c.y].go.position.y = go.position.y
+		terr.set_column(map.tiles[c.x][c.y], heights.get(c, 1))
+	terr.drape()
 	return go
 
 

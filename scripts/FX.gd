@@ -51,17 +51,22 @@ static func muzzle(pos: Vector3, dir: Vector3) -> void:
 					"damp": 1.5, "ang": 150.0, "hold": 0.35})
 
 
-static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0) -> void:
+static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0, smoke := false) -> void:
 	var s := clampf(damage / 10.0, 0.7, 2.2) * (1.0 + 0.5 * splash)
 	var q := sqrt(s)
 	var root := _root("impact", 2.6)
-	## A splash shell also puffs every tile it hit round the point.
+	## A splash shell also puffs every tile it hit round the point; with `smoke`
+	## those puffs cloud the whole 3x3, the heavy shell's landing (I101).
 	if splash > 0.0:
 		for d in [Vector3(splash, 0, 0), Vector3(-splash, 0, 0), Vector3(0, 0, splash), Vector3(0, 0, -splash),
 				Vector3(splash, 0, splash), Vector3(splash, 0, -splash), Vector3(-splash, 0, splash), Vector3(-splash, 0, -splash)]:
 			_burst(root, pos + d, {"tex": DIRT, "count": 4, "life": 0.8, "s": [0.12, 0.24],
 					"col": Color(0.85, 0.72, 0.55), "spread": 75.0, "v": [1.2, 2.4],
 					"grav": Vector3(0, -6, 0), "hold": 0.15})
+			if smoke:
+				_burst(root, pos + d, {"tex": SMOKE_DARK, "count": 3, "life": 1.9, "s": [0.25 * s, 0.55 * s],
+						"col": Color(0.66, 0.62, 0.58), "spread": 25.0, "v": [0.5 * q, 1.2 * q],
+						"damp": 1.1, "ang": 150.0, "hold": 0.3})
 	if water:
 		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 14, "life": 0.9, "s": [0.1 * s, 0.22 * s],
 				"col": Color(0.9, 0.95, 1.0), "spread": 15.0, "v": [2.5 * q, 4.5 * q],

@@ -6,6 +6,7 @@ extends Node
 ##   godot --headless --fixed-fps 30 res://tests/weapons.tscn
 
 const Main = preload("res://scripts/Main.gd")
+const FX = preload("res://scripts/FX.gd")
 
 var main: Node
 var game
@@ -98,17 +99,28 @@ func _run() -> void:
 			"four cannons in a square fuse into the heavy cannon (got %s)" % [fused_def.id if fused_def else "nothing"])
 	built["cannon22a"] = fused
 
-	# cluster bomb: sub munitions set the tiles around the target on fire
+	# cluster bomb: sub munitions set the tiles around the target on fire; their
+	# splash carries none of the heavy shell's 3x3 smoke (I101)
 	var target = map.tiles[15][17]
 	var cluster := U.shooter(built["cannon22b"])
 	check(cluster.try_shoot(target.go.global_position, target), "cannon22b fires")
 	var burning := false
+	var shard_plumes := 0
+	var smoked_shards := 0
+	var seen := {}
 	var end: float = U.time + 15.0
-	while U.time < end and not burning:
+	while U.time < end and not (burning and shard_plumes >= 5):
 		await get_tree().process_frame
+		for c in U.world().get_children():
+			if c.has_meta("fx") and c.get_meta("fx") == "impact" and not seen.has(c):
+				seen[c] = true
+				shard_plumes += 1
+				smoked_shards += _smoke_tiles(c)
 		for t in target.get_surrounding_tiles(3):
 			burning = burning or (t.burning and not t.buildable())
 	check(burning, "cluster bomb sets tiles on fire (not buildable while burning)")
+	check(shard_plumes >= 5 and smoked_shards == 0,
+			"the cluster's %d shard plumes stay without the 3x3 smoke" % shard_plumes)
 
 	# rocket, from the parked rocket station placed from its file: the hit tile is destroyed for good
 	var station: Node3D = p1.place(load("res://data/buildings/rocket_station.tres"), 12, 2)
@@ -157,6 +169,13 @@ func _run() -> void:
 			"the splash patch stands: own gun, enemy gun, enemy wall")
 	gun.nextBulletTime = 0.0
 	check(gun.try_shoot(sc.go.global_position, sc), "the fused gun fires at the splash patch")
+	var smoke_plume: Node = null
+	var smoke_end: float = U.time + 15.0
+	while U.time < smoke_end and smoke_plume == null:
+		await get_tree().process_frame
+		smoke_plume = _fx_at("impact")
+	var smoked := _smoke_tiles(smoke_plume) if smoke_plume != null else -1
+	check(smoked == 8, "the heavy shell's landing puffs smoke on every tile of its 3x3 (got %d of 8)" % smoked)
 	await seconds(10.0)
 	check(U.alive(own.structure) and U.comp(own.structure, "BuildingBlock").health == 20.0,
 			"the shooter's own gun on a splash tile keeps 20 of its 40 health")
@@ -388,4 +407,27 @@ func _fx_count() -> int:
 	for c in U.world().get_children():
 		if c.has_meta("fx"):
 			n += 1
+	return n
+
+
+## The impact point an FX root stands at: its ground ring, raised 0.06 m.
+func _fx_centre(root: Node) -> Vector3:
+	for mi in root.find_children("*", "MeshInstance3D", true, false):
+		return (mi as Node3D).global_position - Vector3.UP * 0.06
+	return Vector3.INF
+
+
+## How many of the eight splash tiles round an impact hold a smoke puff.
+func _smoke_tiles(root: Node) -> int:
+	var centre := _fx_centre(root)
+	var n := 0
+	for o in [Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, 1), Vector3(0, 0, -1),
+			Vector3(1, 0, 1), Vector3(1, 0, -1), Vector3(-1, 0, 1), Vector3(-1, 0, -1)]:
+		for p in root.find_children("*", "CPUParticles3D", true, false):
+			var pp := p as CPUParticles3D
+			var m := (pp.mesh as QuadMesh).material as StandardMaterial3D
+			if m != null and m.albedo_texture == FX.SMOKE_DARK \
+					and pp.global_position.distance_to(centre + o) < 0.4:
+				n += 1
+				break
 	return n

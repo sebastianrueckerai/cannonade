@@ -221,3 +221,54 @@ step-down guard - after the check learned to pick the tallest column of the vict
 run sat on a one-block column and the scar guard caught the break instead; a pooled die() on
 the first block had failed the run on a freed-object script error, which the runner also
 counts as red).
+
+## Round 7
+
+One ask: the obstacles become hills and cliffs ("The hills are green like the ground and
+gently sloping, the rocks are grey, rock textured and craggy and steep"), built as merged
+blanket meshes ("Imagine having a grid of stacked cubes of different height and then throwing
+a blanket over it: Same general shape, but the blocks are merged in places"), with block-wise
+demolition kept ("I need to be able to procedurally scale back the rocks block by block but
+only ever taking away from the top... shatter a cube in the place were we need flying debris
+and at the sdame time exchange the whole mountin shape for one without that cube").
+
+**The blanket.** `drape()` in [Terrain.gd](../../scripts/components/Terrain.gd) cuts one
+merged flat-shaded mesh per feature: a corner lattice over the standing columns, one quad per
+cell subdivided 2 (rock) or 3 (hill) steps, and side skirts that sink 0.25 under the rim so
+the mesh never floats over a low neighbour. Corners pool the up-to-4 cells they touch - a
+hill averages them (gentle), a rock takes the tallest (craggy). Roughness is a deterministic
+hash of board position (hills ±0.03, rocks ±0.12 plus horizontal jag), so a re-cut after a
+shell keeps every crest it had and only changes where the block went. His "is this like simple
+voxels?" - yes, a smoothed heightfield drape, not marching cubes: the columns stay the data
+model (placement, damage, AI), the mesh is only their skin.
+
+**Families.** Hill = the indestructible sort (green, absorbs every hit), rock = the
+destructible sort (grey, shatters block by block) - I90 named destructible crates and
+indestructible stone, so the families map onto the standing behaviour. One flag flip each if
+meant the other way.
+
+**A shell.** The top block of the hit column loses health; at zero it flies apart as a
+family-tinted debris cube from its own spot and `drape()` re-cuts the whole feature without
+it - his "exchange the whole mountain shape for one without that cube", verbatim. The view
+check now samples `surface_at` (the draped surface), not the column top.
+
+**The shoulder rule.** A pooled corner hangs a tall shoulder over free ground west or east of
+a column, so the I97 backing rule grew an apron: past level 1 a column needs W, E, SW, S and
+SE terrain or off-map. Stacked columns fell 411 to 174.
+
+**What the ground did to the numbers.** Tiles undulate ±0.1 (`lerpf(0.1, -0.1, rand)` in
+[Map.gd](../../scripts/Map.gd)); a rim tile sitting low against a feature base sitting high
+ate the view margin at LEVEL 0.8. Three fixes stacked: LEVEL 0.75, the drape sits on the
+flattened mean ground of its cells (every covered tile's y written to the feature base,
+hidden under the blanket), and the band guard reads `aabb.end.y`. The view history across the
+ten runs: 59-102 (rocks pooled by sum, 4-5 corners high, 48 of 48 features out of band),
+12-22 (max pooling), 2-10 (apron), then ground undulation case by case, run 10 green: 0
+blocked views over the eight sweep seeds.
+
+**Break-checks.** The mesh guards broke isolated: a `return` at the top of `drape()` (break A
+first fired at nothing - its pattern searched for a leading tab on a top-level function) and
+the re-cut swapped for `pass`. Every geometry fix also went red organically as its own
+before-state. The suite itself: 50 checks green.
+
+**Unverified.** The renders: the drape's look (green hills, grey craggy rocks) is Sebastian's
+call, boards open in his editor with the report.

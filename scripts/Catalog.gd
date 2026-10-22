@@ -409,6 +409,7 @@ func spawn_projectile(pdef: ProjectileDef, parent: Node, pos: Vector3, basis: Ba
 	c.burnTime = pdef.burn_time
 	c.stunTime = pdef.stun_time
 	c.splashRange = pdef.splash_range
+	c.smokePuff = pdef.smoke_puff
 	c.tileDestroyer = pdef.tile_destroyer
 	if pdef.kind != ProjectileDef.Kind.STRAIGHT:
 		var body := _first_model_child(go)

@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a16560-931f-70ff-8472-966c4f40facd",
+  "inputs": [
+    "game/assets/3d/cannon/refs/chunky-mortar.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "target_polycount": 1000,
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2"
+  },
+  "label": "cannon meshy-chunky-mortar-1000",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 37,
+  "created": "2026-10-22T22:50:26",
+  "outputs": {
+    "model": "meshy-chunky-mortar-1000.glb",
+    "rendered_image": "meshy-chunky-mortar-1000-preview.png"
+  }
+}

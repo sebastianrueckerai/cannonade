@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a16561-9d0b-763d-add4-ebe0a12c7bc3",
+  "inputs": [
+    "game/assets/3d/cannon/refs/chunky-iron.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "target_polycount": 1000,
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2"
+  },
+  "label": "cannon meshy-chunky-iron-1000",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 31,
+  "created": "2026-10-22T22:51:28",
+  "outputs": {
+    "model": "meshy-chunky-iron-1000.glb",
+    "rendered_image": "meshy-chunky-iron-1000-preview.png"
+  }
+}
