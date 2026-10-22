@@ -11,6 +11,8 @@ const UpgradeCluster = preload("res://scripts/UpgradeCluster.gd")
 @export var discardFlySeconds := 1.0
 ## How long a discarded gun leaves the hand empty before the next one is dealt.
 @export var secondsBetweenBuildings := 0.3
+## How long a placed wall holds the next one: quick placing stays, machinegunning a line doesn't.
+@export var secondsBetweenWalls := 0.25
 
 ## Above the top of every wall block and storey: where the view ray starts looking for blocks.
 const RAY_TOP := 2.5
@@ -62,6 +64,8 @@ var reach := PackedByteArray()
 var _reachStale := true
 ## When the last gun was discarded (0 while one is held or none is due)
 var secondsLastBuilding := 0.0
+## When the last wall went down (0 before the first one)
+var secondsLastWall := 0.0
 var game = null
 var voidSelected := false
 ## battle statistics (shots, hits, intercepted, absorbed, walls_lost, guns_lost, buildings_lost)
@@ -527,7 +531,9 @@ func manage_player_actions() -> void:
 		match game.phase:
 			game.Phase.WALLS:
 				if button_down("act") and U.alive(nextWall):
-					if canPlaceWall:
+					if secondsLastWall + secondsBetweenWalls > U.time:
+						Sound.play("place_invalid")
+					elif canPlaceWall:
 						build_next_wall(buildableTileSelected)
 					elif canStackWall:
 						stack_wall(buildableTileSelected)
@@ -634,6 +640,7 @@ func stack_wall(tile) -> void:
 	Sound.play("stack_block", sound_db())
 	U.destroy(nextWall)
 	nextWall = null
+	secondsLastWall = U.time
 	get_next_wall()
 
 
@@ -650,6 +657,7 @@ func build_next_wall(tile) -> void:
 		Sound.play("ring_closed", sound_db())
 	U.destroy(nextWall)
 	nextWall = null
+	secondsLastWall = U.time
 	get_next_wall()
 
 

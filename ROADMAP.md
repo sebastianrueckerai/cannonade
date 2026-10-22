@@ -213,6 +213,8 @@ Sections A to H cover the art and the process that makes it, sections I to K the
 
 Note: Godot does not write values equal to a field's default into `.tres` files, the Inspector still shows them. Changing a default in [scripts/data/](scripts/data) changes every file that relies on it.
 
+- [x] I83 **must** **game** A wall just placed holds the next one (Sebastian, 2026-10-22: "We should add a tiny pause between placing walls so a palyer cant just wildly machinegun click walls into a direction plastering them automatically. We want them to placve quickly, but this would be an exploit.", then "The ai already had the cooldown, but ahuman can place walls as quickly as they like. This is fione for cannonsa but for walls a little pause would keep them from wildly click a lot."). `secondsBetweenWalls` (0.25 s) gates the human's act click in [PlayerController.gd](scripts/components/PlayerController.gd): the clock `secondsLastWall` is stamped where the wall lands (the tails of `build_next_wall` and `stack_wall`, the shared success point the AI walks through too), and a click inside the wait plays `place_invalid` and is dropped, the piece staying in hand; past the wait the same click places it. Deliberate placing tops out at 3-4 walls a second and machinegun spam 6-10, so 0.25 s caps at the top of deliberate speed. Guns stay instant (I80), the AI keeps its own `secondsBetweenBuilds`, discards keep their waits, the sandbox's `place()` is unchanged.
+
 ## J. Game ideas to try, all game
 
 - [ ] ~~J1 **spike** Flak with a limited number of shots per salvo, or a cooldown per shell.~~ Rules v2 section 3: the flak shoots down one ball every 2 s (D59).

@@ -150,6 +150,21 @@ func free_quad_in_range() -> Vector2i:
 	return Vector2i(-1, -1)
 
 
+
+## A free upright three in build range (its anchor and the tiles above and below), for the wall hold.
+func free_column_in_range() -> Vector2i:
+	var b := base_xz()
+	for r in range(2, 7):
+		for dx in range(-r, r + 1):
+			for dz in range(-r, r + 1):
+				var free := true
+				for q in [Vector2i(0, 1), Vector2i(0, 0), Vector2i(0, -1)]:
+					var t = map.tiles[b.x + dx + q.x][b.y + dz + q.y]
+					if not (human.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable()):
+						free = false
+				if free:
+					return Vector2i(b.x + dx, b.y + dz)
+	return Vector2i(-1, -1)
 func _run() -> void:
 	await frames(3)
 	game.timeLeftInRound = 1e6  # the script sets the phase it needs
@@ -236,12 +251,27 @@ func _run() -> void:
 			"the placed blocks wear the ring's colour, not the ghost's tint")
 	check(human.wallTiles.size() == walls_before + 3, "the three blocks count as the player's walls")
 	check(not U.alive(piece) and U.alive(human.nextWall), "the piece is used up and a new one is offered")
+	# a wall just placed holds the next one for secondsBetweenWalls (I83): the click right
+	# after places nothing, past the wait the same click places the piece
+	var hold_at := free_column_in_range()
+	var hold_want := [hold_at + Vector2i(0, 1), hold_at, hold_at + Vector2i(0, -1)]
+	check(hold_at.x >= 0, "a free column of three sits in reach")
+	_hold("wall_3")
+	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()
+	await point_at_tile(hold_at)
+	await press("act")
+	check(_all_free(hold_want) and U.alive(human.nextWall), "the click right after a placed wall places nothing")
+	await seconds(0.2)
+	await press("act")
+	check(_all_blocks(hold_want), "past the wait the piece goes down")
 
 	# a piece hanging off the map edge places nothing, even with its other cells in reach
 	var edge := Vector2i(0, b.y)
 	check(_all_free([Vector2i(0, b.y), Vector2i(1, b.y), Vector2i(2, b.y)]), "the row at the west edge is free")
 	human.build_wall(map.tiles[2][b.y], Catalog.spawn("wall"))
 	_hold("wall_3")
+	# past secondsBetweenWalls: the edge must be what blocks this click, not the hold
+	await seconds(0.3)
 	await point_at_tile(edge)
 	await press("act")
 	check(not U.alive(map.tiles[0][b.y].structure) and not U.alive(map.tiles[1][b.y].structure),
@@ -355,6 +385,8 @@ func _run() -> void:
 	human.build_wall(map.tiles[post.x][post.y], Catalog.spawn("wall", null, human))
 	check(human.in_reach(post_t.x, post_t.y), "two tiles east of the own block is in reach")
 	_hold("wall_1")
+	# past secondsBetweenWalls, so this click tests the empty line, not the hold
+	await seconds(0.3)
 	await point_at_tile(post_t)
 	await press("act")
 	check(U.alive(map.tiles[post_t.x][post_t.y].structure), "the block places with the line empty")
@@ -428,6 +460,8 @@ func _run() -> void:
 		north.append(Vector2i(b.x, top + d))
 	check(_all_free(north), "the column north of the ring is free")
 	_hold("wall_1")
+	# past secondsBetweenWalls, so the distance, not the hold, refuses this block
+	await seconds(0.3)
 	await point_at_tile(Vector2i(b.x, top + 3))
 	await press("act")
 	check(not U.alive(map.tiles[b.x][top + 3].structure), "a block three tiles from every own wall is refused")
@@ -438,6 +472,8 @@ func _run() -> void:
 	check(_all_blocks([Vector2i(b.x, top + 2), Vector2i(b.x, top + 3), Vector2i(b.x, top + 4)]),
 			"an upright three places with only its bottom tile in reach")
 	_hold("wall_1")
+	# past secondsBetweenWalls, so this click tests the reach the new blocks bought
+	await seconds(0.3)
 	await point_at_tile(Vector2i(b.x, top + 6))
 	await press("act")
 	check(_all_blocks([Vector2i(b.x, top + 6)]), "new blocks extend reach: a block two past them places")
