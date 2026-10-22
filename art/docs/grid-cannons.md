@@ -14,7 +14,7 @@ The game is released as Cannonade (D26). Every player-facing string says Cannona
 
 ## What the game is
 
-A Godot port of a Unity game in the spirit of Rampart. A round is a wall phase, a cannon phase and a battle (session 38), each counted in by a 3 s banner, and the left mouse button places and fires in all three (session 41); before that, turns alternated between a build phase, where the player places rotatable wall pieces and buildings on a tile grid to enclose areas, and a battle phase, where cannons inside closed walls fire. Upgrade blocks in 2 by 2 or 3 by 3 patterns merge into bigger guns, flak, rocket stations, shield generators or supply depots. Modes: single player against a ship fleet, player against AI, AI against AI with 2 or 4 sides.
+A Godot port of a Unity game in the spirit of Rampart. A round is a wall phase, a cannon phase and a battle (session 38), each counted in by a 2 s banner (session 56), and the left mouse button places and fires in all three (session 41); before that, turns alternated between a build phase, where the player places rotatable wall pieces and buildings on a tile grid to enclose areas, and a battle phase, where cannons inside closed walls fire. Upgrade blocks in 2 by 2 or 3 by 3 patterns merge into bigger guns, flak, rocket stations, shield generators or supply depots. Modes: single player against a ship fleet, player against AI, AI against AI with 2 or 4 sides.
 
 ## Engine facts that matter for art
 

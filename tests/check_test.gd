@@ -175,7 +175,7 @@ func _run() -> void:
 	game.next_phase()  # to battle
 	check(not U.alive(human.nextWall) and not U.alive(human.nextBuilding),
 			"the held gun flies away when the battle starts")
-	await frames(95)  # the fly-away (3 s) ends without drawing a new wall
+	await frames(95)  # the fly-away (3 s) ends without drawing a new wall; the disarmed battle holds, its banner plus the disarm grace outlast the wait
 	check(not U.alive(human.nextWall) and not U.alive(human.nextBuilding),
 			"nothing returns to the hand while the battle runs")
 	game.next_phase()  # back to the walls

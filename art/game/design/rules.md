@@ -16,7 +16,7 @@ The Rampart rule replaces today's rule, under which the first breach switches of
 
 ## 2. Phases and draws
 
-- Build 45 s, battle 30 s. Today: 150 s each in versus, 250 s in single player.
+- Build 45 s, cannons a second per cannon the fullest hand can place, battle 30 s that ends early once no side holds a gun and no shell is in the air. The banner counts a phase in over 2 s. Today: versus runs these; single player pins 200 s walls, 50 s cannons, 250 s battle.
 - The two draws stay random: a wall piece, one in four per shape, and a building, one in three each of small gun, timber block, iron block. The next piece comes 0.3 s after a placement.
 - The discard goes. Two hold slots come, one beside each draw. Putting a draw into its slot swaps it with what the slot holds. A held piece waits for the right moment, the way a Tetris hold does. With a 45 s build phase draws run out before the phase does, so the slot is a choice and not a vending machine.
 - Build range stays: within 2 tiles of an own structure, no crossing water.

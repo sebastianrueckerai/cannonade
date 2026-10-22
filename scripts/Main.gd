@@ -13,20 +13,21 @@ const PlayerController = preload("res://scripts/components/PlayerController.gd")
 const AIScript = preload("res://scripts/components/AI.gd")
 const CameraRig = preload("res://scripts/CameraRig.gd")
 
-## "size" is the board's depth and its width unless "width" says otherwise; a round is "walls", "guns" and
-## "battle" seconds. The 52 by 34 board fills the 16:9 window at the home view (session 38).
+## "size" is the board's depth and its width unless "width" says otherwise; a round is "walls" and
+## "battle" seconds, the gun phase a second per placeable cannon unless "guns" pins it (session 56).
+## The 52 by 34 board fills the 16:9 window at the home view (session 38).
 const MODES := {
 	# Assets/Scenes/singlePlayer.unity: one human against the ship fleet
 	"single": {"players": ["human"], "size": 20, "walls": 200.0, "guns": 50.0, "battle": 250.0, "pitch": 71.42,
 		"fov": 37.44, "ships": 7},
-	# Assets/Scenes/multiPlayer.unity: human against one AI; rules v3: 45 s walls, 15 s cannons, 30 s battle
-	"versus": {"players": ["human", "ai"], "size": 34, "width": 52, "walls": 45.0, "guns": 15.0, "battle": 30.0,
+	# Assets/Scenes/multiPlayer.unity: human against one AI; rules v3: 45 s walls, a second a cannon, 30 s battle
+	"versus": {"players": ["human", "ai"], "size": 34, "width": 52, "walls": 45.0, "battle": 30.0,
 		"pitch": 60.0, "fov": 30.0, "ships": 7},
 	# two AIs (handy to watch / for tests)
-	"ai2": {"players": ["ai", "ai"], "size": 34, "width": 52, "walls": 45.0, "guns": 15.0, "battle": 30.0,
+	"ai2": {"players": ["ai", "ai"], "size": 34, "width": 52, "walls": 45.0, "battle": 30.0,
 		"pitch": 60.0, "fov": 30.0, "ships": 7},
 	# Assets/Scenes/4ai.unity: four AIs
-	"ai4": {"players": ["ai", "ai", "ai", "ai"], "size": 60, "walls": 20.0, "guns": 5.0, "battle": 25.0,
+	"ai4": {"players": ["ai", "ai", "ai", "ai"], "size": 60, "walls": 20.0, "battle": 25.0,
 		"pitch": 71.42, "fov": 37.44, "ships": 7},
 	# practice: you against a dormant AI on the standard map; Enter steps to the next phase, no timer
 	"practice": {"players": ["human", "ai"], "size": 34, "width": 52, "walls": 1e9, "guns": 1e9, "battle": 1e9,
@@ -154,7 +155,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	var fleet = _component("FleetControll", ShipFleet)
 	game = _component("Game", GameController)
 	game.wallDuration = cfg["walls"]
-	game.gunDuration = cfg["guns"]
+	game.gunDuration = cfg.get("guns", 0.0)
 	game.battleDuration = cfg["battle"]
 	game.readyDuration = cfg.get("ready", game.readyDuration)
 	game.initialShips = cfg["ships"]

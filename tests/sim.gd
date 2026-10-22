@@ -30,6 +30,10 @@ var _ship_start := {}
 var _rules_last := {}
 ## microseconds the rules check took since the last frame tick, kept out of the frame times
 var _rules_usec := 0
+## every phase flip as the frame before it ended: its phase, its clock, the sides' guns and shells
+var _flips: Array = []
+var _flipRound := -1
+var _flipRow := {}
 
 
 func _ready() -> void:
@@ -69,6 +73,18 @@ func _process(_delta: float) -> void:
 			stats["shots"] += 1
 	stats["max_projectiles"] = maxi(stats["max_projectiles"], U.projectiles.size())
 	stats["rounds"] = g.roundNumber
+	var armed := 0
+	for p in g.players:
+		armed += p.activeCannons.size()
+	var shells := 0
+	for s in U.projectiles:
+		if s.player != null:
+			shells += 1
+	if g.roundNumber != _flipRound:
+		if _flipRound >= 0:
+			_flips.append(_flipRow)
+		_flipRound = g.roundNumber
+	_flipRow = {"phase": g.phase, "left": g.timeLeftInRound, "guns": armed, "shells": shells}
 	if not stats.get("marked") and not U.projectiles.is_empty():
 		_scan_marked(g)
 	for p in g.players:
@@ -170,21 +186,15 @@ func _count_enclosed(g) -> int:
 ## The game actually got played: rounds alternate on time, every AI builds,
 ## arms itself and fights, ships sail and shoot.
 func _check_outcome(g) -> void:
-	# a phase flips one second past its end (see _update_round_time); a game
-	# decided by conquest stops the phase clock where it stands
-	var expected_rounds := 0
-	var spent := 0.0
-	var durations := [g.wallDuration, g.gunDuration, g.battleDuration]
-	while true:
-		# a flip lands strictly after its phase end, so a boundary seconds value
-		# must not count the flip that happens exactly at it
-		var d: float = durations[expected_rounds % 3] + 1.0
-		if spent + d >= seconds:
-			break
-		spent += d
-		expected_rounds += 1
-	if g.started and g.roundNumber != expected_rounds:
-		_fail("expected %d phase flips, got %d" % [expected_rounds, g.roundNumber])
+	# a phase flips one second past its end (see _update_round_time); a battle also flips once no
+	# side holds a gun and no side's shell is in the air, after its grace (session 56). A game
+	# decided by conquest stops the phase clock where it stands.
+	for row in _flips:
+		if row["left"] < -0.5:
+			continue
+		if row["phase"] == g.Phase.BATTLE and row["guns"] == 0 and row["shells"] == 0:
+			continue
+		_fail("the %s phase flipped at %.1f s left" % [["walls", "guns", "battle"][row["phase"]], row["left"]])
 	var battle_happened: bool = g.roundNumber >= 2
 	var n_ais := 0
 	for p in g.players:

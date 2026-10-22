@@ -5,10 +5,12 @@ extends "res://scripts/components/Component.gd"
 enum Phase { WALLS, GUNS, BATTLE }
 
 @export var wallDuration := 45.0
-@export var gunDuration := 15.0
+## The gun phase in seconds; 0 derives it: a second per part of the widest hand (its parts cap).
+## Single player pins 50; practice and the sandbox pin huge values to run untimed.
+@export var gunDuration := 0.0
 @export var battleDuration := 30.0
 ## The banner counts every phase in for this long: nobody acts and the phase clock stands.
-@export var readyDuration := 3.0
+@export var readyDuration := 2.0
 @export var randomSeed := 41
 @export var useRandomSeed := false
 @export var initialShips := 7
@@ -33,6 +35,11 @@ signal game_over(winner)
 
 ## The last seconds of a phase tick, once a second.
 const COUNTDOWN := 5
+## Once no side holds a cannon, the battle waits this long for the last exchange to settle, so its
+## end is not abrupt.
+const DISARM_GRACE := 2.0
+## U.time the battle went quiet, -1 while a side's cannon or shell is up
+var _quietSince := -1.0
 var _ticked := 0
 const HORNS := ["horn_build", "horn_guns", "horn_battle"]
 
@@ -56,8 +63,13 @@ func start_game() -> void:
 	Sound.music("build")
 
 
-## How long the current phase lasts.
+## How long the current phase lasts: the gun phase a second per cannon the widest hand can place.
 func duration() -> float:
+	if phase == Phase.GUNS and gunDuration <= 0.0:
+		var parts := 0
+		for p in players:
+			parts = maxi(parts, p.partsCap)
+		return float(parts)
 	return [wallDuration, gunDuration, battleDuration][phase]
 
 
@@ -193,7 +205,28 @@ func _castle_far(c: Vector2i, placed: Array) -> bool:
 	return true
 
 
+## No side holds a cannon and no side's shell is in the air — a ship's shell does not hold the
+## round: the battle has nothing left to wait for.
+func _disarmed() -> bool:
+	for p in players:
+		if not p.activeCannons.is_empty():
+			return false
+	for s in U.projectiles:
+		if s.player != null:
+			return false
+	return true
+
+
 func _update_round_time(delta: float) -> void:
+	if phase == Phase.BATTLE and castles:
+		if _disarmed():
+			if _quietSince < 0.0:
+				_quietSince = U.time
+			elif U.time - _quietSince >= DISARM_GRACE:
+				next_phase()
+				return
+		else:
+			_quietSince = -1.0
 	timeLeftInRound -= delta
 	if timeLeftInRound < -1:
 		next_phase()
@@ -215,6 +248,7 @@ func next_phase() -> void:
 	phase = ((phase + 1) % Phase.size()) as Phase
 	timeLeftInRound = duration()
 	readyLeft = readyDuration
+	_quietSince = -1.0
 	if phase == Phase.BATTLE and castles and started:
 		run_check()
 	for p in players:

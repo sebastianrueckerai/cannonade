@@ -70,7 +70,7 @@ func _run() -> void:
 	var ai = game.players[1]
 	var ai_walls: int = ai.wallTiles.size()
 	await frames(2)
-	check(_says("BUILD WALLS", "3"), "the game opens on the banner: BUILD WALLS, 3")
+	check(_says("BUILD WALLS", "2"), "the game opens on the banner: BUILD WALLS, 2")
 	var view := Rect2(Vector2.ZERO, Vector2(get_tree().root.size))
 	var r := _banner().get_global_rect()
 	check(view.encloses(r) and r.get_center().distance_to(view.get_center()) < 2.0,
@@ -95,8 +95,8 @@ func _run() -> void:
 	await press("act")
 	check(map.tiles[spot.x][spot.y].is_free(), "a left click under the banner places nothing")
 	check(game.timeLeftInRound == game.wallDuration, "the wall phase's clock stands under the banner")
-	await _until_left(1.9)
-	check(_says("BUILD WALLS", "2"), "the banner counts down: 2")
+	await _until_left(0.9)
+	check(_says("BUILD WALLS", "1"), "the banner counts down: 1")
 	check(not Sound.playing("horn_build"), "the wall phase's horn waits for the banner")
 	await _until_left(0.05)
 	check(ai.wallTiles.size() == ai_walls, "the AI places nothing under the banner")
@@ -114,7 +114,7 @@ func _run() -> void:
 
 	game.next_phase()
 	await frames(2)
-	check(_says("PLACE CANNONS", "3"), "the cannon phase opens on the banner: PLACE CANNONS, 3")
+	check(_says("PLACE CANNONS", "2"), "the cannon phase opens on the banner: PLACE CANNONS, 2")
 	_pocket()
 	var gun_spot := base_xz() + Vector2i(3, 0)
 	await seconds(0.5)
@@ -122,7 +122,7 @@ func _run() -> void:
 	check(U.alive(human.nextBuilding), "the cannon is dealt under the banner")
 	await press("act")
 	check(map.tiles[gun_spot.x][gun_spot.y].is_free(), "a left click under the banner places no cannon")
-	check(game.timeLeftInRound == game.gunDuration, "the cannon phase's clock stands under the banner")
+	check(game.timeLeftInRound == 6.0, "the cannon phase lasts a second per placeable cannon: 6 parts, 6 s")
 	check(not Sound.playing("horn_guns"), "the cannon phase's horn waits for the banner")
 	await _until_left(0.0)
 	await frames(2)
@@ -134,7 +134,7 @@ func _run() -> void:
 
 	game.next_phase()
 	await frames(2)
-	check(_says("BATTLE", "3"), "the battle opens on the banner: BATTLE, 3")
+	check(_says("BATTLE", "2"), "the battle opens on the banner: BATTLE, 2")
 	check(human.activeCannons.size() == 1, "the walled cannon survives the check")
 	var enemy = null
 	for c in map.castles:
@@ -156,4 +156,40 @@ func _run() -> void:
 	game.next_phase()  # the battle's clock runs out under it
 	await frames(2)
 	check(flying.all(func(s): return not U.alive(s)), "the round's end shoots down every shell still in flight")
-	check(_says("BUILD WALLS", "3"), "the next round opens on its banner")
+	check(_says("BUILD WALLS", "2"), "the next round opens on its banner")
+
+	# the battle ends once neither side holds a cannon: after the grace, not abrupt, and the last
+	# shell lands first
+	game.next_phase()  # walls -> guns
+	await frames(2)
+	game.next_phase()  # guns -> battle, through the check
+	await frames(2)
+	check(_says("BATTLE", "2"), "the second battle opens on its banner")
+	await _until_left(0.0)
+	await seconds(2.2)
+	check(game.phase == game.Phase.BATTLE, "the battle holds while a cannon stands, its quiet grace never starting")
+	await point_at_tile(Vector2i(ec.x, ec.y - 2))
+	await press("act")
+	var shell = null
+	for s in U.projectiles:
+		if s.player != null:
+			shell = s
+	check(shell != null, "the human's gun puts the last shell in the air")
+	for p in game.players:
+		for key in p.cannons.keys():
+			map.tiles[key.x][key.y].un_build()
+	await frames(2)
+	check(game.phase == game.Phase.BATTLE, "a shell in the air holds the disarmed battle")
+	var waited := 0
+	while U.alive(shell) and waited < 300:
+		await frames(1)
+		waited += 1
+	check(not U.alive(shell) and game.phase == game.Phase.BATTLE,
+			"the last shell lands and the battle still waits out its grace")
+	await seconds(1.0)
+	check(game.phase == game.Phase.BATTLE, "the disarmed battle holds through its grace")
+	while game.phase == game.Phase.BATTLE and waited < 300:
+		await frames(1)
+		waited += 1
+	check(game.phase == game.Phase.WALLS and game.roundNumber == 6,
+			"the battle ends once neither side holds a cannon and no shell is in the air")

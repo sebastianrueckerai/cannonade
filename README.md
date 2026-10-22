@@ -66,9 +66,11 @@ a closed ring takes a wash of the colour of the player whose walls encircle it a
 two factions share encircles nothing and the ground stays open — so a glance tells whose wall
 and whose ground is whose.
 
-A round is three phases: **build walls** (45 s), **place cannons** (15 s) and the
-**battle** (30 s). A small banner in the middle counts each phase in for 3 seconds; nobody
-acts while it shows, and the phase starts with its own call: a bell for the walls, a whistle
+A round is three phases: **build walls** (45 s), **place cannons** (one second per cannon
+the fullest hand can place) and the **battle** (30 s, ending early once neither side holds
+a cannon and no shell is in the air). A small banner in the middle counts each phase in for
+2 seconds; nobody acts while it shows, and the phase starts with its own call: a bell for
+the walls, a whistle
 for the cannons, a horn for the battle. The plaque at the top counts each phase down and names it, its last
 five seconds in red; the line at the bottom names the controls of the phase. You hold one
 thing at a time and see it only where you point: the wall piece in the wall phase, a drawn
@@ -313,7 +315,9 @@ controls and the custom cursor.
 * `tests/phase_test` – the banner counts each phase in at the window's centre, small and off
   the other plaques, and a middle drag on it pans the board; under it a left click places and
   fires nothing, the AI builds nothing and the clock stands; then the phase's horn blows and
-  the left click places the piece, places the cannon and fires.
+  the left click places the piece, places the cannon and fires; the cannon phase lasts a
+  second per placeable cannon, and a battle with no cannon left on either side ends after
+  its grace.
 * `tests/weapons` – upgrade patterns (incl. rotated ones) merge into the right structures;
   cluster bombs, rockets, shield, flak and ships behave as in the game.
 * `tests/menu_test` – menu → chosen game mode → Esc → pause menu → menu. The loading screen shows concept
