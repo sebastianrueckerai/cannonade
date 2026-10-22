@@ -264,9 +264,10 @@ const WallComp = preload("res://scripts/components/Wall.gd")
 ## wears the first.
 const WALL_LOOKS := ["wall", "wall_corbel", "wall_pilaster", "wall_course"]
 
-## The gun looks of C20: the slender cannon, the two chunky picks and the mortar at 1x1. Every game deals each
-## player one (Main.build); a gun with no owner wears the first. One look a player, the whole faction wears it.
-const GUN_LOOKS := ["cannon", "cannon.2", "cannon.3", "cannon.4"]
+## The gun looks of C20, without cannon.2 (D92): the slender cannon, the chunky iron pick and the mortar at 1x1.
+## Every game deals each player one (Main.build); a gun with no owner wears the first. One look a player, the
+## whole faction wears it.
+const GUN_LOOKS := ["cannon", "cannon.3", "cannon.4"]
 
 
 static func wall_look(owner) -> String:
