@@ -14,8 +14,9 @@ config/name="Cannonade"
 config/description="Port of the Unity game Grid Cannons to Godot."
 run/main_scene="res://scenes/splash.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-boot_splash/bg_color=Color(0.12, 0.16, 0.22, 1)
-boot_splash/show_image=false
+boot_splash/bg_color=Color(0.867, 0.859, 0.784, 1)
+boot_splash/image="res://assets/art/ui/splash.png"
+boot_splash/show_image=true
 
 [autoload]
 
