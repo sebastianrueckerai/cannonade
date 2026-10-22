@@ -246,7 +246,7 @@ func _check_invariants(g) -> void:
 			var owner_id: int = m.get_mini(x, z)
 			if U.alive(t.structure):
 				var bb := U.comp(t.structure, "BuildingBlock")
-				if bb == null:
+				if bb == null and U.comp(t.structure, "Terrain") == null:
 					_fail("structure without BuildingBlock at %d,%d" % [x, z])
 				if owner_id == 0:
 					_fail("built tile %d,%d not in miniMap" % [x, z])

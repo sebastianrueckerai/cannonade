@@ -1,4 +1,5 @@
 extends "res://scripts/components/Component.gd"
+const TerrainScript = preload("res://scripts/components/Terrain.gd")
 ## Port of GameController.cs: a round is a wall phase, a cannon phase and a battle.
 
 ## The round: walls, then cannons, then the battle. The check runs where the build ends, at GUNS to BATTLE.
@@ -14,6 +15,9 @@ enum Phase { WALLS, GUNS, BATTLE }
 @export var randomSeed := 41
 @export var useRandomSeed := false
 @export var initialShips := 7
+## The seed the map was built from (Main sets it), so the terrain layout draws from its own
+## stream and moves no other seeded expectation (I90).
+@export var mapSeed := 0
 
 var phase := Phase.WALLS
 ## PlayerController / AI components
@@ -124,6 +128,8 @@ func _initialize_players() -> void:
 		p.setup()
 	if castles:
 		_place_castles()
+		if players.size() > 1:
+			_place_terrain()
 		for p in players:
 			p.recompute_parts_cap()
 
@@ -196,6 +202,213 @@ func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
 		if _castle_far(c, placed) and _castle_far(m, placed):
 			return c
 	return anchor
+
+
+# ------------------------------------------------------------- terrain (I90, I91)
+## The shapes a feature can take, offsets from its north-west cell ("up" the map is low z):
+## a few that make sense to 4x4 and not just rectangles. Rocks and houses fall to shells
+## (10 health a tile), hills and mountains absorb every hit.
+const TERRAIN_SHAPES := {
+	"rocks": [[Vector2i(0, 0)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(2, 1)]],
+	"house": [[Vector2i(0, 0)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1),
+			Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2)]],
+	"hill": [[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(0, 2)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1),
+			Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2)]],
+	"mountain": [[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(1, 1)],
+		[Vector2i(0, 0), Vector2i(0, 1), Vector2i(0, 2), Vector2i(1, 2)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0)],
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1),
+			Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2)]],
+}
+## Features drawn per side's generation zone: one half with two players, one quadrant with
+## four (the mirrors fill the rest, so every side holds the same blocked tiles).
+const TERRAIN_COUNTS := {2: {"mountain": 3, "hill": 2, "rocks": 3, "house": 2},
+	4: {"mountain": 2, "hill": 1, "rocks": 2, "house": 1}}
+## Spots tried per feature before this map goes without it.
+const TERRAIN_ATTEMPTS := 40
+## Terrain keeps this Chebyshev distance from a castle centre, so its 5x5 ring stays buildable.
+const TERRAIN_CASTLE_CLEAR := 3
+
+
+## Terrain features over the battlefield (I90, I91): each drawn on one half (one quadrant,
+## four players) and mirrored exactly by the castles' flips, so both sides hold the same
+## blocked tiles. A feature never touches a castle's build ring, water or another structure,
+## and a placement that would cut the last way between castle rings is rolled back.
+func _place_terrain() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = mapSeed if mapSeed != 0 else randomSeed
+	var counts: Dictionary = TERRAIN_COUNTS.get(players.size(), {})
+	var zone := Vector2i(map.sizeX, map.sizeZ / 2)
+	if players.size() == 4:
+		zone.x = map.sizeX / 2
+	for kind in ["mountain", "hill", "rocks", "house"]:
+		for i in counts.get(kind, 0):
+			var shapes: Array = TERRAIN_SHAPES[kind]
+			var shape: Array = shapes[rng.randi_range(0, shapes.size() - 1)]
+			for attempt in TERRAIN_ATTEMPTS:
+				var anchor := Vector2i(rng.randi_range(0, zone.x - 1), rng.randi_range(0, zone.y - 1))
+				var cells: Array = []
+				for c in shape:
+					cells.append(anchor + c)
+				var all := _terrain_mirrors(cells)
+				if not _terrain_fits(all):
+					continue
+				var go := _terrain_go(kind, all)
+				map.claim_terrain(go, all)
+				if _rings_connected():
+					break
+				map.release_terrain(go, all)
+
+
+## The cells plus every mirror copy: the castles' z-flip, and with four players the x-flip
+## and both, so all sides hold the same blocked tiles (a shape crossing a flip line merges
+## with its mirror; the union stays symmetric).
+func _terrain_mirrors(cells: Array) -> Array:
+	var out: Array = cells.duplicate()
+	var flips: Array = [[false, true]] if players.size() != 4 else [[false, true], [true, false], [true, true]]
+	for f in flips:
+		for c in cells:
+			var m := Vector2i(map.sizeX - 1 - c.x if f[0] else c.x, map.sizeZ - 1 - c.y if f[1] else c.y)
+			if not out.has(m):
+				out.append(m)
+	return out
+
+
+## On the map, on free ground no ship sits on, and clear of every castle's build ring.
+func _terrain_fits(cells: Array) -> bool:
+	var centres: Array = []
+	for c in map.castles:
+		if U.alive(c.go):
+			centres.append(map.tile_index_at(c.go.global_position))
+	for c in cells:
+		if c.x < 0 or c.y < 0 or c.x >= map.sizeX or c.y >= map.sizeZ:
+			return false
+		var t = map.tiles[c.x][c.y]
+		if not t.is_free() or U.alive(t.ship):
+			return false
+		for q in centres:
+			if max(absi(c.x - q.x), absi(c.y - q.y)) < TERRAIN_CASTLE_CLEAR:
+				return false
+	return true
+
+
+## The feature's GameObject at the centre of its cells: the Terrain component and the art.
+## Rocks carry a boulder a tile; a house is one depot of its footprint; hills and mountains
+## are one stretched boulder each, placeholders until their own round builds them (C18).
+func _terrain_go(kind: String, all: Array) -> Node3D:
+	var go := Node3D.new()
+	go.name = kind.capitalize()
+	map.go.add_child(go)
+	var terr := Node.new()
+	terr.name = "Terrain"
+	terr.set_script(TerrainScript)
+	go.add_child(terr)
+	terr.map = map
+	terr.tiles = all.map(func(c): return map.tiles[c.x][c.y])
+	terr.destructible = kind == "rocks" or kind == "house"
+	terr.health = terr.HEALTH_PER_TILE * all.size()
+	var centre := Vector3.ZERO
+	var lo := Vector2i(map.sizeX, map.sizeZ)
+	var hi := Vector2i.ZERO
+	for c in all:
+		centre += map.tile_position(c.x, c.y)
+		lo = lo.min(c)
+		hi = hi.max(c)
+	go.position = centre / all.size()
+	var span := Vector2(hi.x - lo.x + 1, hi.y - lo.y + 1)
+	match kind:
+		"rocks":
+			for c in all:
+				var b := Art.instance("nature_boulder")
+				if b == null:
+					continue
+				go.add_child(b)
+				b.position = map.tile_position(c.x, c.y) - go.position
+				b.position.y = map.tiles[c.x][c.y].go.position.y
+				b.rotation.y = Art._rng.randf_range(0.0, TAU)
+				b.scale = Vector3.ONE * Art._rng.randf_range(1.05, 1.2)
+		"house":
+			var h := Art.instance("supply" if span.x == 1.0 else ("supply22" if span.x == 2.0 else "supply33"))
+			if h != null:
+				go.add_child(h)
+		"hill":
+			_stretched_art(go, "nature_boulder", Vector3(span.x + 0.4, 0.55, span.y + 0.4))
+		"mountain":
+			_stretched_art(go, "nature_boulder", Vector3(span.x + 0.2, 2.1, span.y + 0.2))
+	return go
+
+
+## One model stretched to `size` (the placeholder mass of a hill or mountain, C18).
+func _stretched_art(parent: Node3D, id: String, size: Vector3) -> void:
+	var n := Art.instance(id)
+	if n == null:
+		return
+	var b := Art.bounds(n).size
+	n.scale = Vector3(size.x / b.x, size.y / b.y, size.z / b.z)
+	parent.add_child(n)
+
+
+## The encirclement guarantee (I91): every castle's build ring (Chebyshev 2 of its centre)
+## still reaches every other's over ground no terrain and no water blocks. Walls and other
+## buildings are the way itself, so they never block it.
+func _rings_connected() -> bool:
+	var centres: Array = []
+	for c in map.castles:
+		if U.alive(c.go):
+			centres.append(map.tile_index_at(c.go.global_position))
+	if centres.size() < 2:
+		return true
+	var seen := PackedByteArray()
+	seen.resize(map.sizeX * map.sizeZ)
+	var queue: Array[Vector2i] = []
+	_ring_seeds(centres[0], seen, queue)
+	var head := 0
+	while head < queue.size():
+		var p: Vector2i = queue[head]
+		head += 1
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = p + d
+			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ:
+				continue
+			var i: int = n.x * map.sizeZ + n.y
+			if seen[i] != 0:
+				continue
+			var t = map.tiles[n.x][n.y]
+			if t.water or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
+				continue
+			seen[i] = 1
+			queue.append(n)
+	for q in centres:
+		var shell: Array[Vector2i] = []
+		_ring_seeds(q, PackedByteArray(), shell)
+		var reached := false
+		for p in shell:
+			if seen[p.x * map.sizeZ + p.y] != 0:
+				reached = true
+				break
+		if not reached:
+			return false
+	return true
+
+
+## The build ring's tiles of the castle at `centre`, into `queue` marked in `seen`.
+func _ring_seeds(centre: Vector2i, seen: PackedByteArray, queue: Array[Vector2i]) -> void:
+	for dx in range(-2, 3):
+		for dz in range(-2, 3):
+			var p := Vector2i(centre.x + dx, centre.y + dz)
+			if p.x < 0 or p.y < 0 or p.x >= map.sizeX or p.y >= map.sizeZ:
+				continue
+			if not seen.is_empty():
+				seen[p.x * map.sizeZ + p.y] = 1
+			queue.append(p)
 
 
 func _castle_far(c: Vector2i, placed: Array) -> bool:

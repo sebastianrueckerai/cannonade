@@ -157,6 +157,9 @@ func hold_wall(id: String) -> void:
 
 func _run() -> void:
 	await frames(3)
+	# the scripted checks below were derived on bare ground: the generated terrain (I90) goes
+	for go in map.terrain_features.duplicate():
+		U.comp(go, "Terrain").die(Vector3.INF, 0.0)
 
 	# 1: the plans at the start
 	enemy.update_plans()

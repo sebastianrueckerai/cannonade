@@ -421,8 +421,9 @@ func _random_shuffle(arr: Array) -> void:
 
 
 ## The tiles to shoot at, best first. "auto": the enemy's guns (they shoot back), then the castles
-## the enemy holds, the nearest to ruin first (they decide the game), then its walls, the most
-## walled-in first. An explicit mode leads with its own pool, and the walls follow it.
+## the enemy holds, the nearest to ruin first (they decide the game), then terrain that blocks the
+## AI's own way to castles, then its walls, the most walled-in first. An explicit mode leads with
+## its own pool, and the terrain and the walls follow it.
 func aquire_targets(enemy) -> Array:
 	var out: Array = []
 	for mode in (["guns", "castles"] if targetMode == "auto" else [targetMode]):
@@ -430,6 +431,7 @@ func aquire_targets(enemy) -> Array:
 		if mode != "castles":
 			_random_shuffle(pool)
 		out.append_array(pool)
+	out.append_array(_terrain_targets(enemy))
 	var walls: Array = []
 	for t in enemy.wallTiles:
 		if U.alive(t):
@@ -438,6 +440,113 @@ func aquire_targets(enemy) -> Array:
 	for w in walls:
 		out.append(w[1])
 	return out
+
+
+# ------------------------------------------------------- terrain (I92)
+## How many steps a cleared rock has to save before it is worth a shell.
+const TERRAIN_MARGIN := 4
+
+
+## Destructible terrain that blocks this AI's own way to the castles it wants: the BFS
+## distance from its castles' rings to them, with the feature standing and with it gone. A
+## feature goes on the list only when clearing it shortens the way by TERRAIN_MARGIN steps
+## or opens an unreachable one - and only when the same clearing does not shorten the
+## enemy's way to the AI's castles, so the AI never shoots the rock that mainly opens your path.
+func _terrain_targets(enemy) -> Array:
+	var out: Array = []
+	if activeCannons.is_empty() or map.terrain_features.is_empty():
+		return out
+	var mine := _held_rings(self)
+	var wanted := _wanted_rings(self, enemy)
+	var theirs := _held_rings(enemy)
+	var their_wanted := _wanted_rings(enemy, self)
+	for go in map.terrain_features:
+		if not U.alive(go):
+			continue
+		var terr := U.comp(go, "Terrain")
+		if terr == null or not terr.destructible:
+			continue
+		var cells: Array = []
+		for t in terr.tiles:
+			cells.append(Vector2i(t.idxX, t.idxZ))
+		if _clearing_helps(mine, wanted, cells) and not _clearing_helps(theirs, their_wanted, cells):
+			out.append_array(terr.tiles)
+	return out
+
+
+## Clearing `cells` brings `sources` nearer `goals` by the margin, or makes an unreachable
+## goal reachable.
+func _clearing_helps(sources: Array, goals: Array, cells: Array) -> bool:
+	if sources.is_empty() or goals.is_empty():
+		return false
+	var with := _route_steps(sources, goals, cells, false)
+	var without := _route_steps(sources, goals, cells, true)
+	return without >= 0 and (with < 0 or without + TERRAIN_MARGIN <= with)
+
+
+## BFS steps from any of `sources` to the nearest of `goals` over ground no terrain and no
+## water blocks; the tiles of `cells` count as free while `clear` is on. -1 unreachable.
+func _route_steps(sources: Array, goals: Array, cells: Array, clear: bool) -> int:
+	var goal := {}
+	for g in goals:
+		goal[g] = true
+	var dist := {}
+	var queue: Array = []
+	for s in sources:
+		if goal.has(s):
+			return 0
+		dist[s] = 0
+		queue.append(s)
+	var head := 0
+	while head < queue.size():
+		var p: Vector2i = queue[head]
+		head += 1
+		var d: int = dist[p] + 1
+		for v in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = p + v
+			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or dist.has(n):
+				continue
+			var t = map.tiles[n.x][n.y]
+			var feature := U.alive(t.structure) and U.comp(t.structure, "Terrain") != null
+			if t.water or (feature and not (clear and cells.has(n))):
+				continue
+			if goal.has(n):
+				return d
+			dist[n] = d
+			queue.append(n)
+	return -1
+
+
+## The build rings (Chebyshev 2 of the centre) of the castles `p` holds.
+func _held_rings(p) -> Array:
+	var out: Array = []
+	for c in map.castles:
+		if not U.alive(c.go) or c.is_ruin() or c.owner() != p:
+			continue
+		_shell_of(c, out)
+	return out
+
+
+## The build rings of the castles `p` does not hold and may take: the neutral ones and `foe`'s.
+func _wanted_rings(p, foe) -> Array:
+	var out: Array = []
+	for c in map.castles:
+		if not U.alive(c.go) or c.is_ruin():
+			continue
+		var holder = c.owner()
+		if holder == p or (holder != null and holder != foe):
+			continue
+		_shell_of(c, out)
+	return out
+
+
+func _shell_of(c, out: Array) -> void:
+	var centre: Vector2i = map.tile_index_at(c.go.global_position)
+	for dx in range(-2, 3):
+		for dz in range(-2, 3):
+			var p := Vector2i(centre.x + dx, centre.y + dz)
+			if p.x >= 0 and p.y >= 0 and p.x < map.sizeX and p.y < map.sizeZ:
+				out.append(p)
 
 
 ## The tiles of one target mode; "walls" has none here, the walls follow every list.

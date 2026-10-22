@@ -131,6 +131,10 @@ func damage_structure(damage: float, from := Vector3.INF) -> void:
 			Sound.play("hit_castle")
 			castle.take_damage(damage, from)
 			return
+		var terrain := U.comp(structure, "Terrain")
+		if terrain != null:
+			terrain.take_damage(damage, from)
+			return
 	var bb = block()
 	if bb != null:
 		bb.hits_taken += 1

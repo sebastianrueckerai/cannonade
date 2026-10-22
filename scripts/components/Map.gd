@@ -41,6 +41,8 @@ var openColorMax: Color
 var tiles: Array = []
 ## every Castle component on the map, in build order
 var castles: Array = []
+## every terrain feature's GameObject (Node3D with a Terrain component), in build order (I90)
+var terrain_features: Array = []
 ## CustomModelMaker components
 var customModelMakers: Array = []
 ## miniMap[x * sizeZ + z]: player id owning the tile (0 = free)
@@ -172,6 +174,31 @@ func place_neutral(def: BuildingDef, x: int, z: int) -> Node3D:
 	main.build(go, null)
 	go.global_position = Vector3(centre.x / square.size(), 0.0, centre.z / square.size())
 	return go
+
+
+## Stands one terrain feature (I90) as the structure of every tile of `cells` and the art
+## under `go`: nobody owns that ground (mini 255) and every placement rule refuses it until
+## the feature falls. The caller sized, positioned and parented `go` and filled its Terrain
+## component's tiles; this claims the tiles.
+func claim_terrain(go: Node3D, cells: Array) -> void:
+	terrain_features.append(go)
+	for c in cells:
+		var t = tiles[c.x][c.y]
+		t.structure = go
+		t.player = null
+		set_mini(c.x, c.y, 255)
+		t.destroy_decorations()
+
+
+## Frees what claim_terrain took, for a placement rolled back before it stands (I91).
+func release_terrain(go: Node3D, cells: Array) -> void:
+	terrain_features.erase(go)
+	for c in cells:
+		var t = tiles[c.x][c.y]
+		if t.structure == go:
+			t.structure = null
+		set_mini(c.x, c.y, 0)
+	U.destroy(go)
 
 
 ## Inverse of tile_position(); returns Vector2i(-1, -1) outside of the map.

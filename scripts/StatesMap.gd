@@ -134,8 +134,9 @@ func _update_tile_in_accessible_grid(bp) -> void:
 	var x: int = bp.idxX * 3
 	var z: int = bp.idxZ * 3
 	var full := 1
-	if U.alive(bp.structure):
-		var grid: Array = U.comp(bp.structure, "BuildingBlock").accessGrid
+	var bb = U.comp(bp.structure, "BuildingBlock") if U.alive(bp.structure) else null
+	if bb != null:
+		var grid: Array = bb.accessGrid
 		for dx in 3:
 			for dz in 3:
 				accessible[idx(x + dx, z + dz)] = 1 if grid[dx][dz] else 0

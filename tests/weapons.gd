@@ -67,6 +67,9 @@ func _run() -> void:
 	await seconds(0.2)
 	game.phase = game.Phase.BATTLE
 	game.timeLeftInRound = 1e6
+	# the scripted spots below were derived on bare ground: the generated terrain (I90) goes
+	for go in map.terrain_features.duplicate():
+		U.comp(go, "Terrain").die(Vector3.INF, 0.0)
 
 	# the 2x2 specials placed directly from their files (their upgrade-block
 	# recipes are parked out of the game)

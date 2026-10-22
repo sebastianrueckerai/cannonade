@@ -160,6 +160,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	game.readyDuration = cfg.get("ready", game.readyDuration)
 	game.initialShips = cfg["ships"]
 	game.castles = cfg.get("castles", true)
+	game.mapSeed = _used_seed   # the terrain layout draws from its own stream (I90)
 	game.map = map
 	game.fleet = fleet
 	game.hudBand = cfg.get("band", _hud_band() if cfg.get("hud", true) else Vector2.ZERO)

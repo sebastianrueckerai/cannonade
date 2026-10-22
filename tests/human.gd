@@ -168,6 +168,9 @@ func free_column_in_range() -> Vector2i:
 func _run() -> void:
 	await frames(3)
 	game.timeLeftInRound = 1e6  # the script sets the phase it needs
+	# the scripted spots below were derived on bare ground: the generated terrain (I90) goes
+	for go in map.terrain_features.duplicate():
+		U.comp(go, "Terrain").die(Vector3.INF, 0.0)
 	var b := base_xz()
 	check(map.is_tile_enclosed(b.x, b.y), "player starts with a walled-in castle")
 

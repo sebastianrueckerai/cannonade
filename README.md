@@ -79,6 +79,12 @@ cannon in the cannon phase, each on the tile under the cursor, red where it cann
 its half with free rows between the two halves, you start with one walled in, and a player
 whose last castle falls is out: at once when a shell ruins it, at the check when it burns.
 
+**Terrain** breaks up the ground between the castles: rock piles and houses that fall to
+shells — one shell clears a tile of them — and hills and mountains no shell marks. Both
+halves carry the same terrain, nothing builds on it and shells fly over it, yet a way round
+it always remains between the castle rings. The AI shells the rocks that block its own way
+to a castle, never the ones that would mainly open yours.
+
 At the end of every cannon phase the **check** runs:
 
 - every owned building standing outside your closed wall ring burns,
