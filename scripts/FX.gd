@@ -2,13 +2,13 @@ extends Object
 ## Battle effects at the muzzle (Shooter) and the landing (TileImpactor):
 ## textured billboard bursts on Kenney's CC0 particle sprites
 ## (assets/art/fx, LICENSE there), sized, ramped and damped after Godot's
-## official 3D particles demo (I78). ENABLED stays off until the look is
-## picked from the round-2 boards; `style` names the look: smoke (the demo
+## official 3D particles demo (I78). The look is fire (Sebastian's pick,
+## board 12, session 49); `style` names the look: smoke (the demo
 ## look), fire, soft. Particle seeds make the randomness, never the game RNG.
 
-static var ENABLED := false
+static var ENABLED := true
 
-static var style := "smoke"
+static var style := "fire"
 
 const RING := preload("res://materials/fx_ring.gdshader")
 
@@ -200,7 +200,5 @@ static func _root(kind: String, life: float) -> Node3D:
 	root.name = "FX %s" % kind.capitalize()
 	root.set_meta("fx", kind)
 	U.world().add_child(root)
-	root.get_tree().create_timer(life).timeout.connect(func():
-		if is_instance_valid(root):
-			root.queue_free())
+	root.get_tree().create_timer(life).timeout.connect(root.queue_free)
 	return root

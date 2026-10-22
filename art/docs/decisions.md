@@ -547,3 +547,9 @@ room (not sure who it belongs to) this is wroing, it should be open until walls 
 revises D79's majority rule: the ground inside a closed ring takes its owner's colour only when that owner's walls
 encircle the region alone; a ring two factions share encircles nothing and the room stays open. Where one faction's
 ring runs round a smaller ring of the other, the ground between stays the outer faction's. Session 47, roadmap I75.
+
+## D89. The battle effects are the fire look (2026-10-22, Sebastian)
+
+"12 looks good." The muzzle and landing effects of I78 turn on with FX.style = fire: the muzzle flash and burst of
+[board 12](game/art-direction/rounds/49-cannon-fx/board-12-fire-muzzle.png), the landing plume of board 13. The
+spawns they ride are his hand placements (round 3). Session 49, roadmap I78.

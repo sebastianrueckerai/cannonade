@@ -97,3 +97,7 @@ with them. Boards 10, 12, 14, 16 and 17 re-shot on the new anchors; every flash 
 above the printed muzzle anchor (bright-core diff against an effects-off render of the same seed:
 10 +123 px above, 12 +81, 14 +63, 16 +12), the same anchor-diff method as round 2, this time without
 a vision pass. The pick by board number is still Sebastian's.
+
+## The pick
+Fire. Sebastian chose board 12 (2026-10-22: "12 looks good"), so FX.ENABLED = true and FX.style = fire in one
+commit (D89); the landing look is board 13's plume, the muzzle board 12's flash, both riding his round-3 anchors.
