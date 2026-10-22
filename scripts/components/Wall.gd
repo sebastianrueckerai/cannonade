@@ -118,8 +118,10 @@ static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0, tint :
 
 
 ## A hand piece: each cell wears the owner's block, its walkway running toward the piece's other cells, in the
-## piece's own frame, which turns with it. `cells` are the def's, in the order of the cell nodes.
-static func paint_piece(piece: Node3D, owner, cells: Array, shade := 1.0) -> void:
+## piece's own frame, which turns with it. `cells` are the def's, in the order of the cell nodes; `tints`
+## colours single cells (the ground ghost's blocked ones red), empty leaves every cell white.
+static func paint_piece(piece: Node3D, owner, cells: Array, shade := 1.0,
+		tints: PackedColorArray = PackedColorArray()) -> void:
 	var nodes := piece.get_children().filter(func(n): return n is Node3D)
 	for i in mini(cells.size(), nodes.size()):
 		nodes[i].basis = Basis()
@@ -127,7 +129,8 @@ static func paint_piece(piece: Node3D, owner, cells: Array, shade := 1.0) -> voi
 		var open := {}
 		for r in DIRS:
 			open[r] = cells.has(cells[i] + DIRS[r])
-		paint_art(nodes[i].get_node_or_null("Art"), owner, open, shade)
+		paint_art(nodes[i].get_node_or_null("Art"), owner, open, shade,
+				tints[i] if i < tints.size() else Color.WHITE)
 
 
 static func material(art: Node3D) -> ShaderMaterial:

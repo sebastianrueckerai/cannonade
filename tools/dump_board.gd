@@ -52,7 +52,21 @@ func _ready() -> void:
 		sorts["crate" if terr.destructible else "stone"] += 1
 		for t in terr.tiles:
 			blocked["top" if t.idxZ < map.sizeZ / 2 else "bottom"] += 1
-	print("features=%d (%d crate, %d stone), blocked tiles: top %d, bottom %d of %d a half"
+	var touching := 0
+	var feats: Array = []
+	for go in map.terrain_features:
+		var cells: Array = U.comp(go, "Terrain").tiles.map(
+				func(t): return Vector2i(t.idxX, t.idxZ))
+		feats.append(cells)
+	for i in feats.size():
+		for j in range(i + 1, feats.size()):
+			var gap := 99
+			for a in feats[i]:
+				for b in feats[j]:
+					gap = mini(gap, maxi(absi(a.x - b.x), absi(a.y - b.y)))
+			if gap <= 1:
+				touching += 1
+	print("features=%d (%d crate, %d stone), blocked tiles: top %d, bottom %d of %d a half, touching pairs %d"
 			% [map.terrain_features.size(), sorts["crate"], sorts["stone"],
-				blocked["top"], blocked["bottom"], map.sizeX * map.sizeZ / 2])
+				blocked["top"], blocked["bottom"], map.sizeX * map.sizeZ / 2, touching])
 	get_tree().quit()

@@ -101,3 +101,49 @@ jointly enclosing 7 tiles: the game rightly open under D88, the reference closed
 verdict moved into StatesMap._finish_flood, called by both the optimised fill and the original
 cell-by-cell reference, so the reference guards the fill and walls_test guards the sealing rule;
 the block enqueue broken on purpose turned it red again before the restore.
+
+## Round 3
+
+Two asks: bigger obstacles (up to 7x7, no plain rectangle, clustered rather than evenly spread)
+and a red preview of the blocked part of a held piece.
+
+**Shapes.** Eight big patterns join TERRAIN_PATTERNS: 7x7 donut, spiral, 7x7 U, thick L,
+double clump, 5x7 zigzag, comb, 5x5 donut. The first spiral draft was two disconnected islands
+(row 0 hanging off column 6, rows 2-6 a second mass) — caught it reviewing the diff, replaced
+with a connected curl. Every big mass has a hole by construction, so "no boring rectangle"
+holds without a runtime rule.
+
+**Clustering.** The first try — anchor a random cell of a placed feature plus a random one of
+eight directions — measured 12-13 touching pairs against 8-2 unbiased and looked thin because
+the shape grows back over the neighbour, fails `_terrain_fits`, and the retry scatters
+uniformly. Raising the gate 0.4 to 0.6 changed nothing (12 vs 13). The shipped rule seats the
+new feature's bounding box flush against a placed one's, one of four sides, the slide along it
+random: 23 pairs at 0.5 and 27 at 0.7 against 2 unbiased (8 seeds, versus, --terrain=6), so
+TERRAIN_CLUSTER stays 0.5. Blocked area holds near 10% of a half; TERRAIN_DEFAULT drops 8 to 6.
+
+**Red ghost.** `Wall.paint_piece` takes per-cell tints; `_blocked_tints` in PlayerController
+walks the piece's cells and marks a cell red when the tile cannot take a block (terrain, a
+wall, enemy ground, off the map — the same rule `can_place_piece` applies per tile). A blocked
+cell's block also rides on top of the structure that blocks it: at ground level the red block
+would sit inside the terrain box, out of sight. `_settle_cells` resets the heights every
+frame, so the lift is per hover, not sticky. The anchor cell (the hovered free tile) stays
+white; a piece over own walls keeps the storey stack preview as before.
+
+**Break-checks** (each watched red then restored): an 8x3 solid pattern (oversize and
+solid-big both red), the eight big patterns removed (big >= 4 red), TERRAIN_CLUSTER := 0.0
+(pairs red), `_blocked_tints` returning empty (the red and the lift red). The `:=`-from-
+Variant trap bit twice in new code (`_blocked_tints`'s `ok`, `preview_test`'s `nodes`) —
+both the same shape as round 2's: an untyped `map`/`human` in the chain.
+
+**The suite flake.** The full suite failed previews once with the spot search empty while
+the same test had passed standalone: the dealt piece is time-seeded (`U.randomize()` runs at
+startup, `Catalog.draw` picks through the global RNG), so the drawn shape varies per run and
+some shapes find no free anchor beside terrain on the seed-7 board. `_check_blocked_cells`
+now picks its own piece, the first wall def from `Catalog.drawable(WALL)` that anchors beside
+terrain at one of its rotations (`_check_pieces`' destroy-and-spawn pattern), and leaves it
+in the hand — the first draft saved the dealt piece to restore it and crashed on a freed
+instance: the def loop's first destroy frees exactly that piece. The `:=` trap bit a third
+time in the same fix (`var held := human.nextWall`): a parse error makes the scene hang, so
+the runner times out at 600 s with exit 124 instead of failing fast.
+
+**Renders:** /tmp/r3_versus_s4_005.png, /tmp/r3_versus_s11_005.png, /tmp/r3_ai4_s5_005.png.

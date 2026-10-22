@@ -388,7 +388,7 @@ func next_wall_to_map() -> void:
 		U.set_parent(nextWall, buildableTileSelected.go)
 		nextWall.position = Vector3.ZERO
 		_settle_cells()
-		_darken_wall()
+		_shade_wall(0.7, _blocked_tints())
 		_hide_decorations(piece_tiles(buildableTileSelected))
 
 
@@ -402,6 +402,26 @@ func _settle_cells() -> void:
 		if x >= 0 and z >= 0 and x < map.sizeX and z < map.sizeZ:
 			nodes[i].global_position.y = map.tiles[x][z].go.global_position.y
 
+
+## White per cell that can take a block, red per blocked one (terrain, a wall, enemy ground, off the map);
+## a blocked cell's ghost block rides on top of the structure blocking it, so the red stays in sight.
+func _blocked_tints() -> PackedColorArray:
+	var out := PackedColorArray()
+	var nodes := nextWall.get_children().filter(func(n): return n is Node3D)
+	var cells: Array[Vector2i] = U.comp(nextWall, "BuildingBlock").cells
+	for i in cells.size():
+		var x: int = buildableTileSelected.idxX + cells[i].x
+		var z: int = buildableTileSelected.idxZ + cells[i].y
+		var ok: bool = x >= 0 and z >= 0 and x < map.sizeX and z < map.sizeZ
+		if ok:
+			var t = map.tiles[x][z]
+			if U.alive(t.structure):
+				nodes[i].global_position.y = t.wall_top()
+			ok = t.is_free() and not enemy_ground(t)
+		elif i < nodes.size():
+			nodes[i].global_position.y = buildableTileSelected.go.global_position.y
+		out.append(Color.WHITE if ok else NO_STACK)
+	return out
 
 func next_building_to_hand() -> void:
 	if U.alive(nextBuilding) and nextBuilding.get_parent() != hand:
@@ -421,13 +441,9 @@ func _restore_wall_color() -> void:
 
 
 ## The held piece on the board reads darker than the placed blocks round it.
-func _darken_wall() -> void:
-	_shade_wall(0.7)
-
-
-func _shade_wall(shade: float) -> void:
+func _shade_wall(shade: float, tints: PackedColorArray = PackedColorArray()) -> void:
 	if U.alive(nextWall):
-		WallComp.paint_piece(nextWall, self, U.comp(nextWall, "Structure").def.piece, shade)
+		WallComp.paint_piece(nextWall, self, U.comp(nextWall, "Structure").def.piece, shade, tints)
 
 
 ## The held piece over own walls shows the storeys it stacks as, darkened like every ghost and red when it cannot

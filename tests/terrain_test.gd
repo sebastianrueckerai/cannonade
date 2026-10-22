@@ -1,7 +1,8 @@
 extends Node
-## Terrain on the battlefield (I90-I93): both halves hold the same blocked tiles, every
-## feature is a clumped shape inside 4x4 whose holes stay buildable ground, the count is a
-## knob (--terrain=N), castle rings keep their reach round every feature, a destructible
+## Terrain on the battlefield (I90-I95): both halves hold the same blocked tiles, every
+## feature is a clumped shape inside 7x7 whose holes stay buildable ground, a mass five
+## tiles across or more is never a filled rectangle, neighbours gather in clusters, the
+## count is a knob (--terrain=N), castle rings keep their reach round every feature, a destructible
 ## feature falls to its shells and frees its ground, an indestructible one absorbs every
 ## hit, placement refuses the tiles, and the AI shoots the crates that block its own way
 ## but never the ones that would open the enemy's.
@@ -155,9 +156,9 @@ func _versus_board() -> void:
 			for t in cells:
 				lo = lo.min(Vector2i(t.idxX, t.idxZ))
 				hi = hi.max(Vector2i(t.idxX, t.idxZ))
-			if hi.x - lo.x > 3 or hi.y - lo.y > 3:
+			if hi.x - lo.x > 6 or hi.y - lo.y > 6:
 				oversize += 1
-	check(oversize == 0, "every feature fits a 4x4 box on each half (%d oversize)" % [oversize])
+	check(oversize == 0, "every feature fits a 7x7 box on each half (%d oversize)" % [oversize])
 
 	var mismatch := 0
 	for x in map.sizeX:
@@ -245,6 +246,9 @@ func _versus_board() -> void:
 ## frame passes, so no AI coroutine starts.
 func _seed_sweep() -> void:
 	var kinds := {true: 0, false: 0}
+	var big := 0
+	var solid_big := 0
+	var pairs := 0
 	for s in range(10, 18):
 		_start("versus", s)
 		var mismatch := 0
@@ -254,11 +258,43 @@ func _seed_sweep() -> void:
 					mismatch += 1
 		for go in map.terrain_features:
 			kinds[U.comp(go, "Terrain").destructible] += 1
+		# I95: the bigger masses (five tiles across or more) are never filled rectangles, and
+		# features gather: a pair touches when some two of their cells lie side by side
+		var feats: Array = []
+		for go in map.terrain_features:
+			var terr := U.comp(go, "Terrain")
+			var cells: Array = []
+			for t in terr.tiles:
+				cells.append(Vector2i(t.idxX, t.idxZ))
+			feats.append(cells)
+			var lo := Vector2i(map.sizeX, map.sizeZ)
+			var hi := Vector2i.ZERO
+			var n_half := 0
+			for c: Vector2i in cells:
+				if c.y < map.sizeZ / 2:
+					lo = lo.min(c)
+					hi = hi.max(c)
+					n_half += 1
+			if hi.x - lo.x >= 4 or hi.y - lo.y >= 4:
+				big += 1
+				if n_half == (hi.x - lo.x + 1) * (hi.y - lo.y + 1):
+					solid_big += 1
+		for i in feats.size():
+			for j in range(i + 1, feats.size()):
+				var gap := 99
+				for a: Vector2i in feats[i]:
+					for b: Vector2i in feats[j]:
+						gap = mini(gap, maxi(absi(a.x - b.x), absi(a.y - b.y)))
+				if gap <= 1:
+					pairs += 1
 		check(map.terrain_features.size() > 0 and mismatch == 0 and _rings_reach(),
 				"seed %d: terrain grows, mirrors and keeps the castle rings connected (%d features)" % [s, map.terrain_features.size()])
 		main.free()
 	check(kinds[true] > 0 and kinds[false] > 0,
 			"across the seeds both sorts appear (breakable %d, standing %d)" % [kinds[true], kinds[false]])
+	check(big >= 4 and solid_big == 0,
+			"bigger masses appear (%d of five tiles across or more) and none is a filled rectangle (%d solid)" % [big, solid_big])
+	check(pairs >= 20, "features gather in clusters (%d touching pairs across the seeds)" % [pairs])
 	_start("versus", 19, 3)
 	check(map.terrain_features.size() == 3,
 			"--terrain=3 draws three features a side (%d)" % [map.terrain_features.size()])

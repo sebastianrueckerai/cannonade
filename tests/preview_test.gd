@@ -1,7 +1,8 @@
 extends Node
 ## The hand and the placement preview: the held piece lives in an invisible hand, never on the UI layer, and
 ## shows only on the board. In the wall phase the piece previews on a hovered free tile (darker, the tile's
-## trees and stones hidden) and returns to the hand off the board; in the cannon phase the dealt gun previews
+## trees and stones hidden), every cell the piece cannot occupy reads red and rides on what blocks it (I95),
+## and the piece returns to the hand off the board; in the cannon phase the dealt gun previews
 ## on the tile instead, and no piece is held. Every drawn piece's ghost covers its anchor plus cells at every
 ## turn. The HUD plaques lie on screen and clear of each other, in versus and with four players.
 ##   godot --headless --fixed-fps 30 res://tests/preview_test.tscn
@@ -21,6 +22,7 @@ func _ready() -> void:
 	_check_quiet_build()
 	_check_hand()
 	await _check_hovers()
+	await _check_blocked_cells()
 	await _check_gun_hover()
 	await _check_plates()
 	_check_pieces()
@@ -131,6 +133,69 @@ func _check_hovers() -> void:
 	check(deco.all(func(m): return m.visible), "the tile's trees and stones come back when the preview leaves")
 
 
+## A piece hovering beside terrain shows its blocked part in red on top of the blocker (I95): the held piece
+## anchors on a free tile with a cell over a terrain tile, that cell's ghost block turns the no-stack red and
+## rises onto the feature, the anchor's own cell stays white, and the piece cannot be placed.
+func _check_blocked_cells() -> void:
+	# the dealt piece is time-seeded, so the check picks its own: the first wall def that
+	# anchors beside terrain at one of its rotations, deterministic as _check_pieces
+	var blocked: Array = []
+	for col in map.tiles:
+		for t in col:
+			if U.alive(t.structure) and U.comp(t.structure, "Terrain") != null:
+				blocked.append(t)
+	var spots: Array = []
+	var bb = null
+	for def in Catalog.drawable(BuildingDef.Category.WALL):
+		U.destroy(human.nextWall)
+		human.nextWall = Catalog.spawn(def, human.hand)
+		bb = U.comp(human.nextWall, "BuildingBlock")
+		var rot := 0
+		while spots.is_empty() and rot < 4:
+			for c: Vector2i in bb.cells:
+				for t in blocked:
+					var a := Vector2i(t.idxX - c.x, t.idxZ - c.y)
+					if a.x < 0 or a.y < 0 or a.x >= map.sizeX or a.y >= map.sizeZ:
+						continue
+					if map.tiles[a.x][a.y].is_free():
+						spots.append([a, c, t])
+						break
+				if not spots.is_empty():
+					break
+			if spots.is_empty():
+				bb.rotate_counter_clockwise()
+				rot += 1
+		if not spots.is_empty():
+			break
+	check(not spots.is_empty(), "a wall def anchors beside terrain over it")
+	if spots.is_empty():
+		return
+	var spot: Array = []
+	for s in spots:
+		await _hover(s[0])
+		if human.buildableTileSelected == map.tiles[s[0].x][s[0].y]:
+			spot = s
+			break
+	check(not spot.is_empty(), "the cursor picks the anchor tile beside terrain")
+	if spot.is_empty():
+		return
+	var nodes: Array = human.nextWall.get_children().filter(func(n): return n is Node3D)
+	var idx := -1
+	for i in bb.cells.size():
+		if bb.cells[i] == spot[1]:
+			idx = i
+	var anchor_i: int = bb.cells.find(Vector2i.ZERO)
+	check(idx >= 0 and _tint(nodes[idx]) == human.NO_STACK,
+			"the ghost cell over terrain wears the no-stack red")
+	check(idx >= 0 and is_equal_approx(nodes[idx].global_position.y, spot[2].wall_top()),
+			"the red cell rides on top of the terrain feature")
+	check(anchor_i >= 0 and _tint(nodes[anchor_i]) == Color.WHITE,
+			"the anchor's own free cell stays uncoloured")
+	check(not human.canPlaceWall, "the piece over terrain cannot be placed")
+	await _hover_off()
+	check(human.nextWall.get_parent() == human.hand, "the piece returns to the hand off the board")
+
+
 ## In the cannon phase the dealt gun previews on the hovered free tile and goes back to the hand off the board.
 func _check_gun_hover() -> void:
 	game.next_phase()
@@ -226,6 +291,12 @@ func _check_pieces() -> void:
 			check(human.nextWall.get_parent() == human.hand, "%s turned %d goes back to the hand" % [def.id, r])
 			bb.rotate_clockwise()
 		human._restore_decorations()
+
+
+## The wall shader's tint of the first block under node, white when no cell of the piece is blocked.
+func _tint(node: Node) -> Color:
+	var mi := node.find_child("wall", true, false) as MeshInstance3D
+	return mi.material_override.get_shader_parameter("tint") if mi != null else Color.BLACK
 
 
 ## The wall shader's shade of the first block under node, 1 placed, under 1 as the ghost.

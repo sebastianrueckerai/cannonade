@@ -204,10 +204,11 @@ func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
 	return anchor
 
 
-# ------------------------------------------------------------- terrain (I90, I91, I93)
+# ------------------------------------------------------------- terrain (I90, I91, I93, I95)
 ## The shapes a feature can take, rows from its north-west cell ("up" the map is low z):
 ## "#" a blocked cell, "." a hole that stays free ground a wall can stand in. Clumps with
-## holes and notches, not lines, every one inside 4x4.
+## holes and notches, not lines. The first ten sit inside 4x4; the I95 masses reach 7x7 -
+## corridors, curls and double clumps, none a plain rectangle.
 const TERRAIN_PATTERNS := [
 	"####/####/####/####",
 	"####/####/##../##..",
@@ -219,14 +220,25 @@ const TERRAIN_PATTERNS := [
 	"#../###/..#",
 	"##./##./.##",
 	"##/##",
+	"#######/#.....#/#.....#/#.....#/#.....#/#.....#/#######",
+	"#######/#.....#/#.###.#/#.#.#.#/#.#...#/#.###.#/#######",
+	"##...##/##...##/##...##/##...##/##...##/##...##/#######",
+	"##...../##...../##...../##...../##...../#######/#######",
+	"###.###/###.###/#######/###.###",
+	"#####/...##/..##./.##../##.../#####/#####",
+	"#######/#######/#.#.#.#/#.#.#.#",
+	"#####/#...#/#...#/#...#/#####",
 ]
 ## Features a side draws, stone half of them and crates the rest: one half with two players,
 ## one quadrant with four (the mirrors fill in, so every side holds the same blocked tiles).
 ## --terrain=N overrides.
-const TERRAIN_DEFAULT := 8
+const TERRAIN_DEFAULT := 6
 @export var terrainCount := TERRAIN_DEFAULT
 ## Spots tried per feature before this map goes without it.
 const TERRAIN_ATTEMPTS := 60
+## A feature joins an earlier one instead of scattering this often, so masses stand in
+## clusters rather than spreading evenly (I95). Overlaps fail _terrain_fits; touching stands.
+const TERRAIN_CLUSTER := 0.5
 ## Terrain keeps this Chebyshev distance from a castle centre, so its 5x5 ring stays buildable.
 const TERRAIN_CASTLE_CLEAR := 3
 
@@ -251,11 +263,29 @@ func _place_terrain() -> void:
 	var zone := Vector2i(map.sizeX, map.sizeZ / 2)
 	if players.size() == 4:
 		zone.x = map.sizeX / 2
+	var clusters: Array = []
 	for i in terrainCount:
 		var shape: Array = shapes[rng.randi_range(0, shapes.size() - 1)]
+		var size := Vector2i.ONE
+		for c in shape:
+			size.x = maxi(size.x, c.x + 1)
+			size.y = maxi(size.y, c.y + 1)
 		var sort := "stone" if rng.randf() < 0.5 else "crate"
 		for attempt in TERRAIN_ATTEMPTS:
-			var anchor := Vector2i(rng.randi_range(0, zone.x - 1), rng.randi_range(0, zone.y - 1))
+			var anchor := Vector2i(rng.randi_range(0, zone.x - size.x), rng.randi_range(0, zone.y - size.y))
+			if rng.randf() < TERRAIN_CLUSTER and not clusters.is_empty():
+				var near: Array = clusters[rng.randi_range(0, clusters.size() - 1)]
+				var lo: Vector2i = near[0]
+				var hi: Vector2i = near[0]
+				for c in near:
+					lo = Vector2i(mini(lo.x, c.x), mini(lo.y, c.y))
+					hi = Vector2i(maxi(hi.x, c.x), maxi(hi.y, c.y))
+				match rng.randi_range(0, 3):  # flush against a side of the placed feature's bounding box
+					0: anchor = Vector2i(hi.x + 1, rng.randi_range(lo.y - size.y + 1, hi.y))
+					1: anchor = Vector2i(lo.x - size.x, rng.randi_range(lo.y - size.y + 1, hi.y))
+					2: anchor = Vector2i(rng.randi_range(lo.x - size.x + 1, hi.x), hi.y + 1)
+					_: anchor = Vector2i(rng.randi_range(lo.x - size.x + 1, hi.x), lo.y - size.y)
+				anchor = anchor.clamp(Vector2i.ZERO, zone - size)
 			var cells: Array = []
 			for c in shape:
 				cells.append(anchor + c)
@@ -265,6 +295,7 @@ func _place_terrain() -> void:
 			var go := _terrain_go(sort, all)
 			map.claim_terrain(go, all)
 			if _rings_connected():
+				clusters.append(cells)
 				break
 			map.release_terrain(go, all)
 
