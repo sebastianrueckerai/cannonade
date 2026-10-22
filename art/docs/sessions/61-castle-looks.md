@@ -13,7 +13,7 @@ writes `castle_d3.<v>_rubble.glb` for the fall to ruins.
 
 ## Deliverables
 
-1. **The game pins the look** (I100): [Castle.gd](/home/womb/repos/grid-cannons/scripts/components/Castle.gd)
+1. **The game pins the look** (I104): [Castle.gd](/home/womb/repos/grid-cannons/scripts/components/Castle.gd)
    reads the drawn look off its Art node and resolves its five state ids through it, the ruin crumbles as its own
    look's d3. A test guards the pinning and the completeness rule: every healthy look on disk owns its four
    damage states and its d3 rubble.
@@ -30,7 +30,7 @@ writes `castle_d3.<v>_rubble.glb` for the fall to ruins.
 4. **The board**: one sheet of all eight looks × five states (pipeline renders), a battle screenshot at several
    art seeds, and [tools/damage_view.tscn](/home/womb/repos/grid-cannons/tools/damage_view.tscn) widened, for
    Sebastian's pass. The looks ship synced unapproved like the faction walls did (C17); his pick or rework
-   closes C20.
+   closes C21.
 
 ## Budget
 
@@ -69,4 +69,4 @@ Spend ~$20.70 of the 30 cap: 8 healthy reference pictures, 24 chained damage edi
 
 Boards for the pass: /tmp/damage_view.png (all eight looks × five states, team parts painted), and three
 ai4 battles at art seeds 11, 23, 37 (/tmp/board1_005.png to /tmp/board3_005.png). Not verified here: the
-look of any generated picture or mesh — no image judgement in this harness. Sebastian's pass closes C20.
+look of any generated picture or mesh — no image judgement in this harness. Sebastian's pass closes C21.

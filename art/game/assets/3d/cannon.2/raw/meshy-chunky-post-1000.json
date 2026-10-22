@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a16560-1815-749a-9f6c-e61b585cc9f5",
+  "inputs": [
+    "game/assets/3d/cannon/refs/chunky-post.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "target_polycount": 1000,
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2"
+  },
+  "label": "cannon meshy-chunky-post-1000",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 31,
+  "created": "2026-10-22T22:49:49",
+  "outputs": {
+    "model": "meshy-chunky-post-1000.glb",
+    "rendered_image": "meshy-chunky-post-1000-preview.png"
+  }
+}

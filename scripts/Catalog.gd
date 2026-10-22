@@ -264,14 +264,32 @@ const WallComp = preload("res://scripts/components/Wall.gd")
 ## wears the first.
 const WALL_LOOKS := ["wall", "wall_corbel", "wall_pilaster", "wall_course"]
 
+## The gun looks of C20: the slender cannon, the two chunky picks and the mortar at 1x1. Every game deals each
+## player one (Main.build); a gun with no owner wears the first. One look a player, the whole faction wears it.
+const GUN_LOOKS := ["cannon", "cannon.2", "cannon.3", "cannon.4"]
+
 
 static func wall_look(owner) -> String:
 	return owner.wallLook if owner != null and owner.wallLook != "" else WALL_LOOKS[0]
 
 
+static func gun_look(owner) -> String:
+	return owner.gunLook if owner != null and owner.gunLook != "" else GUN_LOOKS[0]
+
+
 ## The looks in a random order, drawn from the art's own generator so the game's random sequence stays.
 static func deal_wall_looks() -> Array:
 	var looks: Array = WALL_LOOKS.duplicate()
+	for i in range(looks.size() - 1, 0, -1):
+		var j: int = Art._rng.randi_range(0, i)
+		var t = looks[i]
+		looks[i] = looks[j]
+		looks[j] = t
+	return looks
+
+
+static func deal_gun_looks() -> Array:
+	var looks: Array = GUN_LOOKS.duplicate()
 	for i in range(looks.size() - 1, 0, -1):
 		var j: int = Art._rng.randi_range(0, i)
 		var t = looks[i]
@@ -290,6 +308,8 @@ func spawn(def_or_id, parent: Node = null, owner = null) -> Node3D:
 	var go: Node3D = def.model.instantiate()
 	if def.id == "wall":
 		WallComp.put_on(go, wall_look(owner))
+	elif def.id == "cannon":
+		Art.attach(go, gun_look(owner))
 	else:
 		Art.attach(go, def.id)
 	if not def.piece.is_empty():
@@ -409,6 +429,7 @@ func spawn_projectile(pdef: ProjectileDef, parent: Node, pos: Vector3, basis: Ba
 	c.burnTime = pdef.burn_time
 	c.stunTime = pdef.stun_time
 	c.splashRange = pdef.splash_range
+	c.smokePuff = pdef.smoke_puff
 	c.tileDestroyer = pdef.tile_destroyer
 	if pdef.kind != ProjectileDef.Kind.STRAIGHT:
 		var body := _first_model_child(go)

@@ -63,8 +63,39 @@ func _ready() -> void:
 	_check_problem_reports()
 	await _check_workflow_in_game()
 	Catalog.load_dir(Catalog.BUILDINGS_DIR)
+	await _check_gun_looks()
 	print("CATALOG TEST PASSED" if failures.is_empty() else "CATALOG TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
+
+
+## The gun looks of C20: the game deals each player one of the four, a player's cannons wear it, and a cannon
+## without an owner wears the first.
+func _check_gun_looks() -> void:
+	check(Catalog.GUN_LOOKS.size() == 4 and Catalog.GUN_LOOKS.all(func(id): return Art.has_model(id)),
+			"four gun looks and every model is in the game %s" % [Catalog.GUN_LOOKS])
+	var dealt: Array = Catalog.deal_gun_looks()
+	check(dealt.all(func(l): return l in Catalog.GUN_LOOKS) and dealt.size() == Catalog.GUN_LOOKS.size(),
+			"the deal hands out the four looks, none twice (%s)" % [dealt])
+	Main.requested_mode = "ai2"
+	Main.requested_args = {"seed": "5", "no-decorations": "true"}
+	var main := Main.new()
+	get_tree().root.add_child.call_deferred(main)
+	await frames(1)
+	get_tree().current_scene = main
+	var players: Array = main.game.players
+	check(players[0].gunLook in Catalog.GUN_LOOKS and players[0].gunLook != players[1].gunLook,
+			"two players, two different gun looks (%s, %s)" % [players[0].gunLook, players[1].gunLook])
+	var look := func(go: Node3D): return go.get_node("Art").get_meta("art_id")
+	players[1].gunLook = "cannon.3"  # the deal is random; the wear check needs an owner on a non-first look
+	var gun := Catalog.spawn("cannon", null, players[1])
+	check(look.call(gun) == players[1].gunLook,
+			"a cannon of player 2 wears player 2's look (got %s)" % look.call(gun))
+	var bare := Catalog.spawn("cannon")
+	check(look.call(bare) == "cannon", "a cannon without an owner wears the first look")
+	gun.free()
+	bare.free()  # never added to the tree: they would leak at exit and fail the runner's ERROR check
+	main.queue_free()
+	await frames(2)
 
 
 ## A copy of the shipped catalog to edit freely.

@@ -13,6 +13,8 @@ enum Kind { SHELL, CLUSTER, STRAIGHT, ROCKET }
 @export var velocity := 3.0
 ## Tiles around the target that are hit too
 @export var splash_range := 0
+## The landing smokes over every splash tile (the heavy shell's 3x3)
+@export var smoke_puff := false
 ## Seconds hit tiles burn (cannot be built on)
 @export var burn_time := 0.0
 ## Seconds hit guns are stunned and tiles shake

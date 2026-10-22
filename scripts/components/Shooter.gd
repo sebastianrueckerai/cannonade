@@ -11,7 +11,7 @@ const FX = preload("res://scripts/FX.gd")
 @export var supplyNeeded := 0.0
 @export var minRange := 2.0
 @export var maxDesiredRange := 20.0
-@export var gravity := 5.0
+@export var gravity := 7.5
 @export var ascendingPart := 0.6
 @export var secondsBetweenShots := 1.0
 @export var damage := 10.0
@@ -89,15 +89,10 @@ func try_aim(destination: Vector3) -> bool:
 	distance = go.global_position.distance_to(destination)
 	var reachable := can_reach(distance)
 	if reachable and not stunned:
-		var angle1 := asin(clampf(distance * gravity / pow(vOpt, 2.0), -1.0, 1.0)) / 2.0
-		var deg1 := rad_to_deg(angle1)
-		var deg2 := 90.0 - deg1
-		if deg1 >= deg2:
-			angleDegrees = deg1
-			angleRads = angle1
-		else:
-			angleDegrees = deg2
-			angleRads = deg_to_rad(deg2)
+		# the flat (low) solution, never the steep one: the arc rises just high
+		# enough to reach the farthest tile (J6)
+		angleRads = asin(clampf(distance * gravity / pow(vOpt, 2.0), -1.0, 1.0)) / 2.0
+		angleDegrees = rad_to_deg(angleRads)
 		flyTime = 2.0 * vOpt * sin(angleRads) / gravity
 		if turns:
 			U.look_at(go, destination)

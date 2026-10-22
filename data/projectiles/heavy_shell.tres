@@ -8,3 +8,4 @@ script = ExtResource("2_hvy02")
 model = ExtResource("1_hvy01")
 velocity = 0.0
 splash_range = 1
+smoke_puff = true

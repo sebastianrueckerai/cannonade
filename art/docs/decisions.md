@@ -556,3 +556,15 @@ spawns they ride are his hand placements (round 3). Session 49, roadmap I78.
 
 ## D90. The heavy shell splashes a 3x3 at 20 a tile (2026-10-22, Sebastian)
 "Hm, how about the big cannon does twice the damage per field but damages all field in a 3x3 radius (including friendly ones and neutral one) with a impact effect over all 3 fields?" The heavy shell leaves the plus of five of rules v2 for a full 3x3 at twice a small shell's damage a tile, friends and bare ground included, and the landing effect covers the square. Rules v2's "damage stays 10 everywhere" now holds only for the small shells. Session 54, roadmap I84.
+
+## D91. The chunky gun looks: 2 and 5 picked, the mortar joins as a 1x1 (2026-10-23, Sebastian)
+"Build 2 and 5." And the follow-up: "An then in any round we give the existing cannon or one of the
+new ones randomly to a faction. So each faction alwas builds the same, but per party they differ. I
+also want to fix up the mortar: Scale it down to 2x2 and lets do the same for the mortat. We use it as
+a 1:1 exchange for the same cannon.So one faction has the now smaller mortat and the other the
+existing cannon" Board 2 (chunky-post) ships as
+[cannon.2](game/assets/3d/cannon.2), board 5 (chunky-iron) as
+[cannon.3](game/assets/3d/cannon.3), and the mortar's model rebuilt on the 1x1 plate ships as
+[cannon.4](game/assets/3d/cannon.4), a 1:1 model exchange for the cannon — same behaviour, same shell,
+only the model swaps. Every game deals each player one of the four looks (the slender cannon among
+them), the whole faction wears it, like the wall looks (D81). Session 62, roadmap C20 and I103.
