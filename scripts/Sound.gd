@@ -1,5 +1,5 @@
 extends Node
-## Sound (autoload): the game's clips by cue, the three buses, the menu's volumes and one call per event.
+## Sound (autoload): the game's clips by cue, the three buses, the menu's volumes and mute, and one call per event.
 ##
 ## A clip is res://assets/audio/<bus>/<cue>.wav or <cue>_<n>.wav for a cue with variants, picked at random and
 ## never the same twice in a row. A cue without a clip plays nothing, so a hook may stand before its clip lands.
@@ -33,6 +33,7 @@ var _voices: Array[AudioStreamPlayer] = []
 var _music := AudioStreamPlayer.new()
 var _music_cue := ""
 var _volume := {}  # setting of VOLUME_BUSES -> linear 0 to 1, 1 when never saved
+var _muted := false  # the menu icon's mute, carried by the Master bus every setting's buses flow into
 var _rng := RandomNumberGenerator.new()
 ## Headless runs (tests, the lab) have no audio device: the voices keep their books by the clock and never
 ## start a playback, which the server would hold past the resource cache at exit and report as a leak.
@@ -160,24 +161,47 @@ func volume(kind: String) -> float:
 func set_volume(kind: String, linear: float) -> void:
 	_volume[kind] = clampf(linear, 0.0, 1.0)
 	_apply(kind)
+	_save_volumes()
+
+
+## Whether the whole game is muted.
+func muted() -> bool:
+	return _muted
+
+
+## Mutes or restores everything and saves the file. The sliders keep their own settings.
+func set_muted(on: bool) -> void:
+	_muted = on
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), on)
+	_save_volumes()
+
+
+## Writes every setting: the sliders' volumes and the mute.
+func _save_volumes() -> void:
 	var cfg := ConfigFile.new()
 	for k in VOLUME_BUSES:
 		cfg.set_value("volume", k, _volume[k])
+	cfg.set_value("volume", "muted", _muted)
 	cfg.save(VOLUME_PATH)
 
 
-## Reads the saved volumes and applies them. A missing or broken file leaves everything at full.
+## Reads the saved volumes and the mute and applies them. A missing or broken file leaves everything at full.
 func load_volumes() -> void:
 	var cfg := ConfigFile.new()
 	for kind in VOLUME_BUSES:
 		_volume[kind] = 1.0
+	_muted = false
 	if cfg.load(VOLUME_PATH) == OK:
 		for kind in VOLUME_BUSES:
 			var v = cfg.get_value("volume", kind, 1.0)
 			if v is int or v is float:
 				_volume[kind] = clampf(float(v), 0.0, 1.0)
+		var m = cfg.get_value("volume", "muted", false)
+		if m is bool:
+			_muted = m
 	for kind in VOLUME_BUSES:
 		_apply(kind)
+	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), _muted)
 
 
 ## The setting's buses at its linear volume; the maxf is the -80 dB floor, a mute for the 0 slider.

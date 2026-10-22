@@ -13,6 +13,7 @@ class_name Art
 ##   ui/splash.png          splash screen image
 ##   ui/logo.png            title image on the menu
 ##   ui/menu_background.png
+##   ui/sound_on.svg, ui/sound_off.svg   the menu's mute icon pair, the state swapped on the click
 ##   ui/button.png, ui/button_hover.png, ui/button_pressed.png, ui/panel.png   9-slice styles, see theme()
 ##   ui/font.ttf            default font of the menu screens
 ##   sky/world_panorama.png equirectangular sky
