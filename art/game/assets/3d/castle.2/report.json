@@ -2,12 +2,12 @@
   "asset_id": "castle.2",
   "parts": {
     "castle": {
-      "verts": 3755,
+      "verts": 9348,
       "tris": 3116,
-      "non_manifold_edges": 3334,
+      "non_manifold_edges": 9348,
       "materials": [
         "team",
-        "Material_0"
+        "Mesh_0_stone"
       ],
       "origin": [
         0.0,
@@ -16,11 +16,11 @@
       ]
     }
   },
-  "verts": 3755,
+  "verts": 9348,
   "tris": 3116,
-  "non_manifold_edges": 3334,
+  "non_manifold_edges": 9348,
   "materials": [
-    "Material_0",
+    "Mesh_0_stone",
     "team"
   ],
   "dims_m": [
