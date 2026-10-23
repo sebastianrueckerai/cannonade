@@ -28,8 +28,8 @@ named, and the fall to ruins to shatter like the walls' crumble.
    and none is shoved under the ground. `Crumble`'s lending instance now takes the exact look
    (`Art.instance(look, true)`): without it a base castle's fall drew a random d3 variant and its pieces
    went material-less. Guarded in `tests/walls_test._check_crumble`, watched red.
-4. **The board**: `tools/damage_view` over the three keepers × five states in the flat materials, for
-   his pass; the material names on the board are the answer to his question.
+4. **The board**: [tools/damage_view](/home/womb/repos/grid-cannons/tools/damage_view.gd) over the three keepers × five states in the flat materials, for
+   his pass; the material names on the board are the answer to his question. The first board shipped broken: the tool built the ruined ids as look + suffix (`castle.3_d1`), but the state goes before the look's dot (`castle_d1.3`, `Castle.state_model`), so only the base castle showed its chain. A follow-up commit fixed the ids, paints the team slot by material name (the flat materials carry their part names, so d3 and d4 keep their true stone and dark), and shoots the grid through a 26° long lens from the old stand, so the rows sit near one scale with every label in frame.
 
 ## Budget
 

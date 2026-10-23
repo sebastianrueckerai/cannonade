@@ -36,9 +36,18 @@ func _ready() -> void:
 		var look: String = LOOKS[r]
 		for c in cols:
 			var st: Dictionary = STATES[c]
-			var id: String = look + st["suffix"]
+			# the state goes before the look's dot: castle.3's d1 is castle_d1.3 (Castle.state_model)
+			var id: String = look.get_slice(".", 0) + st["suffix"] + ("." + look.get_slice(".", 1) if look.contains(".") else "")
 			var path := "res://assets/art/3d/%s.glb" % id
 			if not FileAccess.file_exists(path):
+				var miss := Label3D.new()
+				miss.text = "missing\n%s" % id
+				miss.position = Vector3(c * CELL_X, 1.5, r * CELL_Z)
+				miss.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				miss.font_size = 64
+				miss.modulate = Color(0.8, 0.1, 0.1)
+				_board.add_child(miss)
+				push_error("damage_view: no model " + path)
 				continue
 			var at := Vector3(c * CELL_X, 0.0, r * CELL_Z)
 			var castle: Node3D = load(path).instantiate()
@@ -50,7 +59,7 @@ func _ready() -> void:
 			label.text += st["label"]
 			label.position = at + Vector3(0, 4.2, 0)
 			label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-			label.font_size = 96
+			label.font_size = 64
 			label.modulate = Color(0.15, 0.15, 0.15)
 			_board.add_child(label)
 	var rig: Camera3D = preload("res://scripts/CameraRig.gd").new()
@@ -58,6 +67,8 @@ func _ready() -> void:
 	add_child(rig)
 	rig.current = true
 	var centre := Vector3((cols - 1) * CELL_X * 0.5, 1.0, (rows - 1) * CELL_Z * 0.5)
+	# a long lens from far out: the rows keep near one scale and every label stays in frame
+	rig.fov = 26.0
 	rig.global_position = centre + Vector3(0, 30.0, 17.0)
 	rig.look_at(centre)
 	rig.capture_home_view(Vector2((cols - 1) * CELL_X * 0.5 + 2.0, (rows - 1) * CELL_Z * 0.5 + 2.0))
@@ -111,15 +122,15 @@ func _world(cols: int, rows: int) -> void:
 
 
 func _paint_team(root: Node3D) -> void:
-	# The cleanup puts the team material first, flat and without a texture; the game paints it.
+	# Flat materials carry their part names; the game paints the team one in the player colour.
 	for mi in _meshes(root):
 		var mesh: Mesh = mi.mesh
-		if mesh.get_surface_count() > 0:
-			var m: Material = mesh.surface_get_material(0)
-			if m is StandardMaterial3D and m.albedo_texture == null:
+		for s in mesh.get_surface_count():
+			var m: Material = mesh.surface_get_material(s)
+			if m is StandardMaterial3D and m.resource_name == "team":
 				var paint: StandardMaterial3D = m.duplicate()
 				paint.albedo_color = TEAM_BLUE
-				mi.set_surface_override_material(0, paint)
+				mi.set_surface_override_material(s, paint)
 
 
 func _meshes(node: Node) -> Array[MeshInstance3D]:
