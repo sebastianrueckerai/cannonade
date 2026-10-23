@@ -134,6 +134,14 @@ func _open_seed(p: Vector2i, seen: Dictionary, queue: Array) -> void:
 		queue.append(p)
 
 
+## An edge's identity: both endpoints' positions, order-independent, rounded against
+## last-ulp differences between the two expressions that compute a shared lattice point.
+func _edge_key(a: Vector3, b: Vector3) -> Array:
+	var key := ["%.3f,%.3f,%.3f" % [a.x, a.y, a.z], "%.3f,%.3f,%.3f" % [b.x, b.y, b.z]]
+	key.sort()
+	return key
+
+
 ## The generated versus board (seed 4, the enemy idle): the layout rules and the damage.
 ## The board is already up (built deferred in _ready); later boards use _start.
 func _versus_board() -> void:
@@ -243,24 +251,32 @@ func _versus_board() -> void:
 		var mass: MeshInstance3D = victim.go.get_node_or_null("Mass")
 		check(mass != null and mass.mesh != null, "a feature wears one merged drape mesh")
 		if mass != null and mass.mesh != null:
-			# the blanket's sides must face outward: a skirt wound the other way is culled from
-			# outside and the drape floats with see-through rims (found in play, 2026-10-23)
+			# the blanket's faces must front the outside viewer: Godot culls a face whose cross
+			# product (b-a)x(c-a) points at the viewer, so a correct skirt's cross product points
+			# into the mass and a correct top's points down (found in play, 2026-10-23)
 			var wv: PackedVector3Array = mass.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
 			var east := -1e9
 			for t3 in victim.tiles:
 				east = maxf(east, t3.go.position.x - victim.go.position.x)
 			var skirts := 0
 			var wrong := 0
+			var tops := 0
+			var down := 0
 			for i in range(0, wv.size(), 3):
 				var wa := wv[i]
 				var wb := wv[i + 1]
 				var wc := wv[i + 2]
-				if (wa.y < -0.2 or wb.y < -0.2 or wc.y < -0.2) and (wa.x + wb.x + wc.x) / 3.0 > east + 0.4:
-					skirts += 1
-					if (wb - wa).cross(wc - wa).x <= 0.0:
-						wrong += 1
-			check(skirts > 0 and wrong == 0,
-					"the blanket's sides face outward (%d east skirts, %d wound inward)" % [skirts, wrong])
+				if wa.y < -0.2 or wb.y < -0.2 or wc.y < -0.2:
+					if (wa.x + wb.x + wc.x) / 3.0 > east + 0.4:
+						skirts += 1
+						if (wb - wa).cross(wc - wa).x >= 0.0:
+							wrong += 1
+				else:
+					tops += 1
+					if (wb - wa).cross(wc - wa).y >= 0.0:
+						down += 1
+			check(skirts > 0 and wrong == 0 and down == 0,
+					"the blanket fronts the viewer (%d east skirts, %d culled from outside, %d of %d tops culled from above)" % [skirts, wrong, down, tops])
 
 			# every wall stands on one of the feature's exposed edges: the S/E/N/W neighbour
 			# pairing shipped rotated once, walls stood inside the mass and the open sides
@@ -298,9 +314,31 @@ func _versus_board() -> void:
 			for h in vhit:
 				if not h:
 					vbare += 1
-			check(vwalls == vedges.size() * 2 and voff == 0 and vbare == 0,
-					"every wall stands on an exposed edge (%d walls, %d off, %d of %d edges bare)"
-					% [vwalls, voff, vbare, vedges.size()])
+			var vsteps := 3 if victim.sort == "hill" else 2
+			check(vwalls == vedges.size() * 2 * vsteps and voff == 0 and vbare == 0,
+					"every exposed edge wears its wall strip, %d quads deep (%d walls, %d off, %d of %d edges bare)"
+					% [vsteps, vwalls, voff, vbare, vedges.size()])
+
+			# the wall's rim runs through the top's own lattice points, vertex for vertex:
+			# the walls once ran chord-straight between the lattice corners while the top rim
+			# subdivided, and the higher stories cracked off them (found in play, 2026-10-23)
+			var skirt_edges := {}
+			var top_counts := {}
+			for i in range(0, wv.size(), 3):
+				var tri := [wv[i], wv[i + 1], wv[i + 2]]
+				var skirted: bool = tri[0].y < -0.2 or tri[1].y < -0.2 or tri[2].y < -0.2
+				for e2 in [[tri[0], tri[1]], [tri[1], tri[2]], [tri[2], tri[0]]]:
+					var k2 := _edge_key(e2[0], e2[1])
+					if skirted:
+						skirt_edges[k2] = true
+					else:
+						top_counts[k2] = top_counts.get(k2, 0) + 1
+			var loose := 0
+			for k2 in top_counts:
+				if top_counts[k2] == 1 and not skirt_edges.has(k2):
+					loose += 1
+			check(loose == 0,
+					"every rim edge of the top is a wall's rim edge, vertex for vertex (%d loose)" % loose)
 		var cut: Mesh = mass.mesh if mass != null else null
 		var column: int = victim.columns[first]
 		for i in column - 1:
@@ -378,6 +416,8 @@ func _seed_sweep() -> void:
 	var crossing := 0
 	var tall := 0
 	var draped := 0
+	var fam_max := {}
+	var over := 0
 	for s in range(10, 18):
 		_start("versus", s)
 		var mismatch := 0
@@ -476,6 +516,9 @@ func _seed_sweep() -> void:
 				if terr3.columns[t] >= 2:
 					tall += 1
 				hmax = maxi(hmax, terr3.columns[t])
+			fam_max[terr3.sort] = maxi(fam_max.get(terr3.sort, 0), hmax)
+			if hmax > (4 if terr3.sort == "rock" else 3):  # rocks four stories, hills three
+				over += 1
 			var top3 := m3.mesh.get_aabb().end.y if m3 != null and m3.mesh != null else -1.0
 			if not (top3 > 0.6 and top3 < hmax * 0.75 + 0.3):
 				draped += 1
@@ -490,6 +533,9 @@ func _seed_sweep() -> void:
 	check(crossing >= 4, "features sit across the midline (%d across the seeds)" % [crossing])
 	check(tall >= 100, "terrain rises in stacked levels (%d columns two high or more across the seeds)" % [tall])
 	check(draped == 0, "every drape stands inside its levels (%d features out of band)" % [draped])
+	check(fam_max.get("rock", 0) == 4 and fam_max.get("hill", 0) == 3 and over == 0,
+			"rocks stand up to four stories, hills three (tallest %d and %d, %d over)"
+			% [fam_max.get("rock", 0), fam_max.get("hill", 0), over])
 	_start("versus", 19, 3)
 	check(map.terrain_features.size() == 6,
 			"--terrain=3 draws three shapes, one seat a side each (%d features)" % [map.terrain_features.size()])
