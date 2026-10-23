@@ -56,17 +56,25 @@ static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0, smok
 	var q := sqrt(s)
 	var root := _root("impact", 2.6)
 	## A splash shell also puffs every tile it hit round the point; with `smoke`
-	## those puffs cloud the whole 3x3, the heavy shell's landing (I101).
+	## those puffs cloud the whole 3x3, the heavy shell's landing (I101). Over
+	## water the puffs turn to mist, blue at the core, white as it disperses, and
+	## a river throws no dirt.
 	if splash > 0.0:
 		for d in [Vector3(splash, 0, 0), Vector3(-splash, 0, 0), Vector3(0, 0, splash), Vector3(0, 0, -splash),
 				Vector3(splash, 0, splash), Vector3(splash, 0, -splash), Vector3(-splash, 0, splash), Vector3(-splash, 0, -splash)]:
-			_burst(root, pos + d, {"tex": DIRT, "count": 4, "life": 0.8, "s": [0.12, 0.24],
-					"col": Color(0.85, 0.72, 0.55), "spread": 75.0, "v": [1.2, 2.4],
-					"grav": Vector3(0, -6, 0), "hold": 0.15})
+			if not water:
+				_burst(root, pos + d, {"tex": DIRT, "count": 4, "life": 0.8, "s": [0.12, 0.24],
+						"col": Color(0.85, 0.72, 0.55), "spread": 75.0, "v": [1.2, 2.4],
+						"grav": Vector3(0, -6, 0), "hold": 0.15})
 			if smoke:
-				_burst(root, pos + d, {"tex": SMOKE_DARK, "count": 3, "life": 1.9, "s": [0.25 * s, 0.55 * s],
+				var puff := {"tex": SMOKE_DARK, "count": 3, "life": 1.9, "s": [0.25 * s, 0.55 * s],
 						"col": Color(0.66, 0.62, 0.58), "spread": 25.0, "v": [0.5 * q, 1.2 * q],
-						"damp": 1.1, "ang": 150.0, "hold": 0.3})
+						"damp": 1.1, "ang": 150.0, "hold": 0.3}
+				if water:
+					puff.tex = SMOKE_SOFT
+					puff.col = Color(0.45, 0.62, 0.95)
+					puff.to = Color(0.93, 0.97, 1.0)
+				_burst(root, pos + d, puff)
 	if water:
 		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 20, "life": 1.1, "s": [0.12 * s, 0.26 * s],
 				"col": Color(0.9, 0.95, 1.0), "spread": 15.0, "v": [2.5 * q, 4.5 * q],
@@ -77,9 +85,6 @@ static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0, smok
 		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 7, "life": 0.55, "s": [0.3 * s, 0.55 * s],
 				"col": Color(0.95, 0.98, 1.0), "spread": 20.0, "v": [0.6 * q, 1.2 * q],
 				"damp": 2.0, "hold": 0.35})
-		_burst(root, pos, {"tex": SPARK, "count": 12, "life": 0.6, "s": [0.05, 0.09],
-				"col": Color(1.6, 1.8, 2.0), "add": true, "spread": 55.0, "v": [1.5 * q, 2.6 * q],
-				"grav": Vector3(0, -7, 0), "hold": 0.2})
 		_ring(root, pos, s, Color(0.7, 0.85, 1.0, 0.65))
 		return
 	match style:
@@ -119,8 +124,9 @@ static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0, smok
 
 ## One one-shot burst of camera-facing textured quads. The config keys:
 ## tex, count, life, s = [min, max] quad size, grow (size over life), col
-## (may exceed 1 for additive fire), add, dir, spread, v = [min, max]
-## velocity, damp, ang (spin), grav, hold (fraction of life before fade).
+## (may exceed 1 for additive fire), to (end colour, for bursts that recolour
+## over life), add, dir, spread, v = [min, max] velocity, damp, ang (spin),
+## grav, hold (fraction of life before fade).
 static func _burst(parent: Node3D, pos: Vector3, cfg: Dictionary) -> void:
 	var p := CPUParticles3D.new()
 	p.one_shot = true
@@ -142,8 +148,7 @@ static func _burst(parent: Node3D, pos: Vector3, cfg: Dictionary) -> void:
 	p.damping_max = p.damping_min
 	p.angular_velocity_min = -float(cfg.get("ang", 0.0))
 	p.angular_velocity_max = float(cfg.get("ang", 0.0))
-	p.color = cfg.get("col", Color.WHITE)
-	p.color_ramp = _ramp(cfg.get("hold", 0.35))
+	p.color_ramp = _ramp(cfg.get("hold", 0.35), cfg.get("col", Color.WHITE), cfg.get("to", cfg.get("col", Color.WHITE)))
 	p.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	p.visibility_aabb = AABB(Vector3(-6, -6, -6), Vector3(12, 12, 12))
 	parent.add_child(p)
@@ -177,11 +182,12 @@ static func _curve(grow: bool) -> Curve:
 	return c
 
 
-## Alpha holds to `hold`, then fades out; the particle colour multiplies in.
-static func _ramp(hold: float) -> Gradient:
+## Alpha holds to `hold`, then fades out; the colour runs `col` to `to` over the
+## held span, so `to` alone turns a burst that changes colour as it disperses.
+static func _ramp(hold: float, col := Color.WHITE, to := Color.WHITE) -> Gradient:
 	var g := Gradient.new()
 	g.offsets = PackedFloat32Array([0.0, hold, 1.0])
-	g.colors = PackedColorArray([Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)])
+	g.colors = PackedColorArray([col, to, Color(to.r, to.g, to.b, 0.0)])
 	return g
 
 

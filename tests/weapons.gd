@@ -380,11 +380,60 @@ func _run() -> void:
 				sparks += q.amount
 			else:
 				land_style = true
-	check(droplets >= 30 and bursts >= 3 and sparks >= 10,
-			"the splash throws droplets, foam and spray (%d droplets, %d bursts, %d sparks)" % [droplets, bursts, sparks])
+	check(droplets >= 30 and bursts >= 3 and sparks == 0,
+			"the splash throws droplets and foam, no sparks (%d droplets, %d bursts, %d sparks)" % [droplets, bursts, sparks])
 	check(not land_style, "a water landing wears no dirt, fire or smoke texture")
 	await seconds(3.0)
 	check(_fx_count() == 0, "the splash cleans itself up")
+
+	# the fused gun's shell lands in water: its 3x3 turns to mist, blue at the
+	# core and white as it disperses, and a river throws no dirt or dark smoke
+	var sgun = null
+	for t in fx_water.get_surrounding_tiles(2):
+		if not (t.is_free() and not t.water):
+			continue
+		var placed: Node3D = p1.place(load("res://data/buildings/cannon22a.tres"), t.idxX, t.idxZ)
+		if not U.alive(placed):
+			continue
+		var psh := U.shooter(placed)
+		if psh != null:
+			psh.nextBulletTime = 0.0
+		if psh != null and psh.try_shoot(fx_water.go.global_position, fx_water):
+			sgun = psh
+			break
+		U.destroy(placed)
+	check(sgun != null, "a fused gun by the water fires its shell at it")
+	var mist = null
+	fx_end = U.time + 15.0
+	while U.time < fx_end and mist == null:
+		await get_tree().process_frame
+		mist = _fx_at("impact")
+	check(mist != null, "the shell's water landing raises a splash")
+	var land := 0
+	var mist_tiles := 0
+	var blue_core := true
+	var white_out := true
+	for p in mist.find_children("*", "CPUParticles3D", true, false):
+		var pm := ((p as CPUParticles3D).mesh as QuadMesh).material as StandardMaterial3D
+		if pm.albedo_texture == FX.SMOKE_DARK or pm.albedo_texture == FX.DIRT or pm.albedo_texture == FX.SPARK:
+			land += 1
+	var centre := _fx_centre(mist)
+	for o in [Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, 1), Vector3(0, 0, -1),
+			Vector3(1, 0, 1), Vector3(1, 0, -1), Vector3(-1, 0, 1), Vector3(-1, 0, -1)]:
+		for p in mist.find_children("*", "CPUParticles3D", true, false):
+			var pp := p as CPUParticles3D
+			var pm2 := (pp.mesh as QuadMesh).material as StandardMaterial3D
+			if pm2.albedo_texture == FX.SMOKE_SOFT and pp.global_position.distance_to(centre + o) < 0.4:
+				mist_tiles += 1
+				var ramp: Gradient = pp.color_ramp
+				blue_core = blue_core and ramp.colors[0].b - ramp.colors[0].r >= 0.3
+				white_out = white_out and ramp.colors[1].b - ramp.colors[1].r <= 0.15
+				break
+	check(land == 0, "the shell's water landing wears no dark smoke, dirt or sparks (%d land-style bursts)" % land)
+	check(mist_tiles == 8 and blue_core and white_out,
+			"the shell's 3x3 mists blue at the core and white as it disperses (%d of 8 tiles)" % mist_tiles)
+	await seconds(3.0)
+	check(_fx_count() == 0, "the mist cleans itself up")
 
 	# the shell flies the flat arc (J6): the low ballistic solution - the barrel
 	# never rises past 45 degrees, the 62-tile map diagonal lands in 0.6 of the
