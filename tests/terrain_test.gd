@@ -243,24 +243,32 @@ func _versus_board() -> void:
 		var mass: MeshInstance3D = victim.go.get_node_or_null("Mass")
 		check(mass != null and mass.mesh != null, "a feature wears one merged drape mesh")
 		if mass != null and mass.mesh != null:
-			# the blanket's sides must face outward: a skirt wound the other way is culled from
-			# outside and the drape floats with see-through rims (found in play, 2026-10-23)
+			# the blanket's faces must front the outside viewer: Godot culls a face whose cross
+			# product (b-a)x(c-a) points at the viewer, so a correct skirt's cross product points
+			# into the mass and a correct top's points down (found in play, 2026-10-23)
 			var wv: PackedVector3Array = mass.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
 			var east := -1e9
 			for t3 in victim.tiles:
 				east = maxf(east, t3.go.position.x - victim.go.position.x)
 			var skirts := 0
 			var wrong := 0
+			var tops := 0
+			var down := 0
 			for i in range(0, wv.size(), 3):
 				var wa := wv[i]
 				var wb := wv[i + 1]
 				var wc := wv[i + 2]
-				if (wa.y < -0.2 or wb.y < -0.2 or wc.y < -0.2) and (wa.x + wb.x + wc.x) / 3.0 > east + 0.4:
-					skirts += 1
-					if (wb - wa).cross(wc - wa).x <= 0.0:
-						wrong += 1
-			check(skirts > 0 and wrong == 0,
-					"the blanket's sides face outward (%d east skirts, %d wound inward)" % [skirts, wrong])
+				if wa.y < -0.2 or wb.y < -0.2 or wc.y < -0.2:
+					if (wa.x + wb.x + wc.x) / 3.0 > east + 0.4:
+						skirts += 1
+						if (wb - wa).cross(wc - wa).x >= 0.0:
+							wrong += 1
+				else:
+					tops += 1
+					if (wb - wa).cross(wc - wa).y >= 0.0:
+						down += 1
+			check(skirts > 0 and wrong == 0 and down == 0,
+					"the blanket fronts the viewer (%d east skirts, %d culled from outside, %d of %d tops culled from above)" % [skirts, wrong, down, tops])
 
 			# every wall stands on one of the feature's exposed edges: the S/E/N/W neighbour
 			# pairing shipped rotated once, walls stood inside the mass and the open sides

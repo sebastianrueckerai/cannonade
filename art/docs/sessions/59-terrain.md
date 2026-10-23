@@ -296,3 +296,19 @@ pairing had left 2-8 of 8-28 edges bare and 12-40 phantom triangles per feature.
 victim's exposed-edge set from its cells and checks every wall triangle stands on one of
 them, red with the rotation back in (20 walls off, 10 of 18 edges bare). Gold-board renders
 before and after differ exactly at the feature clusters, 10-12k changed pixels per seed.
+
+**Follow-up 3, same day.** Still broken in his play ("Does not work... I still see only some
+first level wall - individual faces... Looks like the faces away from the player are
+visible"). That named it: back-face culling inverted. Every face of the drape was wound
+against Godot's front-face convention - Godot culls a face whose cross product
+(b-a)x(c-a) points at the viewer. The tops were wound cross-up since the first drape and
+never rendered; the flags round's "outward" wall fix (a8902ac) picked exactly the wrong
+direction, the walls had been right before it. `_face` in
+[Terrain.gd](../../scripts/components/Terrain.gd) now emits its triangle reversed
+(a, c, b), so the whole blanket fronts the viewer. The winding guard in
+[terrain_test](../../../tests/terrain_test.gd) asserts the real convention - east skirts
+cross into the mass, tops cross down - watched red against the old winding (8 of 8 east
+skirts and 80 of 80 tops culled), and a rendered gold board proves it: the feature regions
+go from 56 percent bare board with 524 px fragments to solid 9561 px and 7885 px masses.
+Crops: /tmp/winding_{before,after}_{right,left}.png. LineRenderer, the only other
+hand-built mesh, was safe all along through CULL_DISABLED.

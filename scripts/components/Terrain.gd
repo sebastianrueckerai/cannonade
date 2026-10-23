@@ -144,9 +144,11 @@ func _lattice(p: Vector3, top: Array, f: Vector2, hill: bool, peak: float) -> Di
 
 
 ## Triangle of the drape: position, a flat normal placeholder (generate_normals fills it)
-## and the vertex colour.
+## and the vertex colour. Godot's front faces wind clockwise on screen - a face whose
+## cross product (b-a)x(c-a) points at the viewer is culled - so every triangle emits
+## reversed: tops and walls wound inward by cross-math, visible from outside.
 func _face(st: SurfaceTool, a, b, c, peak: float) -> void:
-	for v in [a, b, c]:
+	for v in [a, c, b]:
 		st.set_color(v["tint"])
 		st.add_vertex(v["pos"])
 
