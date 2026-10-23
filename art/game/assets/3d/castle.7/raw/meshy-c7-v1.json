@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a165a1-3fa2-71ba-af28-8b707d8783e9",
+  "inputs": [
+    "game/assets/3d/castle.7/refs/v-view.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle7 meshy",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 42,
+  "created": "2026-10-23T00:01:09",
+  "outputs": {
+    "model": "meshy-c7-v1.glb",
+    "rendered_image": "meshy-c7-v1-preview.png"
+  }
+}

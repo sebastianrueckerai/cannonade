@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The building in this picture is still too tall. Keep the same building, style, colours, plain grey background, wide frame and camera. Change one thing: the whole building stands two thirds as tall as it is wide, two thirds exactly, not more. Make it lower and broader: the bergfried tower is a wide square block, clearly wider than it is tall, the stair turret rises only a little above the battlements, the annex stays even lower at the foot of the tower. The top half of the frame stays empty plain background.",
+  "refs": [
+    "game/assets/3d/castle.3/refs/b-view.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K",
+    "num_images": 2
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle3 bergfried proportion edit",
+  "est_cost_usd": 0.3,
+  "created": "2026-10-22T23:42:41",
+  "outputs": [
+    "e-view-1-1.png",
+    "e-view-1-2.png"
+  ]
+}

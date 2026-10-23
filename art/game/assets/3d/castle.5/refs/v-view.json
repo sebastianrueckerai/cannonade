@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Keep the same clean reference-picture style, the same plain light grey background, the same camera angle and framing, the same warm cream stone and royal blue. Change the building's design: instead of the one round drum with its stair tower and annex, build a twin-drum keep: two round towers of clearly different sizes standing directly joined side by side, the bigger one squat and wide with a steep royal blue conical roof, the smaller one reaching two thirds of the big one's height with its own little royal blue pointed roof, and one low rectangular annex block with a shallow pitched royal blue roof attached to the smaller drum. One royal blue banner on the big drum. Every part touches the next with no gap: one connected building. The whole building stands two thirds as tall as it is wide. An arched wooden door with two steps at the foot of the bigger drum, a few small dark windows. Royal blue is only on the roofs and the banner. No grass, no ground, no cast shadow, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/castle/refs/c-view.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle5 twin drum variation",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:57:33",
+  "outputs": [
+    "v-view.png"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "asset_id": "castle_d4.4",
+  "route": "generative",
+  "inputs": {
+    "asset_yaml_sha": "e926dee19227"
+  },
+  "steps": [
+    {
+      "name": "import",
+      "ok": true,
+      "elapsed_s": 0.02
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.02
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.5
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": null,
+  "approved": null,
+  "cost_usd": 0.45,
+  "created": "2026-10-22T23:56:21+02:00",
+  "parked": true
+}

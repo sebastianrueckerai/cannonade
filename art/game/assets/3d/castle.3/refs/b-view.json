@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint the building on the grass tile as a clean reference picture for a 3D modeller. Keep exactly the same design, the same parts and the same colours, and leave out the grass tile it stands on: one big square bergfried tower of plain smooth warm cream stone with crenellated battlements on top and a plain flat deck inside them, a small round stair turret attached at one corner rising just above the battlements with its own little royal blue pointed roof, one low rectangular annex with small windows and a shallow pitched royal blue roof at the tower's foot, an arched wooden door with two steps in the annex, a few small dark windows in the tower, one royal blue flag on the stair turret. Every part touches the next with no gap: one connected building. Royal blue is only on the annex roof, the stair turret's little roof and the flag.\nThe proportion is the most important rule: the building is wide and solid. Its total height, from the ground to the very tip of the stair turret's roof, is two thirds of its total width. The tower itself is a broad square block, the annex is even lower than the tower.\nThree-quarter view from the front left and a little from above, the whole object in frame and centred, filling about 75 percent of the width of the picture and under half of its height. Plain flat light grey background. No grass tile, no ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture, roofs as smooth simple surfaces. Only this one building, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/castle.3/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "1:1",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle3 bergfried reference view",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:40:03",
+  "outputs": [
+    "b-view.png"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "This bergfried tower keep has taken light battle damage, in the same clean chunky toy style. Add exactly these: two or three small round craters on the tower walls, one window edge chipped, two or three tiles missing from the edge of the royal blue annex roof, the royal blue flag torn and hanging by one corner, and two or three single large rubble stones at the foot of the walls. Everything else exactly as it is.\n\nSame building, exactly the same camera angle, framing and plain light grey background, same art style and colours. Damage is big simple shapes with clean sharp edges. No fine gravel, no scattered small stones, no cracks, no dirt. No fire, no smoke, no people. Royal blue stays only on the parts that still stand. The building must look strictly worse than before: nothing repaired, nothing cleaner.",
+  "refs": [
+    "game/assets/3d/castle.3/refs/e-view-1.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": "castle3 damage state 1 chunky",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:46:07",
+  "outputs": [
+    "dmg-d1.png"
+  ]
+}

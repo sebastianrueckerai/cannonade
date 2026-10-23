@@ -337,12 +337,15 @@ func _check_crumble() -> void:
 	# a cannon: its mount's pieces in the mount's material, its barrel's where the barrel stands
 	var gun_tile = _tile(gun_spot.x, gun_spot.y)
 	var gun := Catalog.spawn("cannon")
+	var gun_look: String = gun.get_node("Art").get_meta("art_look", "cannon")
 	p1.build_building(gun_tile, gun)
 	var mount_mat: Material = (gun.find_child("mount", true, false) as MeshInstance3D).get_active_material(0)
 	var barrel_pos: Vector3 = (gun.find_child("barrel", true, false) as Node3D).global_position
 	gun_tile.damage_building_place(1e6, from)
 	var gun_heaps: Array = gun_tile.go.get_children().filter(func(n): return n is Crumble)
 	check(gun_heaps.size() == 1 and not U.alive(gun_tile.structure), "a shot cannon crumbles (%d heaps)" % gun_heaps.size())
+	check(Crumble.rubble_id(gun_look) == "cannon_rubble" and Crumble.rubble_id("castle_d3.3") == "castle_d3.3_rubble",
+			"a look without its own rubble wears its base look's (%s), a castle its own" % gun_look)
 	var mount_pieces: Array = gun_heaps[0].get_children().filter(func(n): return n.name.begins_with("mount")) if gun_heaps else []
 	var barrel_pieces: Array = gun_heaps[0].get_children().filter(func(n): return n.name.begins_with("barrel")) if gun_heaps else []
 	check(mount_pieces.size() >= 5 and barrel_pieces.size() >= 3,
@@ -360,7 +363,7 @@ func _check_crumble() -> void:
 	var stones: Array = castle_heaps[0].get_children().filter(func(n): return n is RigidBody3D) if castle_heaps else []
 	check(castle.is_ruin() and castle_heaps.size() == 1 and stones.size() >= 20,
 			"the castle falls to ruins in %d pieces (%d heaps)" % [stones.size(), castle_heaps.size()])
-	var d3 := load(Art.model_path("castle_d3")).instantiate() as Node3D
+	var d3 := load(Art.model_path(castle.state_model(3))).instantiate() as Node3D
 	var d3_mat: Material = (d3.find_children("*", "MeshInstance3D", true, false)[0] as MeshInstance3D).get_active_material(0)
 	var stone := 0
 	for b in stones:

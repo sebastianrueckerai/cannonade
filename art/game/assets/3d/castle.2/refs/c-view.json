@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Repaint the building on the grass tile as a clean reference picture for a 3D modeller. Keep exactly the same design, the same parts and the same colours, and leave out the grass tile it stands on: a chunky square two storey keep of plain smooth warm cream stone with crenellated battlements on top and a plain flat deck inside them, four small corner turrets with royal blue pyramid roofs of slightly different heights, a lower rectangular wing attached directly to the hall with small dormer windows in its shallow pitched roof and one chimney, an arched wooden door with two steps, a few small dark windows, a small royal blue flag on one turret. Every part touches the next with no gap: one connected building. Royal blue is only on the turret roofs and the flag.\n\nThe proportion is the most important rule: the building is low and wide. Its total height, from the ground to the very tip of the highest turret roof, is half of its total width: on a base four units wide it stands only two units tall. The battlements sit close above the top storey windows, the corner turrets are small and stubby, the wing is even lower than the hall.\n\nThe frame is wide landscape, one and a half times as wide as it is tall. The building spans the full width of the frame from the left edge to the right edge and stands only half as tall as it is wide, so the top third of the frame stays empty plain background. Three-quarter view from the front left and a little from above, the whole object in frame and centred. Plain flat light grey background. No grass tile, no ground, no floor, no cast shadow. Soft even light from the front. Crisp clean outlines and smooth painted surfaces without brush texture, roofs as smooth simple surfaces. Only this one building, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/castle.2/refs/a-sketch.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle chunky keep wide reference",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T23:44:20",
+  "outputs": [
+    "c-view.png"
+  ]
+}

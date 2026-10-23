@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a1658e-e5ff-7238-bc16-32915dd656a8",
+  "inputs": [
+    "game/assets/3d/castle.3/refs/b-view.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle3 bergfried meshy",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 31,
+  "created": "2026-10-22T23:40:55",
+  "outputs": {
+    "model": "meshy-c3-b1.glb",
+    "rendered_image": "meshy-c3-b1-preview.png"
+  }
+}

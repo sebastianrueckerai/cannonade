@@ -1,0 +1,33 @@
+{
+  "asset_id": "castle.8",
+  "route": "generative",
+  "inputs": {
+    "asset_yaml_sha": "2cee1cc3e18f"
+  },
+  "steps": [
+    {
+      "name": "import",
+      "ok": true,
+      "elapsed_s": 0.02
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.01
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.55
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": null,
+  "approved": null,
+  "cost_usd": 0.45,
+  "created": "2026-10-23T00:02:36+02:00",
+  "parked": true
+}

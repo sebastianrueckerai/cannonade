@@ -131,24 +131,34 @@ static func _stylebox(name: String) -> StyleBoxTexture:
 	return sb
 
 
-## The looks of `id`: <id>.glb, then <id>.2.glb, <id>.3.glb and on until a number is missing.
+## The looks of `id`: <id>.glb plus every <id>.N.glb named in the manifest, in number order, so
+## a parked middle look (the D92 guns, the rejected castle looks of C21) leaves a gap without
+## hiding the looks beyond it.
 static func variants(id: String) -> Array:
 	if not _variants.has(id):
-		var ids := []
-		if has_model(id):
-			ids.append(id)
-			while has_model("%s.%d" % [id, ids.size() + 1]):
-				ids.append("%s.%d" % [id, ids.size() + 1])
+		_load_manifest()
+		var ids := [id] if has_model(id) else []
+		for k in _manifest:
+			if k.begins_with(id + ".") and k.substr(id.length() + 1).is_valid_int() and has_model(k):
+				ids.append(k)
+		ids.sort_custom(func(a, b): return a.get_slice(".", 1).to_int() < b.get_slice(".", 1).to_int())
 		_variants[id] = ids
 	return _variants[id]
 
 
-## A fresh instance of one look of the model, or null when the file does not exist.
-static func instance(id: String) -> Node3D:
-	var ids := variants(id)
-	if ids.is_empty():
-		return null
-	var pick: String = ids[_rng.randi_range(0, ids.size() - 1)]
+## A fresh instance of one look of the model, or null when the file does not exist. Without
+## `exact` one of its looks is drawn at random; `exact` takes the id itself, for a caller that
+## has already drawn its look (a castle's damage states, C20).
+static func instance(id: String, exact := false) -> Node3D:
+	var pick: String = id
+	if exact:
+		if not has_model(id):
+			return null
+	else:
+		var ids := variants(id)
+		if ids.is_empty():
+			return null
+		pick = ids[_rng.randi_range(0, ids.size() - 1)]
 	var node := (load(model_path(pick)) as PackedScene).instantiate() as Node3D
 	node.name = "Art"
 	node.set_meta("art_look", pick)
@@ -158,9 +168,9 @@ static func instance(id: String) -> Node3D:
 
 ## Attaches the model `id` to the prefab root `go`, `lift` metres up (the slab top for anything standing on a
 ## tile). Returns false and leaves the prefab alone when there is no file. Call before the prefab enters the
-## tree and before components look for anchors.
-static func attach(go: Node3D, id: String, lift := SLAB_TOP) -> bool:
-	var art := instance(id)
+## tree and before components look for anchors. `exact` passes through to `instance`.
+static func attach(go: Node3D, id: String, lift := SLAB_TOP, exact := false) -> bool:
+	var art := instance(id, exact)
 	if art == null:
 		return false
 	for mi in go.find_children("*", "MeshInstance3D", true, false):

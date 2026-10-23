@@ -1,0 +1,16 @@
+{
+  "model": "local crop",
+  "source": "../../../art-direction/rounds/32-castle/castle4.png",
+  "box_px": [
+    30,
+    450,
+    810,
+    1380
+  ],
+  "design": "1 of 4, round 32 board 4, the classic bergfried",
+  "est_cost_usd": 0,
+  "created": "2026-10-22T23:39:26",
+  "outputs": [
+    "a-sketch.png"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Same building, same style, same colours, same plain grey background, same wide frame and camera. One change only: the whole building is half as tall. A low squat keep, its total height from the ground to the tip of the highest roof is exactly half of its total width. Every roof stays low and shallow, the stair tower reaches only a little above the main roof, the annex stays even lower. Keep the wide empty plain background above it.",
+  "refs": [
+    "game/assets/3d/castle/refs/c-view.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle drum wide reference squat edit",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-18T23:45:41",
+  "outputs": [
+    "d-view.png"
+  ]
+}

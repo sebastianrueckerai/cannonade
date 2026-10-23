@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Almost destroyed, still in the same clean chunky toy style. Exactly these: one jagged stub of the hall's front wall at about one quarter of its original height with a simple stepped top, three or four large footing stones marking where the wing and the turret stood, and a low mound of large simple rubble blocks filling the rest of the footprint. Everything else exactly as it is.\n\nSame building, exactly the same camera angle, framing and plain light grey background, same art style and colours. Damage is big simple shapes with clean sharp edges. No fine gravel, no scattered small stones, no cracks, no dirt. No fire, no smoke, no people. Royal blue stays only on the parts that still stand. The building must look strictly worse than before: nothing repaired, nothing cleaner.",
+  "refs": [
+    "game/assets/3d/castle.4/refs/dmg-d3.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": "castle4 damage state 4 chunky",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:49:32",
+  "outputs": [
+    "dmg-d4.png"
+  ]
+}

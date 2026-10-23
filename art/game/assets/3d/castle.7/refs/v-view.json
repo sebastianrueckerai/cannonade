@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Keep the same clean reference-picture style, the same plain light grey background, the same camera angle and framing, the same warm cream stone and royal blue. Change the building's design: instead of the four small corner turrets, give the keep one big round corner turret, half the width of the hall and rising one storey above its roof, with a steep royal blue conical roof and one royal blue flag; the hall keeps its crenellated battlements, its plain flat deck inside them and its arched wooden door with two steps, and the lower wing keeps its dormers and its chimney. Every part touches the next with no gap: one connected building. The whole building stands half as tall as it is wide, low and wide. A few small dark windows. Royal blue is only on the turret roof and the flag. No grass, no ground, no cast shadow, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/castle.2/refs/e-view-1.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle7 one big turret variation",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:58:23",
+  "outputs": [
+    "v-view.png"
+  ]
+}

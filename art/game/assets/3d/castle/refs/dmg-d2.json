@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The damage has grown worse. The top rim of the big round drum now has a jagged broken bite out of its wall, part of the blue cone roof's edge has collapsed, one side of the annex roof has caved in, the small stair tower's blue roof is half gone, more craters on the walls, and more rubble at the foot. The drum still stands at its full height otherwise. Everything else exactly as it is.\n\nSame building, exactly the same camera angle, framing and plain light grey background, same art style and colours. Only the described damage changes. No fire, no smoke, no people. Royal blue stays only on the parts that still stand. The building must look strictly worse than before: nothing repaired, nothing cleaner.",
+  "refs": [
+    "game/assets/3d/castle/refs/dmg-d1.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": "castle damage state 2",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-19T00:20:06",
+  "outputs": [
+    "dmg-d2.png"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a1511d-35dd-77fb-8dda-f7f10d817039",
+  "inputs": [
+    "game/assets/3d/castle/refs/dmg-d4.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle damage state 4",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 30,
+  "created": "2026-10-19T00:24:20",
+  "outputs": {
+    "model": "meshy-c-d4.glb",
+    "rendered_image": "meshy-c-d4-preview.png"
+  }
+}

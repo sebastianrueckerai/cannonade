@@ -42,6 +42,9 @@ gltf/embedded_image_handling=3
 def sync_one(asset_dir: Path, game_manifest: dict, force: bool) -> bool:
     manifest = json.loads((asset_dir / "manifest.json").read_text())
     asset_id = manifest["asset_id"]
+    if manifest.get("parked"):
+        print(f"skip {asset_id}: parked")
+        return False
     if not manifest.get("approved") and not force:
         print(f"skip {asset_id}: not approved (use --force to sync anyway)")
         return False

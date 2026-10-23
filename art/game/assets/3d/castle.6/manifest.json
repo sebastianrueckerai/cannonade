@@ -1,0 +1,32 @@
+{
+  "asset_id": "castle.6",
+  "route": "generative",
+  "inputs": {
+    "asset_yaml_sha": "c1cb6f8c7b8e"
+  },
+  "steps": [
+    {
+      "name": "import",
+      "ok": true,
+      "elapsed_s": 0.02
+    },
+    {
+      "name": "report",
+      "ok": true,
+      "elapsed_s": 0.02
+    },
+    {
+      "name": "render",
+      "ok": true,
+      "elapsed_s": 0.57
+    }
+  ],
+  "report": "report.json",
+  "limits_ok": true,
+  "limit_failures": [],
+  "critic": null,
+  "approved_by": null,
+  "approved": null,
+  "cost_usd": 0.45,
+  "created": "2026-10-23T00:02:34+02:00"
+}

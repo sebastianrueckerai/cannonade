@@ -67,7 +67,10 @@ func lower(tile, to: int) -> void:
 ## Cuts the blanket for the standing columns: one merged, flat-shaded mesh. Corner heights
 ## pool the cells they touch - hills average them into gentle slopes, rocks take the
 ## tallest for a crag - and deterministic roughness keys on board position, so a re-cut
-## after a block shatters keeps every other crest it had. The outline leaves the grid as
+## after a block shatters keeps every other crest it had. A hill's pooled corners then
+## dome (Sebastian, 2026-10-23: "less box more hill"): the rim eases toward the ground and
+## a smoothstep rounds the climb, so the foot rises from the board and the crest shoulder
+## curves while the steep plane stays in the middle. The outline leaves the grid as
 ## it rises (Sebastian, 2026-10-23: "the very ground layer of vertices can still follow
 ## the grid layout, the first floor should already have variation"): feet stand on the
 ## tile grid, a rock's first story bulges off it in smooth swells and a hill's rim rounds
@@ -82,9 +85,11 @@ func drape() -> void:
 	_corners.clear()
 	var lo := Vector2i(map.sizeX, map.sizeZ)
 	var hi := Vector2i.ZERO
+	var peak_cells := 0
 	for c in cells:
 		lo = lo.min(c)
 		hi = hi.max(c)
+		peak_cells = maxi(peak_cells, cells[c])
 	for i in range(lo.x, hi.x + 2):
 		for j in range(lo.y, hi.y + 2):
 			var touched := 0
@@ -96,16 +101,25 @@ func drape() -> void:
 					pooled += cells[c]
 					tallest = maxf(tallest, cells[c])
 			if touched > 0:
-				_corners[Vector2i(i, j)] = (pooled / touched if sort != "rock" else tallest) * LEVEL
+				var h: float = tallest if sort == "rock" else pooled / touched
+				if sort != "rock":
+					# a hill domes (Sebastian, 2026-10-23: "less box more hill"): the rim
+					# eases toward the ground so the foot rises from the board instead of
+					# jumping to the first story, and the smoothstep rounds the climb -
+					# gentle ends, the steep plane he allows kept in the middle. A single
+					# story eases less: the mass has no climb above it and a blocked tile
+					# must still read as standing ground
+					var rim := 0.75 if peak_cells == 1 else 0.3
+					h *= rim if touched < 4 else 1.0
+					var t: float = clampf(h / peak_cells, 0.0, 1.0)
+					h = peak_cells * (t * t * (3.0 - 2.0 * t))
+				_corners[Vector2i(i, j)] = h * LEVEL
 	if sort == "hill":
 		_outline_disp(cells)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var hill := sort == "hill"
-	var peak := 0.0
-	for c in cells:
-		peak = maxf(peak, cells[c])
-	peak *= LEVEL
+	var peak := peak_cells * LEVEL
 	for c in cells:
 		var p: Vector3 = map.tile_position(c.x, c.y) - go.position
 		var top := [_corn(c), _corn(Vector2i(c.x + 1, c.y)), _corn(Vector2i(c.x, c.y + 1)), _corn(Vector2i(c.x + 1, c.y + 1))]
@@ -166,7 +180,9 @@ func _lattice(p: Vector3, top: Array, f: Vector2, hill: bool, peak: float, b: Ve
 	var off := Vector2.ZERO
 	if hill:
 		var d: Vector2 = _disp_at(b)  # board z mirrors: world z runs against board z
-		off = Vector2(d.x, -d.y)
+		# the rounding cuts in as the mass rises: the foot stays wide on the grid, the
+		# crest narrows (Sebastian, 2026-10-23: "cut into the pieces and narrow them down")
+		off = Vector2(d.x, -d.y) * clampf(y0 / peak, 0.0, 1.0)
 	else:
 		# a rock's outline swells off the grid through the first story - smooth swells, the
 		# per-point crag only above it, the ground ring untouched

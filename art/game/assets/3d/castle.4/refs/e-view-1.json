@@ -1,0 +1,21 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "The building in this picture is still too tall. Keep the same building, style, colours, plain grey background, wide frame and camera. Change one thing: the whole building stands half as tall as it is wide, half exactly, not two thirds. Make it lower and wider: the hall is a broad low block, its roofs are shallow, the turret does not rise above the roofs, the dormers sit low in the roof. The top half of the frame stays empty plain background.",
+  "refs": [
+    "game/assets/3d/castle.4/refs/b-view.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K",
+    "num_images": 2
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle4 broad hall proportion edit",
+  "est_cost_usd": 0.3,
+  "created": "2026-10-22T23:43:10",
+  "outputs": [
+    "e-view-1-1.png",
+    "e-view-1-2.png"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Much worse now, still in the same clean chunky toy style. Exactly these: both royal blue pyramid roofs gone completely, the gatehouse broken down to about two thirds of its height with a jagged but simple broken crown of a few large steps, the long hall reduced to two or three standing wall fragments, and one ring of large blocky rubble pieces around the base, each piece a simple chunky block. Everything else exactly as it is.\n\nSame building, exactly the same camera angle, framing and plain light grey background, same art style and colours. Damage is big simple shapes with clean sharp edges. No fine gravel, no scattered small stones, no cracks, no dirt. No fire, no smoke, no people. Royal blue stays only on the parts that still stand. The building must look strictly worse than before: nothing repaired, nothing cleaner.",
+  "refs": [
+    "game/assets/3d/castle.8/refs/dmg-d2.png"
+  ],
+  "params": {},
+  "seed": null,
+  "description": "",
+  "label": "castle8 damage state 3 chunky",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-23T00:11:13",
+  "outputs": [
+    "dmg-d3.png"
+  ]
+}

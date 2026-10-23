@@ -85,11 +85,18 @@ static func crumble(go: Node3D, from: Vector3, look := "") -> Crumble:
 	return heap
 
 
-## The pieces of a look: <look>_rubble; a wall look without its own wears the plain block's.
+## The pieces of a look: <look>_rubble; a look without its own wears its base look's pieces, a
+## wall look the plain block's (cannon.3 breaks as the cannon's mount and barrel).
 static func rubble_id(look: String) -> String:
-	if Art.has_model(look + "_rubble") or not look.begins_with("wall"):
-		return look + "_rubble"
-	return "wall_upper_rubble" if look.ends_with("_upper") else "wall_rubble"
+	var own := look + "_rubble"
+	if Art.has_model(own):
+		return own
+	var base := look.get_slice(".", 0)
+	if base != look and Art.has_model(base + "_rubble"):
+		return base + "_rubble"
+	if look.begins_with("wall"):
+		return "wall_upper_rubble" if look.ends_with("_upper") else "wall_rubble"
+	return own
 
 
 ## Under the tree's root, which outlives every scene: a game can crumble a tree before it is the current scene.

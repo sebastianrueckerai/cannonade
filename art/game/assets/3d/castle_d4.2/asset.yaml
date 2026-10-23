@@ -1,0 +1,14 @@
+asset_id: castle_d4.2
+route: generative     # Meshy, then the cleanup by hand: cleanup.json, cleanup.py
+class: building
+dimensions:           # Blender axes, metres; the healthy keep's box (D68)
+  max_x: 2.9
+  max_y: 2.9
+  max_z: 1.6          # battle rubble rides higher than the healthy roofline (C20)
+budget:
+  max_tris: 3500
+  max_materials: 1    # no blue survives at this state, the texture only
+parts:
+- castle_d4.2
+pivots:
+  origin: ground_centre

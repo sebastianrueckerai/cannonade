@@ -1,0 +1,19 @@
+{
+  "model": "google/nano-banana-2.1/edit",
+  "prompt": "Keep the same clean reference-picture style, the same plain light grey background, the same camera angle and framing, the same warm cream stone and royal blue. Change the building's design: instead of the one round drum with its stair tower and annex, build a tower-and-drum keep: one big square main tower with crenellated battlements on top, and one round drum attached directly at the tower's front corner, the drum reaching the battlements with a steep royal blue conical roof, and one low rectangular annex block with a shallow pitched royal blue roof at the tower's other side. One royal blue flag on the tower's battlements. Every part touches the next with no gap: one connected building. The whole building stands about as tall as it is wide, a broad strong tower. An arched wooden door with two steps at the foot of the drum, a few small dark windows. Royal blue is only on the roofs and the flag. No grass, no ground, no cast shadow, no text, no other objects.",
+  "refs": [
+    "game/assets/3d/castle/refs/c-view.png"
+  ],
+  "params": {
+    "aspect_ratio": "3:2",
+    "resolution": "1K"
+  },
+  "seed": null,
+  "description": "",
+  "label": "castle6 tower and drum variation",
+  "est_cost_usd": 0.15,
+  "created": "2026-10-22T23:57:49",
+  "outputs": [
+    "v-view.png"
+  ]
+}

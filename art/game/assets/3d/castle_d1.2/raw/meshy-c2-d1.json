@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a1657a-3a9d-77f2-9fe7-06438271af54",
+  "inputs": [
+    "game/assets/3d/castle.2/refs/dmg-d1.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle2 damage 1 meshy",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 25,
+  "created": "2026-10-22T23:18:16",
+  "outputs": {
+    "model": "meshy-c2-d1.glb",
+    "rendered_image": "meshy-c2-d1-preview.png"
+  }
+}

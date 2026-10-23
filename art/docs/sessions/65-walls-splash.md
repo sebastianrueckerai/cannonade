@@ -55,7 +55,7 @@ no rock or hill can take a river tile. river_test's sweep already guards it: "ri
 stand bare after the build" counts any structure on a river tile, terrain included. No change; verified and
 reported.
 
-## Round 2 (I108): his play of the splash
+## Round 2 (I112): his play of the splash
 
 "The river splash has lightning looking studff in it. Get rid of that. It aslso has a smoke plume. That may
 work if you make it blue on the inside and white as it disperses. Currently is looks like thick black smoke."

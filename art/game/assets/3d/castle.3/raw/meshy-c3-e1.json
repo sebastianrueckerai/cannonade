@@ -1,0 +1,25 @@
+{
+  "provider": "meshy",
+  "task_id": "01a16591-d82e-7395-bba8-1265d498bd00",
+  "inputs": [
+    "game/assets/3d/castle.3/refs/e-view-1.png"
+  ],
+  "params": {
+    "endpoint": "image-to-3d",
+    "target_formats": [
+      "glb"
+    ],
+    "model_type": "smart-topology",
+    "ai_model": "meshy-t2",
+    "target_polycount": 3000
+  },
+  "label": "castle3 bergfried meshy squat",
+  "credits": 15,
+  "est_cost_usd": 0.3,
+  "elapsed_s": 36,
+  "created": "2026-10-22T23:44:14",
+  "outputs": {
+    "model": "meshy-c3-e1.glb",
+    "rendered_image": "meshy-c3-e1-preview.png"
+  }
+}
