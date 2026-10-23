@@ -6,6 +6,8 @@ extends "res://scripts/components/Component.gd"
 
 const SHADER := preload("res://materials/wall.gdshader")
 const STONE := Color("#e8d6b0")
+## The look of every block on a river (I104): the plain block on four piers, the water running through its arches.
+const BRIDGE := "wall_bridge"
 const WHITE := Color.WHITE
 ## The corridor regions and the tile step each leads to: +x, -x, tile z + 1 (Godot -z) and tile z - 1.
 const DIRS := {2: Vector2i(1, 0), 3: Vector2i(-1, 0), 4: Vector2i(0, 1), 5: Vector2i(0, -1)}
@@ -22,9 +24,10 @@ static var rim_tint := 0.0
 static var band_tint := 0.0
 
 
-## The owner's look on the block; the art is only replaced when the block wears another.
+## The owner's look on the block, the bridge on a river; the art is only replaced when the block wears another.
 func wear(owner) -> void:
-	put_on(go, Catalog.wall_look(owner))
+	var tile = U.comp(go, "BuildingBlock").buildingPlace
+	put_on(go, BRIDGE if tile != null and tile.river else Catalog.wall_look(owner))
 
 
 ## Stacked on another block, the art turns into the storey of the same look.
@@ -119,13 +122,14 @@ static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0, tint :
 
 ## A hand piece: each cell wears the owner's block, its walkway running toward the piece's other cells, in the
 ## piece's own frame, which turns with it. `cells` are the def's, in the order of the cell nodes; `tints`
-## colours single cells (the ground ghost's blocked ones red), empty leaves every cell white.
+## colours single cells (the ground ghost's blocked ones red), empty leaves every cell white; a cell set in
+## `bridges` wears the bridge (the ghost over a river).
 static func paint_piece(piece: Node3D, owner, cells: Array, shade := 1.0,
-		tints: PackedColorArray = PackedColorArray()) -> void:
+		tints: PackedColorArray = PackedColorArray(), bridges: PackedByteArray = PackedByteArray()) -> void:
 	var nodes := piece.get_children().filter(func(n): return n is Node3D)
 	for i in mini(cells.size(), nodes.size()):
 		nodes[i].basis = Basis()
-		put_on(nodes[i], Catalog.wall_look(owner))
+		put_on(nodes[i], BRIDGE if i < bridges.size() and bridges[i] != 0 else Catalog.wall_look(owner))
 		var open := {}
 		for r in DIRS:
 			open[r] = cells.has(cells[i] + DIRS[r])

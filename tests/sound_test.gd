@@ -127,10 +127,9 @@ func _check_battle() -> void:
 				sea = t
 	if sea != null:
 		var shell := Catalog.spawn_projectile(load("res://data/projectiles/shell.tres"), U.world(), Vector3.ZERO, Basis())
-		var imp := U.comp(shell, "TileImpactor")
-		imp.destinationTile = sea
-		imp.impact()
-		check(Sound.playing("hit_water"), "a shell in the sea plays hit_water")
+		shell.destinationTile = sea  # spawn_projectile returns the component, a TileImpactor
+		shell.impact()
+		check(Sound.playing("hit_water"), "a shell landing in the water plays hit_water")
 	await get_tree().process_frame
 	game.next_phase()
 	await _banner_out()

@@ -59,9 +59,12 @@ var wallTiles: Array = []
 var activeCannons: Array = []
 var playerID := 0
 var map = null
-## reach[x * map.sizeZ + z] = 1 where a placement may touch: within map.buildingRange (Chebyshev) of an own
+## reach[x * map.sizeZ + z] = 1 where a building may stand: within map.buildingRange (Chebyshev) of an own
 ## wall tile or of a tile of an own castle that is not a ruin
 var reach := PackedByteArray()
+## wall_reach[x * map.sizeZ + z] = 1 where a wall may stand: edge on an own wall tile or an own castle tile,
+## so a new wall always connects to the walls it grows from (I105)
+var wall_reach := PackedByteArray()
 ## set by reach_changed(); the next read rebuilds `reach`
 var _reachStale := true
 ## When the last gun was discarded (0 while one is held or none is due)
@@ -105,6 +108,11 @@ func in_reach(x: int, z: int) -> bool:
 	return reach[x * map.sizeZ + z] != 0
 
 
+func in_wall_reach(x: int, z: int) -> bool:
+	_fresh_reach()
+	return wall_reach[x * map.sizeZ + z] != 0
+
+
 ## The anchors moved: every own placement and loss and every castle changing hands call it. The next read
 ## rebuilds the reach once, however many blocks a piece stamped or a splash took.
 func reach_changed() -> void:
@@ -119,6 +127,16 @@ func _fresh_reach() -> void:
 
 func _rebuild_reach() -> void:
 	reach = _anchor_mask(map.buildingRange)
+	wall_reach = _wall_anchor_mask()
+
+
+## Own wall tiles and the tiles of every own castle that is not a ruin.
+func _anchor_tiles() -> Array:
+	var anchors: Array = wallTiles.duplicate()
+	for c in map.castles:
+		if U.alive(c) and not c.is_ruin() and c.owner() == self:
+			anchors.append_array(c.my_tiles())
+	return anchors
 
 
 ## 1 within r tiles (Chebyshev) of an own wall tile or of a tile of an own castle that is not a ruin,
@@ -126,15 +144,25 @@ func _rebuild_reach() -> void:
 func _anchor_mask(r: int) -> PackedByteArray:
 	var m := PackedByteArray()
 	m.resize(map.sizeX * map.sizeZ)
-	var anchors: Array = wallTiles.duplicate()
-	for c in map.castles:
-		if U.alive(c) and not c.is_ruin() and c.owner() == self:
-			anchors.append_array(c.my_tiles())
-	for t in anchors:
+	for t in _anchor_tiles():
 		for x in range(maxi(t.idxX - r, 0), mini(t.idxX + r, map.sizeX - 1) + 1):
 			for z in range(maxi(t.idxZ - r, 0), mini(t.idxZ + r, map.sizeZ - 1) + 1):
 				if _line_clear(t, x, z):
 					m[x * map.sizeZ + z] = 1
+	return m
+
+
+## 1 on every tile edge on an own anchor tile: a wall may only stand connected, never apart with a
+## gap (I105). A bridge is a wall, so the mask crosses water with the walls.
+func _wall_anchor_mask() -> PackedByteArray:
+	var m := PackedByteArray()
+	m.resize(map.sizeX * map.sizeZ)
+	for t in _anchor_tiles():
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var x: int = t.idxX + d.x
+			var z: int = t.idxZ + d.y
+			if x >= 0 and z >= 0 and x < map.sizeX and z < map.sizeZ:
+				m[x * map.sizeZ + z] = 1
 	return m
 
 ## The tiles strictly between the anchor tile and (x, z) on the straight line joining them stand empty.
@@ -233,7 +261,7 @@ func update_point_and_tile_selected() -> void:
 	if buildableTileSelected != null and (game == null or game.phase != game.Phase.BATTLE):
 		var x: int = buildableTileSelected.idxX
 		var z: int = buildableTileSelected.idxZ
-		freeTileSelected = buildableTileSelected.is_free()
+		freeTileSelected = buildableTileSelected.wall_free() if U.alive(nextWall) else buildableTileSelected.is_free()
 		if freeTileSelected:
 			canPlaceWall = can_place_piece(buildableTileSelected)
 			canPlaceBuilding = U.alive(nextBuilding) and in_reach(x, z) and not enemy_ground(buildableTileSelected) \
@@ -316,8 +344,8 @@ func piece_tiles(tile) -> Array:
 	return out
 
 
-## The held piece fits with its anchor on `tile`: every cell on the map, free and off enemy ground, one of
-## them in reach.
+## The held piece fits with its anchor on `tile`: every cell on the map, free or river (a bridge) and off enemy
+## ground, one of them edge on an own wall or castle tile (I105).
 func can_place_piece(tile) -> bool:
 	if not U.alive(nextWall):
 		return false
@@ -326,9 +354,9 @@ func can_place_piece(tile) -> bool:
 		return false
 	var reached := false
 	for t in tiles:
-		if not t.is_free() or enemy_ground(t):
+		if not t.wall_free() or enemy_ground(t):
 			return false
-		reached = reached or in_reach(t.idxX, t.idxZ)
+		reached = reached or in_wall_reach(t.idxX, t.idxZ)
 	return reached
 
 
@@ -337,7 +365,7 @@ func enemy_ground(t) -> bool:
 	return t.ringOwner != null and t.ringOwner != self
 
 
-## The held piece with its anchor on `tile` lies wholly on own walls with room on top.
+## The held piece with its anchor on `tile` lies wholly on own walls with room on top; a bridge has none.
 func can_stack_on(tile) -> bool:
 	if not U.alive(nextWall):
 		return false
@@ -346,7 +374,7 @@ func can_stack_on(tile) -> bool:
 
 
 func _room_on_top(t) -> bool:
-	return _own_wall(t) and not U.alive(t.wallStacked) and not t.burning
+	return _own_wall(t) and not U.alive(t.wallStacked) and not t.burning and not t.river
 
 
 func _own_wall(t) -> bool:
@@ -376,7 +404,7 @@ func try_get_next_building() -> void:
 		var def := Catalog.draw(BuildingDef.Category.BUILDING)
 		if def == null:
 			return
-		nextBuilding = Catalog.spawn(def, hand)
+		nextBuilding = Catalog.spawn(def, hand, self)
 
 
 func next_wall_to_hand() -> void:
@@ -390,7 +418,7 @@ func next_wall_to_map() -> void:
 		U.set_parent(nextWall, buildableTileSelected.go)
 		nextWall.position = Vector3.ZERO
 		_settle_cells()
-		_shade_wall(0.7, _blocked_tints())
+		_shade_wall(0.7, _blocked_tints(), _bridge_cells())
 		_hide_decorations(piece_tiles(buildableTileSelected))
 
 
@@ -419,7 +447,7 @@ func _blocked_tints() -> PackedColorArray:
 			var t = map.tiles[x][z]
 			if U.alive(t.structure):
 				nodes[i].global_position.y = t.wall_top()
-			ok = t.is_free() and not enemy_ground(t)
+			ok = t.wall_free() and not enemy_ground(t)
 		elif i < nodes.size():
 			nodes[i].global_position.y = buildableTileSelected.go.global_position.y
 		out.append(Color.WHITE if ok else NO_STACK)
@@ -443,9 +471,20 @@ func _restore_wall_color() -> void:
 
 
 ## The held piece on the board reads darker than the placed blocks round it.
-func _shade_wall(shade: float, tints: PackedColorArray = PackedColorArray()) -> void:
+func _shade_wall(shade: float, tints: PackedColorArray = PackedColorArray(),
+		bridges: PackedByteArray = PackedByteArray()) -> void:
 	if U.alive(nextWall):
-		WallComp.paint_piece(nextWall, self, U.comp(nextWall, "Structure").def.piece, shade, tints)
+		WallComp.paint_piece(nextWall, self, U.comp(nextWall, "Structure").def.piece, shade, tints, bridges)
+
+
+## 1 per cell of the held piece over a river, which it would bridge (I104).
+func _bridge_cells() -> PackedByteArray:
+	var out := PackedByteArray()
+	for c: Vector2i in U.comp(nextWall, "BuildingBlock").cells:
+		var x: int = buildableTileSelected.idxX + c.x
+		var z: int = buildableTileSelected.idxZ + c.y
+		out.append(1 if x >= 0 and z >= 0 and x < map.sizeX and z < map.sizeZ and map.tiles[x][z].river else 0)
+	return out
 
 
 ## The held piece over own walls shows the storeys it stacks as, darkened like every ghost and red when it cannot

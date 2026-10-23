@@ -272,3 +272,93 @@ before-state. The suite itself: 50 checks green.
 
 **Unverified.** The renders: the drape's look (green hills, grey craggy rocks) is Sebastian's
 call, boards open in his editor with the report.
+
+**Follow-up, same day.** He wants both families destructible for now, a flag for each
+("I might change it later"): `HILL_BREAKS` and `ROCK_BREAKS` on
+[Terrain.gd](../../scripts/components/Terrain.gd), both true, `_terrain_go` wiring the
+family's flag onto the feature. The AI's blocker filter still reads the feature's flag, so
+it only shoots what a flag lets it break. The soak mode stays a live, checked path: the test
+flips one feature's flag off (what a false flag ships as), ten shells leave no scratch, the
+flag back on and one shell takes one block. Breaks watched red: the wiring handing every
+family a false flag (the flag count and the victim pick), the soak path ignoring the flag,
+one sort never drawn.
+
+**Follow-up 2, same day.** His games still showed broken masses after the outward-winding
+fix ("Problem persits", "Still broken"). The winding was right; the sides' neighbour pairing
+was not: each side's `continue` read the neighbour one position around the ring (S with E,
+E with N, N with W, W with S), so the walls between cells stood inside the mass and every
+open side stayed bare - and the skirt count still matched either way, which is why the count
+guard never fired. A throwaway audit (since deleted) checked the primitives per feature -
+tops complete and wound up, every skirt triangle on an exposed edge, every edge covered -
+and the fixed pairing audits clean on seeds 2, 3, 12 and 21 (12 features each); the rotated
+pairing had left 2-8 of 8-28 edges bare and 12-40 phantom triangles per feature.
+[terrain_test](../../../tests/terrain_test.gd) keeps the guard that matters: it builds the
+victim's exposed-edge set from its cells and checks every wall triangle stands on one of
+them, red with the rotation back in (20 walls off, 10 of 18 edges bare). Gold-board renders
+before and after differ exactly at the feature clusters, 10-12k changed pixels per seed.
+
+**Follow-up 3, same day.** Still broken in his play ("Does not work... I still see only some
+first level wall - individual faces... Looks like the faces away from the player are
+visible"). That named it: back-face culling inverted. Every face of the drape was wound
+against Godot's front-face convention - Godot culls a face whose cross product
+(b-a)x(c-a) points at the viewer. The tops were wound cross-up since the first drape and
+never rendered; the flags round's "outward" wall fix (a8902ac) picked exactly the wrong
+direction, the walls had been right before it. `_face` in
+[Terrain.gd](../../scripts/components/Terrain.gd) now emits its triangle reversed
+(a, c, b), so the whole blanket fronts the viewer. The winding guard in
+[terrain_test](../../../tests/terrain_test.gd) asserts the real convention - east skirts
+cross into the mass, tops cross down - watched red against the old winding (8 of 8 east
+skirts and 80 of 80 tops culled), and a rendered gold board proves it: the feature regions
+go from 56 percent bare board with 524 px fragments to solid 9561 px and 7885 px masses.
+Crops: /tmp/winding_{before,after}_{right,left}.png. LineRenderer, the only other
+hand-built mesh, was safe all along through CULL_DISABLED.
+
+**Follow-up 4, same day.** His shape notes ("The first story of these seems to always [be] a
+straight wall. Like each tile has cube walls as the base... The second story geometry does
+not completely attach to the cube walls in all places, leaving gaps... I would like the
+rocks to already have a more smoothed out shape one unit from the ground... The very ground
+layer of vertices can still follow the grid layout, the first floor should already have
+variation... The rocks should be up to 4 stories high, the hills up to 3. The hills should
+also have more rounded edges. Dont put a ton of vertices there... just make the hills more
+or less like squares... use a method that produces rounder edges."). Four changes in
+[Terrain.gd](../../scripts/components/Terrain.gd) and
+[GameController.gd](../../scripts/components/GameController.gd):
+
+1. The wall between grid and blanket is a battered strip through the rim's own lattice
+   points (the same displaced points the top meshes through), stepping down over `steps`
+   quads to an undisplaced ground ring at y -0.25. Story 2 lands on the wall's rim vertex
+   for vertex, so the gaps he saw cannot open, and the feet keep the tile layout he wanted
+   to keep.
+2. A rock's outline swells off the grid through the first story: a smooth +/-0.10 noise
+   swell scaled by clamp(y0 / LEVEL), plus +/-0.05 crag jag only above LEVEL. The ground
+   layer of vertices stays on the grid, exactly as he allowed.
+3. Rocks cap at 4 stories, hills at 3. The taller crest broke I97's sight rule on real
+   boards: a four-corner pooled surface two tiles north of free ground reads 3.0 against
+   the 2.598 the 60-degree camera clears (three stories pass at 2.25, margin 0.348; even a
+   [4,3] corner pair bleeds to 2.625). A sight pass (`_terrain_sight`) now runs once the
+   whole board stands: while any pooled column breaks a line to free ground, the column
+   closest to that ground steps down (`Terrain.lower`, no shell noise), so a deep feature
+   keeps its crest and the front yields; the drape is re-cut once the feature settles.
+   Found with a throwaway probe scene (deleted before the commit) that dumps the failing
+   sight pairs and height grids per seed.
+4. A hill's rim rounds by relaxing its boundary lattice points toward their boundary
+   neighbours - two passes at 0.2, corners pull in, straight runs stay. No extra vertices,
+   the walls sew to the same points.
+
+Three guards grew in [terrain_test](../../../tests/terrain_test.gd): every exposed edge
+wears its wall strip `steps` quads deep (72 walls on the 18-edge victim), every rim edge of
+the top is a wall's rim edge vertex for vertex (0 loose; edge keys carry both endpoint
+positions rounded to 0.001, against last-ulp differences between the two expressions that
+compute a shared lattice point), and rocks stand up to four stories, hills three (tallest 4
+and 3, 0 over) - plus the view sweep over eight seeds, which the sight pass keeps green
+while leaving a 4-high rock alive. Watched red: chord walls for the strips (36 of 72 walls,
+36 loose rim edges), the rock cap back at 3 (tallest 3 and 3), the sight pass disabled
+(view fails on 7 of 8 seeds). Rendered versus board seed 2 against master (0dd4758): the
+rock region reads one solid blob of 9182 px, 92 percent of its rock-class pixels - the
+swell trims coverage 39 to 37 percent with no crack signature - and the hill mass trims
+2850 to 2704 px where the corners round. Crops: /tmp/crop_rock_f.png, /tmp/crop_hill_f.png.
+Terrain test 56 checks ok. Process note: an earlier suite run failed sim-ai2 with a SCRIPT
+ERROR at Terrain.gd take_damage because watch-red file swaps ran while the suite was still
+going - its process loaded a mid-swap file. The lone rerun of that exact command passed
+(3871 frames, 0 errors); the rule is now absolute: no project-file edits while the suite
+runs.

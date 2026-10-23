@@ -85,13 +85,23 @@ func _set_water_areas(n_players: int) -> void:
 		add_water(true, z_water, 2, 2, true)
 
 
-func _tile_to_water(x: int, z: int) -> void:
-	var c := waterColorMin.lerp(waterColorMax, U.value())
+func _tile_to_water(x: int, z: int, shade := -1.0) -> void:
+	var c := waterColorMin.lerp(waterColorMax, U.value() if shade < 0.0 else shade)
 	var t = tiles[x][z]
 	t.go.position.y = -0.1
 	t.water = true
 	t.enclosedColor = c
 	t.openColor = c
+
+
+## Turns the built tile (x, z) into river (I104): water a wall bridges, cleared of its decorations. `shade` comes
+## from the river's own generator, so the game's random numbers stay put.
+func make_river(x: int, z: int, shade: float) -> void:
+	_tile_to_water(x, z, shade)
+	var t = tiles[x][z]
+	t.river = true
+	t.destroy_decorations()
+	t.reset_color(false)
 
 
 func add_water(along_x: bool, from_index: int, margin_up := 2, margin_down := 2, fill_up := false, fill_down := false) -> void:

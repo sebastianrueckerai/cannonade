@@ -251,7 +251,7 @@ func _check_invariants(g) -> void:
 					_fail("built tile %d,%d not in miniMap" % [x, z])
 			elif owner_id != 0 and t.upgradeCluster == null:
 				_fail("miniMap says %d at empty tile %d,%d" % [owner_id, x, z])
-			if t.water and U.alive(t.structure):
+			if t.water and U.alive(t.structure) and not (t.river and t.isWall):  # a wall bridges a river (I104)
 				_fail("building on water %d,%d" % [x, z])
 			if U.get_color(t.model()) == Color.BLACK:
 				_fail("tile %d,%d painted pure black (selection must outline, not blacken)" % [x, z])

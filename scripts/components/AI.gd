@@ -604,7 +604,8 @@ func _clearing_helps(sources: Array, goals: Array, cells: Array) -> bool:
 
 
 ## BFS steps from any of `sources` to the nearest of `goals` over ground no terrain and no
-## water blocks; the tiles of `cells` count as free while `clear` is on. -1 unreachable.
+## sea blocks, across a river walls bridge (I104); the tiles of `cells` count as free while `clear` is on.
+## -1 unreachable.
 func _route_steps(sources: Array, goals: Array, cells: Array, clear: bool) -> int:
 	var goal := {}
 	for g in goals:
@@ -627,7 +628,7 @@ func _route_steps(sources: Array, goals: Array, cells: Array, clear: bool) -> in
 				continue
 			var t = map.tiles[n.x][n.y]
 			var feature := U.alive(t.structure) and U.comp(t.structure, "Terrain") != null
-			if t.water or (feature and not (clear and cells.has(n))):
+			if (t.water and not t.river) or (feature and not (clear and cells.has(n))):
 				continue
 			if goal.has(n):
 				return d

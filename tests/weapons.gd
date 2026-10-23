@@ -33,8 +33,10 @@ func seconds(t: float) -> void:
 func open_patch(x0: int, z0: int):
 	var ring := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
 			Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)]
-	for x in range(x0, x0 + 4):
-		for z in range(z0, z0 + 4):
+	# the window reaches past a river, and the picks stay close together: the flat arc
+	# clips no rock between the gun and its target
+	for x in range(x0, mini(x0 + 16, map.sizeX - 1)):
+		for z in range(z0, mini(z0 + 16, map.sizeZ - 1)):
 			var t = map.tiles[x][z]
 			var ok: bool = t.is_free() and not t.water and not map.is_tile_enclosed(t.idxX, t.idxZ)
 			for d in ring:
@@ -151,6 +153,10 @@ func _run() -> void:
 		gun.try_shoot(plain.go.global_position, plain)
 	await seconds(10.0)
 	check(not U.alive(plain.structure), "an unprotected structure is destroyed by the same shells")
+	# the picks below no longer dodge the spent interceptors: the river moved the free
+	# ground into their reach
+	U.destroy(built["flak22"])
+	U.destroy(built["shield22"])
 
 	# the heavy shell splashes a 3x3 at twice a small shell's damage a tile, the
 	# shooter's own side, enemy walls and bare ground included (I84). The patch
@@ -279,7 +285,7 @@ func _run() -> void:
 
 	# a real shell that lands on bare ground scars it
 	var bare = open_patch(13, 8)
-	var shooter_tile = open_patch(14, 12)
+	var shooter_tile = (open_patch(bare.idxX - 1, bare.idxZ + 4) if bare != null else null)
 	check(bare != null and shooter_tile != null, "two more free open patches exist")
 	p1.build_building(shooter_tile, Catalog.spawn("cannon"))
 	var sh := U.shooter(shooter_tile.structure)
@@ -325,10 +331,17 @@ func _run() -> void:
 	water.damage_building_place(10.0)
 	check(not U.alive(ship_go) and not game.fleet.ships.has(ship), "a ship sinks when its health is used up")
 
+	# the flat arc lands the last section's shell while its effects still play
+	# (J6): wait them out, or _fx_at picks up the stale plume and the cleanup
+	# checks pass on the wrong root
+	var drain_end: float = U.time + 15.0
+	while U.time < drain_end and _fx_count() > 0:
+		await get_tree().process_frame
+
 	# fire and impact effects: firing pops a muzzle effect at the barrel, the
 	# landing raises a plume on bare ground and a splash on water, both clean
 	# themselves up (I74)
-	var fx_bare = open_patch(9, 14)
+	var fx_bare = (open_patch(shooter_tile.idxX - 5, shooter_tile.idxZ + 2) if shooter_tile != null else null)
 	check(fx_bare != null, "an fx patch of bare ground exists in the gun's reach")
 	var fx_water = map.tiles[fx_bare.idxX + 1][fx_bare.idxZ]
 	fx_water.water = true
@@ -352,6 +365,24 @@ func _run() -> void:
 		await get_tree().process_frame
 		splash = _fx_at("impact")
 	check(splash != null, "a water landing raises a splash")
+	# I106: the splash is droplets and spray, never a land style
+	var droplets := 0
+	var bursts := 0
+	var sparks := 0
+	var land_style := false
+	for q in splash.get_children():
+		if q is CPUParticles3D:
+			var tex = q.mesh.material.albedo_texture
+			if tex == FX.SMOKE_SOFT:
+				bursts += 1
+				droplets += q.amount
+			elif tex == FX.SPARK:
+				sparks += q.amount
+			else:
+				land_style = true
+	check(droplets >= 30 and bursts >= 3 and sparks >= 10,
+			"the splash throws droplets, foam and spray (%d droplets, %d bursts, %d sparks)" % [droplets, bursts, sparks])
+	check(not land_style, "a water landing wears no dirt, fire or smoke texture")
 	await seconds(3.0)
 	check(_fx_count() == 0, "the splash cleans itself up")
 

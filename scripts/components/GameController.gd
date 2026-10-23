@@ -128,6 +128,8 @@ func _initialize_players() -> void:
 		p.setup()
 	if castles:
 		_place_castles()
+		if players.size() == 2:
+			_place_rivers()
 		if players.size() > 1:
 			_place_terrain()
 		for p in players:
@@ -202,6 +204,192 @@ func _neutral_castle_spot(anchor: Vector2i, placed: Array) -> Vector2i:
 		if _castle_far(c, placed) and _castle_far(m, placed):
 			return c
 	return anchor
+
+
+# ------------------------------------------------------------- rivers (I104)
+## River tiles keep this Chebyshev distance from every castle centre: a free tile between the castle's 3x3 and the
+## water, so its build ring stays land.
+const RIVER_CASTLE_CLEAR := 3
+## A river stamps the 3x3 round every tile of its course: three wide, past the reach of 2, so crossing takes a bridge.
+const RIVER_HALF := 1
+## The most castles of their own half a layout may cut off from each start castle: half of the four.
+const RIVER_CUT_MAX := 2
+## Layouts drawn before the board goes without a river.
+const RIVER_ATTEMPTS := 60
+## The noise cell in tiles: a river bends about this often.
+const RIVER_BEND := 6
+const DIRS8: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+		Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)]
+
+
+## Rivers between the castles and the terrain (I104): one from the north edge to the south edge, or one a side
+## cutting a corner off from its back edge to its west or east edge, each course the cheapest way over a noise
+## field (rivers follow valleys) that keeps clear of every castle. A layout stands only when it is fair (_river_fair);
+## the river draws from its own generator, so the game's random numbers stay put.
+func _place_rivers() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash("river%d" % (mapSeed if mapSeed != 0 else randomSeed))
+	var h: int = map.sizeZ
+	var allowed := PackedByteArray()
+	allowed.resize(map.sizeX * h)
+	allowed.fill(1)
+	for c in map.castles:
+		var q: Vector2i = map.tile_index_at(c.go.global_position)
+		var r := RIVER_CASTLE_CLEAR + RIVER_HALF
+		for x in range(maxi(q.x - r + 1, 0), mini(q.x + r, map.sizeX)):
+			for z in range(maxi(q.y - r + 1, 0), mini(q.y + r, h)):
+				allowed[x * h + z] = 0
+	for attempt in RIVER_ATTEMPTS:
+		var water := _river_layout(rng, allowed)
+		if not water.is_empty() and _river_fair(water):
+			for c: Vector2i in water:
+				map.make_river(c.x, c.y, rng.randf())
+			return
+
+
+## The river tiles of one drawn layout, empty when a course finds no way.
+func _river_layout(rng: RandomNumberGenerator, allowed: PackedByteArray) -> Dictionary:
+	var w: int = map.sizeX
+	var h: int = map.sizeZ
+	var ends: Array = []
+	var north := Vector2i(rng.randi_range(0, w - 1), 0)
+	if rng.randf() < 0.5:
+		ends.append([north, Vector2i(rng.randi_range(0, w - 1), h - 1)])
+	else:  # each side's corner is drawn on its own, so the board is no mirror
+		var south := Vector2i(rng.randi_range(0, w - 1), h - 1)
+		ends.append([north, Vector2i(w - 1 if north.x >= w / 2 else 0, rng.randi_range(0, h / 2 - 1))])
+		ends.append([south, Vector2i(w - 1 if south.x >= w / 2 else 0, rng.randi_range(h / 2, h - 1))])
+	var cost := _river_noise(rng)
+	var water := {}
+	for e in ends:
+		var course := _river_course(e[0], e[1], cost, allowed)
+		if course.is_empty():
+			return {}
+		for p: Vector2i in course:
+			for dx in range(-RIVER_HALF, RIVER_HALF + 1):
+				for dz in range(-RIVER_HALF, RIVER_HALF + 1):
+					var q := p + Vector2i(dx, dz)
+					if q.x >= 0 and q.y >= 0 and q.x < w and q.y < h:
+						water[q] = true
+	return water
+
+
+## A step's cost per tile, 1 in the valleys to 5 on the ridges of a smooth random field.
+func _river_noise(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var gw: int = map.sizeX / RIVER_BEND + 2
+	var gh: int = map.sizeZ / RIVER_BEND + 2
+	var grid := PackedFloat32Array()
+	for i in gw * gh:
+		grid.append(rng.randf())
+	var out := PackedFloat32Array()
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			var fx := float(x) / RIVER_BEND
+			var fz := float(z) / RIVER_BEND
+			var ix := int(fx)
+			var iz := int(fz)
+			var top := lerpf(grid[ix * gh + iz], grid[(ix + 1) * gh + iz], fx - ix)
+			var bottom := lerpf(grid[ix * gh + iz + 1], grid[(ix + 1) * gh + iz + 1], fx - ix)
+			out.append(1.0 + 4.0 * lerpf(top, bottom, fz - iz))
+	return out
+
+
+## The cheapest 8-connected course from `a` to `b` over the allowed tiles, both ends included; empty when none.
+func _river_course(a: Vector2i, b: Vector2i, cost: PackedFloat32Array, allowed: PackedByteArray) -> Array[Vector2i]:
+	var h: int = map.sizeZ
+	var start: int = a.x * h + a.y
+	var goal: int = b.x * h + b.y
+	if allowed[start] == 0 or allowed[goal] == 0:
+		return []
+	var dist := PackedFloat32Array()
+	dist.resize(map.sizeX * h)
+	dist.fill(INF)
+	var from := PackedInt32Array()
+	from.resize(map.sizeX * h)
+	from.fill(-1)
+	var keys := PackedFloat32Array([0.0])  # negated distances, ascending: the nearest pops off the end
+	var open := PackedInt32Array([start])
+	dist[start] = 0.0
+	while not open.is_empty():
+		var i: int = open[open.size() - 1]
+		var d: float = -keys[keys.size() - 1]
+		open.resize(open.size() - 1)
+		keys.resize(keys.size() - 1)
+		if i == goal:
+			break
+		if d > dist[i]:
+			continue
+		for v in DIRS8:
+			var q := Vector2i(i / h, i % h) + v
+			if q.x < 0 or q.y < 0 or q.x >= map.sizeX or q.y >= h:
+				continue
+			var j: int = q.x * h + q.y
+			var nd: float = d + (1.0 if v.x == 0 or v.y == 0 else 1.4142) * cost[j]
+			if allowed[j] == 0 or nd >= dist[j]:
+				continue
+			dist[j] = nd
+			from[j] = i
+			var at := keys.bsearch(-nd)
+			keys.insert(at, -nd)
+			open.insert(at, j)
+	if from[goal] < 0:
+		return []
+	var course: Array[Vector2i] = []
+	var k := goal
+	while k >= 0:
+		course.append(Vector2i(k / h, k % h))
+		k = from[k]
+	return course
+
+
+## A layout is fair when the river cuts the same castles off from both start castles over land: 1 to RIVER_CUT_MAX of
+## each player's own half, and the same count of castles stays on each start castle's land. Every land region holds
+## a castle, so no strip of ground lies dead.
+func _river_fair(water: Dictionary) -> bool:
+	var h: int = map.sizeZ
+	var region := PackedInt32Array()
+	region.resize(map.sizeX * h)
+	region.fill(-1)
+	var regions := 0
+	for x in map.sizeX:
+		for z in h:
+			if region[x * h + z] >= 0 or water.has(Vector2i(x, z)):
+				continue
+			region[x * h + z] = regions
+			var queue: Array[Vector2i] = [Vector2i(x, z)]
+			var head := 0
+			while head < queue.size():
+				var p: Vector2i = queue[head]
+				head += 1
+				for v in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+					var n: Vector2i = p + v
+					if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= h or region[n.x * h + n.y] >= 0 \
+							or water.has(n):
+						continue
+					region[n.x * h + n.y] = regions
+					queue.append(n)
+			regions += 1
+	var held := PackedByteArray()
+	held.resize(regions)
+	var home := [-1, -1]
+	for c in map.castles:
+		var q: Vector2i = map.tile_index_at(c.go.global_position)
+		held[region[q.x * h + q.y]] = 1
+		for i in 2:
+			if c.owner() == players[i]:
+				home[i] = region[q.x * h + q.y]
+	if held.has(0):
+		return false
+	var cut := [0, 0]
+	var kept := [0, 0]
+	for c in map.castles:
+		var q: Vector2i = map.tile_index_at(c.go.global_position)
+		for i in 2:
+			if region[q.x * h + q.y] == home[i]:
+				kept[i] += 1
+			elif (q.y < h / 2) == (i == 0):
+				cut[i] += 1
+	return cut[0] == cut[1] and cut[0] >= 1 and cut[0] <= RIVER_CUT_MAX and kept[0] == kept[1]
 
 
 # ------------------------------------------------------------- terrain (I90, I91, I93, I95, I96, I97, I100)
@@ -298,6 +486,54 @@ func _place_terrain() -> void:
 				break
 			for l in landed:
 				map.release_terrain(l[0], l[1])
+	_terrain_sight()
+
+
+## The blanket's south edge pools the columns beside it, so once rocks grew a fourth story
+## (Sebastian, 2026-10-23) a tall crest next to free ground one row south broke the play
+## camera's 60-degree line to that ground - a three-story front passed at a 0.35 margin,
+## four needs free ground half a tile farther. After the whole board stands, any column
+## pooled into a broken line steps down, the one closest to the free ground first, so a
+## deep feature keeps its crest and the front yields (I97's rule, kept for the taller caps).
+func _terrain_sight() -> void:
+	var rise := tan(deg_to_rad(60.0))
+	var near_free := []  # per x: the z of the nearest free tile south of each z, -1 when none
+	for x in map.sizeX:
+		var col: Array = []
+		var seen := -1
+		for z in map.sizeZ:
+			col.append(seen)
+			var t = map.tiles[x][z]
+			if t.structure == null and not t.water and not t.disabled:
+				seen = z
+		near_free.append(col)
+	for go in map.terrain_features:
+		var terr := U.comp(go, "Terrain")
+		var changed := true
+		while changed:
+			changed = false
+			for t in terr.tiles:
+				var zf: int = near_free[t.idxX][t.idxZ]
+				if zf < 0 or terr.surface_at(t.idxX, t.idxZ - 0.5) - t.go.position.y <= (t.idxZ - zf - 0.5) * rise:
+					continue
+				var victim = null
+				var best := 1 << 30
+				for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0)]:
+					var c: Vector2i = Vector2i(t.idxX, t.idxZ) + d
+					if c.x < 0 or c.x >= map.sizeX or c.y < 0 or c.y >= map.sizeZ:
+						continue
+					var tt = map.tiles[c.x][c.y]
+					if tt.structure != go or terr.columns.get(tt, 0) < 2:
+						continue
+					var z3: int = near_free[c.x][c.y]
+					var dist := 1 << 20 if z3 < 0 else c.y - z3  # deep columns yield last
+					if dist < best:
+						best = dist
+						victim = tt
+				if victim != null:
+					terr.lower(victim, terr.columns[victim] - 1)
+					changed = true
+		terr.drape()
 
 
 ## A random anchor for the shape inside the box [lo, hi), flush against an earlier
@@ -421,12 +657,13 @@ func _terrain_fits(cells: Array) -> bool:
 	return true
 
 
-## Column heights for a feature's cells (I97): one box a level, up to three. A level stacks
+## Column heights for a feature's cells (I97): one box a level, rocks up to four stories
+## and hills three (Sebastian, 2026-10-23). A level stacks
 ## only where the feature itself, another feature or the board's north edge backs it: the
 ## play camera (60 degrees up) sees over one level, but a two-level column hides the centre
 ## of the tile directly behind it, so that tile must be terrain too. Profiles: flat,
 ## terraces rising away from the camera, a peak with its shoulder.
-func _terrain_heights(rng: RandomNumberGenerator, all: Array) -> Dictionary:
+func _terrain_heights(rng: RandomNumberGenerator, all: Array, cap: int) -> Dictionary:
 	var own := {}
 	var near := 0
 	var mid := Vector2i.ZERO
@@ -444,10 +681,10 @@ func _terrain_heights(rng: RandomNumberGenerator, all: Array) -> Dictionary:
 	for c: Vector2i in all:
 		var h := 1
 		if kind == 1:
-			h = 1 + mini(2, near - c.y)
+			h = 1 + mini(cap - 1, near - c.y)
 		elif kind == 2:
-			h = maxi(1, 3 - max(absi(c.x - peak.x), absi(c.y - peak.y)))
-		out[c] = mini(3, h) if _backed(c, own) else 1
+			h = maxi(1, cap - max(absi(c.x - peak.x), absi(c.y - peak.y)))
+		out[c] = mini(cap, h) if _backed(c, own) else 1
 	return out
 
 
@@ -468,10 +705,12 @@ func _backed(c: Vector2i, own: Dictionary) -> bool:
 
 ## The feature's GameObject at the centre of its cells: the Terrain component holding the
 ## standing column heights, and one merged mesh draped over them (I100) - a hill's gentle
-## green blanket or a rock's craggy grey one. `rng` draws the column profile; without it
-## every column is flat.
+## green blanket or a rock's craggy grey one. `rng` draws the column profile, rocks
+## standing up to four stories and hills three (Sebastian, 2026-10-23); without it every
+## column is flat.
 func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) -> Node3D:
-	var heights := _terrain_heights(rng, all) if rng != null else {}
+	var cap := 4 if sort == "rock" else 3
+	var heights := _terrain_heights(rng, all, cap) if rng != null else {}
 	var go := Node3D.new()
 	go.name = sort.capitalize()
 	map.go.add_child(go)
@@ -482,7 +721,7 @@ func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) ->
 	terr.map = map
 	terr.sort = sort
 	terr.tiles = all.map(func(c): return map.tiles[c.x][c.y])
-	terr.destructible = sort == "rock"
+	terr.destructible = TerrainScript.HILL_BREAKS if sort == "hill" else TerrainScript.ROCK_BREAKS
 	var centre := Vector3.ZERO
 	var ground := 0.0
 	for c in all:
@@ -499,8 +738,8 @@ func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) ->
 	return go
 
 
-## The free, dry tiles that reach the board's border over ground no terrain and no water
-## blocks (I97): a pair may not strand free ground behind it.
+## The free, dry tiles that reach the board's border over ground no terrain and no sea blocks
+## (I97), across a river, which walls bridge (I104): a pair may not strand free ground behind it.
 func _border_reach() -> PackedByteArray:
 	var seen := PackedByteArray()
 	seen.resize(map.sizeX * map.sizeZ)
@@ -520,7 +759,7 @@ func _border_reach() -> PackedByteArray:
 			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or seen[n.x * map.sizeZ + n.y]:
 				continue
 			var t = map.tiles[n.x][n.y]
-			if t.water or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
+			if (t.water and not t.river) or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
 				continue
 			seen[n.x * map.sizeZ + n.y] = 1
 			queue.append(n)
@@ -529,7 +768,7 @@ func _border_reach() -> PackedByteArray:
 
 func _reach_seed(p: Vector2i, seen: PackedByteArray, queue: Array[Vector2i]) -> void:
 	var t = map.tiles[p.x][p.y]
-	if t.water or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
+	if (t.water and not t.river) or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
 		return
 	seen[p.x * map.sizeZ + p.y] = 1
 	queue.append(p)
@@ -548,8 +787,8 @@ func _ground_open(before: PackedByteArray) -> bool:
 
 
 ## The encirclement guarantee (I91): every castle's build ring (Chebyshev 2 of its centre)
-## still reaches every other's over ground no terrain and no water blocks. Walls and other
-## buildings are the way itself, so they never block it.
+## still reaches every other's over ground no terrain and no sea blocks; walls bridge a river (I104).
+## Walls and other buildings are the way itself, so they never block it.
 func _rings_connected() -> bool:
 	var centres: Array = []
 	for c in map.castles:
@@ -573,7 +812,7 @@ func _rings_connected() -> bool:
 			if seen[i] != 0:
 				continue
 			var t = map.tiles[n.x][n.y]
-			if t.water or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
+			if (t.water and not t.river) or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
 				continue
 			seen[i] = 1
 			queue.append(n)

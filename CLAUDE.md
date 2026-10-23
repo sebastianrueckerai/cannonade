@@ -73,6 +73,12 @@ highest-numbered file in [art/docs/sessions/](art/docs/sessions), and it can nam
 - Every Godot run without a window plays no sound. `--headless` mutes it on its own; any other run
   (`xvfb-run`, a tool, a subprocess) passes `--audio-driver Dummy`, as `tools/godot_render.sh` does.
 
+## Deploy
+`tools/deploy_itch.sh` ships a new version to itch: it exports the Web build and pushes it to
+`moonlightart/cannonade:HTML5` with butler (in `~/.local/bin`, logged in already; the page lives at
+moonlightart.itch.io/cannonade). One command, no manual upload. Butler needs the page to exist, and its
+target is the account slug (`moonlightart`), not the game title.
+
 ## Gotchas
 - GDScript `:=` cannot infer types from untyped (Variant) expressions; declare the type.
 - A parse error in a test scene makes Godot hang instead of failing; the runner has a timeout.

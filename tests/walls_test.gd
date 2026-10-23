@@ -36,6 +36,7 @@ func _ready() -> void:
 	_check_piece()
 	_check_ground()
 	await _check_crumble()
+	_check_connect()
 	await _check_deal()
 	print("WALLS TEST PASSED" if failures.is_empty() else "WALLS TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
@@ -51,6 +52,57 @@ func check(cond: bool, msg: String) -> void:
 	print(("ok: " if cond else "FAIL: ") + msg)
 	if not cond:
 		failures.append(msg)
+
+
+## I105: a held piece stands only edge on an own wall, a bridge or an own castle tile, never apart with
+## a gap. The held piece is the single block, so the anchor tile is the piece.
+func _check_connect() -> void:
+	U.destroy(p1.nextWall)
+	p1.nextWall = Catalog.spawn(Catalog.get_def("wall_1"), p1.hand)
+	var own_beside := func(t) -> bool:
+		for q in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n = map.tiles[t.idxX + q.x][t.idxZ + q.y]
+			if n.isWall and map.get_mini(n.idxX, n.idxZ) == p1.playerID:
+				return true
+		return false
+	var c = map.castles.filter(func(k): return U.alive(k) and k.owner() == p1)[0]
+	var cc: Vector2i = map.tile_index_at(c.go.global_position)
+	var near_tile = null
+	var far_tile = null
+	var diag_tile = null
+	for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var t1 = map.tiles[cc.x + 3 * d.x][cc.y + 3 * d.y]
+		var t2 = map.tiles[cc.x + 4 * d.x][cc.y + 4 * d.y]
+		var p := Vector2i(d.y, d.x)
+		var t3 = map.tiles[cc.x + 3 * d.x + 3 * p.x][cc.y + 3 * d.y + 3 * p.y]
+		if t1.is_free() and own_beside.call(t1) and t2.is_free() and not own_beside.call(t2) \
+				and t3.is_free() and not own_beside.call(t3):
+			near_tile = t1
+			far_tile = t2
+			diag_tile = t3
+			break
+	check(near_tile != null, "a clear line runs out from the start ring for the connect check")
+	if near_tile == null:
+		return
+	check(p1.can_place_piece(near_tile), "a wall stands on a tile edge on an own wall")
+	check(not p1.can_place_piece(far_tile), "two tiles out with no wall beside it is a gap and stands no wall")
+	check(not p1.can_place_piece(diag_tile), "a corner touch connects nothing")
+	near_tile.water = true
+	near_tile.river = true
+	check(p1.can_place_piece(near_tile), "a river tile edge on an own wall takes a bridge")
+	near_tile.river = false
+	near_tile.water = false
+	var e = map.castles.filter(func(k): return U.alive(k) and k.owner() == p2)[0]
+	var ec: Vector2i = map.tile_index_at(e.go.global_position)
+	var enemy_side = null
+	for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var t1 = map.tiles[ec.x + 3 * d.x][ec.y + 3 * d.y]
+		if t1.is_free() and not own_beside.call(t1):
+			enemy_side = t1
+			break
+	check(enemy_side != null and not p1.can_place_piece(enemy_side), "a tile edge on the enemy's wall alone stands no own wall")
+	_build(p1, near_tile.idxX, near_tile.idxZ)
+	check(p1.can_place_piece(far_tile), "a wall on the gap tile lets the line go on")
 
 
 ## A free, dry, decoration-free tile well away from both castles' rings: the human's rows go at z 2, the AI's at z 5.
@@ -100,7 +152,8 @@ func _check_looks() -> void:
 	check(_look(b) == p2.wallLook, "player 2's block wears player 2's look (got %s)" % _look(b))
 	var bare := Catalog.spawn("wall")
 	check(_look(bare) == "wall", "a block spawned without an owner wears the first look")
-	p2.build_wall(_tile(12, 5), bare)
+	var bare_spot := _dry_near(12, 5, [])  # on a river tile it would wear the bridge look instead
+	p2.build_wall(_tile(bare_spot.x, bare_spot.y), bare)
 	check(_look(bare) == p2.wallLook, "built by player 2, the ownerless block changes into player 2's look")
 	check(Catalog.WALL_LOOKS.size() == 4, "four looks")
 	for go in [a, b, bare]:
@@ -236,8 +289,10 @@ func _check_nested_rings() -> void:
 ## A cannon, the castle falling to ruins and the decorations of a tile shot or built on crumble too (I69).
 func _check_crumble() -> void:
 	Art._rng.seed = 11
-	var used := [[19, 0], [20, 0], [17, 0], [31, 2], [33, 2], [44, 1], [45, 1], [46, 1], [44, 2], [45, 2], [46, 2],
-			[44, 3], [45, 3], [46, 3]]
+	var gun_spot := _dry_near(17, 0, [])
+	var shot_spot := _dry_near(31, 2, [[33, 2]])
+	var used := [[19, 0], [20, 0], [gun_spot.x, gun_spot.y], [shot_spot.x, shot_spot.y], [33, 2],
+			[44, 1], [45, 1], [46, 1], [44, 2], [45, 2], [46, 2], [44, 3], [45, 3], [46, 3]]
 	var free: Array = used.filter(func(c): return not _tile(c[0], c[1]).water and not U.alive(_tile(c[0], c[1]).structure))
 	check(free.size() == used.size(), "the crumble checks' %d tiles are free and dry (taken or wet: %s)"
 			% [used.size(), used.filter(func(c): return not free.has(c))])
@@ -280,7 +335,7 @@ func _check_crumble() -> void:
 					low = minf(low, mi.to_global(v).y - slab)
 		check(low > -0.1, "no piece of the heap sinks through the slab (lowest vertex %.2f m over it)" % low)
 	# a cannon: its mount's pieces in the mount's material, its barrel's where the barrel stands
-	var gun_tile = _tile(17, 0)
+	var gun_tile = _tile(gun_spot.x, gun_spot.y)
 	var gun := Catalog.spawn("cannon")
 	var gun_look: String = gun.get_node("Art").get_meta("art_look", "cannon")
 	p1.build_building(gun_tile, gun)
@@ -318,7 +373,7 @@ func _check_crumble() -> void:
 			"the castle's pieces wear the severe look's stone (%d of %d)" % [stone, stones.size()])
 	d3.free()
 	# a shot clears a decorated tile, and a wall placed on decorations clears another, each decoration in pieces
-	var shot_tile = _tile(31, 2)
+	var shot_tile = _tile(shot_spot.x, shot_spot.y)
 	var walled_tile = _tile(33, 2)
 	var ringed_tile = _tile(45, 2)
 	for t in [shot_tile, walled_tile, ringed_tile]:
@@ -342,6 +397,16 @@ func _check_crumble() -> void:
 	for t in [tile, gun_tile, ctile, shot_tile, walled_tile]:
 		left += t.go.get_children().filter(func(n): return n is Crumble).size()
 	check(left == 0, "the rubble is gone after %.0f s (%d heaps left)" % [Crumble.LIFE, left])
+
+
+## The first free dry tile east of (x, z) in its row, skipping `avoid`: the river and the
+## terrain seated round it move with the board, so these crumble spots cannot stay fixed.
+func _dry_near(x: int, z: int, avoid: Array) -> Vector2i:
+	for e in range(x, map.sizeX):
+		var t = map.tiles[e][z]
+		if not t.water and not U.alive(t.structure) and not t.disabled and not avoid.has([e, z]):
+			return Vector2i(e, z)
+	return Vector2i(x, z)
 
 
 ## Two leaf trees of the art layer on `t`, by hand: the test's game has no decorations.

@@ -986,6 +986,21 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-20T16:27:26+02:00"
   },
+  "wall_bridge": {
+    "size": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "tolerance": 0.02,
+    "parts": [
+      "wall"
+    ],
+    "tris": 518,
+    "source_sha": "732f69dedcce",
+    "approved_by": null,
+    "synced": "2026-10-22T23:29:29+02:00"
+  },
   "wall_corbel": {
     "size": [
       1.0,

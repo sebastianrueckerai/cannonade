@@ -29,6 +29,9 @@
 #             sixteen small stud merlons
 #   arch      one blind round-headed arch recess per face: 0.5 wide, sill 0.12, springing 0.36, apex 0.61, 0.07 deep
 #   caps      body inset 0.04 under a full-tile cornice 0.65..0.69, pyramid caps on the merlons
+#   bridge    the plain block with a round-headed arch cut through along x and along y: 0.56 wide, springing 0.30,
+#             apex 0.58, open at the bottom, so it stands on four 0.22 piers; square merlons. Not a player look: the
+#             piece a wall becomes on a river tile
 # Chamfers (flat, one segment, 0.05): square merlons on their top and vertical edges, drums on top, pyramids on their
 # verticals, studs none. Never an edge in a tile
 # boundary plane (x or y = +-0.5), never an edge on the ground, never a concave edge.
@@ -152,6 +155,14 @@ def body_arch(z0):
     return wall
 
 
+def body_bridge(z0):
+    wall = body_plain(z0)
+    outline = arch_outline(0.28, z0 - 0.2, z0 + 0.30)
+    boolean(wall, [prism("c", outline, -OUT, OUT, axis="y"), turned(prism("c", outline, -OUT, OUT, axis="y"), 1)],
+            "DIFFERENCE")
+    return wall
+
+
 def body_corbel(z0):
     inset = 0.07
     wall = box("wall", -EDGE, EDGE, -EDGE, EDGE, z0, z0 + 0.08)
@@ -204,7 +215,7 @@ def body_caps(z0):
 
 
 BODIES = {"plain": body_plain, "arch": body_arch, "corbel": body_corbel, "pilaster": body_pilaster,
-          "course": body_course, "caps": body_caps}
+          "course": body_course, "caps": body_caps, "bridge": body_bridge}
 
 
 # ------------------------------------------------------------------ deck and merlons
@@ -293,7 +304,7 @@ def _tooth(bm, x0, x1, y0, y1, z_from, z_to, pyramid):
 
 
 TOPS = {"plain": "square", "corbel": "octagon", "pilaster": "lego", "course": "studs", "arch": "square",
-        "caps": "pyramid"}
+        "caps": "pyramid", "bridge": "square"}
 
 
 def region_of(c, z0):
