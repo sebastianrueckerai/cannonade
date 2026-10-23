@@ -348,6 +348,22 @@ func _versus_board() -> void:
 				"a column steps down block by block without freeing its tile")
 		check(mass != null and mass.mesh != null and mass.mesh != cut,
 				"a block's fall re-cuts the drape")
+		var heaps := 0
+		var pieces := 0
+		var frozen := 0
+		for n in map.go.get_children():
+			if n is Crumble:
+				heaps += 1
+				for b in n.get_children():
+					if b is RigidBody3D:
+						pieces += 1
+			elif n is MeshInstance3D and n.mesh is BoxMesh:
+				# the debris once stayed behind as a static cube: crumble refuses a node
+				# without art (found in play, 2026-10-23)
+				frozen += 1
+		check(heaps > 0 and pieces >= 4 and frozen == 0,
+				"a shot-out block bursts into flying rubble (%d heaps, %d pieces, %d cubes left standing)"
+				% [heaps, pieces, frozen])
 		first.damage_building_place(10.0)
 		await frames(2)
 		check(first.structure == null and first.is_free() and map.get_mini(first.idxX, first.idxZ) == 0
@@ -371,6 +387,46 @@ func _versus_board() -> void:
 		check(not map.terrain_features.has(vgo) and freed,
 				"the last column's fall takes the feature with it, every tile freed")
 		check(scarred, "each freed tile carries the killing shell's scar")
+
+	# the hole a shell bites crumbles: every corner pooling a wounded cell sags by a bite
+	# keyed on its place, deterministic as the roughness, so the re-cut reads as broken
+	# ground, not a carved cube (found in play, 2026-10-23)
+	var crater = null
+	var cc := Vector2i.ZERO
+	var cbite := 0.0
+	for go in map.terrain_features:
+		var terr = U.comp(go, "Terrain")
+		if terr == null or terr.sort != "rock":
+			continue
+		for i in range(1, map.sizeX - 1):
+			for j in range(1, map.sizeZ - 1):
+				var inner := true
+				for c in [Vector2i(i - 1, j - 1), Vector2i(i, j - 1), Vector2i(i - 1, j), Vector2i(i, j)]:
+					if terr.columns.get(map.tiles[c.x][c.y], 0) < 1:
+						inner = false
+				if not inner:
+					continue
+				var bite: float = absf(terr._noise(Vector2(i, j) + Vector2(terr.go.position.x, terr.go.position.z) + Vector2(97.3, 45.1))) * 0.28
+				if bite > cbite:
+					cbite = bite
+					crater = terr
+					cc = Vector2i(i, j)
+	check(crater != null, "a rock with an interior corner stands on the map")
+	if crater != null:
+		var four := [cc + Vector2i(-1, -1), cc + Vector2i(0, -1), cc + Vector2i(-1, 0), cc]
+		var top_cell: Vector2i = four[0]
+		for c in four:
+			if crater.columns[map.tiles[c.x][c.y]] > crater.columns[map.tiles[top_cell.x][top_cell.y]]:
+				top_cell = c
+		var before: float = crater._corners[cc]
+		map.tiles[top_cell.x][top_cell.y].damage_building_place(10.0)
+		var tallest_after := 0
+		for c in four:
+			tallest_after = maxi(tallest_after, crater.columns.get(map.tiles[c.x][c.y], 0))
+		check(is_equal_approx(crater._corners[cc], (tallest_after - cbite) * crater.LEVEL)
+				and crater._corners[cc] < before - 0.01,
+				"the lip of a shot-out block sags: the wounded corner pools %.3f, the bite takes %.3f m"
+				% [crater._corners[cc], cbite * crater.LEVEL])
 
 	var flagged := 0
 	for go in map.terrain_features:
