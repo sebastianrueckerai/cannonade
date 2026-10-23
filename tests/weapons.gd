@@ -365,7 +365,9 @@ func _run() -> void:
 		await get_tree().process_frame
 		splash = _fx_at("impact")
 	check(splash != null, "a water landing raises a splash")
-	# I106: the splash is droplets and spray, never a land style
+	# I106: the splash rides the white glow sprites (the grey smoke sprites tint
+	# to black over water), blue at the start, white as they disperse, never a
+	# land style
 	var droplets := 0
 	var bursts := 0
 	var sparks := 0
@@ -373,7 +375,7 @@ func _run() -> void:
 	for q in splash.get_children():
 		if q is CPUParticles3D:
 			var tex = q.mesh.material.albedo_texture
-			if tex == FX.SMOKE_SOFT:
+			if tex == FX.MIST:
 				bursts += 1
 				droplets += q.amount
 			elif tex == FX.SPARK:
@@ -423,7 +425,7 @@ func _run() -> void:
 		for p in mist.find_children("*", "CPUParticles3D", true, false):
 			var pp := p as CPUParticles3D
 			var pm2 := (pp.mesh as QuadMesh).material as StandardMaterial3D
-			if pm2.albedo_texture == FX.SMOKE_SOFT and pp.global_position.distance_to(centre + o) < 0.4:
+			if pm2.albedo_texture == FX.MIST and pp.global_position.distance_to(centre + o) < 0.4:
 				mist_tiles += 1
 				var ramp: Gradient = pp.color_ramp
 				blue_core = blue_core and ramp.colors[0].b - ramp.colors[0].r >= 0.3

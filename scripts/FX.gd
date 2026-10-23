@@ -12,6 +12,7 @@ const RING := preload("res://materials/fx_ring.gdshader")
 
 const SMOKE := preload("res://assets/art/fx/smoke_05.png")
 const SMOKE_SOFT := preload("res://assets/art/fx/smoke_04.png")
+const MIST := preload("res://assets/art/fx/mist.png")
 const SMOKE_DARK := preload("res://assets/art/fx/smoke_07.png")
 const FLASH := preload("res://assets/art/fx/muzzle_04.png")
 const FLASH_BIG := preload("res://assets/art/fx/muzzle_05.png")
@@ -71,20 +72,26 @@ static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0, smok
 						"col": Color(0.66, 0.62, 0.58), "spread": 25.0, "v": [0.5 * q, 1.2 * q],
 						"damp": 1.1, "ang": 150.0, "hold": 0.3}
 				if water:
-					puff.tex = SMOKE_SOFT
+					puff.tex = MIST
 					puff.col = Color(0.45, 0.62, 0.95)
-					puff.to = Color(0.93, 0.97, 1.0)
+					puff.to = Color(0.95, 0.98, 1.0)
 				_burst(root, pos + d, puff)
+	## The water family rides a white puff (MIST: smoke_04's soft round
+	## alpha with white RGB), not the smoke sprites: those are grey and a
+	## tint can only darken them, which reads as black smoke over a river.
+	## White tints to true water blue, and every puff runs blue at its
+	## start to white as it disperses.
 	if water:
-		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 20, "life": 1.1, "s": [0.12 * s, 0.26 * s],
-				"col": Color(0.9, 0.95, 1.0), "spread": 15.0, "v": [2.5 * q, 4.5 * q],
-				"grav": Vector3(0, -9, 0), "damp": 0.3, "ang": 30.0, "hold": 0.5})
-		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 12, "life": 0.85, "s": [0.1 * s, 0.2 * s],
-				"col": Color(0.9, 0.95, 1.0), "spread": 55.0, "v": [1.2 * q, 2.2 * q],
-				"grav": Vector3(0, -7, 0), "damp": 0.3, "hold": 0.4})
-		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 7, "life": 0.55, "s": [0.3 * s, 0.55 * s],
-				"col": Color(0.95, 0.98, 1.0), "spread": 20.0, "v": [0.6 * q, 1.2 * q],
-				"damp": 2.0, "hold": 0.35})
+		_burst(root, pos, {"tex": MIST, "count": 20, "life": 1.1, "s": [0.12 * s, 0.26 * s],
+				"col": Color(0.45, 0.62, 0.95), "to": Color(0.95, 0.98, 1.0), "spread": 15.0,
+				"v": [2.5 * q, 4.5 * q], "grav": Vector3(0, -9, 0), "damp": 0.3, "ang": 30.0,
+				"hold": 0.5})
+		_burst(root, pos, {"tex": MIST, "count": 12, "life": 0.85, "s": [0.1 * s, 0.2 * s],
+				"col": Color(0.5, 0.66, 0.97), "to": Color(0.95, 0.98, 1.0), "spread": 55.0,
+				"v": [1.2 * q, 2.2 * q], "grav": Vector3(0, -7, 0), "damp": 0.3, "hold": 0.4})
+		_burst(root, pos, {"tex": MIST, "count": 7, "life": 0.55, "s": [0.3 * s, 0.55 * s],
+				"col": Color(0.6, 0.73, 1.0), "to": Color(0.97, 0.99, 1.0), "spread": 20.0,
+				"v": [0.6 * q, 1.2 * q], "damp": 2.0, "hold": 0.35})
 		_ring(root, pos, s, Color(0.7, 0.85, 1.0, 0.65))
 		return
 	match style:

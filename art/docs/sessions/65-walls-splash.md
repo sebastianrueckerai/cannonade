@@ -78,3 +78,26 @@ work if you make it blue on the inside and white as it disperses. Currently is l
 
 Plan, roadmap items, code, watched reds, full suite (other sessions' Godot quiet first), before/after
 crops, commit, merge to master by push, origin, report.
+
+## Round 3 (I112 amendment): still black - the sprites themselves
+
+"The splash is still smokle black. It needs to be water blue in the center / at the early stage of the
+shapes emiting and then gfo to white. If the shapes are images that are black by default then go gout
+and search something more fitting a pre made splash effect or white sprites we can tint."
+
+- His diagnosis was right: the Kenney smoke sprites are grey. An in-engine probe read smoke_04 at 0.25
+  average RGB (centre 0.23), so the blue tint multiplied down to dark grey-blue - black smoke over a
+  river, whatever the recipe. The muzzle glows (muzzle_04/05) are white but star-shaped spikes with
+  7.7 / 4.9 percent alpha coverage; a first pass put the water family on them and the render showed 0
+  water-blue pixels - thin streaks, not puffs. That pass also proved the ground darkening in the impact
+  box is the shell's own 3x3 ground scar, not particles (same scar before and after).
+- No download needed: mist.png is derived in-repo from smoke_04's soft round alpha with white RGB
+  (Kenney CC0 allows the edit). White tints true water blue: the droplets, the foam sheet and the 3x3
+  mists all ride MIST, blue (0.45, 0.62, 0.95) at the core to white (0.95, 0.98, 1.0) through the
+  round-2 `to` ramp.
+- Guards: tests/weapons counts FX.MIST for the splash droplets and the eight mist tiles. Watched red:
+  the water path reverted to the grey smoke sprites fails all three (0 droplets, land-style bursts,
+  0 of 8 tiles).
+- Render evidence, seed 42, same pixel, impact frame: the impact box (120x120) holds 4 water-blue
+  pixels on master, 222 after; dark pixels 182 before, 67 after. Crops at /tmp/splash{3,4}_crop3x.png
+  (before = master, the version he played).
