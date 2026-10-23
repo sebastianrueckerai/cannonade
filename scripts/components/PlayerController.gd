@@ -29,6 +29,8 @@ var mainColor := Color.WHITE
 var wallLook := ""
 ## The gun look this game dealt the player (Catalog.GUN_LOOKS, C20), empty for the first look
 var gunLook := ""
+## The big gun look this game dealt the player (Catalog.BIG_GUN_LOOKS, D93), empty for the first look
+var bigGunLook := ""
 var highlightPosColor := Color.WHITE
 var highlightNegColor := Color.RED
 ## GameObject (Node3D) of the next wall / building to place

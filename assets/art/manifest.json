@@ -78,23 +78,6 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-23T00:46:13+02:00"
   },
-  "cannon.4": {
-    "size": [
-      0.9,
-      0.6817,
-      0.9
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "barrel",
-      "mount",
-      "plate"
-    ],
-    "tris": 1107,
-    "source_sha": "d2f8ef342791",
-    "approved_by": "Sebastian",
-    "synced": "2026-10-23T00:46:13+02:00"
-  },
   "cannon22a": {
     "size": [
       1.9,

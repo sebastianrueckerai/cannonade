@@ -63,13 +63,12 @@ func _check_tile_for_upgrade(x: int, z: int, up := 1, down := 1, left := 1, righ
 	var ez := z + up
 	for ix in range(sx, ex + 1):
 		for iz in range(sz, ez + 1):
-			if ix != 0 or iz != 0:
-				var t = map.tiles[ix][iz]
-				var ok: bool = U.alive(t.structure) and U.comp(t.structure, "Upgrade") != null \
-						and t.upgradeCluster == null and t.player == player
-				if not ok:
-					return null
-				parts.append(t)
+			var t = map.tiles[ix][iz]
+			var ok: bool = U.alive(t.structure) and U.comp(t.structure, "Upgrade") != null \
+					and t.upgradeCluster == null and t.player == player
+			if not ok:
+				return null
+			parts.append(t)
 	def = Catalog.pick_for_pattern(_signature(parts))
 	if def == null:
 		return null
@@ -86,7 +85,7 @@ func build_multifield_upgrade() -> void:
 	ix /= upgradedTiles.size()
 	iz /= upgradedTiles.size()
 	var upgrade_position := Vector3(ix, 0.0, iz)
-	var new_structure := Catalog.spawn(def)
+	var new_structure := Catalog.spawn(def, null, player)
 	tile.un_build(true)
 	for bp in upgradedTiles:
 		bp.upgradeCluster = self

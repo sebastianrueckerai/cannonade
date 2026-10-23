@@ -825,7 +825,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9, 0)
 billboard = 1
 pixel_size = 0.004
 font_size = 48
-text = "cannon.4, the mortar at 1x1\nin the game, 1107 tris"
+text = "cannon.4, the mortar at 1x1\nout of the game (D93), 1107 tris"
 
 [node name="gun" parent="game_guns/cannon.4" instance=ExtResource("m19")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
