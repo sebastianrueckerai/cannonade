@@ -2,11 +2,13 @@
   "asset_id": "supply.3",
   "parts": {
     "supply": {
-      "verts": 888,
-      "tris": 517,
-      "non_manifold_edges": 853,
+      "verts": 874,
+      "tris": 513,
+      "non_manifold_edges": 841,
       "materials": [
-        "Material_0"
+        "mud_dark",
+        "wood",
+        "stone"
       ],
       "origin": [
         0.0,
@@ -15,11 +17,13 @@
       ]
     }
   },
-  "verts": 888,
-  "tris": 517,
-  "non_manifold_edges": 853,
+  "verts": 874,
+  "tris": 513,
+  "non_manifold_edges": 841,
   "materials": [
-    "Material_0"
+    "mud_dark",
+    "stone",
+    "wood"
   ],
   "dims_m": [
     0.8207,
@@ -36,6 +40,7 @@
     0.45,
     1.2602
   ],
+  "solidity": 0.476,
   "limits_ok": true,
   "limit_failures": []
 }

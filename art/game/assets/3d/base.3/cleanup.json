@@ -6,6 +6,16 @@
   "team": true,
   "why": {
     "fit": "the base is a 2x2 building (D40): the keep fills the 2x2 tiles less 5 cm per side, so the grid lines round it show",
-    "team": "the game paints the first material of every mesh under the base in the team colour"
+    "team": "the game paints the first material of every mesh under the base in the team colour",
+    "paint": "flat solid materials, D94's recipe on every family (C22): one material a part, named for its palette role, no texture"
+  },
+  "paint": {
+    "kind": "flat",
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    },
+    "seed": 113
   }
 }

@@ -260,8 +260,6 @@ if not JOB["raw"]:
     # the flat painter owns its team split, and logs the parts it found
     if JOB.get("team") and JOB.get("paint", {}).get("kind") != "flat":
         res["team_faces"] = split_team(ob)
-    if JOB.get("team_deck"):
-        res["deck_faces"] = team_deck(ob, JOB["team_deck"])
     if JOB.get("paint"):
         import sys
         sys.path.insert(0, JOB["pipeline"])
@@ -281,11 +279,15 @@ if not JOB["raw"]:
             for uv in list(ob.data.uv_layers):
                 ob.data.uv_layers.remove(uv)
             _paint.cube_uv(ob, top_planar=pspec.pop("top_planar", True))
-        mat = _paint.painted_material(ob, pspec, keep_slots=True, source=src_img)
+        mat = _paint.painted_material(ob, pspec, source=src_img)
         if mat is not None and mat.name not in [m.name for m in ob.data.materials if m]:
             stone = next(i for i, m in enumerate(ob.data.materials) if m.name != "team")
             ob.data.materials[stone] = mat
         res["painted"] = mat.name if mat else "flat"
+    # the deck joins the team after the paint: the flat painter rewrites every face's material index,
+    # so an earlier join would be wiped; `team` stays slot 0 either way
+    if JOB.get("team_deck"):
+        res["deck_faces"] = team_deck(ob, JOB["team_deck"])
     ob.name = ob.data.name = JOB["part"]
     lo, hi = box(ob)
     res.update({"dims_m": [round(v, 3) for v in hi - lo], "tris": sum(len(p.vertices) - 2 for p in ob.data.polygons),

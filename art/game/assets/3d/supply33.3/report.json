@@ -2,11 +2,12 @@
   "asset_id": "supply33.3",
   "parts": {
     "supply33": {
-      "verts": 826,
-      "tris": 393,
-      "non_manifold_edges": 817,
+      "verts": 804,
+      "tris": 385,
+      "non_manifold_edges": 795,
       "materials": [
-        "Material_0"
+        "mud_dark",
+        "wood"
       ],
       "origin": [
         0.0,
@@ -15,11 +16,12 @@
       ]
     }
   },
-  "verts": 826,
-  "tris": 393,
-  "non_manifold_edges": 817,
+  "verts": 804,
+  "tris": 385,
+  "non_manifold_edges": 795,
   "materials": [
-    "Material_0"
+    "mud_dark",
+    "wood"
   ],
   "dims_m": [
     2.4726,
@@ -36,7 +38,7 @@
     1.45,
     2.2461
   ],
-  "solidity": 0.526,
+  "solidity": 0.531,
   "limits_ok": true,
   "limit_failures": []
 }

@@ -2,12 +2,13 @@
   "asset_id": "base.2",
   "parts": {
     "base": {
-      "verts": 1018,
+      "verts": 1042,
       "tris": 561,
-      "non_manifold_edges": 999,
+      "non_manifold_edges": 1031,
       "materials": [
         "team",
-        "Material_0"
+        "mud_light",
+        "wood"
       ],
       "origin": [
         0.0,
@@ -16,12 +17,13 @@
       ]
     }
   },
-  "verts": 1018,
+  "verts": 1042,
   "tris": 561,
-  "non_manifold_edges": 999,
+  "non_manifold_edges": 1031,
   "materials": [
-    "Material_0",
-    "team"
+    "mud_light",
+    "team",
+    "wood"
   ],
   "dims_m": [
     1.9,
@@ -38,6 +40,7 @@
     0.928,
     4.3045
   ],
+  "solidity": 1.169,
   "limits_ok": true,
   "limit_failures": []
 }

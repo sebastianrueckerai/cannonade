@@ -12,5 +12,5 @@ parts:
   - tile
 pivots:
   origin: ground_centre
-paint:
-  tile: {kind: grain, seed: 71}   # near-white grain; the game multiplies the Map colour lerp on top
+materials:
+  tile: "#ffffff"   # the white carrier the Map tints (C22)

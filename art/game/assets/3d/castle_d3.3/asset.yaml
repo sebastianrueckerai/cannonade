@@ -7,7 +7,7 @@ dimensions:           # Blender axes, metres; the healthy model's box (D68)
   max_z: 3.1          # battle rubble rides higher than the healthy roofline (C20)
 budget:
   max_tris: 3500
-  max_materials: 1    # no blue survives at this state, the texture only
+  max_materials: 2    # no blue survives at this state, the texture only
 parts:
 - castle_d3.3
 pivots:

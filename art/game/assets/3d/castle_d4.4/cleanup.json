@@ -6,12 +6,17 @@
   "fit": 2.9,
   "max_tris": 3500,
   "paint": {
-    "kind": "stone",
+    "kind": "flat",
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    },
     "seed": 80
   },
   "why": {
     "team": "no blue survives this state: only a stub and footing stones remain",
-    "paint": "the D49 painted stone, as on this look's healthy model (D73, C20)",
+    "paint": "flat solid materials, D94's recipe on every family (C22): one material a part, named for its palette role, no texture",
     "fit": "the same uniform 2.9 m plan as the healthy model, so the states swap on one 3x3 plot"
   }
 }

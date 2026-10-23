@@ -14,12 +14,5 @@ parts:
 pivots:
   origin: ground_centre
 build: ../terrain_build.py
-paint:
-  terrain_crate.2:
-    kind: stone
-    seed: 72
-    over:                  # the palette's wood, the supply family's browns
-      stops: [[0.0, "#5e3a22"], [0.09, "#6b442a"], [0.72, "#8a5a34"], [1.0, "#95653c"]]
-      grain: [0.05, 0.025]
-      ground: [0.12, 0.08, "#4e321e"]
-      patches: [[10, [8, 15], [0.06, 0.10], [14, 30]], [7, [9, 17], [0.05, 0.09], [-30, -16]]]
+materials:
+  terrain_crate.2: wood

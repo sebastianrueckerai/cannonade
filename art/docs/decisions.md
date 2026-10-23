@@ -606,3 +606,35 @@ the blurred source gives the centres, brightness variants of one hue merge into 
 island takes the nearest centre whole, and a face whose own source texel is team blue joins the team
 part even when its island's mean washed it out. The wrong faces and rough geometry he saw stay his to
 fix by hand in Blender. Session 67, roadmap C21.
+
+## D95. Flat materials everywhere and one kit file (2026-10-23, Sebastian)
+
+"switch the project to flat textures everywhere. [...] I want one Blender file holding all assets with a
+script exporting them. This way I can go into blender, improve the meshes, fix faces with faulty materials
+and then easily update the game." D94's flat recipe went over every family that still wore a baked texture:
+the three bases, the supply family, the upgrades, the ship's hull and the guns - [barrel.py](../pipeline/barrel.py)
+carries the `flat` paint spec into its rebuilds now, which it dropped before, so eight gun source.blends kept
+their provider texture - every part one solid material named for its nearest palette role, `team` the
+reserved player slot. The one file is [kit.blend](../game/assets/3d/kit.blend): one collection per asset, its
+objects prefixed `<id>.` because Blender datablock names are unique and the strip at export keeps `wall`,
+`projectile_spawn` and `flag_dock` exact per asset; materials merge to their plain palette names.
+[kit.py](../pipeline/kit.py) `build` folds all sources, `add <id>...` re-folds one asset after a pipeline
+rerun or a hand edit and re-docks the castle states, `export` gates on approved and not parked, re-checks
+the budgets from asset.yaml instead of trusting a report (session 67 shipped stale ones), writes the glbs
+and the manifest, and re-cuts the rubble from the shipped glbs. After the fold the per-asset source.blend
+and final.glb leave the repo - a pipeline rerun regenerates them and `add` pulls the result in - and
+godot_sync.py is gone. The `team` slot reads white in the kit; the game paints every team slot at runtime.
+Session 68, roadmap C22.
+
+## D96. Every castle flies a flag (2026-10-23, Sebastian)
+
+"Each castle should have a flag as a seperate object, not part of the main mesh. As the castle get
+demolished, the flag still flies. It only goes down when the castle crumbles and is destroyed. [...] So each
+castlke gets a dock point for a flag. The flag should also change colors for players." A `flag` model - pole
+and waving cloth, both on the `team` material - docks at a `flag_dock` empty that every keeper state d0 to d3
+carries, placed where that state's keep still stands (a ray cast on the d3 top, authored in the kit).
+[Castle.gd](/home/womb/repos/grid-cannons/scripts/Castle.gd) re-docks the flag at every state swap, so a d3
+ruin still flies it - the clearest sign the castle is alive - paints it in the owner's colour (neutral the
+brown #9c7a4f) in every state, and topples it away with the crumble at become_ruin. The cloth waves in
+[flag.gdshader](/home/womb/repos/grid-cannons/materials/flag.gdshader). Placed castles turn in random
+90-degree steps, drawn from `Art._rng`, so a battle's numbers stay untouched. Session 68, roadmap I115.

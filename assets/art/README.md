@@ -1,6 +1,6 @@
 # assets/art: the art layer
 
-Drop a file here with the right name and the game uses it. Nothing else to wire. [scripts/Art.gd](../../scripts/Art.gd) does the work. The files come from the blender-ai pipeline ([pipeline/godot_sync.py](/home/womb/repos/blender-ai/pipeline/godot_sync.py)), which also writes [manifest.json](manifest.json).
+Drop a file here with the right name and the game uses it. Nothing else to wire. [scripts/Art.gd](../../scripts/Art.gd) does the work. The 3D files come from [pipeline/kit.py](/home/womb/repos/grid-cannons/art/pipeline/kit.py), which exports the collections of one kit.blend into the game and also writes [manifest.json](manifest.json).
 
 | file | used by |
 |---|---|

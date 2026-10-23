@@ -134,6 +134,21 @@ func _unique_material(mi: MeshInstance3D, surface: int) -> StandardMaterial3D:
 	return m
 
 
+## A mesh surface that wears a ShaderMaterial (the flag cloth's wave) is coloured through its own
+## uniforms, so the duplicate StandardMaterial3D cannot hide it; true when it took the write.
+func _shader_param(mi: MeshInstance3D, surface: int, name: String, value) -> bool:
+	var m: Material = mi.material_override if surface == 0 else null
+	if m == null:
+		m = mi.get_surface_override_material(surface)
+	if m == null and mi.mesh != null and surface < mi.mesh.get_surface_count():
+		m = mi.mesh.surface_get_material(surface)
+	if m is ShaderMaterial:
+		if m.get_shader_parameter(name) != null:
+			m.set_shader_parameter(name, value)
+		return true
+	return false
+
+
 ## renderer.material.color = c (for the first material of every mesh below root)
 func set_color(root: Node, c: Color) -> void:
 	if not alive(root):
@@ -141,6 +156,8 @@ func set_color(root: Node, c: Color) -> void:
 	for mi in meshes(root):
 		if mi.get_script() != null:
 			continue  # line renderers / cooldown indicators
+		if _shader_param(mi, 0, "albedo", c):
+			continue
 		_unique_material(mi, 0).albedo_color = c
 
 
@@ -152,6 +169,8 @@ func set_alpha(root: Node, a: float) -> void:
 		if mi.get_script() != null or mi.mesh == null:
 			continue
 		for s in mi.mesh.get_surface_count():
+			if _shader_param(mi, s, "alpha", a):
+				continue
 			var m := _unique_material(mi, s)
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA if a < 1.0 \
 					else BaseMaterial3D.TRANSPARENCY_DISABLED

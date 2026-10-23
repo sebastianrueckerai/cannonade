@@ -8,7 +8,6 @@ const SHADER := preload("res://materials/wall.gdshader")
 const STONE := Color("#e8d6b0")
 ## The look of every block on a river (I104): the plain block on four piers, the water running through its arches.
 const BRIDGE := "wall_bridge"
-const WHITE := Color.WHITE
 ## The corridor regions and the tile step each leads to: +x, -x, tile z + 1 (Godot -z) and tile z - 1.
 const DIRS := {2: Vector2i(1, 0), 3: Vector2i(-1, 0), 4: Vector2i(0, 1), 5: Vector2i(0, -1)}
 const CENTRE := 1
@@ -84,10 +83,8 @@ static func dress(art: Node3D) -> void:
 	var mi := _mesh(art)
 	if mi == null:
 		return
-	var base: Material = mi.mesh.surface_get_material(0)
 	var m := ShaderMaterial.new()
 	m.shader = SHADER
-	m.set_shader_parameter("tex", base.albedo_texture if base is BaseMaterial3D else null)
 	mi.material_override = m
 	paint_art(art, null, {})
 
@@ -104,17 +101,16 @@ static func paint_art(art: Node3D, owner, open: Dictionary, shade := 1.0, tint :
 	var colors := PackedColorArray()
 	colors.resize(REGIONS)
 	colors.fill(STONE)
-	colors[0] = WHITE
+	colors[0] = STONE
 	colors[CENTRE] = walk
 	for r in DIRS:
-		colors[r + STUD] = WHITE
+		colors[r + STUD] = STONE
 		if open.get(r, false):
 			colors[r] = walk
 			colors[r + CAP] = walk
 			colors[r + STUD] = Color(1, 1, 1, 0)
 	colors[RIM] = STONE.lerp(team, rim_tint)
-	var band := STONE.lerp(team, band_tint)  # over the stone texture: the factor that reaches the band colour
-	colors[BAND] = Color(band.r / STONE.r, band.g / STONE.g, band.b / STONE.b)
+	colors[BAND] = STONE.lerp(team, band_tint)
 	m.set_shader_parameter("colors", colors)
 	m.set_shader_parameter("shade", shade)
 	m.set_shader_parameter("tint", tint)

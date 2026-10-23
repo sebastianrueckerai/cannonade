@@ -12,5 +12,5 @@ parts:
   - shell
 pivots:
   origin: centre       # the projectile flies about its centre, so the build's origin stays
-paint:
-  shell: {kind: iron, seed: 81}
+materials:
+  shell: iron

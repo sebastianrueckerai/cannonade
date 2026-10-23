@@ -7,7 +7,7 @@ dimensions:           # Blender axes, metres; 3x3 footprint less 5 cm per side (
   max_z: 3.6          # the healthy castle's box: the tall round-1 pick (Sebastian, 2026-10-19)
 budget:
   max_tris: 3500
-  max_materials: 1    # no blue survives at this state, the texture only
+  max_materials: 2   # the flat parts (C22)
 parts:
   - castle_d4
 pivots:

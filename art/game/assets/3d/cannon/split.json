@@ -1,31 +1,30 @@
 {
-  "source": "meshy-b-1000",
-  "barrel": [
-    8
-  ],
-  "pivot_pieces": [
-    7
-  ],
-  "fixes": [
-    {
-      "op": "raise_top",
-      "piece": 4,
-      "to": [
-        6
-      ],
-      "why": "the wooden post stopped 2.5 cm below the yoke"
-    }
-  ],
-  "notes": "p05, a cap at the foot of the yoke, and p07, the trunnion pin through the yoke arms, belong to the body",
-  "plate": {
-    "height": 0.1,
-    "margin": 0.05,
-    "chamfer": 0.03,
-    "colour": "#544d52",
-    "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. The colour is the area-weighted grey of the iron faces of the texture",
-    "paint": {
-      "kind": "plate",
-      "seed": 51
-    }
+ "source": "meshy-b-1000",
+ "barrel": [
+  8
+ ],
+ "pivot_pieces": [
+  7
+ ],
+ "fixes": [
+  {
+   "op": "raise_top",
+   "piece": 4,
+   "to": [
+    6
+   ],
+   "why": "the wooden post stopped 2.5 cm below the yoke"
   }
+ ],
+ "notes": "p05, a cap at the foot of the yoke, and p07, the trunnion pin through the yoke arms, belong to the body",
+ "plate": {
+  "height": 0.1,
+  "margin": 0.05,
+  "chamfer": 0.03,
+  "colour": "#544d52",
+  "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. The colour is the area-weighted grey of the iron faces of the texture"
+ },
+ "flat": {
+  "seed": 121
+ }
 }

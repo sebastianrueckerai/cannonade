@@ -6,7 +6,8 @@
       "tris": 1200,
       "non_manifold_edges": 1068,
       "materials": [
-        "tripo_material_3bdd7939-42c7-493e-93a0-24056a8bed18"
+        "mud_dark",
+        "wood"
       ],
       "origin": [
         0.0,
@@ -33,9 +34,10 @@
   "tris": 1408,
   "non_manifold_edges": 1452,
   "materials": [
+    "mud_dark",
     "ship_gun_iron",
     "ship_gun_wood",
-    "tripo_material_3bdd7939-42c7-493e-93a0-24056a8bed18"
+    "wood"
   ],
   "dims_m": [
     0.4712,

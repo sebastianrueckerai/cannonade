@@ -2,7 +2,7 @@
   "asset_id": "cluster_shard",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "1766edb6d8a9",
+    "asset_yaml_sha": "c106915845f8",
     "build_py_sha": "66bffe2b1190"
   },
   "steps": [
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 0.6
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.64
+      "elapsed_s": 0.43
     },
     {
       "name": "export",
@@ -42,7 +42,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-14",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-14T23:15:42+02:00"
+  "created": "2026-10-23T19:22:49+02:00"
 }

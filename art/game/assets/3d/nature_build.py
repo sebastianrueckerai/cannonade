@@ -1,24 +1,18 @@
 # Shared builder for the nine nature looks: bush, leaf tree, boulder in three colourways each.
 # D41 wants big stylized solids like the cover art, D45 makes foliage procedural after image-to-3D
 # returned leaf-card planes. One solid mass per asset (icosphere, subdiv 2), seeded noise on the
-# radius for soft lumps. D49 makes the material the painted path that won round 22: storybook
-# gradient stops from the picked round 20 refs (D44), two-octave brush noise, dabs, and for trees
-# the scalloped contact shadow, crease, under-crown shade and bark dashes of the approved b6 paint.
-# Bushes paint as one crown, boulders get a grounding band and patches. A rebuild with the same
-# seed makes the same mesh and the same texture.
+# radius for soft lumps. C22 makes the material flat: one solid material per band, no texture - the
+# tree keeps its two bands (trunk and crown, split at the UV v the texture used), the bush and the
+# boulder wear one - each named for its palette role and coloured by the mean of the look's stops.
+# A rebuild with the same seed makes the same mesh.
 import bmesh
 import bpy
-import math
 import random
 
-from mathutils import Vector, noise
+from mathutils import Vector
 
 SHRINK = 0.95  # headroom for the seeded noise; build() clamps any axis that still overshoots
-W, H = 512, 512  # painted texture; the b6 paint was tuned at this size
 BOUND = 0.24  # texture v where the trunk band ends and the crown begins (remap: trunk .02-.18, crown .30-.98)
-CROWN_BOT = 0.30
-# grounding band colour for the kinds that stand on the ground without a trunk
-GROUND = {"bush": "#3f4a2a", "boulder": "#57503e"}
 
 # asset_id: kind, seed, gradient stops as (t, hex) from mesh bottom to top
 LOOKS = {
@@ -54,17 +48,21 @@ def rgb(hexstr):
     return tuple(int(hexstr.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
 
 
-def lerp(a, b, k):
-    return tuple(a[i] + (b[i] - a[i]) * k for i in range(3))
+def flat_material(name, col):
+    m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
+    m.use_nodes = True
+    lin = [v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in
+           (c / 255 for c in col)]
+    m.diffuse_color = (*lin, 1)
+    b = m.node_tree.nodes["Principled BSDF"]
+    b.inputs["Base Color"].default_value = (*lin, 1.0)
+    b.inputs["Roughness"].default_value = 1.0
+    b.inputs["Metallic"].default_value = 0.0
+    return m
 
 
-def grad(stops, t):
-    t = min(max(t, 0.0), 1.0)
-    i, (t0, c0) = max((i, s) for i, s in enumerate(stops) if s[0] <= t)
-    if i + 1 < len(stops):
-        t1, c1 = stops[i + 1]
-        return lerp(c0, c1, (t - t0) / (t1 - t0) if t1 > t0 else 0.0)
-    return c0
+def mean(stops):
+    return tuple(sum(rgb(c)[i] for _, c in stops) / len(stops) for i in range(3))
 
 
 def lump(name, rx, ry, rz, centre_z, amp, rng):
@@ -117,135 +115,6 @@ def union(base, cutter):
     bpy.data.objects.remove(cutter, do_unlink=True)
 
 
-def painted_material(name, kind, stops, seed):
-    """The D49 paint. Tree = the b6 board's approved paint verbatim (same seed, same
-    rng draw order, so look 1 rebuilds the picked texture byte for byte); the crown
-    mid stop sits at 0.6 of the band as tuned in the b6 rounds. Bush paints as one
-    crown with a scalloped grounding band; boulder adds larger soft patches."""
-    rng = random.Random(seed + 2000)
-    img = bpy.data.images.new(name + "_tex", width=W, height=H)
-    img.colorspace_settings.name = "sRGB"
-    stops = [(t, rgb(c)) for t, c in stops]
-    if kind == "tree":
-        trunk_stops = [(0.0, stops[0][1]), (1.0, stops[1][1])]
-        crown_stops = [(0.0, stops[2][1]), (0.6, stops[3][1]), (1.0, stops[4][1])]
-    else:
-        trunk_stops, crown_stops = None, stops
-    p1, p2 = rng.random() * 6.28, rng.random() * 6.28
-    flat = [0.0] * (W * H * 4)
-    for y in range(H):
-        v = y / (H - 1)
-        for x in range(W):
-            u = x / (W - 1)
-            if kind == "tree":
-                if v < BOUND:
-                    # ref trunk (measured off leaf-tree-look1): brightest mid third,
-                    # ~15-20% darker at the ground, darker again under the canopy; a
-                    # full-range bottom-to-top gradient reads airbrushed, this does not.
-                    # Visible trunk samples v .02-.154 (junction z~0.95), uv top .18 is
-                    # buried inside the crown
-                    b = v / BOUND
-                    c = grad(trunk_stops, 0.72 + 1.54 * b - 1.96 * b * b)
-                    # canopy contact shadow: 40-50% darker desaturated green-brown,
-                    # scalloped edge (2-3 bumps round the trunk), reaching ~25% of the
-                    # visible trunk height (0.134 of v) below the junction at 0.154
-                    wob = 0.012 + 0.016 * math.sin(u * 2 * math.pi * 2 + p1)
-                    wob += 0.006 * math.sin(u * 2 * math.pi * 5 + p2)
-                    k = min(1.0, max(0.0, (v - (0.118 + wob)) / 0.007))
-                    c = lerp(c, rgb("#3f4a2a"), k)
-                    # painted crease: darkest line just under the junction (v .154),
-                    # visible on the trunk, not buried inside the crown
-                    k2 = min(1.0, max(0.0, (v - (0.131 + 0.4 * wob)) / 0.008))
-                    c = lerp(c, rgb("#2c3520"), 0.45 * k2)
-                else:
-                    c = grad(crown_stops, (v - BOUND) / (1 - BOUND))
-                    wob = 0.014 + 0.022 * (0.5 + 0.5 * math.sin(u * 2 * math.pi * 4 + p2))
-                    wob += 0.009 * math.sin(u * 2 * math.pi * 5 + p1)
-                    k = min(1.0, max(0.0, ((CROWN_BOT + 0.10 + wob) - v) / 0.05))
-                    c = lerp(c, rgb("#33502c"), 0.35 * k)
-            else:
-                c = grad(crown_stops, v)
-                # grounding band: the seam idea carried to masses without a trunk, a
-                # scalloped dark collar where the thing meets the ground
-                wob = 0.016 + 0.020 * math.sin(u * 2 * math.pi * 2 + p1)
-                wob += 0.008 * math.sin(u * 2 * math.pi * 5 + p2)
-                k = min(1.0, max(0.0, ((0.10 + wob) - v) / 0.035))
-                c = lerp(c, rgb(GROUND[kind]), 0.35 * k)
-            n = noise.noise(Vector((x / 56.0, y / 56.0, 3.1))) * 0.09
-            n += noise.noise(Vector((x / 17.0, y / 17.0, 7.7))) * 0.05
-            c = tuple(ch * (1.0 + n) for ch in c)
-            o = (y * W + x) * 4
-            flat[o:o + 3] = c
-            flat[o + 3] = 255
-
-    def dab(cx, cy, r, a, change):
-        # fade near v=1 (the UV pole smears dabs into spokes); wrap in u so a dab cut
-        # at the texture edge does not show a hard line on the mesh seam
-        a *= min(1.0, max(0.0, (0.97 * H - cy) / (0.07 * H)))
-        for dy in range(-int(r), int(r) + 1):
-            yy = cy + dy
-            if 0 <= yy < H:
-                for dx in range(-int(r), int(r) + 1):
-                    d = math.hypot(dx, dy) / r
-                    if d < 1.0:
-                        o = (yy * W + (cx + dx) % W) * 4
-                        k = a * (1.0 - d) ** 1.6
-                        flat[o:o + 3] = [max(0, min(255, ch + change * k)) for ch in flat[o:o + 3]]
-
-    if kind == "tree":  # the b6 counts: crown dabs plus trunk bark
-        for _ in range(70):
-            dab(rng.randrange(W), int(0.30 * H + rng.random() * 0.68 * H),
-                4 + rng.random() * 11, 0.10 + rng.random() * 0.16, 28 + rng.random() * 50)
-        for _ in range(26):
-            dab(rng.randrange(W), int((0.32 + rng.random() * 0.64) * H),
-                5 + rng.random() * 13, 0.10 + rng.random() * 0.14, -(20 + rng.random() * 26))
-        for _ in range(18):  # crisp stipples: small sharp dabs that survive magnification
-            dab(rng.randrange(W), int((0.34 + rng.random() * 0.58) * H),
-                2.5 + rng.random() * 2.5, 0.28 + rng.random() * 0.14, 40 + rng.random() * 35)
-        for _ in range(7):  # ref: 6-8 soft bark dashes, 10-25% of trunk width, 20-40%
-            sx, ph = rng.randrange(W), rng.random() * 6.28  # darker, lower two thirds
-            w = 7.0 + rng.random() * 7.0  # sigma: FWHM ~8-16% of the visible width
-            frac = 0.20 + rng.random() * 0.15
-            yy0 = int((0.035 + rng.random() * 0.05) * H)
-            yy1 = yy0 + int((0.02 + rng.random() * 0.022) * H)  # 15-30% of visible height
-            for yy in range(yy0, yy1):
-                t = (yy - yy0) / max(1, yy1 - yy0 - 1)
-                fade = math.sin(t * math.pi)  # taper both ends
-                xx = int(sx + 3.0 * math.sin(t * 6.28 + ph))
-                for k in range(-24, 25):
-                    o = (yy * W + (xx + k) % W) * 4
-                    fall = math.exp(-(k / w) ** 2)
-                    flat[o:o + 3] = [max(0, ch * (1.0 - frac * fade * fall)) for ch in flat[o:o + 3]]
-    elif kind == "bush":  # one crown, no trunk: slightly fewer dabs over the whole mass
-        for _ in range(45):
-            dab(rng.randrange(W), int((0.06 + rng.random() * 0.90) * H),
-                4 + rng.random() * 11, 0.10 + rng.random() * 0.16, 28 + rng.random() * 50)
-        for _ in range(16):
-            dab(rng.randrange(W), int((0.08 + rng.random() * 0.86) * H),
-                5 + rng.random() * 13, 0.10 + rng.random() * 0.14, -(20 + rng.random() * 26))
-        for _ in range(12):
-            dab(rng.randrange(W), int((0.10 + rng.random() * 0.82) * H),
-                2.5 + rng.random() * 2.5, 0.28 + rng.random() * 0.14, 40 + rng.random() * 35)
-    else:  # boulder: flatter mass, fewer and larger soft patches, no crisp stipple
-        for _ in range(18):
-            dab(rng.randrange(W), int((0.08 + rng.random() * 0.86) * H),
-                8 + rng.random() * 12, 0.08 + rng.random() * 0.12, 22 + rng.random() * 40)
-        for _ in range(12):
-            dab(rng.randrange(W), int((0.10 + rng.random() * 0.82) * H),
-                9 + rng.random() * 11, 0.08 + rng.random() * 0.10, -(16 + rng.random() * 22))
-    img.pixels[:] = [v / 255.0 for v in flat]
-    img.pack()
-    mat = bpy.data.materials.new(name)
-    mat.use_nodes = True
-    bsdf = mat.node_tree.nodes["Principled BSDF"]
-    tex = mat.node_tree.nodes.new("ShaderNodeTexImage")
-    tex.image = img
-    mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Base Color"])
-    bsdf.inputs["Roughness"].default_value = 1.0
-    bsdf.inputs["Metallic"].default_value = 0.0
-    return mat
-
-
 def clamp(ob, dims):
     for i, key in enumerate(("max_x", "max_y", "max_z")):
         ext = max(v.co[i] for v in ob.data.vertices) - min(v.co[i] for v in ob.data.vertices)
@@ -293,7 +162,15 @@ def build(asset):
     clamp(ob, d)
     # the boolean leaves an empty slot 0; faces point at it and render untextured white
     ob.data.materials.clear()
-    ob.data.materials.append(painted_material(name, kind, stops, seed))
+    if kind == "tree":  # the two bands of the painted look, split where its texture split them
+        ob.data.materials.append(flat_material("wood", mean(stops[:2])))
+        ob.data.materials.append(flat_material("leaf", mean(stops[2:])))
+        uv = ob.data.uv_layers.active
+        for p in ob.data.polygons:
+            v = sum(uv.data[li].uv.y for li in p.loop_indices) / len(p.vertices)
+            p.material_index = 0 if v < BOUND else 1
+    else:
+        ob.data.materials.append(flat_material("leaf" if kind == "bush" else "rock", mean(stops)))
     for p in ob.data.polygons:
         p.use_smooth = True
     return {"kind": kind, "seed": seed, "stops": [s[1] for s in stops]}

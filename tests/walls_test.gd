@@ -159,7 +159,8 @@ func _check_looks() -> void:
 	for go in [a, b, bare]:
 		var c := _colors(go)
 		var p = U.comp(go, "BuildingBlock").player
-		check(c[0] == Color.WHITE and c[10] == WallComp.STONE and c[WallComp.BAND] == Color.WHITE,
+		var band := WallComp.STONE.lerp(p.mainColor, WallComp.band_tint)  # flat: the band paints its colour, no stone texture factor
+		check(c[0] == WallComp.STONE and c[10] == WallComp.STONE and c[WallComp.BAND].is_equal_approx(band),
 				"the body, the merlons, the deck corners and the band stay stone on %s" % _look(go))
 		check(c[WallComp.RIM] == WallComp.STONE, "the rim round the deck stays stone on %s (D79)" % _look(go))
 

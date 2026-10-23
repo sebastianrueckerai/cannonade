@@ -2,14 +2,14 @@
   "asset_id": "nature_leaf_tree.3",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "c3e708507021",
-    "build_py_sha": "1521b5b64a03"
+    "asset_yaml_sha": "381b152e1397",
+    "build_py_sha": "48acee7b4237"
   },
   "steps": [
     {
       "name": "build",
       "ok": true,
-      "elapsed_s": 1.05
+      "elapsed_s": 0.01
     },
     {
       "name": "normalise",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.45
+      "elapsed_s": 0.43
     },
     {
       "name": "export",
@@ -42,7 +42,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-14",
+  "approved": "2026-10-23",
   "cost_usd": 0.75,
-  "created": "2026-10-14T14:24:40+02:00"
+  "created": "2026-10-23T19:23:01+02:00"
 }

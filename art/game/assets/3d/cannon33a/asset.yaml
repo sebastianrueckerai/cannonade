@@ -7,7 +7,7 @@ dimensions:           # metres, Blender axes, Z up. The footprint is 3.0 m squar
   max_z: 2.5
 budget:
   max_tris: 3000        # D37
-  max_materials: 2     # the texture and the plate
+  max_materials: 5     # the flat parts and the plate (C22)
 parts:
   - barrel
   - mount

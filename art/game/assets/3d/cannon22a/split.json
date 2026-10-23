@@ -1,26 +1,25 @@
 {
-  "source": "meshy-v1-left-1500",
-  "barrel": [
-    21,
-    22,
-    24,
-    25,
-    26
-  ],
-  "pivot_pieces": [
-    14
-  ],
-  "fixes": [],
-  "notes": "p15 to p17 are bolt heads on the cradle's side plates, p14 the trunnion axle, p19 the strap over it: all body",
-  "plate": {
-    "height": 0.1,
-    "margin": 0.05,
-    "chamfer": 0.03,
-    "colour": "#58555b",
-    "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. The colour is the area-weighted grey of the iron faces of the texture",
-    "paint": {
-      "kind": "plate",
-      "seed": 52
-    }
-  }
+ "source": "meshy-v1-left-1500",
+ "barrel": [
+  21,
+  22,
+  24,
+  25,
+  26
+ ],
+ "pivot_pieces": [
+  14
+ ],
+ "fixes": [],
+ "notes": "p15 to p17 are bolt heads on the cradle's side plates, p14 the trunnion axle, p19 the strap over it: all body",
+ "plate": {
+  "height": 0.1,
+  "margin": 0.05,
+  "chamfer": 0.03,
+  "colour": "#58555b",
+  "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. The colour is the area-weighted grey of the iron faces of the texture"
+ },
+ "flat": {
+  "seed": 125
+ }
 }

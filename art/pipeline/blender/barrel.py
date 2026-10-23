@@ -72,17 +72,13 @@ def make_plate(spec, footprint, mount, barrel):
     bm.free()
     plate = bpy.data.objects.new("plate", me)
     bpy.context.scene.collection.objects.link(plate)
-    if spec.get("paint"):
-        from blender import paint
-        paint.painted_material(plate, {"kind": "plate", "seed": spec["paint"]["seed"]})
-    else:
-        rgb = [int(spec["colour"][i:i + 2], 16) / 255 for i in (1, 3, 5)]
-        mat = bpy.data.materials.new("plate")
-        mat.use_nodes = True
-        bsdf = mat.node_tree.nodes["Principled BSDF"]
-        bsdf.inputs["Base Color"].default_value = (*[c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in rgb], 1)
-        bsdf.inputs["Roughness"].default_value = 0.8
-        me.materials.append(mat)
+    rgb = [int(spec["colour"][i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    mat = bpy.data.materials.new("plate")
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes["Principled BSDF"]
+    bsdf.inputs["Base Color"].default_value = (*[c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in rgb], 1)
+    bsdf.inputs["Roughness"].default_value = 0.8
+    me.materials.append(mat)
     for p in me.polygons:
         p.use_smooth = False
     for v in mount.data.vertices:
@@ -641,6 +637,18 @@ else:
         hand = HAND_SPAWN.get(JOB.get("gun"))
         spawn.location = hand if hand is not None else muzzle - piv  # hand is barrel-local already
     plate = make_plate(JOB["plate"], JOB["footprint"], mount, barrel) if JOB.get("plate") else None
+    flat_mats = None
+    if JOB.get("flat"):  # C22: the source texture's own colours as one flat material a part (D94's recipe)
+        from blender import paint
+        srcs = {n.image for ob in (barrel, mount) for m in ob.data.materials if m and m.use_nodes
+                for n in m.node_tree.nodes if n.type == "TEX_IMAGE" and n.image}
+        source = max(srcs, key=lambda i: i.size[0] * i.size[1], default=None)
+        assert source is not None, "the flat paint needs the gun's source texture"
+        flat_mats = []
+        for ob in (barrel, mount):
+            paint.painted_material(ob, {"kind": "flat", "seed": JOB["flat"]["seed"],
+                                        "over": {"k": 5, "blur": 2}}, source=source)
+            flat_mats += [m.name for m in ob.data.materials]
 
     out = JOB["out_dir"]
     os.makedirs(out, exist_ok=True)
@@ -682,7 +690,7 @@ else:
              "barrel_open_edges": nm(barrel), "mount_open_edges": nm(mount), "pivot_from": pivot_from,
              "bore_from": bore_from, "spawn_from": "hand" if JOB.get("gun") in HAND_SPAWN else bore_from, "bore_m": [round(myc, 3), round(mzc, 3)],
              "pivot_m": [round(v, 3) for v in piv], "barrel_length_m": round(x1 - x0, 3),
-             "part": JOB.get("part", "barrel"), "tilts": JOB["tilts"]}
+             "part": JOB.get("part", "barrel"), "tilts": JOB["tilts"], "flat_materials": flat_mats}
     with open(os.path.join(out, "stats.json"), "w") as f:
         json.dump(stats, f, indent=2)
     if JOB.get("export"):

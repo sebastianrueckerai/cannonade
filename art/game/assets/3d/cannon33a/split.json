@@ -1,28 +1,27 @@
 {
-  "source": "meshy-b-3000",
-  "barrel": [
-    44,
-    45,
-    46,
-    47,
-    48,
-    50
-  ],
-  "pivot_pieces": [
-    37,
-    40
-  ],
-  "fixes": [],
-  "notes": "p25, p26, p29 to p32, p43 and p49 are housing plates, p38 and p39 the bearing plates, p37 and p40 the trunnion stubs: all body",
-  "plate": {
-    "height": 0.1,
-    "margin": 0.05,
-    "chamfer": 0.03,
-    "colour": "#585354",
-    "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. The colour is the area-weighted grey of the iron faces of the texture",
-    "paint": {
-      "kind": "plate",
-      "seed": 53
-    }
-  }
+ "source": "meshy-b-3000",
+ "barrel": [
+  44,
+  45,
+  46,
+  47,
+  48,
+  50
+ ],
+ "pivot_pieces": [
+  37,
+  40
+ ],
+ "fixes": [],
+ "notes": "p25, p26, p29 to p32, p43 and p49 are housing plates, p38 and p39 the bearing plates, p37 and p40 the trunnion stubs: all body",
+ "plate": {
+  "height": 0.1,
+  "margin": 0.05,
+  "chamfer": 0.03,
+  "colour": "#585354",
+  "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. The colour is the area-weighted grey of the iron faces of the texture"
+ },
+ "flat": {
+  "seed": 127
+ }
 }

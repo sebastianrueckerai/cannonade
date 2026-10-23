@@ -3,8 +3,11 @@
 # transform, so the game can place the pieces where the part stands when it dies (scripts/Crumble.gd) and make a
 # rigid body of each. The cuts keep the part's UV layers: the outer faces keep their paint (and the wall's region
 # ids), the cut faces get a box projection and region 0. No materials: the game gives the pieces the part's. A gun's
-# plate stays out. Written for the Blender behind blx; GAME_REPO points at the game repo:
+# plate stays out. Reads the shipped glb (assets/art/3d/<id>.glb, kit.py export writes it); GAME_REPO points at
+# the game repo, FRACTURE_MODELS a comma list cutting only those ids. Written for the Blender behind blx:
 #   { echo 'import os; os.environ["GAME_REPO"] = "<repo>"'; cat art/game/assets/3d/fracture.py; } | blx -
+# pipeline/kit.py export runs it headless after shipping.
+import json
 import os
 import random
 from pathlib import Path
@@ -105,7 +108,7 @@ def fracture(part, n, rnd):
 
 
 def build(model_id, n):
-    parts = load(ROOT / "art/game/assets/3d" / model_id / "final.glb")
+    parts = load(ROOT / "assets/art/3d" / f"{model_id}.glb")
     rnd = random.Random(sum(map(ord, model_id)))
     vols = {p.name: max(p.dimensions.x * p.dimensions.y * p.dimensions.z, 1e-6) for p in parts}
     total = sum(vols.values())
@@ -128,4 +131,6 @@ def build(model_id, n):
     return {"parts": report, "tris": tris, "kb": os.path.getsize(glb) // 1024}
 
 
-result = {m: build(m, n) for m, n in MODELS.items()}
+_only = {m for m in os.environ.get("FRACTURE_MODELS", "").split(",") if m}
+result = {m: build(m, n) for m, n in MODELS.items() if m in _only or not _only}
+print("FRACTURE " + json.dumps(result))

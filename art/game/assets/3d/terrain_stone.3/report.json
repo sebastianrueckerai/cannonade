@@ -2,11 +2,11 @@
   "asset_id": "terrain_stone.3",
   "parts": {
     "terrain_stone.3": {
-      "verts": 56,
-      "tris": 108,
+      "verts": 24,
+      "tris": 44,
       "non_manifold_edges": 0,
       "materials": [
-        "terrain_stone.3_stone"
+        "rock"
       ],
       "origin": [
         0.0,
@@ -15,11 +15,11 @@
       ]
     }
   },
-  "verts": 56,
-  "tris": 108,
+  "verts": 24,
+  "tris": 44,
   "non_manifold_edges": 0,
   "materials": [
-    "terrain_stone.3_stone"
+    "rock"
   ],
   "dims_m": [
     0.9,
@@ -36,7 +36,7 @@
     0.45,
     1.25
   ],
-  "solidity": 0.979,
+  "solidity": 0.981,
   "limits_ok": true,
   "limit_failures": []
 }

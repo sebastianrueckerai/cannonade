@@ -13,5 +13,5 @@ parts:
 pivots:
   origin: ground_centre
 build: ../tile/build.py      # the paving slab geometry of the tile, unchanged
-paint:
-  tile: {kind: stamp, seed: 73, top_planar: true}   # stamped mud, near-white; the Map multiplies its colour on top
+materials:
+  tile: "#ffffff"   # the white carrier the Map tints (C22)

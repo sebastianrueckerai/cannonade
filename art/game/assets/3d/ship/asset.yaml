@@ -7,9 +7,11 @@ dimensions:           # metres, Blender axes, Z up. The hull is one water tile l
   max_z: 1.2          # measured hull+sail 0.974; the gun stays below the sail top
 budget:
   max_tris: 1500      # hull 1200 + gun 208
-  max_materials: 3    # baked hull texture, gun iron, carriage wood (the picked side view shows the wood)
+  max_materials: 5   # the flat parts (C22)
 parts:
   - ship
   - ship_cannon
 pivots:
   origin: ground_centre
+paint:
+  ship: {kind: flat, seed: 151, over: {k: 3, blur: 2}}   # the baked texture's own colours as flat parts (C22)

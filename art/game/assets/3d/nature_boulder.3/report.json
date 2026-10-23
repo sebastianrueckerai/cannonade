@@ -6,7 +6,7 @@
       "tris": 80,
       "non_manifold_edges": 0,
       "materials": [
-        "nature_boulder.3"
+        "rock"
       ],
       "origin": [
         0.0054,
@@ -19,7 +19,7 @@
   "tris": 80,
   "non_manifold_edges": 0,
   "materials": [
-    "nature_boulder.3"
+    "rock"
   ],
   "dims_m": [
     0.8804,

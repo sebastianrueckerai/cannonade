@@ -6,7 +6,7 @@
       "tris": 136,
       "non_manifold_edges": 0,
       "materials": [
-        "wall_stone"
+        "stone"
       ],
       "origin": [
         0.0,
@@ -19,7 +19,7 @@
   "tris": 136,
   "non_manifold_edges": 0,
   "materials": [
-    "wall_stone"
+    "stone"
   ],
   "dims_m": [
     0.69,

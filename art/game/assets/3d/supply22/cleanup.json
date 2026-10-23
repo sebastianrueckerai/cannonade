@@ -1,1 +1,19 @@
-{"source": "meshy-c-550", "part": "supply22", "turn": 0, "fit": 1.9, "why": {"fit": "the footprint less 5 cm per side, like the 1x1 depots and the base"}}
+{
+  "source": "meshy-c-550",
+  "part": "supply22",
+  "turn": 0,
+  "fit": 1.9,
+  "why": {
+    "fit": "the footprint less 5 cm per side, like the 1x1 depots and the base",
+    "paint": "flat solid materials, D94's recipe on every family (C22): one material a part, named for its palette role, no texture"
+  },
+  "paint": {
+    "kind": "flat",
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    },
+    "seed": 105
+  }
+}

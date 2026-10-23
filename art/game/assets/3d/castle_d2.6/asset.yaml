@@ -7,7 +7,7 @@ dimensions:           # Blender axes, metres; the healthy model's box (D68)
   max_z: 3.1          # battle rubble rides higher than the healthy roofline (C20)
 budget:
   max_tris: 3500
-  max_materials: 2    # the team material first, painted by the game, then the texture
+  max_materials: 3    # the team material first, painted by the game, then the texture
 parts:
 - castle_d2.6
 pivots:

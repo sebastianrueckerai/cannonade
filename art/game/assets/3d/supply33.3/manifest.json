@@ -2,7 +2,7 @@
   "asset_id": "supply33.3",
   "route": "generative",
   "inputs": {
-    "asset_yaml_sha": "5b172149dafe"
+    "asset_yaml_sha": "85a44b436811"
   },
   "steps": [
     {
@@ -18,7 +18,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.49
+      "elapsed_s": 0.43
     }
   ],
   "report": "report.json",
@@ -26,7 +26,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-14",
+  "approved": "2026-10-23",
   "cost_usd": 0.45,
-  "created": "2026-10-14T23:12:45+02:00"
+  "created": "2026-10-23T19:33:05+02:00"
 }

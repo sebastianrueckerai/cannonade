@@ -2,7 +2,7 @@
   "asset_id": "heavy_shell",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "1310d86113db",
+    "asset_yaml_sha": "2487f4ba7513",
     "build_py_sha": "4e39690d0320"
   },
   "steps": [
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 0.62
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.63
+      "elapsed_s": 0.43
     },
     {
       "name": "export",
@@ -41,8 +41,8 @@
   "limits_ok": true,
   "limit_failures": [],
   "critic": null,
-  "approved_by": null,
-  "approved": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-20T01:02:36+02:00"
+  "created": "2026-10-23T19:22:49+02:00"
 }

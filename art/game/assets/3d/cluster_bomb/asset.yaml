@@ -12,5 +12,5 @@ parts:
   - cluster_bomb
 pivots:
   origin: centre       # the projectile flies about its centre, so the build's origin stays
-paint:
-  cluster_bomb: {kind: iron, seed: 82}
+materials:
+  cluster_bomb: iron

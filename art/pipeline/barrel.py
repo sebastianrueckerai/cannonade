@@ -59,7 +59,7 @@ def final(d):
              "out_dir": str(d / "previews" / "barrel" / "final"),
              "glb": str(d / "raw" / f"{spec['source']}.glb"), "barrel": spec["barrel"], "fixes": spec.get("fixes", []),
              "pivot_x": spec.get("pivot_x"), "pivot_pieces": spec.get("pivot_pieces"), "plate": spec.get("plate"),
-             "texture_px": spec.get("texture_px"),
+             "flat": spec.get("flat"), "texture_px": spec.get("texture_px"),
              "export": str(d / "final.glb"), "blend": str(d / "source.blend")})
     sheet(d, ["final"], out="final")
 

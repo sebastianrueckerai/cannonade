@@ -7,7 +7,7 @@ dimensions:
   max_z: 0.95
 budget:
   max_tris: 300
-  max_materials: 1
+  max_materials: 2   # trunk and crown bands (C22)
   min_solidity: 0.4
 parts:
   - nature_leaf_tree.3

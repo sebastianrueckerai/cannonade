@@ -6,7 +6,7 @@
       "tris": 502,
       "non_manifold_edges": 0,
       "materials": [
-        "terrain_crate.3_stone"
+        "wood"
       ],
       "origin": [
         0.0,
@@ -19,7 +19,7 @@
   "tris": 502,
   "non_manifold_edges": 0,
   "materials": [
-    "terrain_crate.3_stone"
+    "wood"
   ],
   "dims_m": [
     0.92,

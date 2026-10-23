@@ -2,14 +2,14 @@
   "asset_id": "wall_cross_upper",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "02d12b48ab91",
+    "asset_yaml_sha": "42bcd170a62a",
     "build_py_sha": "4557603a047f"
   },
   "steps": [
     {
       "name": "build",
       "ok": true,
-      "elapsed_s": 0.15
+      "elapsed_s": 0.16
     },
     {
       "name": "normalise",
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 0.98
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.47
+      "elapsed_s": 0.44
     },
     {
       "name": "export",
@@ -42,7 +42,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-14",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-14T14:24:30+02:00"
+  "created": "2026-10-23T19:22:37+02:00"
 }

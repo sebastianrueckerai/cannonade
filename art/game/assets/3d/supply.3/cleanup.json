@@ -3,5 +3,17 @@
   "part": "supply",
   "turn": 0,
   "fit": 0.9,
-  "why": {"fit": "fills most of its tile"}
+  "why": {
+    "fit": "fills most of its tile",
+    "paint": "flat solid materials, D94's recipe on every family (C22): one material a part, named for its palette role, no texture"
+  },
+  "paint": {
+    "kind": "flat",
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    },
+    "seed": 103
+  }
 }

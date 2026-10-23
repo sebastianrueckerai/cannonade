@@ -2,13 +2,13 @@
   "asset_id": "ship",
   "route": "generative",
   "inputs": {
-    "asset_yaml_sha": "716fa2f1adbb"
+    "asset_yaml_sha": "f6221bb3de22"
   },
   "steps": [
     {
       "name": "import",
       "ok": true,
-      "elapsed_s": 0.02
+      "elapsed_s": 0.01
     },
     {
       "name": "report",
@@ -18,7 +18,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 1.16
+      "elapsed_s": 0.43
     }
   ],
   "report": "report.json",
@@ -26,7 +26,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-13",
+  "approved": "2026-10-23",
   "cost_usd": 0.3,
-  "created": "2026-10-13T14:50:36+02:00"
+  "created": "2026-10-23T19:33:07+02:00"
 }

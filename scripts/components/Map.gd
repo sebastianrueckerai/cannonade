@@ -183,6 +183,9 @@ func place_neutral(def: BuildingDef, x: int, z: int) -> Node3D:
 			t.destroy_decorations()
 	main.build(go, null)
 	go.global_position = Vector3(centre.x / square.size(), 0.0, centre.z / square.size())
+	# I115: a randomly placed castle faces a random quarter; the look-only random stream keeps
+	# battles and seeded tests unchanged
+	go.rotate_y(PI / 2.0 * Art._rng.randi_range(0, 3))
 	return go
 
 

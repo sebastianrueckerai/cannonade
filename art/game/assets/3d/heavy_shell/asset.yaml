@@ -12,5 +12,5 @@ parts:
   - heavy_shell
 pivots:
   origin: centre       # the projectile flies about its centre, so the build's origin stays
-paint:
-  heavy_shell: {kind: iron, seed: 84}
+materials:
+  heavy_shell: iron

@@ -7,8 +7,10 @@ dimensions:           # D29
   max_z: 0.6
 budget:
   max_tris: 600
-  max_materials: 1
+  max_materials: 3   # the flat parts (C22)
 parts:
   - upgrade_b
 pivots:
   origin: ground_centre
+paint:
+  upgrade_b: {kind: flat, seed: 137, over: {k: 3, blur: 2}}   # the baked texture's own colours as flat parts (C22)

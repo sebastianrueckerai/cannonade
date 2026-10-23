@@ -7,7 +7,7 @@ dimensions:           # Blender axes, metres; 3x3 footprint less 5 cm per side (
   max_z: 3.6          # the healthy castle's box: the tall round-1 pick (Sebastian, 2026-10-19)
 budget:
   max_tris: 3500
-  max_materials: 2    # the team material first, painted by the game, then the texture
+  max_materials: 3   # the flat parts (C22)
 parts:
   - castle_d1
 pivots:

@@ -2,8 +2,8 @@
   "asset_id": "wall_pilaster_upper",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "b58d0c500de4",
-    "build_py_sha": "a8a414c36896"
+    "asset_yaml_sha": "76fdb187d3f7",
+    "build_py_sha": "cbefabe7c760"
   },
   "steps": [
     {
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 1.02
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -29,12 +29,12 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.46
+      "elapsed_s": 0.44
     },
     {
       "name": "export",
       "ok": true,
-      "elapsed_s": 0.03
+      "elapsed_s": 0.01
     }
   ],
   "report": "report.json",
@@ -42,7 +42,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-20",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-20T16:05:28+02:00"
+  "created": "2026-10-23T19:22:42+02:00"
 }

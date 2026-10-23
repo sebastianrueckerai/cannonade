@@ -2,7 +2,7 @@
   "asset_id": "shell",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "a50615601940",
+    "asset_yaml_sha": "dba7f03961e5",
     "build_py_sha": "3b6f1bd949ef"
   },
   "steps": [
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 0.59
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -42,7 +42,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-14",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-14T14:24:35+02:00"
+  "created": "2026-10-23T19:22:47+02:00"
 }

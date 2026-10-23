@@ -6,6 +6,7 @@ extends "res://scripts/components/Component.gd"
 const RUIN := 4
 const NEUTRAL_COLOR := Color("#9c7a4f")
 const BASE_STATES := ["castle", "castle_d1", "castle_d2", "castle_d3", "castle_d4"]
+const FLAG_SHADER := preload("res://materials/flag.gdshader")
 
 var state := 0
 ## The art look the placement drew (castle, castle.2, ...), pinned for the castle's life so its
@@ -14,6 +15,12 @@ var look := 0
 var map = null
 var _bounds := AABB()
 var _bounds_known := false
+
+
+func _ready() -> void:
+	# deferred: _ready fires inside BuildingPlace's add_child propagation, where an
+	# add_child on the parent is silently dropped
+	_fly_flag.call_deferred()
 
 
 ## World-space bounds of the attached art, for occlusion tests against the
@@ -57,6 +64,7 @@ func become_ruin(from := Vector3.INF) -> void:
 	Crumble.crumble(go, from, state_model(RUIN - 1))
 	set_state(RUIN)
 	_ruin_body()
+	_topple_flag(from)
 	hold_tiles(null)
 
 
@@ -79,6 +87,55 @@ func _ruin_body() -> void:
 	go.add_child(body)
 	body.add_child(shape)
 	body.global_position = Vector3(bb.get_center().x, bb.position.y + top - 0.15, bb.get_center().z)
+
+## Flies the castle's flag (I115): a separate model, not part of the state meshes, docked on a point
+## the state model carries. The cloth waves in flag.gdshader and takes the player colour like the
+## body's team slot; the pole wears the flat `team` material, so set_color carries it too.
+func _fly_flag() -> void:
+	var scene: PackedScene = load("res://assets/art/3d/flag.glb")
+	if scene == null:
+		return
+	var flag := scene.instantiate()
+	flag.name = "Flag"
+	go.add_child(flag)
+	var cloth := flag.find_child("flag_cloth", true, false)
+	if cloth is MeshInstance3D:
+		var m := ShaderMaterial.new()
+		m.shader = FLAG_SHADER
+		m.set_shader_parameter("albedo", NEUTRAL_COLOR)
+		m.set_shader_parameter("alpha", 1.0)
+		cloth.material_override = m
+	_dock_flag()
+	repaint()
+
+
+## Seats the flag on the dock point the current state's model carries: the pole rides the surviving
+## geometry, so the flag stands a little lower with every damage state and never moves sideways.
+func _dock_flag() -> void:
+	var flag := go.get_node_or_null("Flag")
+	var art := go.get_node_or_null("Art")
+	if flag == null or art == null:
+		return
+	var dock := art.find_child("flag_dock", true, false)
+	if dock is Node3D:
+		flag.transform = Art._rel(dock, go)
+
+
+## The castle crumbles: the flag tips away from the shot and fades out with the fall (I115).
+func _topple_flag(from: Vector3) -> void:
+	var flag: Node3D = go.get_node_or_null("Flag")
+	if flag == null:
+		return
+	var away := (flag.global_position - from) * Vector3(1, 0, 1)
+	if away.length_squared() < 0.01 or not away.is_finite():
+		away = Vector3(0, 0, 1)
+	flag.rotation.y = atan2(away.x, away.z)
+	var tw := flag.create_tween()
+	tw.tween_interval(0.35)
+	tw.tween_property(flag, "rotation:x", 1.9, 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_method(func(k: float): U.set_alpha(flag, 1.0 - k), 0.0, 1.0, 0.9)
+	tw.tween_callback(flag.queue_free)
+
 
 
 ## The own player hears a claim as a chime up, a loss as the chime down; others' claims are quieter.
@@ -143,14 +200,19 @@ func set_state(n: int) -> void:
 		if child.has_meta("art_id"):
 			U.destroy(child)
 	Art.attach(go, state_model(n), Art.SLAB_TOP, true)
+	_dock_flag()
 	_bounds = AABB()
 	_bounds_known = false
 	repaint()
 
 
 func repaint() -> void:
+	var p = owner()
+	var flag := go.get_node_or_null("Flag")
+	if flag != null:
+		# the flag flies the colour in every state: even a late ruin is still alive (I115)
+		U.set_color(flag, p.mainColor if p != null else NEUTRAL_COLOR)
 	# d3 and d4 carry no team material, and the placeholder is one grey box
 	if state >= 3 or go.get_node_or_null("Art") == null:
 		return
-	var p = owner()
 	U.set_color(go, p.mainColor if p != null else NEUTRAL_COLOR)

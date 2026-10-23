@@ -6,7 +6,7 @@
       "tris": 80,
       "non_manifold_edges": 0,
       "materials": [
-        "nature_bush"
+        "leaf"
       ],
       "origin": [
         0.0079,
@@ -19,7 +19,7 @@
   "tris": 80,
   "non_manifold_edges": 0,
   "materials": [
-    "nature_bush"
+    "leaf"
   ],
   "dims_m": [
     0.7416,

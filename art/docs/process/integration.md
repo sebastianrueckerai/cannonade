@@ -4,7 +4,7 @@ Goal: every approved asset seen in Grid Cannons from the gameplay camera, next t
 
 ```mermaid
 flowchart LR
-    LIB["Approved assets in game/assets/ [M+I]"] --> SYNC["pipeline/godot_sync.py: copy final files to res://assets/art/, write sync manifest"]
+    LIB["kit.blend: every approved asset in one file [M+I]"] --> SYNC["pipeline/kit.py export: budget gate, glbs + manifest to res://assets/art/, rubble recut"]
     SYNC --> PREV["Preview scene in the game: gameplay camera, grid, one or many assets. For the buildings: tools/shoot_battle.tscn, a sandbox battle of two forts [C]"]
     PREV --> SHOT["Screenshots at 1280x720 [R]"]
     SHOT --> CRIT["Critic: legibility at real size, consistency across assets, UI and world together"]
@@ -21,7 +21,7 @@ The game repo gets one folder, `res://assets/art/`, with `3d/`, `ui/` and `sky/`
 
 ## Sync
 
-[pipeline/godot_sync.py](../../pipeline/godot_sync.py) copies `final.glb`, the UI files and the sky image from [game/assets/](../../game/assets) into the art layer and writes `res://assets/art/manifest.json` with the asset id, the source manifest hash and the date. It copies only assets whose `manifest.json` says approved, which `asset.py approve` records after Sebastian's pass. It writes a minimal `.import` next to each model, so Godot keeps a generated model's texture inside the `.glb`. It never touches anything outside `res://assets/art/`.
+[pipeline/kit.py](../../pipeline/kit.py) export ships the game's 3D from [kit.blend](../../game/assets/3d/kit.blend), the one Blender file holding every asset as a collection (D95). An asset enters the kit when its pipeline step finishes (`kit.py build` folded them all at first; `kit.py add <id>...` re-folds one asset after a rerun or a hand edit in Blender). Export gates on the art manifests' approved and parked flags, re-checks each asset's budgets from its `asset.yaml` fresh in Blender, writes `res://assets/art/3d/<id>.glb` with a minimal `.import` and the `manifest.json` entry with the axes swapped to Y up, and re-cuts the rubble models from the shipped glbs through [fracture.py](../../game/assets/3d/fracture.py). The UI files and the sky image still copy by hand from [game/assets/](../../game/assets). The per-asset `source.blend` and `final.glb` are pipeline intermediates, not kept in the repo: a rerun regenerates them and `add` folds the result back into the kit.
 
 ## Regression
 

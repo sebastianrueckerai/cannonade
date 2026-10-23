@@ -52,7 +52,7 @@ Camera, tile and pixel numbers are in [gameplay_contract.yaml](../game/art-direc
 | `ui/panel.png` | 9-slice panel behind the menu and the loading bar |
 | `ui/font.ttf` | the default font of those screens |
 | `sky/world_panorama.png` | the game scene's WorldEnvironment as a PanoramaSkyMaterial |
-| `manifest.json` | `{"<id>": {"size": [x, y, z], "tolerance": 0.02}}` in Godot axes, written by [pipeline/godot_sync.py](../pipeline/godot_sync.py) |
+| `manifest.json` | `{"<id>": {"size": [x, y, z], "tolerance": 0.02}}` in Godot axes, written by [pipeline/kit.py](../pipeline/kit.py) export |
 
 How a model is attached:
 
@@ -70,7 +70,7 @@ The game repo keeps images and models as plain binaries, `*.png`, `*.fbx` and `*
 
 ## Sync from this repo
 
-`pipeline/godot_sync.py game/assets/3d/<asset_id>` copies `final.glb` into `3d/<asset_id>.glb`, writes the manifest entry from `report.json`, with the Blender Z-up dimensions swapped to Y up, and a minimal `.import` that keeps a texture inside the `.glb`. Only approved assets sync, `--force` overrides for a review before the approval. Our asset ids must match the game's ids above, a second look is `<id>.2`. `GAME_REPO` points it at a worktree of the game.
+`pipeline/kit.py add game/assets/3d/<asset_id>` re-folds one asset's regenerated `source.blend` into [kit.blend](../game/assets/3d/kit.blend) - the flag and the castle flag docks are authored in the kit itself - and `pipeline/kit.py export` writes `3d/<asset_id>.glb` from its collection, with the Blender Z-up dimensions swapped to Y up and a minimal `.import` per model, plus the manifest entry and the rubble recuts. Only approved assets ship, parked ones stay in the kit but out of the game, `--force` overrides for a review before the approval. Our asset ids must match the game's ids above, a second look is `<id>.2`. `GAME_REPO` points it at a worktree of the game.
 
 ## Web build
 

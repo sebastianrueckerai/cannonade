@@ -6,7 +6,8 @@
       "tris": 547,
       "non_manifold_edges": 853,
       "materials": [
-        "Material_0"
+        "mud_dark",
+        "wood"
       ],
       "origin": [
         0.0,
@@ -19,7 +20,8 @@
   "tris": 547,
   "non_manifold_edges": 853,
   "materials": [
-    "Material_0"
+    "mud_dark",
+    "wood"
   ],
   "dims_m": [
     0.9,
@@ -36,6 +38,7 @@
     0.3218,
     0.9479
   ],
+  "solidity": 0.578,
   "limits_ok": true,
   "limit_failures": []
 }

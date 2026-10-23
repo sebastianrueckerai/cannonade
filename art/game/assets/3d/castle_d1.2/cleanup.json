@@ -5,10 +5,18 @@
   "team": true,
   "fit": 2.9,
   "max_tris": 3500,
-  "paint": {"kind": "stone", "seed": 67},
+  "paint": {
+    "kind": "flat",
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    },
+    "seed": 67
+  },
   "why": {
     "team": "the surviving royal blue turret roofs and the torn flag are the team part (D68)",
-    "paint": "the D49 painted stone, as on this look's healthy keep (D73, C20)",
+    "paint": "flat solid materials, D94's recipe on every family (C22): one material a part, named for its palette role, no texture",
     "fit": "the same uniform 2.9 m plan as the healthy keep, so the states swap on one 3x3 plot"
   }
 }

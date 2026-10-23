@@ -2,12 +2,13 @@
   "asset_id": "base",
   "parts": {
     "base": {
-      "verts": 1160,
-      "tris": 582,
-      "non_manifold_edges": 1160,
+      "verts": 1191,
+      "tris": 580,
+      "non_manifold_edges": 1202,
       "materials": [
         "team",
-        "Material_0"
+        "stone",
+        "mud_dark"
       ],
       "origin": [
         0.0,
@@ -16,11 +17,12 @@
       ]
     }
   },
-  "verts": 1160,
-  "tris": 582,
-  "non_manifold_edges": 1160,
+  "verts": 1191,
+  "tris": 580,
+  "non_manifold_edges": 1202,
   "materials": [
-    "Material_0",
+    "mud_dark",
+    "stone",
     "team"
   ],
   "dims_m": [
@@ -38,6 +40,7 @@
     0.9496,
     5.3764
   ],
+  "solidity": 0.36,
   "limits_ok": true,
   "limit_failures": []
 }

@@ -1,7 +1,8 @@
 extends Node
 ## The castle looks (C20): every healthy look on disk owns its four damage states and its d3
 ## rubble, and every placed castle keeps the look it was dealt through its whole damage chain,
-## the ruin included.
+## the ruin included. The flag (I115) flies over every state, re-docked a little lower each hit, in
+## the owner colour until the fall takes it down; a randomly placed castle faces a random quarter.
 ##   godot --headless --fixed-fps 30 res://tests/castle_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -62,11 +63,34 @@ func _run() -> void:
 	for c in map.castles:
 		dealt[c] = worn_look(c)
 		var v: int = dealt[c]
+		var flg0: Node3D = c.go.get_node_or_null("Flag")
+		var dock0: Node3D = c.go.get_node_or_null("Art").find_child("flag_dock", true, false)
+		check(flg0 != null and dock0 != null and flg0.global_position.distance_to(dock0.global_position) < 0.02,
+				"the flag of look %d starts on the healthy castle's dock point (I115)" % v)
 		for n in [1, 2, 3]:
 			c.set_state(n)
 			var art: Node3D = c.go.get_node_or_null("Art")
 			var worn: String = art.get_meta("art_look", "no art") if art != null else "no art"
 			check(worn == state_id(v, n), "the castle in look %d swaps to %s, not %s" % [v, state_id(v, n), worn])
+			var flg: Node3D = c.go.get_node_or_null("Flag")
+			var dock: Node3D = art.find_child("flag_dock", true, false)
+			check(flg != null and dock != null and flg.global_position.distance_to(dock.global_position) < 0.02,
+					"the flag of look %d sits on state %d's dock point (I115)" % [v, n])
+	# the severe ruin still flies its flag, in the owner colour (a neutral castle's brown) (I115)
+	for c in map.castles:
+		var p = c.owner()
+		var want: Color = p.mainColor if p != null else c.NEUTRAL_COLOR
+		var flg2: Node3D = c.go.get_node_or_null("Flag")
+		var cloth = flg2.get_node_or_null("flag_cloth") if flg2 != null else null
+		var sm: ShaderMaterial = cloth.material_override if cloth is MeshInstance3D else null
+		check(sm != null and (sm.get_shader_parameter("albedo") as Color).is_equal_approx(want),
+				"the severe ruin of look %d still flies its flag in %s (I115)" % [dealt[c], want])
+	# a randomly placed castle faces a random quarter (I115), never a tilted odd angle
+	for c in map.castles:
+		if c.owner() == null:
+			var q: float = absf(fmod(c.go.rotation.y, PI / 2.0))
+			check(q < 0.001 or q > PI / 2.0 - 0.001,
+					"the neutral castle stands at a quarter turn: %f rad (I115)" % c.go.rotation.y)
 	# the fall: the ruin art is the same look's
 	var victim = map.castles[0]
 	var v0: int = dealt[victim]
@@ -75,3 +99,6 @@ func _run() -> void:
 	var ruin: String = ruin_art.get_meta("art_look", "no art") if ruin_art != null else "no art"
 	check(victim.is_ruin() and ruin == state_id(v0, 4),
 			"the castle in look %d falls to its own ruin %s (wore %s)" % [v0, state_id(v0, 4), ruin])
+	check(victim.go.get_node_or_null("Flag") != null, "the fall keeps the flag up while the castle breaks (I115)")
+	await get_tree().create_timer(1.6).timeout
+	check(victim.go.get_node_or_null("Flag") == null, "the flag goes down with the crumbled castle (I115)")

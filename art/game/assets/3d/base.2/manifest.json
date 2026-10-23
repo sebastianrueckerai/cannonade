@@ -2,7 +2,7 @@
   "asset_id": "base.2",
   "route": "generative",
   "inputs": {
-    "asset_yaml_sha": "5a87d52ba943"
+    "asset_yaml_sha": "37c6aa0b0ed5"
   },
   "steps": [
     {
@@ -18,7 +18,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.18
+      "elapsed_s": 0.44
     }
   ],
   "report": "report.json",
@@ -26,7 +26,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-12",
+  "approved": "2026-10-23",
   "cost_usd": 0.45,
-  "created": "2026-10-12T17:08:33+02:00"
+  "created": "2026-10-23T19:32:56+02:00"
 }

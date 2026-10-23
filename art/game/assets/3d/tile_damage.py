@@ -1,30 +1,25 @@
 # The three damage stages of the ground (I73), both families: the paving slab of tile_mud with craters
-# pressed into its top face and a blast texture painted in step with them. The enclosed family
+# pressed into its top face. The enclosed family
 # (tile_mud_d1..d3) cracks the stamped paving, the nature family (tile_dirt_d1..d3) churns open ground;
 # both stay near-white so the game's per-tile colour keeps multiplying on top, and the slab's border
 # stays at full height, so slabs of different stages meet without a seam. The first hit already leaves
-# a crater deep enough to read as mesh, the stages deepen and spread it. Written for the Blender behind
-# blx; GAME_REPO points at the game repo:
+# a crater deep enough to read as mesh, the stages deepen and spread it. C22 makes the material the
+# flat white carrier the Map tints - the crater mesh alone reads the damage, no blast texture. Written
+# for the Blender behind blx; GAME_REPO points at the game repo:
 #   { echo 'import os; os.environ["GAME_REPO"] = "<repo>"'; cat art/game/assets/3d/tile_damage.py; } | blx -
 import json
 import math
 import os
 import random
-import sys
 from pathlib import Path
 
 import bmesh
 import bpy
 
 ROOT = Path(os.environ.get("GAME_REPO", "/home/womb/repos/grid-cannons"))
-sys.path.insert(0, str(ROOT / "art/pipeline"))
-for m in [k for k in sys.modules if k == "blender" or k.startswith("blender.") or k == "paint"]:
-    del sys.modules[m]   # the daemon keeps modules of whichever repo imported them last
-from blender import paint  # noqa: E402
 
 GRID = 14          # cuts per side of the top face; the facets of a dent catch the light
 BORDER = 0.42      # craters stay inside this radius, so the slab border never dips
-TEX = paint.W
 
 # per family and stage: crater count, radius and depth in metres, texture seed
 STAGES = {
@@ -35,16 +30,6 @@ STAGES = {
     ("dirt", 2): dict(craters=2, r=(0.19, 0.25), depth=(0.065, 0.080), seed=92),
     ("dirt", 3): dict(craters=3, r=(0.22, 0.30), depth=(0.080, 0.095), seed=93),
 }
-# the deeper stages darken past the painter kind: more cracks on the paving, wider char on open ground
-OVER = {
-    ("mud", 1): {},
-    ("mud", 2): {"cracks": (10, (20, 44), (1.5, 3.5), -75)},
-    ("mud", 3): {"cracks": (14, (22, 48), (2.0, 4.0), -80)},
-    ("dirt", 1): {},
-    ("dirt", 2): {"patches": [(7, (22, 40), (0.3, 0.5), (-50, -28))]},
-    ("dirt", 3): {"patches": [(9, (26, 48), (0.4, 0.65), (-60, -32))]},
-}
-
 
 def craters_of(spec, seed):
     """The crater layout of one slab: (x, y, r, depth) in metres, kept clear of the border."""
@@ -89,26 +74,14 @@ def base_mesh():
     return me
 
 
-def dabs_at(craters, family):
-    """The scorch of each crater in texture pixels, on the top-planar UV (u = x + 0.5), plus the ejecta
-    flecks thrown out of a dirt crater."""
-    out = []
-    for cx, cy, r, _ in craters:
-        px, py = int(round((cx + 0.5) * TEX)), int(round((cy + 0.5) * TEX))
-        out.append((px, py, int(r * TEX * 1.35), 0.9, -80))
-        if family == "dirt":
-            rnd = random.Random(int(px * 131 + py))
-            for _ in range(8):
-                ang = rnd.random() * 2 * math.pi
-                dist = r * rnd.uniform(1.1, 1.7)
-                out.append((int(round((cx + math.cos(ang) * dist + 0.5) * TEX)),
-                            int(round((cy + math.sin(ang) * dist + 0.5) * TEX)),
-                            rnd.uniform(2.5, 5.0), 0.8, -50))
-    return out
-
 
 result = {}
 me = base_mesh()
+white = bpy.data.materials.get("#ffffff") or bpy.data.materials.new("#ffffff")
+white.use_nodes = True
+b = white.node_tree.nodes["Principled BSDF"]
+b.inputs["Base Color"].default_value = (1.0, 1.0, 1.0, 1.0)
+b.inputs["Roughness"].default_value = 1.0
 for (family, stage), spec in STAGES.items():
     craters = craters_of(spec, spec["seed"])
     bm = bmesh.new()
@@ -121,8 +94,7 @@ for (family, stage), spec in STAGES.items():
     bm.free()
     ob = bpy.data.objects.new(mid.name, mid)
     bpy.context.scene.collection.objects.link(ob)
-    paint.painted_material(ob, {"kind": f"{family}_hit", "seed": spec["seed"], "top_planar": True,
-                                "over": {**OVER[(family, stage)], "dabs_at": dabs_at(craters, family)}})
+    mid.materials.append(white)
     zs = [v.co.z for v in mid.vertices if v.co.z > 0.0]
     mid.calc_loop_triangles()
     tris = len(mid.loop_triangles)

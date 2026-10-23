@@ -7,8 +7,10 @@ dimensions:
   max_z: 1.5
 budget:
   max_tris: 600
-  max_materials: 1
+  max_materials: 3   # the flat parts (C22)
 parts:
   - supply
 pivots:
   origin: ground_centre
+paint:
+  supply.2: {kind: flat, seed: 142, over: {k: 3, blur: 2}}   # the baked texture's own colours as flat parts (C22)

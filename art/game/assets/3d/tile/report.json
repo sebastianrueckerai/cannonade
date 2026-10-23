@@ -6,7 +6,7 @@
       "tris": 20,
       "non_manifold_edges": 0,
       "materials": [
-        "tile_grain"
+        "#ffffff"
       ],
       "origin": [
         0.0,
@@ -19,7 +19,7 @@
   "tris": 20,
   "non_manifold_edges": 0,
   "materials": [
-    "tile_grain"
+    "#ffffff"
   ],
   "dims_m": [
     1.0,

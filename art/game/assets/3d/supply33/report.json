@@ -2,11 +2,12 @@
   "asset_id": "supply33",
   "parts": {
     "supply33": {
-      "verts": 907,
-      "tris": 469,
-      "non_manifold_edges": 889,
+      "verts": 901,
+      "tris": 467,
+      "non_manifold_edges": 883,
       "materials": [
-        "Material_0"
+        "roofs",
+        "wood"
       ],
       "origin": [
         0.0,
@@ -15,11 +16,12 @@
       ]
     }
   },
-  "verts": 907,
-  "tris": 469,
-  "non_manifold_edges": 889,
+  "verts": 901,
+  "tris": 467,
+  "non_manifold_edges": 883,
   "materials": [
-    "Material_0"
+    "roofs",
+    "wood"
   ],
   "dims_m": [
     2.9,
@@ -36,7 +38,7 @@
     1.1191,
     2.1596
   ],
-  "solidity": 0.285,
+  "solidity": 0.282,
   "limits_ok": true,
   "limit_failures": []
 }

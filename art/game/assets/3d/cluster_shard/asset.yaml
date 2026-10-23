@@ -12,5 +12,5 @@ parts:
   - cluster_shard
 pivots:
   origin: centre       # the projectile flies about its centre, so the build's origin stays
-paint:
-  cluster_shard: {kind: iron, seed: 83}
+materials:
+  cluster_shard: iron

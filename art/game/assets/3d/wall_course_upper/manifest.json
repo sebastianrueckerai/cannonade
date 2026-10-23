@@ -2,8 +2,8 @@
   "asset_id": "wall_course_upper",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "09a0635423a2",
-    "build_py_sha": "09b5f5dd1b22"
+    "asset_yaml_sha": "45cca22d6787",
+    "build_py_sha": "cbefabe7c760"
   },
   "steps": [
     {
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 1.0
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -42,7 +42,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-20",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-20T15:24:45+02:00"
+  "created": "2026-10-23T19:22:35+02:00"
 }

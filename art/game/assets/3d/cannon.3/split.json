@@ -1,25 +1,37 @@
 {
-  "source": "meshy-chunky-iron-1000",
-  "barrel": [56, 57, 58, 59],
-  "pivot_pieces": [55],
-  "fixes": [
-    {
-      "op": "lift",
-      "pieces": [55, 56, 57, 58, 59],
-      "by": 0.05,
-      "why": "the yoke block's top stood 3 cm into the barrel at every tilt; lifted, the barrel rides the pin over the yoke with the sweep clear"
-    }
-  ],
-  "notes": "Board 5 of the chunky pick (C20), the all-iron gun. p56 and p57 the barrel halves, p58 the band between them, p59 the muzzle ring. p55 the trunnion pin across the yoke, the pivot. p14 the octagonal base, p35 the pedestal foot, p40 the column (the auto split called it barrel; it is the mount), p49 the collar on it, p52 the yoke; the fifty small bolts sit on base, column and yoke, none on the barrel: mount",
-  "plate": {
-    "height": 0.1,
-    "margin": 0.05,
-    "chamfer": 0.03,
-    "colour": "#544d52",
-    "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. Painted in the D39 grey since session 11",
-    "paint": {
-      "kind": "plate",
-      "seed": 57
-    }
+ "source": "meshy-chunky-iron-1000",
+ "barrel": [
+  56,
+  57,
+  58,
+  59
+ ],
+ "pivot_pieces": [
+  55
+ ],
+ "fixes": [
+  {
+   "op": "lift",
+   "pieces": [
+    55,
+    56,
+    57,
+    58,
+    59
+   ],
+   "by": 0.05,
+   "why": "the yoke block's top stood 3 cm into the barrel at every tilt; lifted, the barrel rides the pin over the yoke with the sweep clear"
   }
+ ],
+ "notes": "Board 5 of the chunky pick (C20), the all-iron gun. p56 and p57 the barrel halves, p58 the band between them, p59 the muzzle ring. p55 the trunnion pin across the yoke, the pivot. p14 the octagonal base, p35 the pedestal foot, p40 the column (the auto split called it barrel; it is the mount), p49 the collar on it, p52 the yoke; the fifty small bolts sit on base, column and yoke, none on the barrel: mount",
+ "plate": {
+  "height": 0.1,
+  "margin": 0.05,
+  "chamfer": 0.03,
+  "colour": "#544d52",
+  "why": "Sebastian, session 07: a square plate in the gun's colour shows which grid squares the gun stands on, a round mount is hard to make out on the grid. Painted in the D39 grey since session 11"
+ },
+ "flat": {
+  "seed": 123
+ }
 }

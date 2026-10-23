@@ -2,8 +2,8 @@
   "asset_id": "terrain_stone",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "f60b0011890a",
-    "build_py_sha": "96b8b8819b7e"
+    "asset_yaml_sha": "a3fd799e4f7e",
+    "build_py_sha": "22e13da970c2"
   },
   "steps": [
     {
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 0.99
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.57
+      "elapsed_s": 0.45
     },
     {
       "name": "export",
@@ -41,8 +41,8 @@
   "limits_ok": true,
   "limit_failures": [],
   "critic": null,
-  "approved_by": null,
-  "approved": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-22T16:19:50+02:00"
+  "created": "2026-10-23T19:22:53+02:00"
 }

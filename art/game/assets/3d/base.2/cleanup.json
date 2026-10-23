@@ -7,7 +7,8 @@
   "why": {
     "fit": "the base is a 2x2 building (D40): the keep fills the 2x2 tiles less 5 cm per side, so the grid lines round it show",
     "team": "the game paints the first material of every mesh under the base in the team colour",
-    "team_deck": "Sebastian, session 07: every base shows its team colour on a flag and a coloured roof. The deck inside the battlements is this keep's roof. Measured: the deck at 3.04 to 3.28 m, its faces pointing down, the merlons from 0.8 m out"
+    "team_deck": "Sebastian, session 07: every base shows its team colour on a flag and a coloured roof. The deck inside the battlements is this keep's roof. Measured: the deck at 3.04 to 3.28 m, its faces pointing down, the merlons from 0.8 m out",
+    "paint": "flat solid materials, D94's recipe on every family (C22): one material a part, named for its palette role, no texture"
   },
   "team_deck": {
     "z": [
@@ -15,5 +16,14 @@
       3.35
     ],
     "inside": 0.8
+  },
+  "paint": {
+    "kind": "flat",
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    },
+    "seed": 112
   }
 }

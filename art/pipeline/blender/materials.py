@@ -13,15 +13,22 @@ def linear(hex_colour):
 
 def run(asset, pipeline_dir):
     """asset.yaml `materials` maps a part to a key of palette.json's `world`, or to a "#rrggbb" literal:
-    one flat material per key. asset.yaml `paint` gives a part the painted path of blender/paint.py
-    instead (C12): {"kind": stone|iron|plate|grain, "seed": N}. A part in `paint` ignores `materials`."""
+    one flat material per key. asset.yaml `paint` gives a part the flat painter of blender/paint.py
+    instead (C22): {"kind": flat, "seed": N} over the part's baked source texture. A part in `paint`
+    ignores `materials`."""
     with open(pipeline_dir + "/../game/art-direction/palette.json") as f:
         world = json.load(f)["world"]
     made = {}
     for o in parts(asset):
         spec = (asset.get("paint") or {}).get(o.name)
         if spec is not None:
-            made[paint.painted_material(o, spec).name] = None
+            imgs = [n.image for m in o.data.materials if m and m.use_nodes
+                    for n in m.node_tree.nodes if n.type == "TEX_IMAGE" and n.image]
+            if not imgs:  # already flat (the ship's hand-built gun): keeps its materials
+                made.update({m.name: None for m in o.data.materials if m})
+                continue
+            paint.painted_material(o, spec, source=max(imgs, key=lambda i: i.size[0] * i.size[1]))
+            made.update({m.name: None for m in o.data.materials if m})
             continue
         key = asset.get("materials", {}).get(o.name)
         if key is None:

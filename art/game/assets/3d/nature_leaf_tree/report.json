@@ -6,7 +6,8 @@
       "tris": 118,
       "non_manifold_edges": 0,
       "materials": [
-        "nature_leaf_tree"
+        "wood",
+        "leaf"
       ],
       "origin": [
         0.0141,
@@ -19,7 +20,8 @@
   "tris": 118,
   "non_manifold_edges": 0,
   "materials": [
-    "nature_leaf_tree"
+    "leaf",
+    "wood"
   ],
   "dims_m": [
     0.9162,

@@ -7,8 +7,10 @@ dimensions:
   max_z: 6.0
 budget:
   max_tris: 600
-  max_materials: 2    # the team material first, painted by the game, then the texture
+  max_materials: 4   # the flat parts (C22)
 parts:
   - base
 pivots:
   origin: ground_centre
+paint:
+  base.3: {kind: flat, seed: 133, over: {k: 4, blur: 2}}   # the baked texture's own colours as flat parts (C22)

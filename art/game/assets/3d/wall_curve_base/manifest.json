@@ -2,7 +2,7 @@
   "asset_id": "wall_curve_base",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "981138053293",
+    "asset_yaml_sha": "9b33e9e22446",
     "build_py_sha": "4557603a047f"
   },
   "steps": [
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 1.01
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.46
+      "elapsed_s": 0.44
     },
     {
       "name": "export",
@@ -42,7 +42,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-14",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-14T14:24:21+02:00"
+  "created": "2026-10-23T19:22:37+02:00"
 }

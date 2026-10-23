@@ -16,7 +16,7 @@
     ]
    ],
    "seed": 81,
-   "bytes": 215548
+   "bytes": 14352
   },
   "tile_mud_d2": {
    "tris": 524,
@@ -43,7 +43,7 @@
     ]
    ],
    "seed": 82,
-   "bytes": 228848
+   "bytes": 18864
   },
   "tile_mud_d3": {
    "tris": 524,
@@ -82,7 +82,7 @@
     ]
    ],
    "seed": 83,
-   "bytes": 241892
+   "bytes": 18792
   },
   "tile_dirt_d1": {
    "tris": 524,
@@ -97,7 +97,7 @@
     ]
    ],
    "seed": 91,
-   "bytes": 223664
+   "bytes": 15984
   },
   "tile_dirt_d2": {
    "tris": 524,
@@ -118,7 +118,7 @@
     ]
    ],
    "seed": 92,
-   "bytes": 230640
+   "bytes": 18936
   },
   "tile_dirt_d3": {
    "tris": 524,
@@ -145,7 +145,7 @@
     ]
    ],
    "seed": 93,
-   "bytes": 236872
+   "bytes": 20112
   }
  }
 }

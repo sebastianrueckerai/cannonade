@@ -14,10 +14,5 @@ parts:
 pivots:
   origin: ground_centre
 build: ../terrain_build.py
-paint:
-  terrain_stone:
-    kind: stone
-    seed: 61
-    over:                  # the rock greys of the boulder family, off the castle cream
-      stops: [[0.0, "#7d7364"], [0.09, "#8a8072"], [0.72, "#94897a"], [1.0, "#a89d8b"]]
-      ground: [0.16, 0.08, "#6b6357"]
+materials:
+  terrain_stone: rock

@@ -2,7 +2,7 @@
   "asset_id": "wall_line_base",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "2c9314e676bb",
+    "asset_yaml_sha": "5480ecbd6394",
     "build_py_sha": "4557603a047f"
   },
   "steps": [
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 1.0
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.68
+      "elapsed_s": 0.43
     },
     {
       "name": "export",
@@ -42,7 +42,7 @@
   "limit_failures": [],
   "critic": null,
   "approved_by": "Sebastian",
-  "approved": "2026-10-14",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-14T14:24:17+02:00"
+  "created": "2026-10-23T19:22:39+02:00"
 }

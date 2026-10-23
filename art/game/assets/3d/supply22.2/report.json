@@ -2,11 +2,13 @@
   "asset_id": "supply22.2",
   "parts": {
     "supply22": {
-      "verts": 962,
-      "tris": 488,
-      "non_manifold_edges": 940,
+      "verts": 961,
+      "tris": 487,
+      "non_manifold_edges": 939,
       "materials": [
-        "Material_0"
+        "mud_dark",
+        "wood",
+        "roofs"
       ],
       "origin": [
         0.0,
@@ -15,11 +17,13 @@
       ]
     }
   },
-  "verts": 962,
-  "tris": 488,
-  "non_manifold_edges": 940,
+  "verts": 961,
+  "tris": 487,
+  "non_manifold_edges": 939,
   "materials": [
-    "Material_0"
+    "mud_dark",
+    "roofs",
+    "wood"
   ],
   "dims_m": [
     1.9,

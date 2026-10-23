@@ -5,6 +5,16 @@
   "fit": 2.9,
   "why": {
     "fit": "the footprint less 5 cm per side, like the 1x1 depots and the base",
-    "turn": "the ramp and the door under the hoist face the camera, as in the picked sketch; at turn 0 they faced the left side"
+    "turn": "the ramp and the door under the hoist face the camera, as in the picked sketch; at turn 0 they faced the left side",
+    "paint": "flat solid materials, D94's recipe on every family (C22): one material a part, named for its palette role, no texture"
+  },
+  "paint": {
+    "kind": "flat",
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    },
+    "seed": 109
   }
 }

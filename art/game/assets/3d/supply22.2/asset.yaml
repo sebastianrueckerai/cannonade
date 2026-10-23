@@ -7,8 +7,10 @@ dimensions:           # metres, Blender axes, Z up. The footprint is 2.0 m squar
   max_z: 3.5          # under the base keep, 4.3 m and up (D40)
 budget:
   max_tris: 600       # D37
-  max_materials: 1
+  max_materials: 3   # the flat parts (C22)
 parts:
   - supply22
 pivots:
   origin: ground_centre
+paint:
+  supply22.2: {kind: flat, seed: 146, over: {k: 3, blur: 2}}   # the baked texture's own colours as flat parts (C22)

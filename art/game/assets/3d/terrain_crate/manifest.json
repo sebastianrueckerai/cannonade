@@ -2,7 +2,7 @@
   "asset_id": "terrain_crate",
   "route": "procedural",
   "inputs": {
-    "asset_yaml_sha": "b4995769e226",
+    "asset_yaml_sha": "481e4c8c0f6d",
     "build_py_sha": "22e13da970c2"
   },
   "steps": [
@@ -19,7 +19,7 @@
     {
       "name": "materials",
       "ok": true,
-      "elapsed_s": 1.01
+      "elapsed_s": 0.0
     },
     {
       "name": "report",
@@ -29,7 +29,7 @@
     {
       "name": "render",
       "ok": true,
-      "elapsed_s": 0.57
+      "elapsed_s": 0.44
     },
     {
       "name": "export",
@@ -41,8 +41,8 @@
   "limits_ok": true,
   "limit_failures": [],
   "critic": null,
-  "approved_by": null,
-  "approved": null,
+  "approved_by": "Sebastian",
+  "approved": "2026-10-23",
   "cost_usd": 0,
-  "created": "2026-10-22T16:23:39+02:00"
+  "created": "2026-10-23T19:22:50+02:00"
 }

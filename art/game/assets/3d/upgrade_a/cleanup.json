@@ -2,6 +2,22 @@
   "source": "meshy-b-600",
   "part": "upgrade_a",
   "turn": 0,
-  "size": [0.8, 0.8, 0.6],
-  "why": {"size": "D29, every block 0.8 by 0.8 by 0.6 m"}
+  "size": [
+    0.8,
+    0.8,
+    0.6
+  ],
+  "why": {
+    "size": "D29, every block 0.8 by 0.8 by 0.6 m",
+    "paint": "flat solid materials, D94's recipe on every family (C22): one material a part, named for its palette role, no texture"
+  },
+  "paint": {
+    "kind": "flat",
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    },
+    "seed": 115
+  }
 }
