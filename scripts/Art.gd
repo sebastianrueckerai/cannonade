@@ -131,14 +131,17 @@ static func _stylebox(name: String) -> StyleBoxTexture:
 	return sb
 
 
-## The looks of `id`: <id>.glb, then <id>.2.glb, <id>.3.glb and on until a number is missing.
+## The looks of `id`: <id>.glb plus every <id>.N.glb named in the manifest, in number order, so
+## a parked middle look (the D92 guns, the rejected castle looks of C21) leaves a gap without
+## hiding the looks beyond it.
 static func variants(id: String) -> Array:
 	if not _variants.has(id):
-		var ids := []
-		if has_model(id):
-			ids.append(id)
-			while has_model("%s.%d" % [id, ids.size() + 1]):
-				ids.append("%s.%d" % [id, ids.size() + 1])
+		_load_manifest()
+		var ids := [id] if has_model(id) else []
+		for k in _manifest:
+			if k.begins_with(id + ".") and k.substr(id.length() + 1).is_valid_int() and has_model(k):
+				ids.append(k)
+		ids.sort_custom(func(a, b): return a.get_slice(".", 1).to_int() < b.get_slice(".", 1).to_int())
 		_variants[id] = ids
 	return _variants[id]
 

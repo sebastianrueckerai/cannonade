@@ -28,5 +28,6 @@
   "approved_by": null,
   "approved": null,
   "cost_usd": 1.05,
-  "created": "2026-10-22T23:45:12+02:00"
+  "created": "2026-10-22T23:45:12+02:00",
+  "parked": true
 }

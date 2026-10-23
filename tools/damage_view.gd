@@ -4,7 +4,7 @@ extends Node3D
 ##   godot --path . res://tools/damage_view.tscn                          look around: wheel zooms, middle drags pans, right drags turn the board
 ##   tools/godot_render.sh res://tools/damage_view.tscn -- --shot=/tmp/damage_view.png
 
-const LOOKS := ["castle", "castle.2", "castle.3", "castle.4", "castle.5", "castle.6", "castle.7", "castle.8"]
+const LOOKS := ["castle", "castle.3", "castle.6"]
 const STATES := [
 	{"suffix": "", "label": "healthy"},
 	{"suffix": "_d1", "label": "d1 light"},

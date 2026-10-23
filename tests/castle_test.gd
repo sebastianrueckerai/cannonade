@@ -49,7 +49,8 @@ func _run() -> void:
 	await get_tree().process_frame
 	# the set ships whole: every healthy look owns its four damage states and its d3 rubble
 	var looks := Art.variants("castle")
-	check(looks.size() >= 2, "alternative castle looks ship (%d on disk)" % looks.size())
+	check(looks == ["castle", "castle.3", "castle.6"],
+			"the game ships the three keeper looks, rejected ones parked (C21): %s" % [looks])
 	for id in looks:
 		var v: int = 1 if id == "castle" else id.get_slice(".", 1).to_int()
 		for n in 4:

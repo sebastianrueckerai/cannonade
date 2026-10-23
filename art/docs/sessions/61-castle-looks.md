@@ -70,3 +70,12 @@ Spend ~$20.70 of the 30 cap: 8 healthy reference pictures, 24 chained damage edi
 Boards for the pass: /tmp/damage_view.png (all eight looks × five states, team parts painted), and three
 ai4 battles at art seeds 11, 23, 37 (/tmp/board1_005.png to /tmp/board3_005.png). Not verified here: the
 look of any generated picture or mesh — no image judgement in this harness. Sebastian's pass closes C21.
+
+### Follow-up, 2026-10-23: rejected looks out of the game (I105)
+
+Sebastian wants the rejected castles gone from his game now, not after the texture round. Looks 2, 4,
+5, 7 and 8 are deleted from the game layer (30 glbs + imports, manifest pruned); their art parks with
+`parked: true`, which godot_sync now respects even under --force (retroactively covering cannon.2 of
+D92). Art.variants reads the manifest so the keeper looks .3 and .6 stay reachable past the gap;
+castle_test pins the shipped set. The keepers' stone texture is still open: painted courses vs Meshy
+retexture vs the flat colours, boards/flat_vs_meshy.png is the flat try beside Meshy's own.

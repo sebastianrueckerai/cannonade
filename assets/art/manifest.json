@@ -161,21 +161,6 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-20T15:07:07+02:00"
   },
-  "castle.2": {
-    "size": [
-      2.9,
-      1.3044,
-      2.2663
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle"
-    ],
-    "tris": 3116,
-    "source_sha": "b4668c099c31",
-    "approved_by": null,
-    "synced": "2026-10-22T22:48:11+02:00"
-  },
   "castle.3": {
     "size": [
       2.3655,
@@ -191,36 +176,6 @@
     "approved_by": null,
     "synced": "2026-10-22T23:56:45+02:00"
   },
-  "castle.4": {
-    "size": [
-      2.6906,
-      1.0641,
-      2.9
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle"
-    ],
-    "tris": 2456,
-    "source_sha": "4496e310c979",
-    "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
-  },
-  "castle.5": {
-    "size": [
-      2.9,
-      1.9844,
-      2.2517
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle"
-    ],
-    "tris": 2763,
-    "source_sha": "cb7917e39a5f",
-    "approved_by": null,
-    "synced": "2026-10-23T00:14:17+02:00"
-  },
   "castle.6": {
     "size": [
       2.7519,
@@ -233,36 +188,6 @@
     ],
     "tris": 3246,
     "source_sha": "e80a640d0f22",
-    "approved_by": null,
-    "synced": "2026-10-23T00:14:17+02:00"
-  },
-  "castle.7": {
-    "size": [
-      2.9,
-      1.9931,
-      2.0628
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle"
-    ],
-    "tris": 2927,
-    "source_sha": "de62f063f617",
-    "approved_by": null,
-    "synced": "2026-10-23T00:14:17+02:00"
-  },
-  "castle.8": {
-    "size": [
-      2.9,
-      1.1675,
-      1.5743
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle"
-    ],
-    "tris": 2975,
-    "source_sha": "2d680a28d4af",
     "approved_by": null,
     "synced": "2026-10-23T00:14:17+02:00"
   },
@@ -281,21 +206,6 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-20T15:07:07+02:00"
   },
-  "castle_d1.2": {
-    "size": [
-      2.9,
-      1.5179,
-      2.2617
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d1.2"
-    ],
-    "tris": 2968,
-    "source_sha": "afd081c855a8",
-    "approved_by": null,
-    "synced": "2026-10-22T23:21:49+02:00"
-  },
   "castle_d1.3": {
     "size": [
       2.87,
@@ -311,36 +221,6 @@
     "approved_by": null,
     "synced": "2026-10-22T23:56:45+02:00"
   },
-  "castle_d1.4": {
-    "size": [
-      2.6953,
-      1.0455,
-      2.9
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d1.4"
-    ],
-    "tris": 2983,
-    "source_sha": "433ce1c0e54c",
-    "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
-  },
-  "castle_d1.5": {
-    "size": [
-      2.9,
-      2.0295,
-      2.6411
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d1.5"
-    ],
-    "tris": 2999,
-    "source_sha": "48f167e41741",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
   "castle_d1.6": {
     "size": [
       2.9,
@@ -353,36 +233,6 @@
     ],
     "tris": 3080,
     "source_sha": "02279bc3552e",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
-  "castle_d1.7": {
-    "size": [
-      2.9,
-      2.0201,
-      2.142
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d1.7"
-    ],
-    "tris": 2963,
-    "source_sha": "bddfeb8805a6",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
-  "castle_d1.8": {
-    "size": [
-      2.9,
-      1.1435,
-      1.8457
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d1.8"
-    ],
-    "tris": 2960,
-    "source_sha": "6e0fd185bf08",
     "approved_by": null,
     "synced": "2026-10-23T00:31:50+02:00"
   },
@@ -401,21 +251,6 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-20T15:07:07+02:00"
   },
-  "castle_d2.2": {
-    "size": [
-      2.9,
-      1.5557,
-      2.1816
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d2.2"
-    ],
-    "tris": 2960,
-    "source_sha": "615d0777249b",
-    "approved_by": null,
-    "synced": "2026-10-22T23:21:49+02:00"
-  },
   "castle_d2.3": {
     "size": [
       2.8156,
@@ -431,36 +266,6 @@
     "approved_by": null,
     "synced": "2026-10-22T23:56:45+02:00"
   },
-  "castle_d2.4": {
-    "size": [
-      2.8456,
-      0.8074,
-      2.9
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d2.4"
-    ],
-    "tris": 2864,
-    "source_sha": "219de48f6f84",
-    "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
-  },
-  "castle_d2.5": {
-    "size": [
-      2.9,
-      1.8871,
-      2.4126
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d2.5"
-    ],
-    "tris": 3118,
-    "source_sha": "8187cb844c6b",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
   "castle_d2.6": {
     "size": [
       2.9,
@@ -473,36 +278,6 @@
     ],
     "tris": 2839,
     "source_sha": "64827c7dbfb5",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
-  "castle_d2.7": {
-    "size": [
-      2.9,
-      1.9262,
-      2.2551
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d2.7"
-    ],
-    "tris": 2844,
-    "source_sha": "2ff264b20ed0",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
-  "castle_d2.8": {
-    "size": [
-      2.9,
-      1.2372,
-      1.6119
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d2.8"
-    ],
-    "tris": 2973,
-    "source_sha": "af690eb2cdb1",
     "approved_by": null,
     "synced": "2026-10-23T00:31:50+02:00"
   },
@@ -521,21 +296,6 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-19T15:33:01+02:00"
   },
-  "castle_d3.2": {
-    "size": [
-      2.9,
-      1.0499,
-      2.5466
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d3.2"
-    ],
-    "tris": 2909,
-    "source_sha": "36fc0238b619",
-    "approved_by": null,
-    "synced": "2026-10-22T23:21:49+02:00"
-  },
   "castle_d3.3": {
     "size": [
       2.5871,
@@ -551,36 +311,6 @@
     "approved_by": null,
     "synced": "2026-10-22T23:56:45+02:00"
   },
-  "castle_d3.4": {
-    "size": [
-      2.9,
-      0.7108,
-      2.9
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d3.4"
-    ],
-    "tris": 3056,
-    "source_sha": "bb9dc78aa653",
-    "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
-  },
-  "castle_d3.5": {
-    "size": [
-      2.9,
-      1.5155,
-      2.5502
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d3.5"
-    ],
-    "tris": 2748,
-    "source_sha": "df576262ba42",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
   "castle_d3.6": {
     "size": [
       2.9,
@@ -593,36 +323,6 @@
     ],
     "tris": 2912,
     "source_sha": "dcf2010bc5df",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
-  "castle_d3.7": {
-    "size": [
-      2.9,
-      0.8831,
-      2.1015
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d3.7"
-    ],
-    "tris": 3007,
-    "source_sha": "abb145128dc1",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
-  "castle_d3.8": {
-    "size": [
-      2.9,
-      0.8652,
-      1.9727
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d3.8"
-    ],
-    "tris": 3121,
-    "source_sha": "2b536c00266c",
     "approved_by": null,
     "synced": "2026-10-23T00:31:50+02:00"
   },
@@ -641,21 +341,6 @@
     "approved_by": "Sebastian",
     "synced": "2026-10-19T15:33:01+02:00"
   },
-  "castle_d4.2": {
-    "size": [
-      1.9812,
-      0.8553,
-      2.9
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d4.2"
-    ],
-    "tris": 2942,
-    "source_sha": "3ea3c2bbd198",
-    "approved_by": null,
-    "synced": "2026-10-22T23:21:49+02:00"
-  },
   "castle_d4.3": {
     "size": [
       2.8727,
@@ -671,36 +356,6 @@
     "approved_by": null,
     "synced": "2026-10-22T23:56:45+02:00"
   },
-  "castle_d4.4": {
-    "size": [
-      2.9,
-      0.6705,
-      2.9
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d4.4"
-    ],
-    "tris": 2936,
-    "source_sha": "e3cb87fb7d98",
-    "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
-  },
-  "castle_d4.5": {
-    "size": [
-      2.7725,
-      1.136,
-      2.9
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d4.5"
-    ],
-    "tris": 2863,
-    "source_sha": "f30d05744e50",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
   "castle_d4.6": {
     "size": [
       2.9,
@@ -713,36 +368,6 @@
     ],
     "tris": 2624,
     "source_sha": "703ae8becc41",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
-  "castle_d4.7": {
-    "size": [
-      2.9,
-      0.7751,
-      2.2784
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d4.7"
-    ],
-    "tris": 2410,
-    "source_sha": "777867ba539c",
-    "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
-  },
-  "castle_d4.8": {
-    "size": [
-      2.9,
-      0.4921,
-      2.3686
-    ],
-    "tolerance": 0.02,
-    "parts": [
-      "castle_d4.8"
-    ],
-    "tris": 2930,
-    "source_sha": "745da0638a79",
     "approved_by": null,
     "synced": "2026-10-23T00:31:50+02:00"
   },
