@@ -1,6 +1,6 @@
 # Grid Cannons: the game repo and how art plugs in
 
-Repo: [/home/womb/repos/grid-cannons](/home/womb/repos/grid-cannons), branch `master`, remote `SparseSpeculator/grid-cannons`. Changes to the game are made from sessions here and committed there (D8). Surveyed 11 October 2026, art layer built the same day (session 02).
+Repo: [/home/womb/repos/cannonade](/home/womb/repos/cannonade), branch `master`, remote `sebastianrueckerai/cannonade` (moved 2026-10-24 from SparseSpeculator/grid-cannons). Changes to the game are made from sessions here and committed there (D8). Surveyed 11 October 2026, art layer built the same day (session 02).
 
 The game is released as Cannonade (D26). Every player-facing string says Cannonade: `config/name` in `project.godot`, the fallback titles of the splash and the menu, the store pages. Grid Cannons stays the repository, project and code name.
 

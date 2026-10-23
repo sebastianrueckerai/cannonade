@@ -1,6 +1,6 @@
 # Grid Cannons – notes for Claude
 
-The game is released as **Cannonade**: every player-facing string, the window title (`config/name`), the splash and the menu say Cannonade. Grid Cannons stays the project, repository and code name.
+The game is released as **Cannonade**: every player-facing string, the window title (`config/name`), the splash and the menu say Cannonade. Grid Cannons stays the project and code name (the repository moved to `cannonade` on GitHub and on disk, 2026-10-24).
 
 Godot 4.7 game in GDScript (ported from Unity 2018.3). Player-facing docs: `README.md`.
 
@@ -18,8 +18,8 @@ edit the checkout by hand and does not run merges: the session that finished the
 Do new work in a worktree off the latest master; when it is done, merge it into the local master and
 push. The harness blocks a worktree session's git against the main checkout, and master is checked out
 there, so merge by push: `receive.denyCurrentBranch = updateInstead` stays set in the main checkout's
-`.git/config` (if missing, `git config --file /home/womb/repos/grid-cannons/.git/config
-receive.denyCurrentBranch updateInstead`), then `git push /home/womb/repos/grid-cannons <branch>:master`.
+`.git/config` (if missing, `git config --file /home/womb/repos/cannonade/.git/config
+receive.denyCurrentBranch updateInstead`), then `git push /home/womb/repos/cannonade <branch>:master`.
 Sebastian never hand-edits the checkout, so a refusal for uncommitted changes there is machine noise
 (Godot re-serializations, regenerated files), never his work: restore each differing tracked file to
 its committed content (a `git archive master` extract makes the reference copy), delete untracked
