@@ -579,7 +579,22 @@ a player, one look now left undrawn. His hand-placed spawn anchors of the same r
 cannon.2's anchor is recorded too, for the parked asset whose files stay in art/. Session 62's follow-up
 round, roadmap I103.
 
-## D93. The castle looks wear flat solid materials (2026-10-23, Sebastian)
+## D93. One small and one big gun a player, the mortar a 2x2 only (2026-10-23, Sebastian)
+
+"The game should have a big and a small gun, each in at least 2 varieties. Each player in each roiund
+should only have 1 version of the 1x1 and one version of the 2x2 gun. But the versions of the palyers
+should be different. I had at elast one game were I was able to place different guns for the small one
+at each click. Also, the mortar is supposed to be a 2x2 gun only not a 1x1 gun." The small deal stands
+at two: the slender cannon and `cannon.3` (D92 took the third); `cannon.4`, the mortar's model on the
+1x1 plate, comes out of the looks and its glb leaves the game assets - the mortar is a 2x2 gun only.
+The big deal is new, D91's 1:1 exchange turned into one: `BIG_GUN_LOOKS` holds the 2x2 cannon
+(`cannon22a`) and the mortar (`cannon22b`), dealt beside the small ones so one faction's every fused
+2x2 wears the cannon and the other's the mortar, same def, same heavy shell. The per-click variety was
+not the deal but the wear: `Art.attach` drew a fresh variant of the family on every spawn, so a player
+dealt the first look changed model at each click; the gun paths now attach the dealt look exactly.
+Session 66, roadmap I114.
+
+## D94. The castle looks wear flat solid materials (2026-10-23, Sebastian)
 
 "OK, lets go with flat. [...] Make sure the materials make sense: I need to see tham and know what they
 are and which ofg them is the one were I assign stuff that changes color based on player." The three
@@ -590,4 +605,4 @@ texture for one solid material a part: `team` first (the slot the game paints in
 the blurred source gives the centres, brightness variants of one hue merge into one part, every UV
 island takes the nearest centre whole, and a face whose own source texel is team blue joins the team
 part even when its island's mean washed it out. The wrong faces and rough geometry he saw stay his to
-fix by hand in Blender. Session 66, roadmap C21.
+fix by hand in Blender. Session 67, roadmap C21.

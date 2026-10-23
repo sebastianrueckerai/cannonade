@@ -264,10 +264,14 @@ const WallComp = preload("res://scripts/components/Wall.gd")
 ## wears the first.
 const WALL_LOOKS := ["wall", "wall_corbel", "wall_pilaster", "wall_course"]
 
-## The gun looks of C20, without cannon.2 (D92): the slender cannon, the chunky iron pick and the mortar at 1x1.
-## Every game deals each player one (Main.build); a gun with no owner wears the first. One look a player, the
-## whole faction wears it.
-const GUN_LOOKS := ["cannon", "cannon.3", "cannon.4"]
+## The small gun looks of C20, without cannon.2 (D92) and without cannon.4 (D93: the mortar is a 2x2 gun
+## only): the slender cannon and the chunky iron pick. Every game deals each player one (Main.build); a gun
+## with no owner wears the first. One look a player, the whole faction wears it.
+const GUN_LOOKS := ["cannon", "cannon.3"]
+
+## The big gun looks (D93): the 2x2 cannon and the mortar, a 1:1 exchange of the same fused gun. Dealt like the
+## small ones; a fused 2x2 with no owner wears the first.
+const BIG_GUN_LOOKS := ["cannon22a", "cannon22b"]
 
 
 static func wall_look(owner) -> String:
@@ -278,25 +282,31 @@ static func gun_look(owner) -> String:
 	return owner.gunLook if owner != null and owner.gunLook != "" else GUN_LOOKS[0]
 
 
+static func big_gun_look(owner) -> String:
+	return owner.bigGunLook if owner != null and owner.bigGunLook != "" else BIG_GUN_LOOKS[0]
+
+
 ## The looks in a random order, drawn from the art's own generator so the game's random sequence stays.
 static func deal_wall_looks() -> Array:
-	var looks: Array = WALL_LOOKS.duplicate()
-	for i in range(looks.size() - 1, 0, -1):
-		var j: int = Art._rng.randi_range(0, i)
-		var t = looks[i]
-		looks[i] = looks[j]
-		looks[j] = t
-	return looks
+	return _shuffled(WALL_LOOKS)
 
 
 static func deal_gun_looks() -> Array:
-	var looks: Array = GUN_LOOKS.duplicate()
-	for i in range(looks.size() - 1, 0, -1):
+	return _shuffled(GUN_LOOKS)
+
+
+static func deal_big_gun_looks() -> Array:
+	return _shuffled(BIG_GUN_LOOKS)
+
+
+static func _shuffled(looks: Array) -> Array:
+	var out: Array = looks.duplicate()
+	for i in range(out.size() - 1, 0, -1):
 		var j: int = Art._rng.randi_range(0, i)
-		var t = looks[i]
-		looks[i] = looks[j]
-		looks[j] = t
-	return looks
+		var t = out[i]
+		out[i] = out[j]
+		out[j] = t
+	return out
 
 
 ## Instantiates a building (by id or def), not yet added to the tree when parent is null. A wall block or piece
@@ -310,7 +320,9 @@ func spawn(def_or_id, parent: Node = null, owner = null) -> Node3D:
 	if def.id == "wall":
 		WallComp.put_on(go, wall_look(owner))
 	elif def.id == "cannon":
-		Art.attach(go, gun_look(owner))
+		Art.attach(go, gun_look(owner), Art.SLAB_TOP, true)
+	elif def.id == "cannon22a":   # the dealt look is the draw, so no auto-variant pick over it
+		Art.attach(go, big_gun_look(owner), Art.SLAB_TOP, true)
 	else:
 		Art.attach(go, def.id)
 	if not def.piece.is_empty():

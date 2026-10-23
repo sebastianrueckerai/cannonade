@@ -169,6 +169,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 	Indicators.own_player = null  # static: reset every game, then the human owns the aim arcs
 	var looks: Array = Catalog.deal_wall_looks()  # every player another look, no look twice (D81)
 	var guns: Array = Catalog.deal_gun_looks()  # the guns too: a faction always builds the same gun (C20)
+	var bigs: Array = Catalog.deal_big_gun_looks()  # the fused 2x2 wears its own dealt gun (D93)
 	for i in kinds.size():
 		var script: Script = AIScript if kinds[i] == "ai" else PlayerController
 		var p = _component("%s%d" % ["AI" if kinds[i] == "ai" else "HumanPlayer", i + 1], script)
@@ -180,6 +181,7 @@ func build(cfg: Dictionary, decorate := true) -> void:
 		p.mainColorHexCode = colors[0]
 		p.wallLook = looks[i % looks.size()]
 		p.gunLook = guns[i % guns.size()]
+		p.bigGunLook = bigs[i % bigs.size()]
 		p.highlightPosColorHexCode = colors[1]
 		p.highlightNegColorHexCode = colors[2]
 		game.players.append(p)

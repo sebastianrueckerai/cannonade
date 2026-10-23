@@ -1,4 +1,4 @@
-# Session 66: the castles go flat solid materials, the ruin catches its shatter
+# Session 67: the castles go flat solid materials, the ruin catches its shatter
 
 Sebastian, 2026-10-23: "OK, lets go with flat. Some faces are still assigned wring an the model has bad
 geometry... I might fix this later in blender. Make sure the materials make sense: I need to see tham and
@@ -7,13 +7,13 @@ Yopu can already put the models in game. We go with flat colors. Make sure to us
 MAke ruined versions of them like last time. Also, make sure on the last ruined stage, at the moment the
 castle is destroyed the last ruin shatters to pieces just like walls."
 
-He picks the flat look over the painted texture (D93), keeps the three C21 keepers
+He picks the flat look over the painted texture (D94), keeps the three C21 keepers
 (`castle`, `castle.3`, `castle.6`), wants materials he can read at a glance with the player-colour one
 named, and the fall to ruins to shatter like the walls' crumble.
 
 ## Deliverables
 
-1. **Flat as solid materials** (D93): [paint.py](../../pipeline/blender/paint.py) `flat_materials`
+1. **Flat as solid materials** (D94): [paint.py](../../pipeline/blender/paint.py) `flat_materials`
    returns a part id per face and a colour per part instead of a flattened texture; `painted_material`
    makes one solid material a part, named `team` (first, the game paints it in the player's colour),
    `stone`, `dark` and `stone<n>`. The flat painter owns the team split, so `cleanup.py` skips

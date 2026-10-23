@@ -55,7 +55,49 @@ no rock or hill can take a river tile. river_test's sweep already guards it: "ri
 stand bare after the build" counts any structure on a river tile, terrain included. No change; verified and
 reported.
 
+## Round 2 (I112): his play of the splash
+
+"The river splash has lightning looking studff in it. Get rid of that. It aslso has a smoke plume. That may
+work if you make it blue on the inside and white as it disperses. Currently is looks like thick black smoke."
+
+- The lightning was the water branch's additive SPARK burst (I106): deleted, and the weapons guard flips to
+  `sparks == 0`.
+- The black smoke was the heavy shell's I101 3x3 puffs, which ran on water like on land. Over water the
+  splash shell now skips the dirt puffs and its smoke puffs turn to mist: SMOKE_SOFT, blue (0.45, 0.62, 0.95)
+  at the core running to (0.93, 0.97, 1.0) as it disperses. New `to` end-colour key on `_burst`; the colour
+  moves from `p.color` into the ramp so a burst can recolour over life, identical rendering for every
+  existing burst.
+- Guards in weapons_test beside the cannon splash: a fused cannon placed by the water fires its shell in, the
+  landing wears no dark smoke / dirt / spark texture, each of the eight tiles round it holds a mist puff, and
+  its ramp starts blue, ends white. Watched red: master FX (12 sparks), mist and dirt switches off (16
+  land-style bursts, 0 of 8), `to` dropped (8 of 8, ramp stays blue).
+- The earlier `gun` (the fused square from the top of the test) is freed by then, so the shell fires from a
+  freshly placed cannon22a beside the water tile.
+
 ## Ship order
 
 Plan, roadmap items, code, watched reds, full suite (other sessions' Godot quiet first), before/after
 crops, commit, merge to master by push, origin, report.
+
+## Round 3 (I112 amendment): still black - the sprites themselves
+
+"The splash is still smokle black. It needs to be water blue in the center / at the early stage of the
+shapes emiting and then gfo to white. If the shapes are images that are black by default then go gout
+and search something more fitting a pre made splash effect or white sprites we can tint."
+
+- His diagnosis was right: the Kenney smoke sprites are grey. An in-engine probe read smoke_04 at 0.25
+  average RGB (centre 0.23), so the blue tint multiplied down to dark grey-blue - black smoke over a
+  river, whatever the recipe. The muzzle glows (muzzle_04/05) are white but star-shaped spikes with
+  7.7 / 4.9 percent alpha coverage; a first pass put the water family on them and the render showed 0
+  water-blue pixels - thin streaks, not puffs. That pass also proved the ground darkening in the impact
+  box is the shell's own 3x3 ground scar, not particles (same scar before and after).
+- No download needed: mist.png is derived in-repo from smoke_04's soft round alpha with white RGB
+  (Kenney CC0 allows the edit). White tints true water blue: the droplets, the foam sheet and the 3x3
+  mists all ride MIST, blue (0.45, 0.62, 0.95) at the core to white (0.95, 0.98, 1.0) through the
+  round-2 `to` ramp.
+- Guards: tests/weapons counts FX.MIST for the splash droplets and the eight mist tiles. Watched red:
+  the water path reverted to the grey smoke sprites fails all three (0 droplets, land-style bursts,
+  0 of 8 tiles).
+- Render evidence, seed 42, same pixel, impact frame: the impact box (120x120) holds 4 water-blue
+  pixels on master, 222 after; dark pixels 182 before, 67 after. Crops at /tmp/splash{3,4}_crop3x.png
+  (before = master, the version he played).

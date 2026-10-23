@@ -63,19 +63,27 @@ func _ready() -> void:
 	_check_problem_reports()
 	await _check_workflow_in_game()
 	Catalog.load_dir(Catalog.BUILDINGS_DIR)
-	await _check_gun_looks()
+	await _check_gun_deals()
 	print("CATALOG TEST PASSED" if failures.is_empty() else "CATALOG TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 
-## The gun looks of C20, without cannon.2 (D92): the game deals each player one of the three, a player's
-## cannons wear it, and a cannon without an owner wears the first.
-func _check_gun_looks() -> void:
-	check(Catalog.GUN_LOOKS.size() == 3 and Catalog.GUN_LOOKS.all(func(id): return Art.has_model(id)),
-			"three gun looks and every model is in the game %s" % [Catalog.GUN_LOOKS])
+## The gun deals (C20, D93): two small looks and two big ones, each player one of each and the players
+## differ, every cannon a player draws wears that player's small look, the fused 2x2 wears the big one,
+## and the mortar is a 2x2 gun only.
+func _check_gun_deals() -> void:
+	check(Catalog.GUN_LOOKS.size() == 2 and Catalog.GUN_LOOKS.all(func(id): return Art.has_model(id)),
+			"two gun looks and every model is in the game %s" % [Catalog.GUN_LOOKS])
+	check("cannon.4" not in Catalog.GUN_LOOKS and not Art.has_model("cannon.4"),
+			"the mortar is a 2x2 gun only: no mortar model at 1x1")
+	check(Catalog.BIG_GUN_LOOKS.size() == 2 and Catalog.BIG_GUN_LOOKS.all(func(id): return Art.has_model(id)),
+			"two big gun looks, the 2x2 cannon and the mortar %s" % [Catalog.BIG_GUN_LOOKS])
 	var dealt: Array = Catalog.deal_gun_looks()
 	check(dealt.all(func(l): return l in Catalog.GUN_LOOKS) and dealt.size() == Catalog.GUN_LOOKS.size(),
-			"the deal hands out the three looks, none twice (%s)" % [dealt])
+			"the deal hands out both small looks, none twice (%s)" % [dealt])
+	var big_dealt: Array = Catalog.deal_big_gun_looks()
+	check(big_dealt.all(func(l): return l in Catalog.BIG_GUN_LOOKS) and big_dealt.size() == Catalog.BIG_GUN_LOOKS.size(),
+			"the deal hands out both big looks, none twice (%s)" % [big_dealt])
 	Main.requested_mode = "ai2"
 	Main.requested_args = {"seed": "5", "no-decorations": "true"}
 	var main := Main.new()
@@ -85,36 +93,70 @@ func _check_gun_looks() -> void:
 	var players: Array = main.game.players
 	check(players[0].gunLook in Catalog.GUN_LOOKS and players[0].gunLook != players[1].gunLook,
 			"two players, two different gun looks (%s, %s)" % [players[0].gunLook, players[1].gunLook])
-	var look := func(go: Node3D): return go.get_node("Art").get_meta("art_id")
-	# the hand draw is the real build path (try_get_next_building): the gun a player builds wears that
-	# player's look, not the first one
+	check(players[0].bigGunLook in Catalog.BIG_GUN_LOOKS and players[0].bigGunLook != players[1].bigGunLook,
+			"two players, two different big gun looks (%s, %s)" % [players[0].bigGunLook, players[1].bigGunLook])
+	var look := func(go: Node3D): return go.get_node("Art").get_meta("art_look")
+	players[0].gunLook = "cannon"  # the deal is random; the wear checks want a player on the first look
+	players[1].gunLook = "cannon.3"
+	# the hand draw is the real build path (try_get_next_building): every gun a player builds wears that
+	# player's look, on every draw - the look never varies per click
 	main.game.phase = main.game.Phase.GUNS
 	for p in players:
 		p.secondsBetweenBuildings = 0.0
+		var worn := {}
+		var drawn := 0
 		var tries := 0
-		while tries < 60 and (not U.alive(p.nextBuilding) or Catalog.def_of(p.nextBuilding).id != "cannon"):
+		while tries < 200 and drawn < 8:
 			if U.alive(p.nextBuilding):
 				p.nextBuilding.free()
 			p.try_get_next_building()
 			tries += 1
-		check(U.alive(p.nextBuilding) and Catalog.def_of(p.nextBuilding).id == "cannon",
-				"a cannon reaches the hand within %d draws" % tries)
-		check(look.call(p.nextBuilding) == p.gunLook,
-				"the hand-drawn cannon wears the player's look (got %s, want %s)"
-				% [look.call(p.nextBuilding), p.gunLook])
-		p.nextBuilding.free()
-	players[1].gunLook = "cannon.3"  # the deal is random; the wear check needs an owner on a non-first look
+			if U.alive(p.nextBuilding) and Catalog.def_of(p.nextBuilding).id == "cannon":
+				worn[look.call(p.nextBuilding)] = true
+				drawn += 1
+		check(drawn == 8, "eight cannons reach the hand within %d draws" % tries)
+		check(worn.size() == 1 and worn.has(p.gunLook),
+				"every drawn cannon wears the player's look (%s, want %s)" % [worn.keys(), p.gunLook])
+		if U.alive(p.nextBuilding):
+			p.nextBuilding.free()
 	var gun := Catalog.spawn("cannon", null, players[1])
 	check(look.call(gun) == players[1].gunLook,
 			"a cannon of player 2 wears player 2's look (got %s)" % look.call(gun))
 	var bare := Catalog.spawn("cannon")
-	check(look.call(bare) == "cannon", "a cannon without an owner wears the first look")
+	check(look.call(bare) == "cannon", "a cannon without an owner wears exactly the first look")
 	gun.free()
 	bare.free()  # never added to the tree: they would leak at exit and fail the runner's ERROR check
+	# the real fuse: four cannons placed in a square merge into the 2x2, which wears the placer's big look
+	players[1].bigGunLook = "cannon22b"  # the deal is random; the wear check wants the mortar look
+	for i in players.size():
+		var spot: Variant = _free_square(players[i], 2)
+		check(spot != null, "a free 2x2 square for player %d's fuse at %s" % [i, spot])
+		if spot == null:
+			continue
+		for dx in 2:
+			for dz in 2:
+				players[i].place(Catalog.get_def("cannon"), spot[0] + dx, spot[1] + dz)
+		var fused = players[i].map.tiles[spot[0]][spot[1]].structure
+		check(Catalog.def_of(fused).id == "cannon22a", "four cannons fuse into the 2x2 cannon")
+		check(look.call(fused) == players[i].bigGunLook,
+				"the fused 2x2 of player %d wears the player's big look (got %s, want %s)"
+				% [i, look.call(fused), players[i].bigGunLook])
 	main.queue_free()
 	await frames(2)
 
 
+## The lower-left tile of the first free side x side square of dry, unowned ground.
+func _free_square(p, side: int) -> Variant:
+	var cannon := Catalog.get_def("cannon")
+	for x in range(p.map.sizeX - side + 1):
+		for z in range(p.map.sizeZ - side + 1):
+			var ok := true
+			for dx in side:
+				for dz in side:
+					ok = ok and p.can_place(cannon, x + dx, z + dz)
+			if ok:
+				return [x, z]
+	return null
 ## A copy of the shipped catalog to edit freely.
 func _prepare_tmp_catalog() -> void:
 	DirAccess.make_dir_recursive_absolute(TMP)
