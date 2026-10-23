@@ -88,7 +88,7 @@ func _run() -> void:
 		await _wheel(MOUSE_BUTTON_WHEEL_DOWN, r.get_center())
 
 	_hold("wall_1")
-	var spot := free_tile_in_range()
+	var spot := free_tile_in_range(true)
 	await point_at_tile(spot)
 	check(human.canPlaceWall and human.nextWall.get_parent() == map.tiles[spot.x][spot.y].go,
 			"the held piece previews on the board while the banner counts")

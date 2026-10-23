@@ -30,6 +30,7 @@ func _ready() -> void:
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 
+
 func check(cond: bool, msg: String) -> void:
 	print(("ok: " if cond else "FAIL: ") + msg)
 	if not cond:
@@ -121,13 +122,15 @@ func base_xz() -> Vector2i:
 	return Vector2i(map.sizeX / 2, map.sizeZ / 4)
 
 
-func free_tile_in_range() -> Vector2i:
+## A free buildable tile in the guns' reach, or edge on the walls when it takes a wall piece (I105).
+func free_tile_in_range(wall := false) -> Vector2i:
 	var b := base_xz()
 	for r in range(2, 4):
 		for dx in range(-r, r + 1):
 			for dz in range(-r, r + 1):
 				var t = map.tiles[b.x + dx][b.y + dz]
-				if human.in_reach(t.idxX, t.idxZ) and not U.alive(t.structure) and t.buildable():
+				var near: bool = human.in_wall_reach(t.idxX, t.idxZ) if wall else human.in_reach(t.idxX, t.idxZ)
+				if near and not U.alive(t.structure) and t.buildable():
 					return Vector2i(t.idxX, t.idxZ)
 	return Vector2i(-1, -1)
 
@@ -233,8 +236,8 @@ func _run() -> void:
 	check(bb.cells == _v([[1, 0], [0, 0], [-1, 0], [0, -1]]), "the right mouse button turns it again %s" % [bb.cells])
 
 	# left click stamps one block per cell, on the tiles the ghost covered; the piece is used up.
-	# Upright three west of the ring: its tiles sit two from the ring's west side.
-	var w := Vector2i(b.x - 4, b.y)
+	# Upright three west of the ring: its tiles sit edge on the ring's west side (I105).
+	var w := Vector2i(b.x - 3, b.y)
 	var want := [w + Vector2i(0, 1), w, w + Vector2i(0, -1)]
 	check(_all_free(want), "the three tiles west of the ring are free")
 	_hold("wall_3")
@@ -344,6 +347,8 @@ func _run() -> void:
 			"the S stacks a storey on each of the four")
 	for k in below:
 		map.tiles[k.x][k.y].un_build()  # they would reach the column the gun checks below walk
+	for k in want:
+		map.tiles[k.x][k.y].un_build()  # the column would block the cursor's ray to the building spots below
 
 		# nobody builds on ground another player's closed ring holds, even anchored from inside it:
 	# a 2 x 1 room of the enemy's two rows north of the castle's ring, the player's block in its west half
@@ -372,7 +377,6 @@ func _run() -> void:
 	await point_at(room_e_far)
 	await press("act")
 	check(not U.alive(room_e.structure), "a gun on the enemy's closed ground is refused")
-	room_w.un_build()
 	for k in enemy_room:
 		map.tiles[k.x][k.y].un_build()
 	_hold("wall_1")
@@ -380,20 +384,25 @@ func _run() -> void:
 	await press("act")
 	check(U.alive(room_e.structure), "with the enemy's room gone the block places")
 	room_e.un_build()  # it would reach the column the gun checks below walk
-	# a placement two tiles from an own wall needs the straight line between them empty: the enemy's
-	# block on the line refuses the piece and the gun, the line clear again places
+	# a wall stands only edge on an own wall (I105): two tiles out is a gap and stands nothing, one
+	# edge on it places. A gun two tiles out instead needs the straight line between them empty:
+	# the enemy's block on the line refuses it
 	var post := Vector2i(b.x + 3, b.y + 4)
 	var post_t := Vector2i(b.x + 5, b.y + 4)
 	check(_all_free([post, post_t, Vector2i(b.x + 4, b.y + 4)]), "the row east of the enemy's room is free")
 	human.build_wall(map.tiles[post.x][post.y], Catalog.spawn("wall", null, human))
-	check(human.in_reach(post_t.x, post_t.y), "two tiles east of the own block is in reach")
+	check(human.in_reach(post_t.x, post_t.y), "two tiles east of the own block is in the guns' reach")
 	_hold("wall_1")
-	# past secondsBetweenWalls, so this click tests the empty line, not the hold
+	# past secondsBetweenWalls, so this click tests the gap, not the hold
 	await seconds(0.3)
 	await point_at_tile(post_t)
+	check(not human.canPlaceWall, "the piece over the gap tile reads unplaceable")
 	await press("act")
-	check(U.alive(map.tiles[post_t.x][post_t.y].structure), "the block places with the line empty")
-	map.tiles[post_t.x][post_t.y].un_build()
+	check(not U.alive(map.tiles[post_t.x][post_t.y].structure), "a block two tiles out is a gap and stands no wall")
+	await point_at_tile(Vector2i(b.x + 4, b.y + 4))
+	await press("act")
+	check(U.alive(map.tiles[b.x + 4][b.y + 4].structure), "a block edge on the own wall places")
+	map.tiles[b.x + 4][b.y + 4].un_build()
 	game.players[1].build_wall(map.tiles[b.x + 4][b.y + 4], Catalog.spawn("wall", null, game.players[1]))
 	check(not human.in_reach(post_t.x, post_t.y), "the enemy's block between blocks the line")
 	_hold("wall_1")
@@ -455,8 +464,9 @@ func _run() -> void:
 			"off the wall the held block is a block again (%s)" % cell.get_node("Art").get_meta("art_id"))
 	await zoom(-12, map.tile_position(e.x, e.y))
 
-	# reach: a placement needs one tile within two of an own wall or castle. Walls walk the castle's column
-	# north from the ring's top row, guns south from its bottom row; d counts tiles out from the ring.
+	# walls need a tile edge on an own wall or castle (I105); guns one within two of them. Walls walk
+	# the castle's column north from the ring's top row, guns south from its bottom row; d counts
+	# tiles out from the ring.
 	var top := b.y + 2
 	var north: Array = []
 	for d in range(1, 7):
@@ -469,17 +479,21 @@ func _run() -> void:
 	await press("act")
 	check(not U.alive(map.tiles[b.x][top + 3].structure), "a block three tiles from every own wall is refused")
 	_hold("wall_3")
-	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()  # upright: d = 4, 3, 2
-	await point_at_tile(Vector2i(b.x, top + 3))
+	U.comp(human.nextWall, "BuildingBlock").rotate_clockwise()  # upright: d = 3, 2, 1
+	await point_at_tile(Vector2i(b.x, top + 2))
 	await press("act")
-	check(_all_blocks([Vector2i(b.x, top + 2), Vector2i(b.x, top + 3), Vector2i(b.x, top + 4)]),
-			"an upright three places with only its bottom tile in reach")
+	check(_all_blocks([Vector2i(b.x, top + 1), Vector2i(b.x, top + 2), Vector2i(b.x, top + 3)]),
+			"an upright three places with its bottom tile edge on the ring")
 	_hold("wall_1")
-	# past secondsBetweenWalls, so this click tests the reach the new blocks bought
+	# past secondsBetweenWalls, so this click tests the line the new blocks extend. Zoomed in and
+	# on the far half: the pick takes the first wall block the view ray meets, and even over the
+	# block the last wall placed the ray to the near half of the tile behind it runs under its top
 	await seconds(0.3)
-	await point_at_tile(Vector2i(b.x, top + 6))
+	await zoom(12, map.tile_position(b.x, top + 4))
+	await point_at(map.tile_position(b.x, top + 4, 0.1) + Vector3(0, 0, -0.35))
 	await press("act")
-	check(_all_blocks([Vector2i(b.x, top + 6)]), "new blocks extend reach: a block two past them places")
+	check(_all_blocks([Vector2i(b.x, top + 4)]), "new walls extend the line: a block on the last of them places")
+	await zoom(-12, map.tile_position(b.x, top + 4))
 	var bottom := b.y - 2
 	var south: Array = []
 	for d in range(1, 5):

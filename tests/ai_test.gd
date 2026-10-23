@@ -327,6 +327,15 @@ func _run() -> void:
 					and Catalog.def_of(t.structure).size == 1:
 				t.un_build()
 	check(bigs(enemy) == 1 and enemy.parts_used() == 4, "only the big cannon is left standing")
+	# the connected walls (I105) change the AI's ground, and a free 2x2 far from the big would make
+	# the second big placeable without a yard: own walls on a tile of each close them
+	for i in 24:
+		var sites: Array = enemy._big_sites()
+		if sites.is_empty():
+			break
+		var block: Vector2i = sites[0][5][0]
+		enemy.build_wall(map.tiles[block.x][block.y], Catalog.spawn("wall", null, enemy))
+	check(enemy._big_sites().is_empty(), "no free 2x2 stands far from the first big")
 	enemy.partsCap = 10
 	enemy.update_plans()
 	var open_yards: Array = enemy.yards.filter(func(y): return not y.closed())

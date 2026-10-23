@@ -36,6 +36,7 @@ func _ready() -> void:
 	_check_piece()
 	_check_ground()
 	await _check_crumble()
+	_check_connect()
 	await _check_deal()
 	print("WALLS TEST PASSED" if failures.is_empty() else "WALLS TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if failures.is_empty() else 1)
@@ -51,6 +52,57 @@ func check(cond: bool, msg: String) -> void:
 	print(("ok: " if cond else "FAIL: ") + msg)
 	if not cond:
 		failures.append(msg)
+
+
+## I105: a held piece stands only edge on an own wall, a bridge or an own castle tile, never apart with
+## a gap. The held piece is the single block, so the anchor tile is the piece.
+func _check_connect() -> void:
+	U.destroy(p1.nextWall)
+	p1.nextWall = Catalog.spawn(Catalog.get_def("wall_1"), p1.hand)
+	var own_beside := func(t) -> bool:
+		for q in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n = map.tiles[t.idxX + q.x][t.idxZ + q.y]
+			if n.isWall and map.get_mini(n.idxX, n.idxZ) == p1.playerID:
+				return true
+		return false
+	var c = map.castles.filter(func(k): return U.alive(k) and k.owner() == p1)[0]
+	var cc: Vector2i = map.tile_index_at(c.go.global_position)
+	var near_tile = null
+	var far_tile = null
+	var diag_tile = null
+	for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var t1 = map.tiles[cc.x + 3 * d.x][cc.y + 3 * d.y]
+		var t2 = map.tiles[cc.x + 4 * d.x][cc.y + 4 * d.y]
+		var p := Vector2i(d.y, d.x)
+		var t3 = map.tiles[cc.x + 3 * d.x + 3 * p.x][cc.y + 3 * d.y + 3 * p.y]
+		if t1.is_free() and own_beside.call(t1) and t2.is_free() and not own_beside.call(t2) \
+				and t3.is_free() and not own_beside.call(t3):
+			near_tile = t1
+			far_tile = t2
+			diag_tile = t3
+			break
+	check(near_tile != null, "a clear line runs out from the start ring for the connect check")
+	if near_tile == null:
+		return
+	check(p1.can_place_piece(near_tile), "a wall stands on a tile edge on an own wall")
+	check(not p1.can_place_piece(far_tile), "two tiles out with no wall beside it is a gap and stands no wall")
+	check(not p1.can_place_piece(diag_tile), "a corner touch connects nothing")
+	near_tile.water = true
+	near_tile.river = true
+	check(p1.can_place_piece(near_tile), "a river tile edge on an own wall takes a bridge")
+	near_tile.river = false
+	near_tile.water = false
+	var e = map.castles.filter(func(k): return U.alive(k) and k.owner() == p2)[0]
+	var ec: Vector2i = map.tile_index_at(e.go.global_position)
+	var enemy_side = null
+	for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var t1 = map.tiles[ec.x + 3 * d.x][ec.y + 3 * d.y]
+		if t1.is_free() and not own_beside.call(t1):
+			enemy_side = t1
+			break
+	check(enemy_side != null and not p1.can_place_piece(enemy_side), "a tile edge on the enemy's wall alone stands no own wall")
+	_build(p1, near_tile.idxX, near_tile.idxZ)
+	check(p1.can_place_piece(far_tile), "a wall on the gap tile lets the line go on")
 
 
 ## A free, dry, decoration-free tile well away from both castles' rings: the human's rows go at z 2, the AI's at z 5.

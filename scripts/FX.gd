@@ -68,16 +68,19 @@ static func impact(pos: Vector3, water: bool, damage: float, splash := 0.0, smok
 						"col": Color(0.66, 0.62, 0.58), "spread": 25.0, "v": [0.5 * q, 1.2 * q],
 						"damp": 1.1, "ang": 150.0, "hold": 0.3})
 	if water:
-		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 14, "life": 0.9, "s": [0.1 * s, 0.22 * s],
+		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 20, "life": 1.1, "s": [0.12 * s, 0.26 * s],
 				"col": Color(0.9, 0.95, 1.0), "spread": 15.0, "v": [2.5 * q, 4.5 * q],
 				"grav": Vector3(0, -9, 0), "damp": 0.3, "ang": 30.0, "hold": 0.5})
-		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 8, "life": 0.7, "s": [0.08 * s, 0.18 * s],
+		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 12, "life": 0.85, "s": [0.1 * s, 0.2 * s],
 				"col": Color(0.9, 0.95, 1.0), "spread": 55.0, "v": [1.2 * q, 2.2 * q],
 				"grav": Vector3(0, -7, 0), "damp": 0.3, "hold": 0.4})
-		_burst(root, pos, {"tex": SPARK, "count": 10, "life": 0.6, "s": [0.05, 0.09],
+		_burst(root, pos, {"tex": SMOKE_SOFT, "count": 7, "life": 0.55, "s": [0.3 * s, 0.55 * s],
+				"col": Color(0.95, 0.98, 1.0), "spread": 20.0, "v": [0.6 * q, 1.2 * q],
+				"damp": 2.0, "hold": 0.35})
+		_burst(root, pos, {"tex": SPARK, "count": 12, "life": 0.6, "s": [0.05, 0.09],
 				"col": Color(1.6, 1.8, 2.0), "add": true, "spread": 55.0, "v": [1.5 * q, 2.6 * q],
 				"grav": Vector3(0, -7, 0), "hold": 0.2})
-		_ring(root, pos, 0.85 * s, Color(0.7, 0.85, 1.0, 0.55))
+		_ring(root, pos, s, Color(0.7, 0.85, 1.0, 0.65))
 		return
 	match style:
 		"fire":

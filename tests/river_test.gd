@@ -11,6 +11,7 @@ extends Node
 
 const Main = preload("res://scripts/Main.gd")
 const SEEDS := 12
+const INF := 1 << 30
 const DIRS4: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 
 var main: Node
@@ -118,6 +119,8 @@ func _sweep() -> int:
 	var wet := 0
 	var built := 0
 	var bridge_seed := -1
+	var far_seed := -1
+	var far_d := -1
 	for s in range(1, SEEDS + 1):
 		Main.requested_mode = "versus"
 		Main.requested_args = {"seed": str(s), "no-decorations": "true"}
@@ -141,6 +144,16 @@ func _sweep() -> int:
 				nearest = mini(nearest, maxi(absi(p.x - q.x), absi(p.y - q.y)))
 			if bridge_seed < 0 and game.players[0].in_reach(p.x, p.y):
 				bridge_seed = s
+		# the bridge board the walk makes: the river farthest from the human's start walls, so the
+		# line must reach it before any piece goes over the water
+		var human_walls: Array = game.players[0].wallTiles
+		var nearest_d: int = INF
+		for p: Vector2i in water:
+			for w in human_walls:
+				nearest_d = mini(nearest_d, maxi(absi(p.x - w.idxX), absi(p.y - w.idxZ)))
+		if nearest_d > far_d:
+			far_d = nearest_d
+			far_seed = s
 		var region := _regions(water)
 		for p: Vector2i in region:
 			for dx in range(-2, 3):
@@ -188,7 +201,76 @@ func _sweep() -> int:
 	check(kinds.has(1) and kinds.has(2), "both layouts appear, one river through and one a side (%s)" % [kinds])
 	check(wet == 0 and built == 0, "river tiles are water and stand bare after the build (%d dry, %d built)" % [wet, built])
 	check(bridge_seed > 0, "a sweep board brings the river into the human's start reach")
-	return bridge_seed
+	check(far_seed > 0, "a sweep board holds the river far from the human's walls")
+	return far_seed
+
+
+## Every legal placement of every wall def and rotation that covers a river cell: first the ones with a
+## river cell within 2 of the far bank, then those over the most river cells.
+func _river_spots(across) -> Array:
+	var spots: Array = []
+	for def in Catalog.drawable(BuildingDef.Category.WALL):
+		U.destroy(human.nextWall)
+		human.nextWall = Catalog.spawn(def, human.hand)
+		var bb = U.comp(human.nextWall, "BuildingBlock")
+		for rot in 4:
+			for x in map.sizeX:
+				for z in map.sizeZ:
+					var t = map.tiles[x][z]
+					if not human.can_place_piece(t):
+						continue
+					var under: Array = human.piece_tiles(t)
+					var wet: int = under.filter(func(c): return c.river).size()
+					if wet > 0:
+						spots.append([wet + (100 if under.any(across) else 0), def, rot, Vector2i(x, z)])
+			bb.rotate_clockwise()
+	return spots
+
+
+## One legal placement nearest the river, placed through the real cursor: a wall may only stand edge on
+## the walls before it (I105), so the bridge starts as a line walked tile by tile to the bank.
+func _step_to_river() -> bool:
+	var river := _river()
+	var dist := {}
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			var d: int = INF
+			for w: Vector2i in river:
+				d = mini(d, maxi(absi(x - w.x), absi(z - w.y)))
+			dist[Vector2i(x, z)] = d
+	var best: Array = []
+	var best_d: int = INF
+	for def in Catalog.drawable(BuildingDef.Category.WALL):
+		U.destroy(human.nextWall)
+		human.nextWall = Catalog.spawn(def, human.hand)
+		var bb = U.comp(human.nextWall, "BuildingBlock")
+		for rot in 4:
+			for x in map.sizeX:
+				for z in map.sizeZ:
+					var t = map.tiles[x][z]
+					if not human.can_place_piece(t):
+						continue
+					var d: int = INF
+					for c: Vector2i in bb.cells:
+						d = mini(d, dist[Vector2i(x + c.x, z + c.y)])
+					if d < best_d:
+						best_d = d
+						best = [def, rot, Vector2i(x, z)]
+			bb.rotate_clockwise()
+	if best.is_empty():
+		return false
+	U.destroy(human.nextWall)
+	human.nextWall = Catalog.spawn(best[0], human.hand)
+	var bb = U.comp(human.nextWall, "BuildingBlock")
+	for i in best[1]:
+		bb.rotate_clockwise()
+	await _hover(best[2])
+	if human.buildableTileSelected != map.tiles[best[2].x][best[2].y] or not human.canPlaceWall:
+		return false
+	await _click()
+	while U.time < human.secondsLastWall + human.secondsBetweenWalls:
+		await frames(1)
+	return true
 
 
 func _hover(xz: Vector2i) -> void:
@@ -249,23 +331,14 @@ func _bridges(the_seed: int) -> void:
 				if region.has(q) and region[q] != home:
 					return true
 		return false
-	var spots: Array = []
-	for def in Catalog.drawable(BuildingDef.Category.WALL):
-		U.destroy(human.nextWall)
-		human.nextWall = Catalog.spawn(def, human.hand)
-		var bb = U.comp(human.nextWall, "BuildingBlock")
-		for rot in 4:
-			for x in map.sizeX:
-				for z in map.sizeZ:
-					var t = map.tiles[x][z]
-					if not human.can_place_piece(t):
-						continue
-					var under: Array = human.piece_tiles(t)
-					var wet: int = under.filter(func(c): return c.river).size()
-					if wet > 0:
-						spots.append([wet + (100 if under.any(across) else 0), def, rot, Vector2i(x, z)])
-			bb.rotate_clockwise()
-	check(not spots.is_empty(), "a held piece may go down over the river within reach")
+	var spots: Array = _river_spots(across)
+	var steps := 0
+	while spots.is_empty() and steps < 40:
+		steps += 1
+		if not await _step_to_river():
+			break
+		spots = _river_spots(across)
+	check(not spots.is_empty(), "the walls walk to the bank and a piece goes down over the river edge on them (%d placements)" % steps)
 	if spots.is_empty():
 		return
 	spots.sort_custom(func(a, b): return a[0] > b[0])

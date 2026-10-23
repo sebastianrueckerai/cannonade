@@ -365,6 +365,24 @@ func _run() -> void:
 		await get_tree().process_frame
 		splash = _fx_at("impact")
 	check(splash != null, "a water landing raises a splash")
+	# I106: the splash is droplets and spray, never a land style
+	var droplets := 0
+	var bursts := 0
+	var sparks := 0
+	var land_style := false
+	for q in splash.get_children():
+		if q is CPUParticles3D:
+			var tex = q.mesh.material.albedo_texture
+			if tex == FX.SMOKE_SOFT:
+				bursts += 1
+				droplets += q.amount
+			elif tex == FX.SPARK:
+				sparks += q.amount
+			else:
+				land_style = true
+	check(droplets >= 30 and bursts >= 3 and sparks >= 10,
+			"the splash throws droplets, foam and spray (%d droplets, %d bursts, %d sparks)" % [droplets, bursts, sparks])
+	check(not land_style, "a water landing wears no dirt, fire or smoke texture")
 	await seconds(3.0)
 	check(_fx_count() == 0, "the splash cleans itself up")
 
