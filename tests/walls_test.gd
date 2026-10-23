@@ -231,6 +231,14 @@ func _check_piece() -> void:
 ## A closed ring tints the ground it encloses toward its owner's colour; a ring two factions
 ## share encircles nothing (I73), and opened the mud comes back.
 func _check_ground() -> void:
+	# I118: one open-ground family - grass on every tile, water excluded
+	var sandy := 0
+	for x in map.sizeX:
+		for z in map.sizeZ:
+			var t = map.tiles[x][z]
+			if not t.water and t.openColor.g <= t.openColor.r:
+				sandy += 1
+	check(sandy == 0, "the open ground is grass on every tile (%d sandy)" % [sandy])
 	var inside = _tile(23, 3)
 	var mud: Color = inside.enclosedColor
 	check(inside.ringOwner == null and U.get_color(inside.model()) == inside.openColor, "open ground wears the open colour")

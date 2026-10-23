@@ -7,13 +7,14 @@ const StatesMap = preload("res://scripts/StatesMap.gd")
 @export var sizeZ := 20
 @export var tileSize := 1.0
 @export var tilePrefab: PackedScene = preload("res://prefabs/Slab.tscn")
-# The ground colours of the art kit, palette.json (D21, D70): open ground is sand or grass for the whole map,
+# The ground colours of the art kit, palette.json (D21, D70): open ground is grass on every map,
 # enclosed ground and the ground under a wall are stamped mud, well darker than the light walls, water is the
 # sea. Each tile lerps from the lighter min colour (a high tile) to the darker max colour (a low tile).
 @export var maxEnclosedColors: Array = [Color("#b2915f")]
 @export var minEnclosedColors: Array = [Color("#dcc399")]
-@export var maxOpenColors: Array = [Color("#f0c975").darkened(0.08), Color("#8fbf3c").darkened(0.08)]
-@export var minOpenColors: Array = [Color("#f0c975").lightened(0.06), Color("#8fbf3c").lightened(0.06)]
+# one family (I118): the family draw below keeps the seeded map stream put
+@export var maxOpenColors: Array = [Color("#8fbf3c").darkened(0.08)]
+@export var minOpenColors: Array = [Color("#8fbf3c").lightened(0.06)]
 @export var waterColorMin := Color("#2f9fc9").lightened(0.04)
 @export var waterColorMax := Color("#2f9fc9").darkened(0.06)
 @export var wallColor := Color("#b2915f")

@@ -664,3 +664,10 @@ low-to-high grey ramp. The dark grounding band the rocks wore is superseded by t
 wall faces carry the gradient by the GPU alone - their vertices are the green feet at the ground and
 the family colour at the rim - and the shatter pieces call the same function at their block's height,
 so a first-level piece bursts in the green mix it stood in. Session 71, roadmap I117.
+
+## D99. The open ground is grass on every board (2026-10-23, Sebastian)
+
+"Hm, the ground color seems to change,. often it is green but sometimes I get sand colored. MAke it all green!"
+The map's open-ground family draw picked sand or grass per board, so some games rolled out on sand. The sand
+variant goes; the grass pair is the one family, and the draw itself stays so every seeded board keeps its
+layout. The stamped mud inside walls (D70) and the water keep their colours. Session 72, roadmap I118.
