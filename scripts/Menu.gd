@@ -72,6 +72,7 @@ func _ready() -> void:
 	_build_buttons(box, OS.has_feature("web"))
 	Sound.buttons(box)
 	_add_mute()
+	_add_version()
 	var errors: Array[String] = []
 	errors.append_array(Catalog.errors)
 	errors.append_array(Art.validate())
@@ -151,6 +152,19 @@ func _add_mute() -> void:
 func _toggle_mute() -> void:
 	Sound.set_muted(not Sound.muted())
 	_refresh_mute()
+
+
+## The release number in the bottom-left corner (G9): the one value
+## deploy_itch.sh also passes to butler, so the build and the channel agree.
+func _add_version() -> void:
+	var version := str(ProjectSettings.get_setting("application/config/version", ""))
+	if version.is_empty():
+		return
+	var v := Label.new()
+	v.text = "v" + version
+	v.modulate.a = 0.55
+	v.set_anchors_and_offsets_preset(PRESET_BOTTOM_LEFT)
+	add_child(v)
 
 
 ## The icon shows the state: the muted glyph, or a text button when the art layer is absent.

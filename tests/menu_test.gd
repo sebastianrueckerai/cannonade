@@ -17,6 +17,13 @@ func _ready() -> void:
 	var menu := get_tree().current_scene
 	var buttons := menu.find_children("*", "Button", true, false)
 	_check(buttons.size() == 7, "menu has 7 buttons (3 modes, Tutorial & Controls, Volume, Sandbox, Quit)")
+	# the menu shows the project version (G9), the number deploy_itch.sh passes to butler
+	var version := str(ProjectSettings.get_setting("application/config/version", ""))
+	var vlabel: Label = null
+	for l in menu.find_children("*", "Label", true, false):
+		if l.text == "v" + version:
+			vlabel = l
+	_check(version != "" and vlabel != null, "the menu shows the project version v%s" % version)
 	_check(buttons.any(func(b): return b.text.contains("Player vs. AI"))
 			and buttons.any(func(b): return b.text.contains("Practice"))
 			and not buttons.any(func(b): return b.text.contains("Single player"))

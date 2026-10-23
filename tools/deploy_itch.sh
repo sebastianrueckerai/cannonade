@@ -7,5 +7,10 @@ cd "$(dirname "$0")/.."
 PATH="$HOME/.local/bin:$PATH"
 BUTLER=${BUTLER:-butler}
 tools/export_web.sh
-"$BUTLER" push build/web moonlightart/cannonade:HTML5
+ver=$(sed -n 's/^config\/version="\(.*\)"$/\1/p' project.godot)
+if [ -z "$ver" ]; then
+	echo "deploy_itch: no application/config/version in project.godot" >&2
+	exit 1
+fi
+"$BUTLER" push build/web moonlightart/cannonade:HTML5 --userversion "$ver"
 "$BUTLER" status moonlightart/cannonade:HTML5
