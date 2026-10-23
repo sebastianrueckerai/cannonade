@@ -101,6 +101,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if main == null or main.game == null:
 		return
+	if look_target != null and not shots.is_empty() and U.time < shots[0]:
+		_look_at(look_target)  # the game start can home the camera after _ready set the look
 	if aim != null:
 		var wp: Vector3 = main.game.map.tile_position(aim.x, aim.y, 0.1)
 		if not main.camera.is_position_behind(wp):

@@ -259,14 +259,14 @@ func _face(st: SurfaceTool, a, b, c, peak: float) -> void:
 		st.add_vertex(v["pos"])
 
 
-## Height colour (I117): the first level (0.75 m) interpolates from the ground green into
-## the family colour - the hill's tan with its light crown lift, the rock's grey ramp -
-## and above it only that family shading goes on.
+## Height colour (I117, I119): the whole first level (0.75 m) stays the ground green, the
+## second level interpolates into the family colour - the hill's tan with its light crown
+## lift, the rock's grey ramp - and above it only that family shading goes on.
 func _tint(y: float, peak: float) -> Color:
 	var top := (HILL_TAN.lerp(Color.WHITE, 0.04 + 0.10 * (y / peak if peak > 0.0 else 0.0))
 		if sort == "hill"
 		else ROCK_LOW.lerp(ROCK_HIGH, clampf(y / peak, 0.0, 1.0) if peak > 0.0 else 0.0))
-	return GROUND_GREEN.lerp(top, clampf(y / LEVEL, 0.0, 1.0))
+	return GROUND_GREEN.lerp(top, clampf((y - LEVEL) / LEVEL, 0.0, 1.0))
 
 
 ## Deterministic roughness, -1 to 1: the same board position draws the same crest every

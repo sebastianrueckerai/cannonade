@@ -419,7 +419,10 @@ func place_decorations(terrain = null) -> void:
 	var max_step_dist := 0.3
 	var max_deco := 6
 	var max_tries := 1000
-	var makers := customModelMakers if terrain == null else customModelMakers.filter(func(m): return m.kind != "boulder")
+	# mountains wear boulders alone, hills greenery (I119); open ground draws the lot
+	var rocky: bool = terrain != null and terrain.sort == "rock"
+	var makers := customModelMakers if terrain == null \
+			else customModelMakers.filter(func(m): return m.kind == "boulder" if rocky else m.kind != "boulder")
 	if makers.is_empty():
 		return
 	var rand_indices := U.shuffle_index(makers.size())

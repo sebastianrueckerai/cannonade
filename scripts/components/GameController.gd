@@ -468,7 +468,7 @@ func _place_terrain() -> void:
 		map.claim_terrain(go, u[1].keys())
 	_terrain_sight()
 	_terrain_ease()
-	_terrain_trees()
+	_terrain_decorations()
 
 
 ## Grows one unit for `seat` (I116): the best of TERRAIN_DRAWS scored spots seeds a growth
@@ -943,14 +943,11 @@ func _terrain_go(sort: String, all: Array, heights := {}) -> Node3D:
 	return go
 
 
-## Hills grow trees (I116): after the sight pass settles the drapes, every standing hill
-## column sprouts its green decorations on the drape's own surface - the boulder stays off
-## the slope. When the block under a tree shatters, the tree crumbles away with it.
-func _terrain_trees() -> void:
+## After the sight pass settles the drapes, every standing terrain column sprouts
+## its family's decorations on the drape's own surface, and a shot block takes them with it.
+func _terrain_decorations() -> void:
 	for go in map.terrain_features:
 		var terr := U.comp(go, "Terrain")
-		if terr.sort != "hill":
-			continue
 		for t in terr.tiles:
 			if terr.columns.get(t, 0) > 0:
 				t.place_decorations(terr)

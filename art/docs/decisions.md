@@ -671,3 +671,13 @@ so a first-level piece bursts in the green mix it stood in. Session 71, roadmap 
 The map's open-ground family draw picked sand or grass per board, so some games rolled out on sand. The sand
 variant goes; the grass pair is the one family, and the draw itself stays so every seeded board keeps its
 layout. The stamped mud inside walls (D70) and the water keep their colours. Session 72, roadmap I118.
+
+## D100. The first level stands solid green, the second carries the gradient, mountains grow boulders (2026-10-23, Sebastian)
+
+"Cool. Maybe make the whole 1st level green and then have a gradient on the second level. Also, much like
+trees live on the hills, have rocks on the mountains!" The drape's colour law moves its clamp start one
+level up: the whole first 0.75 m stays the ground green exactly, the second level interpolates green into
+the family colour, and above only the family shading goes on - the crown colours of D98 stand. The terrain
+decoration pass grows beyond the hills: every standing column sprouts its family's makers, rocks draw
+boulders alone and hills the greenery, and a boulder stands on the drape's own surface and flies with the
+block it stood on when that block shatters, the tree's path unchanged. Session 73, roadmap I119.

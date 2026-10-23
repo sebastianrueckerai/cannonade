@@ -6,8 +6,8 @@ extends Node
 ## either direction, no free ground walled in, the count a knob (--terrain=N), castle
 ## rings keeping their reach round every feature, every family shattering block by block
 ## and freeing its ground tile by tile, a family with its break flag off absorbing every
-## hit, placement refusing the tiles, hills growing trees that fly with the block they
-## stand on, and the AI shooting the rocks that block its own way but never the ones that
+## hit, placement refusing the tiles, hills growing trees and mountains boulders that fly with the
+## block they stand on, and the AI shooting the rocks that block its own way but never the ones that
 ## would open the enemy's.
 ##   godot --headless --fixed-fps 30 res://tests/terrain_test.tscn
 
@@ -679,7 +679,7 @@ func _seed_sweep() -> void:
 	main.free()
 
 
-## Hills grow trees on the drape and a tree flies with the block it stood on (I116).
+## Hills grow trees, mountains boulders, and one flies with the block it stood on (I116, I119).
 func _tree_board() -> void:
 	_start("versus", 4, -1, true)
 	var hill = null
@@ -703,10 +703,20 @@ func _tree_board() -> void:
 			highest = maxf(highest, d.position.y)
 	check(treed > 0, "hills grow trees (%d decorations)" % [treed])
 	check(highest > 0.5, "a tree stands above the board's ground on the drape's slope (%.2f m)" % [highest])
-	var bare := 0
+	var boulders := 0
+	var off_kind := 0
 	for t in rock.tiles:
-		bare += t.decorations.size()
-	check(bare == 0, "rocks stay bare (%d decorations)" % [bare])
+		for d in t.decorations:
+			boulders += 1
+			if not str(d.get_meta("art_look", "")).begins_with("nature_boulder"):
+				off_kind += 1
+	check(boulders > 0, "mountains carry boulders (%d decorations)" % [boulders])
+	check(off_kind == 0, "every mountain decoration is a boulder (%d off)" % [off_kind])
+	for t in rock.tiles:
+		if not t.decorations.is_empty():
+			t.damage_building_place(10.0)
+			check(t.decorations.is_empty(), "the boulder flies with the block it stood on")
+			break
 	var block_tile = null
 	for t in hill.tiles:
 		if not t.decorations.is_empty():
@@ -725,7 +735,7 @@ func _colour_law() -> void:
 	_start("versus", 4)
 	var green := Color("8fbf3c")
 	var tan := Color("b2915f")
-	var feet_bad := 0
+	var low_bad := 0
 	var hill_c := Color.BLACK
 	var hill_y := 0.0
 	var rock_c := Color.BLACK
@@ -735,9 +745,9 @@ func _colour_law() -> void:
 		var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 		var cols: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
 		for i in verts.size():
-			if verts[i].y <= -0.2:
+			if verts[i].y <= 0.75:  # the whole first level stays the ground green (I119)
 				if not cols[i].is_equal_approx(green):
-					feet_bad += 1
+					low_bad += 1
 			elif U.comp(go, "Terrain").sort == "hill":
 				if verts[i].y > hill_y:
 					hill_y = verts[i].y
@@ -745,7 +755,7 @@ func _colour_law() -> void:
 			elif verts[i].y > rock_y:
 				rock_y = verts[i].y
 				rock_c = cols[i]
-	check(feet_bad == 0, "every wall foot wears the ground green (%d vertices off)" % [feet_bad])
+	check(low_bad == 0, "the whole first level stays the ground green (%d vertices off)" % [low_bad])
 	check(hill_y > 0.75, "a hill stands above the first level (%.2f m)" % [hill_y])
 	# the crown is the tan lifted toward white by one factor across all three channels
 	var fr := (hill_c.r - tan.r) / (1.0 - tan.r)
