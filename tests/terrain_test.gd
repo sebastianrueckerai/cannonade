@@ -38,6 +38,7 @@ func _ready() -> void:
 	await _versus_board()
 	await _ai_board()
 	await _tree_board()
+	await _colour_law()
 	var ok: bool = failures.is_empty() and ran >= 18
 	print("TERRAIN TEST PASSED" if ok else "TERRAIN TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if ok else 1)
@@ -714,6 +715,46 @@ func _tree_board() -> void:
 	if block_tile != null:
 		block_tile.damage_building_place(10.0)
 		check(block_tile.decorations.is_empty(), "the tree flies with the block it stood on")
+	main.free()
+
+
+## The first level rises out of the ground green into the family colour (I117): the wall
+## feet wear the grass green of open ground, a hill's crown the palette's tan with its
+## light lift, a rock's crown its grey.
+func _colour_law() -> void:
+	_start("versus", 4)
+	var green := Color("8fbf3c")
+	var tan := Color("b2915f")
+	var feet_bad := 0
+	var hill_c := Color.BLACK
+	var hill_y := 0.0
+	var rock_c := Color.BLACK
+	var rock_y := 0.0
+	for go in map.terrain_features:
+		var arrays: Array = go.get_node("Mass").mesh.surface_get_arrays(0)
+		var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var cols: PackedColorArray = arrays[Mesh.ARRAY_COLOR]
+		for i in verts.size():
+			if verts[i].y <= -0.2:
+				if not cols[i].is_equal_approx(green):
+					feet_bad += 1
+			elif U.comp(go, "Terrain").sort == "hill":
+				if verts[i].y > hill_y:
+					hill_y = verts[i].y
+					hill_c = cols[i]
+			elif verts[i].y > rock_y:
+				rock_y = verts[i].y
+				rock_c = cols[i]
+	check(feet_bad == 0, "every wall foot wears the ground green (%d vertices off)" % [feet_bad])
+	check(hill_y > 0.75, "a hill stands above the first level (%.2f m)" % [hill_y])
+	# the crown is the tan lifted toward white by one factor across all three channels
+	var fr := (hill_c.r - tan.r) / (1.0 - tan.r)
+	var fg := (hill_c.g - tan.g) / (1.0 - tan.g)
+	var fb := (hill_c.b - tan.b) / (1.0 - tan.b)
+	check(hill_y > 0.75 and fr > 0.0 and fr < 0.2 and absf(fr - fg) < 0.02 and absf(fr - fb) < 0.02,
+			"the hill's crown is the tan with its light lift (%.3f/%.3f/%.3f)" % [fr, fg, fb])
+	check(rock_y > 0.75 and rock_c.r > rock_c.b and rock_c.g < rock_c.r,
+			"the rock's crown keeps its grey, no green (%.2f m)" % [rock_y])
 	main.free()
 
 

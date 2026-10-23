@@ -22,12 +22,13 @@ const LEVEL := 0.75
 const HILL_BREAKS := true
 const ROCK_BREAKS := true
 
-## The families' colours (D21's palette, the boulder greys of the paint family D49): hills
-## the grass green of open ground, rocks grey low to high with a dark grounding band.
-const HILL_GREEN := Color("8fbf3c")
+## The families' colours (D21's palette, the boulder greys of the paint family D49): every
+## mass rises out of the ground green, hills into the palette's mud_dark tan, rocks their
+## grey low to high.
+const GROUND_GREEN := Color("8fbf3c")
+const HILL_TAN := Color("b2915f")
 const ROCK_LOW := Color("7d7364")
 const ROCK_HIGH := Color("a89d8b")
-const ROCK_FOOT := Color("6b6357")
 
 var map = null
 var sort := "rock"
@@ -258,15 +259,14 @@ func _face(st: SurfaceTool, a, b, c, peak: float) -> void:
 		st.add_vertex(v["pos"])
 
 
-## Height colour: hills green with a light crown, rocks grey low to high with the dark
-## grounding band at the foot.
+## Height colour (I117): the first level (0.75 m) interpolates from the ground green into
+## the family colour - the hill's tan with its light crown lift, the rock's grey ramp -
+## and above it only that family shading goes on.
 func _tint(y: float, peak: float) -> Color:
-	if sort == "hill":
-		return HILL_GREEN.lerp(Color.WHITE, 0.04 + 0.10 * (y / peak if peak > 0.0 else 0.0))
-	if y < LEVEL * 0.35:
-		return ROCK_FOOT
-	var t := clampf(y / peak, 0.0, 1.0) if peak > 0.0 else 0.0
-	return ROCK_LOW.lerp(ROCK_HIGH, t)
+	var top := (HILL_TAN.lerp(Color.WHITE, 0.04 + 0.10 * (y / peak if peak > 0.0 else 0.0))
+		if sort == "hill"
+		else ROCK_LOW.lerp(ROCK_HIGH, clampf(y / peak, 0.0, 1.0) if peak > 0.0 else 0.0))
+	return GROUND_GREEN.lerp(top, clampf(y / LEVEL, 0.0, 1.0))
 
 
 ## Deterministic roughness, -1 to 1: the same board position draws the same crest every

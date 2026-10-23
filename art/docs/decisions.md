@@ -653,3 +653,14 @@ face is the player's alone on every side (the sight law itself runs both directi
 Sides may drift 10 percent, no more. Hills grow trees on the drape; a tree crumbles with
 the block it stands on. This supersedes I95's flush clustering and I97's bitten-shapes rule; the drapes
 (I100, I105, I111), the shatter (I113) and the destructible families stand. Session 69, roadmap I116.
+
+## D98. The terrain's first level rises out of the ground green (2026-10-23, Sebastian)
+
+"In the first level of the hills / mountains, have the color interpolate from the ground green to tan
+for hills and grey for rocks / mountains!" The drape's one colour function mixes the grass green of
+open ground into the family colour through the first 0.75 m level and lets only the family's own
+shading go on above: hills the palette's mud_dark tan with their light crown lift kept, rocks their
+low-to-high grey ramp. The dark grounding band the rocks wore is superseded by the green base. The
+wall faces carry the gradient by the GPU alone - their vertices are the green feet at the ground and
+the family colour at the rim - and the shatter pieces call the same function at their block's height,
+so a first-level piece bursts in the green mix it stood in. Session 71, roadmap I117.
