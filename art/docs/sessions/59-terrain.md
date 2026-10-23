@@ -362,3 +362,40 @@ ERROR at Terrain.gd take_damage because watch-red file swaps ran while the suite
 going - its process loaded a mid-swap file. The lone rerun of that exact command passed
 (3871 frames, 0 errors); the rule is now absolute: no project-file edits while the suite
 runs.
+
+**Follow-up 5, same day.** His play of round 7 ("Rocks look nice. For hills, they still
+have the steep curve... can you make the slopes more gently, without the immediate rise to
+level 1? ... Feel free to cut into the pieces and narrow them down and curving them. A
+steep plane is acceptable where it is needed to climb multiple levels, but as soon as the
+peak is reached I want a sloped, curved edge to the top. So less box more hill!"). Rocks
+untouched. A hill's corners now pass through a dome in
+[Terrain.gd](../../scripts/components/Terrain.gd):
+
+1. Boundary corners (touching fewer than four cells) ease to 0.3 of their pooled height,
+   so the foot rises from the board instead of jumping to the first story. A single-story
+   mass eases only to 0.75: it has no climb above it, and a blocked tile must still read
+   as standing ground. The first draft eased every boundary corner flat to 0.3 and failed
+   "every drape stands inside its levels" on 8 features - 1x1 and one-tile-wide hills
+   have nothing but boundary corners, so they flattened to a 0.16 m ripple.
+2. A smoothstep over t = h / peak rounds the climb: slope zero at rim and crest, the steep
+   plane he allows kept in the middle. Corners below the crest can sit a hair above their
+   pooled raw where smoothstep(t) > t, rounding the plateau edge from below; nothing ever
+   passes the peak, so the stack bound and the drape-band guard hold.
+3. The rim rounding of Follow-up 4 now cuts in as the mass rises (`_disp_at` scaled by
+   y0 / peak): the foot stays wide on the tile grid, the crest narrows - his "cut into the
+   pieces and narrow them down".
+
+A hill's south rim is the corner the I97 camera line samples; it now eases to at most
+0.12 levels (0.09 m) for two-story hills and 0.08 for three, so hills clear the 60-degree
+line trivially and the sight pass spends itself on rocks. [terrain_test](../../../tests/
+terrain_test.gd) grew the foot guard: every south-boundary corner of every hill eases
+under 0.35 levels for multi-story masses, 0.9 for single-story ones - 268 corners across
+the eight-seed sweep, 0 high, watched red with the ease forced to 1.0 (268 of 268 high).
+The crest-narrowing displacement has no suite guard: no honest mesh invariant separates
+height-scaled from uniform displacement, so the render is its evidence. Rendered versus
+board seed 2 against df6e786: the rock region identical in the class map (r=10027, blob
+9182), the hill region 15 percent less green (5174 to 4397 px, solid blob 2704 to 2349)
+with board gold showing where the flanks eased off. Crops: /tmp/crop_hill_g.png,
+/tmp/crop_rock_g.png. Process note: the guard's first run hung the runner - `var lim :=
+(0.35 if ...) * ...` is `:=` from a Variant ternary, the documented parse-error-hang
+gotcha; declared the type and it ran.

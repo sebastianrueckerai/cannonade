@@ -418,6 +418,8 @@ func _seed_sweep() -> void:
 	var draped := 0
 	var fam_max := {}
 	var over := 0
+	var sfeet := 0
+	var steep_feet := 0
 	for s in range(10, 18):
 		_start("versus", s)
 		var mismatch := 0
@@ -522,6 +524,22 @@ func _seed_sweep() -> void:
 			var top3 := m3.mesh.get_aabb().end.y if m3 != null and m3.mesh != null else -1.0
 			if not (top3 > 0.6 and top3 < hmax * 0.75 + 0.3):
 				draped += 1
+			if terr3.sort == "hill":
+				# a hill's south rim rises from the board: the rim column there stands at
+				# one story (the backing rule), so the pooled rim corner eases under a
+				# third of a level; undomed it sits at the full first story
+				var fset := {}
+				for t in terr3.tiles:
+					fset[Vector2i(t.idxX, t.idxZ)] = true
+				for c in terr3._corners:
+					if c.y < 1 or fset.has(Vector2i(c.x - 1, c.y - 1)) or fset.has(Vector2i(c.x, c.y - 1)):
+						continue
+					if not (fset.has(Vector2i(c.x - 1, c.y)) or fset.has(Vector2i(c.x, c.y))):
+						continue
+					sfeet += 1
+					var lim: float = (0.35 if hmax >= 2 else 0.9) * terr3.LEVEL + 0.001
+					if terr3._corners[c] > lim:
+						steep_feet += 1
 		check(enclosed == 0 and views == 0,
 				"seed %d: no free tile walled in (%d), no column hides the ground behind it (%d)" % [s, enclosed, views])
 		main.free()
@@ -536,6 +554,9 @@ func _seed_sweep() -> void:
 	check(fam_max.get("rock", 0) == 4 and fam_max.get("hill", 0) == 3 and over == 0,
 			"rocks stand up to four stories, hills three (tallest %d and %d, %d over)"
 			% [fam_max.get("rock", 0), fam_max.get("hill", 0), over])
+	check(steep_feet == 0 and sfeet > 0,
+			"hill feet rise from the board: south rim corners ease under a third of a level (%d of %d high)"
+			% [steep_feet, sfeet])
 	_start("versus", 19, 3)
 	check(map.terrain_features.size() == 6,
 			"--terrain=3 draws three shapes, one seat a side each (%d features)" % [map.terrain_features.size()])
