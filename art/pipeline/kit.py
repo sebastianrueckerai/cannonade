@@ -17,6 +17,10 @@ assignments in Blender there, then ship to the game:
                                      crumbling model re-cut; default: every approved asset plus the
                                      flag; --force ships unapproved ones too
 
+    pipeline/kit.py sharpen          the sharp pass on the tuned kit: every collection except the
+                                     organic trees and bushes goes smooth shaded with edges over
+                                     35 deg marked sharp (build and add run it on what they fold)
+
 The game repo comes from game_repo in game/art-direction/gameplay_contract.yaml, GAME_REPO overrides
 it. Replaces godot_sync.py: after the fold kit.blend is the one source, the pipeline steps end at
 `kit.py add`."""
@@ -43,6 +47,7 @@ ART = GAME / "assets" / "art"
 BLENDER = shutil.which("blender") or str(Path.home() / "Applications/blender-5.2.2-linux-x64/blender")
 KEEPERS = ("", ".3", ".6")   # the castle looks in the game (D93)
 DOCK_STATES = ("castle", "castle_d1", "castle_d2", "castle_d3")
+ORGANIC = ("nature_leaf_tree", "nature_bush")   # collections the sharp pass leaves untouched
 
 IMPORT = """[remap]
 
@@ -320,6 +325,44 @@ print("KIT_EXPORT " + json.dumps(res))
 
 '''
 
+SHARPEN = r'''
+import json
+from math import radians
+import bmesh, bpy
+
+KIT_PATH = %r
+IDS = %r   # None: every collection; the add pass sends just its ids
+ORGANIC = %r   # the organics stay untouched
+LIMIT = radians(35.0)
+
+bpy.ops.wm.read_homefile(filepath=str(KIT_PATH))
+kit = bpy.data.collections.get("kit")
+res = {"assets": 0, "meshes": 0, "flat": 0, "edges": 0}
+for col in kit.children:
+    if col.name.startswith(ORGANIC) or IDS is not None and col.name not in IDS:
+        continue
+    res["assets"] += 1
+    for ob in col.objects:
+        if ob.type != "MESH":
+            continue
+        bm = bmesh.new()
+        bm.from_mesh(ob.data)
+        for f in bm.faces:
+            if not f.smooth:
+                f.smooth = True
+                res["flat"] += 1
+        for e in bm.edges:
+            if len(e.link_faces) == 2 and e.calc_face_angle() > LIMIT:
+                e.smooth = False   # the flag reads inverted: False marks the edge sharp
+                res["edges"] += 1
+        bm.to_mesh(ob.data)
+        bm.free()
+        res["meshes"] += 1
+bpy.ops.wm.save_as_mainfile(filepath=str(KIT_PATH), compress=True)
+print("KIT_SHARPEN " + json.dumps(res))
+
+'''
+
 
 def run_blender(script: str, timeout: int) -> dict:
     with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
@@ -341,7 +384,8 @@ def cmd_build() -> None:
     if KIT.exists():
         sys.exit(f"{KIT.relative_to(ROOT)} exists: rebuild single assets with `kit.py add <id>`")
     run_blender(BUILD % (str(A3), str(KIT), KEEPERS, DOCK_STATES, True, [], []), 5400)
-    print(f"folded the sources into {KIT.relative_to(ROOT)}")
+    res = run_blender(SHARPEN % (str(KIT), None, ORGANIC), 3600)
+    print(f"folded the sources into {KIT.relative_to(ROOT)}, {res['edges']} edges over 35 deg sharp")
 
 
 def cmd_add(ids: list[str]) -> None:
@@ -349,7 +393,16 @@ def cmd_add(ids: list[str]) -> None:
         if aid != "flag" and not (A3 / aid / "source.blend").is_file():
             sys.exit(f"no source.blend for {aid}")
     run_blender(BUILD % (str(A3), str(KIT), KEEPERS, DOCK_STATES, False, ids, ids), 3600)
-    print(f"replaced {' '.join(ids)} in {KIT.relative_to(ROOT)}")
+    res = run_blender(SHARPEN % (str(KIT), tuple(ids), ORGANIC), 3600)   # just the folded ids: hand-cleared marks on the rest survive
+    print(f"replaced {' '.join(ids)} in {KIT.relative_to(ROOT)}, {res['edges']} edges over 35 deg sharp")
+
+
+def cmd_sharpen() -> None:
+    if not KIT.exists():
+        sys.exit(f"no {KIT.relative_to(ROOT)} to sharpen")
+    res = run_blender(SHARPEN % (str(KIT), None, ORGANIC), 3600)
+    print(f"sharpened {res['assets']} assets: {res['edges']} edges over 35 deg sharp, "
+          f"{res['flat']} flat faces smoothed")
 
 
 def budget(aid: str) -> dict:
@@ -412,6 +465,8 @@ def main() -> None:
         cmd_build()
     elif args[:1] == ["add"]:
         cmd_add(args[1:] or sys.exit("kit.py add <id>..."))
+    elif args[:1] == ["sharpen"]:
+        cmd_sharpen()
     elif args[:1] == ["export"]:
         cmd_export(args[1:], force)
     else:

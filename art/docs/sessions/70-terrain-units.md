@@ -1,4 +1,4 @@
-# 69 — Hills and mountains as grown units
+# 70 — Hills and mountains as grown units
 
 Sebastian, 2026-10-23: "Currently they are made by placing shapes. Can you propose an algorithm were we just
 pick a few spots on the map [...] and then fill the avilable area so we leave any castle rechable from any
