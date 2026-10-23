@@ -272,3 +272,27 @@ before-state. The suite itself: 50 checks green.
 
 **Unverified.** The renders: the drape's look (green hills, grey craggy rocks) is Sebastian's
 call, boards open in his editor with the report.
+
+**Follow-up, same day.** He wants both families destructible for now, a flag for each
+("I might change it later"): `HILL_BREAKS` and `ROCK_BREAKS` on
+[Terrain.gd](../../scripts/components/Terrain.gd), both true, `_terrain_go` wiring the
+family's flag onto the feature. The AI's blocker filter still reads the feature's flag, so
+it only shoots what a flag lets it break. The soak mode stays a live, checked path: the test
+flips one feature's flag off (what a false flag ships as), ten shells leave no scratch, the
+flag back on and one shell takes one block. Breaks watched red: the wiring handing every
+family a false flag (the flag count and the victim pick), the soak path ignoring the flag,
+one sort never drawn.
+
+**Follow-up 2, same day.** His games still showed broken masses after the outward-winding
+fix ("Problem persits", "Still broken"). The winding was right; the sides' neighbour pairing
+was not: each side's `continue` read the neighbour one position around the ring (S with E,
+E with N, N with W, W with S), so the walls between cells stood inside the mass and every
+open side stayed bare - and the skirt count still matched either way, which is why the count
+guard never fired. A throwaway audit (since deleted) checked the primitives per feature -
+tops complete and wound up, every skirt triangle on an exposed edge, every edge covered -
+and the fixed pairing audits clean on seeds 2, 3, 12 and 21 (12 features each); the rotated
+pairing had left 2-8 of 8-28 edges bare and 12-40 phantom triangles per feature.
+[terrain_test](../../../tests/terrain_test.gd) keeps the guard that matters: it builds the
+victim's exposed-edge set from its cells and checks every wall triangle stands on one of
+them, red with the rotation back in (20 walls off, 10 of 18 edges bare). Gold-board renders
+before and after differ exactly at the feature clusters, 10-12k changed pixels per seed.

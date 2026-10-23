@@ -376,7 +376,7 @@ func try_get_next_building() -> void:
 		var def := Catalog.draw(BuildingDef.Category.BUILDING)
 		if def == null:
 			return
-		nextBuilding = Catalog.spawn(def, hand)
+		nextBuilding = Catalog.spawn(def, hand, self)
 
 
 func next_wall_to_hand() -> void:

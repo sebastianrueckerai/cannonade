@@ -26,8 +26,20 @@ func _ready() -> void:
 	for b in buttons:
 		if b.text == "Tutorial & Controls":
 			tut = b
-	_check(menu.modes_for(true) == [["versus", "Player vs. AI"], ["ai2", "Watch: AI vs. AI"]],
-			"the web build ships Player vs. AI and the watch mode only, practice stays desktop")
+	# the browser build shows every entry but Sandbox; Quit has no window to close there (I88)
+	var web_box := VBoxContainer.new()
+	menu.add_child(web_box)
+	menu._build_buttons(web_box, true)
+	var web_buttons: Array = web_box.find_children("*", "Button", true, false)
+	_check(web_buttons.size() == 5
+			and web_buttons.any(func(b): return b.text.contains("Player vs. AI"))
+			and web_buttons.any(func(b): return b.text.contains("Watch"))
+			and web_buttons.any(func(b): return b.text.contains("Practice"))
+			and not web_buttons.any(func(b): return b.text.contains("Sandbox"))
+			and not web_buttons.any(func(b): return b.text.contains("Quit")),
+		"the web build shows all three modes and both panels, Sandbox and Quit stay desktop (%s)"
+			% [web_buttons.map(func(b): return b.text)])
+	web_box.queue_free()
 	_check(tut != null, "the menu has a Tutorial & Controls button")
 	# the menu and the help overlay both fit the 1280x720 canvas, the smallest any window shows
 	var panels: Array = menu.find_children("*", "PanelContainer", true, false)

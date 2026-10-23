@@ -69,9 +69,24 @@ func _ready() -> void:
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		title.add_theme_font_size_override("font_size", 44)
 		box.add_child(title)
-	var web := OS.has_feature("web")
-	var modes: Array = modes_for(web)
-	for entry in modes:
+	_build_buttons(box, OS.has_feature("web"))
+	Sound.buttons(box)
+	_add_mute()
+	var errors: Array[String] = []
+	errors.append_array(Catalog.errors)
+	errors.append_array(Art.validate())
+	if not errors.is_empty():
+		var problems := Label.new()
+		problems.text = "Problems in data/buildings or assets/art:\n" + "\n".join(errors)
+		problems.add_theme_color_override("font_color", Color(1, 0.45, 0.4))
+		problems.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		box.add_child(problems)
+
+
+## The menu's buttons: every entry everywhere but Sandbox and Quit, which stay desktop
+## (the browser shows the whole game, and the tab is its own quit button).
+func _build_buttons(box: VBoxContainer, web: bool) -> void:
+	for entry in MODES:
 		var b := Button.new()
 		b.text = entry[1]
 		b.custom_minimum_size = Vector2(0, 44)
@@ -87,33 +102,18 @@ func _ready() -> void:
 	volume.custom_minimum_size = Vector2(0, 44)
 	volume.pressed.connect(_show_volume)
 	box.add_child(volume)
-	if not web:
-		var sandbox := Button.new()
-		sandbox.text = "Sandbox (build & test battles)"
-		sandbox.custom_minimum_size = Vector2(0, 44)
-		sandbox.pressed.connect(func(): Loading.go("res://scenes/sandbox.tscn"))
-		box.add_child(sandbox)
-		var quit := Button.new()
-		quit.text = "Quit"
-		quit.custom_minimum_size = Vector2(0, 36)
-		quit.pressed.connect(get_tree().quit)
-		box.add_child(quit)
-	Sound.buttons(box)
-	_add_mute()
-	var errors: Array[String] = []
-	errors.append_array(Catalog.errors)
-	errors.append_array(Art.validate())
-	if not errors.is_empty():
-		var problems := Label.new()
-		problems.text = "Problems in data/buildings or assets/art:\n" + "\n".join(errors)
-		problems.add_theme_color_override("font_color", Color(1, 0.45, 0.4))
-		problems.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		box.add_child(problems)
-
-
-## The shipped web build carries the two duel modes only; practice, Sandbox and Quit stay desktop.
-static func modes_for(web: bool) -> Array:
-	return [MODES[0], MODES[1]] if web else MODES
+	if web:
+		return
+	var sandbox := Button.new()
+	sandbox.text = "Sandbox (build & test battles)"
+	sandbox.custom_minimum_size = Vector2(0, 44)
+	sandbox.pressed.connect(func(): Loading.go("res://scenes/sandbox.tscn"))
+	box.add_child(sandbox)
+	var quit := Button.new()
+	quit.text = "Quit"
+	quit.custom_minimum_size = Vector2(0, 36)
+	quit.pressed.connect(get_tree().quit)
+	box.add_child(quit)
 
 
 func _start(mode: String) -> void:
@@ -232,8 +232,7 @@ func _show_help() -> void:
 		bind.pressed.connect(_capture.bind(row[0], bind))
 		grid.add_child(bind)
 	var fixed: Array = FIXED.duplicate()
-	if not OS.has_feature("web"):
-		fixed.append(["next phase (Practice)", "Enter"])
+	fixed.append(["next phase (Practice)", "Enter"])
 	fixed.append(["pause the game (in play)", "Esc"])
 	for row in fixed:
 		var what := Label.new()

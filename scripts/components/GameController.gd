@@ -670,7 +670,7 @@ func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) ->
 	terr.map = map
 	terr.sort = sort
 	terr.tiles = all.map(func(c): return map.tiles[c.x][c.y])
-	terr.destructible = sort == "rock"
+	terr.destructible = TerrainScript.HILL_BREAKS if sort == "hill" else TerrainScript.ROCK_BREAKS
 	var centre := Vector3.ZERO
 	var ground := 0.0
 	for c in all:

@@ -1,5 +1,5 @@
 extends Node
-## Prints the board as ASCII for one mode+seed (# crate, M stone, N neutral castle, w wall,
+## Prints the board as ASCII for one mode+seed (# rock, M hill, N neutral castle, w wall,
 ## ~ river, = bridge, digits player castles).  godot --headless --fixed-fps 30 res://tools/dump_board.tscn -- --mode=versus --seed=4 --terrain=6
 const Main = preload("res://scripts/Main.gd")
 
@@ -31,7 +31,7 @@ func _ready() -> void:
 				var terr: Variant = U.comp(t.structure, "Terrain")
 				var castle: Variant = U.comp(t.structure, "Castle")
 				if terr != null:
-					ch = "#" if terr.destructible else "M"
+					ch = "#" if terr.sort == "rock" else "M"
 				elif castle != null:
 					ch = "N" if castle.owner() == null else str(castle.owner().playerID)
 				elif U.comp(t.structure, "BuildingBlock") != null:
@@ -59,7 +59,7 @@ func _ready() -> void:
 	var sorts := {"rock": 0, "hill": 0}
 	for go in map.terrain_features:
 		var terr: Variant = U.comp(go, "Terrain")
-		sorts["rock" if terr.destructible else "hill"] += 1
+		sorts[terr.sort] += 1
 		for t in terr.tiles:
 			blocked["top" if t.idxZ < map.sizeZ / 2 else "bottom"] += 1
 	var touching := 0

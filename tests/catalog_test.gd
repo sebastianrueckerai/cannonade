@@ -68,14 +68,14 @@ func _ready() -> void:
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 
-## The gun looks of C20: the game deals each player one of the four, a player's cannons wear it, and a cannon
-## without an owner wears the first.
+## The gun looks of C20, without cannon.2 (D92): the game deals each player one of the three, a player's
+## cannons wear it, and a cannon without an owner wears the first.
 func _check_gun_looks() -> void:
-	check(Catalog.GUN_LOOKS.size() == 4 and Catalog.GUN_LOOKS.all(func(id): return Art.has_model(id)),
-			"four gun looks and every model is in the game %s" % [Catalog.GUN_LOOKS])
+	check(Catalog.GUN_LOOKS.size() == 3 and Catalog.GUN_LOOKS.all(func(id): return Art.has_model(id)),
+			"three gun looks and every model is in the game %s" % [Catalog.GUN_LOOKS])
 	var dealt: Array = Catalog.deal_gun_looks()
 	check(dealt.all(func(l): return l in Catalog.GUN_LOOKS) and dealt.size() == Catalog.GUN_LOOKS.size(),
-			"the deal hands out the four looks, none twice (%s)" % [dealt])
+			"the deal hands out the three looks, none twice (%s)" % [dealt])
 	Main.requested_mode = "ai2"
 	Main.requested_args = {"seed": "5", "no-decorations": "true"}
 	var main := Main.new()
@@ -86,6 +86,23 @@ func _check_gun_looks() -> void:
 	check(players[0].gunLook in Catalog.GUN_LOOKS and players[0].gunLook != players[1].gunLook,
 			"two players, two different gun looks (%s, %s)" % [players[0].gunLook, players[1].gunLook])
 	var look := func(go: Node3D): return go.get_node("Art").get_meta("art_id")
+	# the hand draw is the real build path (try_get_next_building): the gun a player builds wears that
+	# player's look, not the first one
+	main.game.phase = main.game.Phase.GUNS
+	for p in players:
+		p.secondsBetweenBuildings = 0.0
+		var tries := 0
+		while tries < 60 and (not U.alive(p.nextBuilding) or Catalog.def_of(p.nextBuilding).id != "cannon"):
+			if U.alive(p.nextBuilding):
+				p.nextBuilding.free()
+			p.try_get_next_building()
+			tries += 1
+		check(U.alive(p.nextBuilding) and Catalog.def_of(p.nextBuilding).id == "cannon",
+				"a cannon reaches the hand within %d draws" % tries)
+		check(look.call(p.nextBuilding) == p.gunLook,
+				"the hand-drawn cannon wears the player's look (got %s, want %s)"
+				% [look.call(p.nextBuilding), p.gunLook])
+		p.nextBuilding.free()
 	players[1].gunLook = "cannon.3"  # the deal is random; the wear check needs an owner on a non-first look
 	var gun := Catalog.spawn("cannon", null, players[1])
 	check(look.call(gun) == players[1].gunLook,

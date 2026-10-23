@@ -7,7 +7,7 @@ extends "res://scripts/components/Component.gd"
 ## shatters the top block of the tile it hits, the column steps down and the drape is
 ## re-cut for the shorter stack, the tile frees when its last block goes - the killing
 ## blow also scarring the ground it frees (I74) - and the feature dies with its last
-## column. Hills, the indestructible family, absorb every hit.
+## column. Each family carries its break flag; a flag-off family absorbs every hit.
 
 ## What one block of feature mass costs to clear, the same a wall costs a shell.
 const HEALTH_PER_TILE := 10.0
@@ -15,6 +15,11 @@ const HEALTH_PER_TILE := 10.0
 ## under the 0.866 the 60-degree play camera can just see over, so a one-level drape
 ## never hides the tile behind it (I97's rule, kept for the blanket).
 const LEVEL := 0.75
+## Each family's break switch (Sebastian, 2026-10-22: "I want both to be destructible for
+## now, but I might change it later, so keep a flag for each"): a flag-off family absorbs
+## every hit the way the old stone did.
+const HILL_BREAKS := true
+const ROCK_BREAKS := true
 
 ## The families' colours (D21's palette, the boulder greys of the paint family D49): hills
 ## the grass green of open ground, rocks grey low to high with a dark grounding band.
@@ -93,7 +98,10 @@ func drape() -> void:
 				var d := _lattice(p, top, Vector2(u, v + 1) / steps, hill, peak)
 				_face(st, a, b, c2, peak)
 				_face(st, a, c2, d, peak)
-		for side in [[Vector2(0, 0), Vector2(1, 0), Vector2(1, 0)], [Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)], [Vector2(1, 1), Vector2(0, 1), Vector2(-1, 0)], [Vector2(0, 1), Vector2(0, 0), Vector2(0, -1)]]:
+		# each side: its two lattice corners and the neighbour that hides the wall between the
+		# cells - the offset must match the edge (S, E, N, W), a rotated pairing skips real
+		# outer walls and drapes phantom ones inside the mass
+		for side in [[Vector2(0, 0), Vector2(1, 0), Vector2(0, -1)], [Vector2(1, 0), Vector2(1, 1), Vector2(1, 0)], [Vector2(1, 1), Vector2(0, 1), Vector2(0, 1)], [Vector2(0, 1), Vector2(0, 0), Vector2(-1, 0)]]:
 			if cells.has(c + Vector2i(side[2])):
 				continue  # a neighbour stands here, no wall between them
 			var near := _lattice(p, top, side[0], hill, peak)
@@ -102,9 +110,11 @@ func drape() -> void:
 			var wall: Array = [near, far,
 				{"pos": far["pos"] - Vector3(0, far["pos"].y + 0.25, 0), "tint": foot},
 				{"pos": near["pos"] - Vector3(0, near["pos"].y + 0.25, 0), "tint": foot}]
-			# two triangles down to the ground, matching the top edge's roughness
-			_face(st, wall[0], wall[1], wall[2], peak)
-			_face(st, wall[0], wall[2], wall[3], peak)
+			# two triangles down to the ground, matching the top edge's roughness, wound so
+			# the wall faces outward - the other way round, culling hides every skirt and the
+			# blanket floats (Sebastian saw it in play, 2026-10-23)
+			_face(st, wall[0], wall[2], wall[1], peak)
+			_face(st, wall[0], wall[3], wall[2], peak)
 	st.generate_normals()
 	var mesh := st.commit()
 	if _mass == null:
