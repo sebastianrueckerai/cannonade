@@ -56,7 +56,29 @@ func become_ruin(from := Vector3.INF) -> void:
 	_pin_look()
 	Crumble.crumble(go, from, state_model(RUIN - 1))
 	set_state(RUIN)
+	_ruin_body()
 	hold_tiles(null)
+
+
+## The ruin catches its own shatter (I66): a slab over its bounds like a standing wall's box
+## (BuildingPlace._wall_body), 0.3 m thick with its top at 0.8 of the ruin's height, where the broken
+## walls end (castle_d4's surface stands 0.77 to 0.92 of it), so the pieces from above lie on the rubble.
+## A thin slab, not a full box: the dying castle's pieces are born inside the ruin's bounds - a wall's
+## own box goes away with the wall, so it never meets its pieces - and a solid box of the whole bounds
+## shoves the low ones under the ground. Born under the slab they fall to the floor, hidden in the ruin.
+## Gone with the castle.
+func _ruin_body() -> void:
+	var bb := bounds()
+	var body := StaticBody3D.new()
+	body.name = "RuinBody"
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	var top := maxf(0.3, bb.size.y * 0.8)
+	box.size = Vector3(bb.size.x, 0.3, bb.size.z)
+	shape.shape = box
+	go.add_child(body)
+	body.add_child(shape)
+	body.global_position = Vector3(bb.get_center().x, bb.position.y + top - 0.15, bb.get_center().z)
 
 
 ## The own player hears a claim as a chime up, a loss as the chime down; others' claims are quieter.

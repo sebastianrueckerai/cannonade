@@ -578,3 +578,16 @@ a player, one look now left undrawn. His hand-placed spawn anchors of the same r
 ([barrel.py](../pipeline/blender/barrel.py)) and the finals of cannon.3 and cannon.4 rebuilt with them;
 cannon.2's anchor is recorded too, for the parked asset whose files stay in art/. Session 62's follow-up
 round, roadmap I103.
+
+## D93. The castle looks wear flat solid materials (2026-10-23, Sebastian)
+
+"OK, lets go with flat. [...] Make sure the materials make sense: I need to see tham and know what they
+are and which ofg them is the one were I assign stuff that changes color based on player." The three
+keepers of the C21 round (`castle`, `castle.3`, `castle.6`) and all their damage states drop the painted
+texture for one solid material a part: `team` first (the slot the game paints in the player's colour),
+`stone`, `dark`, and `stone<n>` for a further stone hue. The flat painter in
+[paint.py](../pipeline/blender/paint.py) reads the source texture's own colours: a seeded k-means over
+the blurred source gives the centres, brightness variants of one hue merge into one part, every UV
+island takes the nearest centre whole, and a face whose own source texel is team blue joins the team
+part even when its island's mean washed it out. The wrong faces and rough geometry he saw stay his to
+fix by hand in Blender. Session 66, roadmap C21.

@@ -5,10 +5,18 @@
   "team": true,
   "fit": 2.9,
   "max_tris": 3500,
-  "paint": {"kind": "stone", "seed": 86},
+  "paint": {
+    "kind": "flat",
+    "seed": 86,
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    }
+  },
   "why": {
     "team": "the drum's royal blue conical roof, the annex roof and the flag are the team part (D68)",
-    "paint": "the D49 painted stone the castle looks wear (D73, C20)",
+    "paint": "flat solid materials, the look picked over the Meshy texture (Sebastian, 2026-10-23): team, stone and dark, one material a part, no texture",
     "fit": "uniform scale, proportions kept: the tower and drum stand about as tall as wide by their reference; the longer side of the footprint becomes the 2.9 m of the 3x3 tiles less 5 cm per side"
   }
 }

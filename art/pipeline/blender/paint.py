@@ -66,6 +66,10 @@ PAINTERS = {
         "cracks": (7, (18, 40), (1.5, 3.0), -70),   # count, segment count, half width px, darkening
         "edge": (1.0, 36.0, 0.32),
     },
+    "flat": {   # no texture of our own: the source texture as flat colours, one per UV island, on the UVs it came with
+        "k": 6,
+        "blur": 2,
+    },
     "dirt_hit": {  # open nature ground blasted (I73): churned earth and char, near-white for the Map colour
         "stops": [(0.0, "#ffffff"), (1.0, "#f2ede2")],
         "grain": (0.09, 0.045),
@@ -173,6 +177,44 @@ def paint_texture(params, seed):
             o = (y * W + x) * 4
             flat[o:o + 3] = c
             flat[o + 3] = 255
+    if params.get("courses"):
+        # running-bond masonry: `rows` courses over the painted height, vertical joints every
+        # `block_m` metres of u (u is metres mod 1, so joints meet at the corners), staggered per
+        # row, wobbled so no line reads ruler-straight, every block cell jittered in value.
+        rows, block_m, mortar, jitter = params["courses"][:4]
+        mwid = params["courses"][4] if len(params["courses"]) > 4 else 2.5
+        v0 = (params["ground"][1] + 0.015) if params["ground"] else 0.03
+        v1 = 0.985
+        ph = [rng.random() * 6.28 for _ in range(rows + 1)]
+        jk = {}
+        def cell(row, seg):
+            key = (row, seg)
+            if key not in jk:
+                r2 = random.Random(seed + row * 4099 + seg * 7919).random()
+                jk[key] = 1.0 + jitter * (r2 * 2 - 1) / 100.0
+            return jk[key]
+        span = v1 - v0
+        hw = mwid / H         # mortar half width in v
+        hwu = mwid / W        # in u: u spans one metre
+        for y in range(H):
+            v = y / (H - 1)
+            fy = (v - v0) / span * rows
+            row = int(fy)
+            for x in range(W):
+                u = x / (W - 1)
+                o = (y * W + x) * 4
+                if row < 0 or row >= rows:
+                    continue
+                # the course boundary under this pixel, in v, wobbled along the metre u
+                line = v0 + (row + 1 + 0.05 * math.sin(u * 2 * math.pi * 2 + ph[row + 1])) * span / rows
+                kv = max(0.0, 1.0 - abs(v - line) / hw)
+                ub = u + (block_m * 0.5 if row % 2 else 0.0)
+                seg = math.floor(ub / block_m)
+                frac = ub / block_m - seg
+                du = min(frac, 1.0 - frac) * block_m
+                ku = max(0.0, 1.0 - du / hwu)
+                m = max(kv, ku) * mortar / 100.0
+                flat[o:o + 3] = [max(0, ch * cell(row, seg) * (1.0 - m)) for ch in flat[o:o + 3]]
     for cx, cy, r, a, chg in params.get("dabs_at") or []:   # fixed dabs, e.g. the scorch over its crater
         dab(flat, rng, cx, cy, r, a, chg)
     for count, (rlo, rhi), (alo, ahi), chg in params["patches"]:
@@ -220,7 +262,136 @@ def paint_texture(params, seed):
     return flat
 
 
-def painted_material(ob, spec, keep_slots=False):
+
+def flat_materials(ob, source, params, seed):
+    """The flat look as one solid material per part, no texture: a seeded k-means over the
+    blurred source gives the centres, bright centres of one hue merge into one part, and
+    every UV island takes the nearest centre whole. Returns a part id per face (0 team,
+    1 stone, 2 dark, 3+ further stone hues) and each part's colour."""
+    import numpy as np
+    w, h = int(source.size[0]), int(source.size[1])
+    arr = np.array(source.pixels[:], dtype=np.float32).reshape(h, w, 4)[:, :, :3] * 255.0
+    for _ in range(int(params.get("blur", 2))):
+        q = np.pad(arr, ((1, 1), (1, 1), (0, 0)), mode="edge")
+        arr = sum(q[i:i + h, j:j + w] for i in range(3) for j in range(3)) / 9.0
+    rng = random.Random(seed)
+    flat_px = arr.reshape(-1, 3)
+    sample = flat_px[rng.sample(range(w * h), min(6000, w * h))]
+    k = int(params.get("k", 6))
+    cent = sample[[int(len(sample) * (i + 0.5) / k) for i in range(k)]].copy()
+    for _ in range(12):
+        lab = ((sample[:, None, :] - cent[None, :, :]) ** 2).sum(-1).argmin(1)
+        for i in range(k):
+            m = sample[lab == i]
+            if len(m):
+                cent[i] = m.mean(0)
+    # the source's baked light and shadow split one material into brightness steps,
+    # so bright centres of one hue are that material's lighting variants: merge them to
+    # their running mean and every island of one material takes one colour. A dark centre
+    # of the same hue stays apart: it is a part of its own, a door or a window, not a
+    # shadow of the wall.
+    import colorsys
+    def hls(c):
+        r, g, b = (v / 255.0 for v in c)
+        return colorsys.rgb_to_hls(r, g, b)
+    merged, counts = [cent[0].copy()], [1]
+    for c in cent[1:]:
+        for gi, g in enumerate(merged):
+            dh = abs(hls(c)[0] - hls(g)[0])
+            if min(dh, 1 - dh) < 0.03 and hls(c)[1] >= 0.45 and hls(g)[1] >= 0.45:
+                merged[gi] = g + (c - g) / (counts[gi] + 1)
+                counts[gi] += 1
+                break
+        else:
+            merged.append(c.copy())
+            counts.append(1)
+    cent = np.array(merged)
+    tlo, thi = params.get("team_hue") or (0.0, -1.0)
+    part, stone = [], 0
+    for c in cent:
+        hue, lig = hls(c)[0], hls(c)[1]
+        if tlo <= hue <= thi:
+            part.append(0)
+        elif lig < 0.45:
+            part.append(2)
+        else:
+            stone += 1
+            part.append(1 if stone == 1 else stone + 1)
+    cols = {q: [c for c, r in zip(cent, part) if r == q] for q in set(part)}
+    cols = {q: (255.0, 255.0, 255.0) if q == 0 else tuple(np.array(v).mean(0)) for q, v in cols.items()}
+
+    # UV islands: faces joined by an edge their uv coords share
+    uv = ob.data.uv_layers.active.data
+    faces = ob.data.polygons
+    parent = list(range(len(faces)))
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    edges = {}
+    for fi, p in enumerate(faces):
+        end = p.loop_start + p.loop_total
+        for li in range(p.loop_start, end):
+            a = uv[li].uv
+            b = uv[p.loop_start if li + 1 == end else li + 1].uv
+            key = tuple(sorted(((round(a.x, 4), round(a.y, 4)), (round(b.x, 4), round(b.y, 4)))))
+            other = edges.setdefault(key, fi)
+            if other != fi:
+                parent[find(fi)] = find(other)
+    islands = {}
+    for fi in range(len(faces)):
+        islands.setdefault(find(fi), []).append(fi)
+
+    roles = [1] * len(faces)
+    for members in islands.values():
+        mask = np.zeros((h, w), dtype=bool)
+        for fi in members:
+            p = faces[fi]
+            end = p.loop_start + p.loop_total
+            pts = [np.array([uv[li].uv.x * (w - 1), uv[li].uv.y * (h - 1)]) for li in range(p.loop_start, end)]
+            for a, b, c in zip(range(len(pts) - 2), range(1, len(pts) - 1), range(2, len(pts))):
+                v0, v1, v2 = pts[a], pts[b], pts[c]
+                x0, y0 = np.floor(min(v0[0], v1[0], v2[0])).astype(int), np.floor(min(v0[1], v1[1], v2[1])).astype(int)
+                x1, y1 = np.ceil(max(v0[0], v1[0], v2[0])).astype(int), np.ceil(max(v0[1], v1[1], v2[1])).astype(int)
+                xs = np.arange(max(0, x0), min(w, x1 + 1))
+                ys = np.arange(max(0, y0), min(h, y1 + 1))
+                if not len(xs) or not len(ys):
+                    continue
+                gx, gy = np.meshgrid(xs, ys)
+                d = (v1[1] - v2[1]) * (v0[0] - v2[0]) + (v2[0] - v1[0]) * (v0[1] - v2[1])
+                if abs(d) < 1e-9:
+                    continue
+                l1 = ((v1[1] - v2[1]) * (gx - v2[0]) + (v2[0] - v1[0]) * (gy - v2[1])) / d
+                l2 = ((v2[1] - v0[1]) * (gx - v2[0]) + (v0[0] - v2[0]) * (gy - v2[1])) / d
+                mask[gy[(l1 >= -0.001) & (l2 >= -0.001) & (l1 + l2 <= 1.001)],
+                     gx[(l1 >= -0.001) & (l2 >= -0.001) & (l1 + l2 <= 1.001)]] = True
+        if mask.any():
+            ci = int(((cent - arr[mask].mean(0)) ** 2).sum(1).argmin())
+            for fi in members:
+                roles[fi] = part[ci]
+        else:
+            # an island too small to rasterize falls back to each face's own texel
+            for fi in members:
+                p = faces[fi]
+                li = p.loop_start + p.loop_total // 2
+                x, y = min(w - 1, int(uv[li].uv.x * w)), min(h - 1, int(uv[li].uv.y * h))
+                roles[fi] = part[int(((cent - arr[y, x]) ** 2).sum(1).argmin())]
+
+    # a team part welded into a bigger island washes out of the island mean, but its own
+    # texels stay team-coloured underneath: the face's own source texel votes team
+    for fi, p in enumerate(faces):
+        li = p.loop_start + p.loop_total // 2
+        x = min(w - 1, int(uv[li].uv.x * w))
+        y = min(h - 1, int(uv[li].uv.y * h))
+        if tlo <= hls(arr[y, x])[0] <= thi:
+            roles[fi] = 0
+    return roles, cols
+
+
+def painted_material(ob, spec, keep_slots=False, source=None):
     """Paints `spec` {"kind", "seed", optional "over"} onto `ob`, assigns the material, returns it.
     Keeps existing UVs (the shell's sphere); projects box meshes that have none, or any mesh with `project`
     (the wall block carries a second UV layer of region ids and wants the projection on its first). `tint`, a
@@ -229,15 +400,37 @@ def painted_material(ob, spec, keep_slots=False):
     keep_slots: leave the slot list alone (the caller places the material), for
     meshes whose first material must stay, like the castle's team slot."""
     kind = spec["kind"]
-    kind = spec["kind"]
     params = dict(PAINTERS[kind])
     params.update(spec.get("over") or {})
     name = f"{ob.name}_{kind}"
     if ob.data.uv_layers.active is None or spec.get("project"):
         cube_uv(ob, top_planar=spec.get("top_planar", False))
-    img = bpy.data.images.new(name + "_tex", width=W, height=H)
-    img.colorspace_settings.name = "sRGB"
-    img.pixels[:] = [v / 255.0 for v in paint_texture(params, int(spec["seed"]))]
+    if kind == "flat":
+        roles, cols = flat_materials(ob, source, params, int(spec["seed"]))
+        names = {0: "team", 1: "stone", 2: "dark"}
+        mats = {}
+        for q in sorted(set(roles)):
+            m = bpy.data.materials.new(names.get(q, "stone%d" % (q - 2)))
+            m.use_nodes = True
+            b = m.node_tree.nodes["Principled BSDF"]
+            b.inputs["Base Color"].default_value = (*linear(tuple(cols[q])), 1.0)
+            b.inputs["Roughness"].default_value = 1.0
+            b.inputs["Metallic"].default_value = 0.0
+            mats[q] = m
+        ob.data.materials.clear()
+        pos = {q: i for i, q in enumerate(sorted(mats))}
+        for q in sorted(mats):
+            ob.data.materials.append(mats[q])
+        for fi, q in enumerate(roles):
+            ob.data.polygons[fi].material_index = pos[q]
+        if not spec.get("smooth"):
+            for p in ob.data.polygons:
+                p.use_smooth = False
+        return mats.get(1)
+    else:
+        img = bpy.data.images.new(name + "_tex", width=W, height=H)
+        img.colorspace_settings.name = "sRGB"
+        img.pixels[:] = [v / 255.0 for v in paint_texture(params, int(spec["seed"]))]
     img.pack()
     mat = bpy.data.materials.new(name)
     mat.use_nodes = True

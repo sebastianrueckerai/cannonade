@@ -5,10 +5,18 @@
   "team": false,
   "fit": 2.9,
   "max_tris": 3500,
-  "paint": {"kind": "stone", "seed": 64},
+  "paint": {
+    "kind": "flat",
+    "seed": 64,
+    "keep_uv": true,
+    "over": {
+      "k": 6,
+      "blur": 2
+    }
+  },
   "why": {
     "team": "no blue survives this state: the cone roof is gone and the fragments are bare stone",
-    "paint": "the D49 painted stone replaces the raw Meshy texture on the body, so the castle sits in the game's material world (rules v3)",
+    "paint": "the healthy look's flat solid materials (2026-10-23), the bare fragments keep them",
     "fit": "the same uniform 2.9 m plan as the healthy castle, so the states swap on one 3x3 plot"
   }
 }

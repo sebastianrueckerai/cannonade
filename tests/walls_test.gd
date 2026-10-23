@@ -286,7 +286,8 @@ func _check_nested_rings() -> void:
 ## them out, every player another. The versus game's AI is idle, so freeing it resumes no coroutine.
 ## A wall shot down crumbles (I62): a storey alone, leaving its block, then the block; the pieces wear the block's
 ## material, fly away from the shot, lie on the walls and not in them, stay on the slab and are gone after Crumble.LIFE.
-## A cannon, the castle falling to ruins and the decorations of a tile shot or built on crumble too (I69).
+## A cannon, the castle falling to ruins and the decorations of a tile shot or built on crumble too (I69); the castle's
+## pieces lie on its ruin and not fallen through it (I66).
 func _check_crumble() -> void:
 	Art._rng.seed = 11
 	var gun_spot := _dry_near(17, 0, [])
@@ -364,14 +365,35 @@ func _check_crumble() -> void:
 	check(castle.is_ruin() and castle_heaps.size() == 1 and stones.size() >= 20,
 			"the castle falls to ruins in %d pieces (%d heaps)" % [stones.size(), castle_heaps.size()])
 	var d3 := load(Art.model_path(castle.state_model(3))).instantiate() as Node3D
-	var d3_mat: Material = (d3.find_children("*", "MeshInstance3D", true, false)[0] as MeshInstance3D).get_active_material(0)
+	var d3_mats: Array = []
+	for mi in d3.find_children("*", "MeshInstance3D", true, false):
+		var mm: Material = (mi as MeshInstance3D).get_active_material(0)
+		if mm != null and not d3_mats.has(mm):
+			d3_mats.append(mm)
 	var stone := 0
 	for b in stones:
-		var worn: Material = b.get_child(0).material_override
-		stone += 1 if worn is BaseMaterial3D and worn.albedo_texture == d3_mat.albedo_texture else 0
+		stone += 1 if d3_mats.has(b.get_child(0).material_override) else 0
 	check(not stones.is_empty() and stone == stones.size(),
-			"the castle's pieces wear the severe look's stone (%d of %d)" % [stone, stones.size()])
+			"the castle's pieces wear the severe look's materials (%d of %d)" % [stone, stones.size()])
 	d3.free()
+	# the ruin catches the pieces from above on its slab (I66); the pieces born under the slab
+	# fall to the floor, hidden in the ruin
+	var rb: Array = castle.go.find_children("RuinBody", "", true, false)
+	var body: StaticBody3D = rb[0] if rb.size() == 1 else null
+	check(body != null, "the ruin carries its catch body (I66)")
+	var top := 0.0
+	if body != null:
+		var box := (body.get_child(0) as CollisionShape3D).shape as BoxShape3D
+		top = body.global_position.y + box.size.y * 0.5
+	var start := stones.map(func(b): return b.global_position.y)
+	var rbb: AABB = castle.bounds()
+	await seconds(1.5)
+	var deep := 0
+	for i in stones.size():
+		var p: Vector3 = stones[i].global_position
+		if start[i] > top and p.y < top - 0.1 and rbb.position.x < p.x and p.x < rbb.end.x and rbb.position.z < p.z and p.z < rbb.end.z:
+			deep += 1
+	check(deep == 0, "the pieces from above lie on the ruin, none fallen through it (%d deep)" % deep)
 	# a shot clears a decorated tile, and a wall placed on decorations clears another, each decoration in pieces
 	var shot_tile = _tile(shot_spot.x, shot_spot.y)
 	var walled_tile = _tile(33, 2)

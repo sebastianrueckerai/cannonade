@@ -157,9 +157,9 @@
       "castle"
     ],
     "tris": 3121,
-    "source_sha": "c69a1ca38239",
+    "source_sha": "4bbc8d03e854",
     "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:07:07+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle.3": {
     "size": [
@@ -172,9 +172,9 @@
       "castle"
     ],
     "tris": 3064,
-    "source_sha": "554795f5d5c6",
+    "source_sha": "eb42ddf7e3da",
     "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle.6": {
     "size": [
@@ -187,9 +187,9 @@
       "castle"
     ],
     "tris": 3246,
-    "source_sha": "e80a640d0f22",
+    "source_sha": "1c7c54dcb0ed",
     "approved_by": null,
-    "synced": "2026-10-23T00:14:17+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d1": {
     "size": [
@@ -202,9 +202,9 @@
       "castle_d1"
     ],
     "tris": 3274,
-    "source_sha": "64030da115b4",
+    "source_sha": "ee4eac2ddb10",
     "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:07:07+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d1.3": {
     "size": [
@@ -217,9 +217,9 @@
       "castle_d1.3"
     ],
     "tris": 3107,
-    "source_sha": "aab03d783587",
+    "source_sha": "f24866e0e3c4",
     "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d1.6": {
     "size": [
@@ -232,9 +232,9 @@
       "castle_d1.6"
     ],
     "tris": 3080,
-    "source_sha": "02279bc3552e",
+    "source_sha": "8059b48d41a9",
     "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d2": {
     "size": [
@@ -247,9 +247,9 @@
       "castle_d2"
     ],
     "tris": 2726,
-    "source_sha": "94ea2673b8e4",
+    "source_sha": "071e78c51e20",
     "approved_by": "Sebastian",
-    "synced": "2026-10-20T15:07:07+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d2.3": {
     "size": [
@@ -262,9 +262,9 @@
       "castle_d2.3"
     ],
     "tris": 2966,
-    "source_sha": "2e50df4487e2",
+    "source_sha": "e3df884919b4",
     "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d2.6": {
     "size": [
@@ -277,9 +277,9 @@
       "castle_d2.6"
     ],
     "tris": 2839,
-    "source_sha": "64827c7dbfb5",
+    "source_sha": "f86d497f7323",
     "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d3": {
     "size": [
@@ -292,9 +292,9 @@
       "castle_d3"
     ],
     "tris": 2957,
-    "source_sha": "daca646d7d5b",
+    "source_sha": "d23a44b40901",
     "approved_by": "Sebastian",
-    "synced": "2026-10-19T15:33:01+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d3.3": {
     "size": [
@@ -307,9 +307,9 @@
       "castle_d3.3"
     ],
     "tris": 3052,
-    "source_sha": "87d1863e9a22",
+    "source_sha": "e56160ad2f9d",
     "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d3.6": {
     "size": [
@@ -322,9 +322,9 @@
       "castle_d3.6"
     ],
     "tris": 2912,
-    "source_sha": "dcf2010bc5df",
+    "source_sha": "c6d7393a9968",
     "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d4": {
     "size": [
@@ -337,9 +337,9 @@
       "castle_d4"
     ],
     "tris": 3105,
-    "source_sha": "af8df8b404c0",
+    "source_sha": "7f87e3f48337",
     "approved_by": "Sebastian",
-    "synced": "2026-10-19T15:33:01+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d4.3": {
     "size": [
@@ -352,9 +352,9 @@
       "castle_d4.3"
     ],
     "tris": 2033,
-    "source_sha": "0efd876a6e36",
+    "source_sha": "ec4892bc7036",
     "approved_by": null,
-    "synced": "2026-10-22T23:56:45+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "castle_d4.6": {
     "size": [
@@ -367,9 +367,9 @@
       "castle_d4.6"
     ],
     "tris": 2624,
-    "source_sha": "703ae8becc41",
+    "source_sha": "5fd476376325",
     "approved_by": null,
-    "synced": "2026-10-23T00:31:50+02:00"
+    "synced": "2026-10-23T16:49:37+02:00"
   },
   "cluster_bomb": {
     "size": [

@@ -257,7 +257,8 @@ if not JOB["raw"]:
         if img.size[0] > px:
             img.scale(px, px)
             img.pack()
-    if JOB.get("team"):
+    # the flat painter owns its team split, and logs the parts it found
+    if JOB.get("team") and JOB.get("paint", {}).get("kind") != "flat":
         res["team_faces"] = split_team(ob)
     if JOB.get("team_deck"):
         res["deck_faces"] = team_deck(ob, JOB["team_deck"])
@@ -268,19 +269,38 @@ if not JOB["raw"]:
         import blender.paint
         _paint = importlib.reload(blender.paint)
         pspec = dict(JOB["paint"])
+        if JOB.get("team"):
+            pspec.setdefault("over", {})["team_hue"] = list(TEAM_HUE)
         # a forced world-metre projection replaces the API's UV islands, so the
-        # D49 bands land by height on the keep as they do on the walls
-        for uv in list(ob.data.uv_layers):
-            ob.data.uv_layers.remove(uv)
-        _paint.cube_uv(ob, top_planar=pspec.pop("top_planar", True))
-        mat = _paint.painted_material(ob, pspec, keep_slots=True)
-        stone = next(i for i, m in enumerate(ob.data.materials) if m.name != "team")
-        ob.data.materials[stone] = mat
-        res["painted"] = mat.name
+        # D49 bands land by height on the keep as they do on the walls. keep_uv keeps the
+        # API's own islands instead, for a painter that works off the source texture (flat).
+        if pspec.pop("keep_uv", False):
+            src_img = max(bpy.data.images, key=lambda i: i.size[0])
+        else:
+            src_img = None
+            for uv in list(ob.data.uv_layers):
+                ob.data.uv_layers.remove(uv)
+            _paint.cube_uv(ob, top_planar=pspec.pop("top_planar", True))
+        mat = _paint.painted_material(ob, pspec, keep_slots=True, source=src_img)
+        if mat is not None and mat.name not in [m.name for m in ob.data.materials if m]:
+            stone = next(i for i, m in enumerate(ob.data.materials) if m.name != "team")
+            ob.data.materials[stone] = mat
+        res["painted"] = mat.name if mat else "flat"
     ob.name = ob.data.name = JOB["part"]
     lo, hi = box(ob)
     res.update({"dims_m": [round(v, 3) for v in hi - lo], "tris": sum(len(p.vertices) - 2 for p in ob.data.polygons),
                 "materials": [m.name for m in ob.data.materials]})
+    # the API splits one vertex per UV island; any topology change here (prune, weld, decimate)
+    # recomputes normals per copy, so every island shades flat. Weld the copies - loop UVs
+    # survive, the exporter re-splits at the seams and writes the shared normal to both sides -
+    # and drop the stale split normals the import left.
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_mode(type="VERT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.mesh.remove_doubles(threshold=5e-4)
+    bpy.ops.mesh.customdata_custom_splitnormals_clear()
+    bpy.ops.object.mode_set(mode="OBJECT")
+    bpy.ops.object.shade_smooth()
     bpy.ops.wm.save_as_mainfile(filepath=JOB["blend"], compress=True)
     bpy.ops.object.select_all(action="DESELECT")
     ob.select_set(True)

@@ -9,6 +9,7 @@
   mesh.py tripo --views front.png left.png back.png right.png --out raw/x.glb     (- for a missing view)
   mesh.py meshy --image a.png --out raw/x.glb --param model_type=smart-topology --param target_polycount=500
   mesh.py meshy --views a.png b.png --out raw/x.glb --param ai_model=meshy-6
+  mesh.py meshy-retexture --model final.glb --style-image style.png --out raw/x.glb    (retexture an existing mesh, Meshy)
   mesh.py tripo-fal --image a.png --out raw/x.glb --param face_limit=1000 --param texture=standard
   mesh.py balance
 """
@@ -152,6 +153,30 @@ def run_meshy(a, params):
     return tid, {"endpoint": kind, **shown}, urls, t.get("consumed_credits")
 
 
+def run_meshy_retexture(a, params):
+    body = {"model_url": data_uri(a.model), **params}
+    shown = {"model": a.model}
+    if a.style_image:
+        body["image_style_url"] = data_uri(a.style_image, max_side=2048)
+        shown["style_image"] = a.style_image
+    if a.style_text:
+        body["text_style_prompt"] = a.style_text
+    body = {**body, "target_formats": ["glb"]}
+    r = meshy_req("POST", "/retexture", json=body)
+    tid = r.get("result") or r["id"]
+    while True:
+        time.sleep(5)
+        t = meshy_req("GET", f"/retexture/{tid}")
+        if t["status"] == "SUCCEEDED":
+            break
+        if t["status"] not in ("PENDING", "IN_PROGRESS"):
+            sys.exit(f"meshy task {tid}: {t['status']} {t.get('task_error')}")
+    urls = {"model": t["model_urls"]["glb"]}
+    if t.get("thumbnail_url"):
+        urls["rendered_image"] = t["thumbnail_url"]
+    return tid, {"endpoint": "retexture", **shown, "target_formats": body["target_formats"]}, urls, t.get("consumed_credits")
+
+
 def cmd_run(a):
     load_env()
     if not (a.image or a.views):
@@ -193,6 +218,43 @@ def cmd_run(a):
     print(f"{out} {credits} credits, {meta['elapsed_s']} s, session ~${spent():.2f}")
 
 
+def cmd_retexture(a):
+    load_env()
+    params = parse_params(a.param)
+    check_cap(EST_CREDITS["meshy"] * USD_PER_CREDIT["meshy"])
+    t0 = time.time()
+    tid, body, urls, credits = run_meshy_retexture(a, params)
+    out = Path(a.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    saved = {}
+    for k, url in urls.items():
+        if k == "rendered_image":
+            p = out.with_name(f"{out.stem}-preview{Path(url.split('?')[0]).suffix or '.png'}")
+        else:
+            p = out
+        p.write_bytes(httpx.get(url, timeout=300, follow_redirects=True).content)
+        saved[k] = p.name
+    credits = credits if credits is not None else EST_CREDITS["meshy"]
+
+    def rel(p_):
+        return str(Path(p_).resolve().relative_to(ROOT))
+
+    meta = {
+        "provider": "meshy",
+        "task_id": tid,
+        "inputs": [rel(a.model)] + ([rel(a.style_image)] if a.style_image else []),
+        "params": body,
+        "label": a.label,
+        "credits": credits,
+        "est_cost_usd": round(credits * USD_PER_CREDIT["meshy"], 3),
+        "elapsed_s": round(time.time() - t0),
+        "created": dt.datetime.now().isoformat(timespec="seconds"),
+        "outputs": saved,
+    }
+    out.with_suffix(".json").write_text(json.dumps(meta, indent=2))
+    print(f"{out} {credits} credits, {meta['elapsed_s']} s, session ~${spent():.2f}")
+
+
 def cmd_balance(_):
     load_env()
     print("tripo", tripo_req("GET", "/user/balance")["balance"], "credits")
@@ -210,6 +272,14 @@ def main():
         g.add_argument("--label")
         g.add_argument("--out", required=True)
         g.set_defaults(func=cmd_run, provider=name)
+    g = sub.add_parser("meshy-retexture")
+    g.add_argument("--model", required=True)
+    g.add_argument("--style-image")
+    g.add_argument("--style-text")
+    g.add_argument("--param", action="append", help="key=value, value parsed as JSON when possible")
+    g.add_argument("--label")
+    g.add_argument("--out", required=True)
+    g.set_defaults(func=cmd_retexture)
     sub.add_parser("balance").set_defaults(func=cmd_balance)
     a = ap.parse_args()
     a.func(a)

@@ -2,8 +2,8 @@ class_name Crumble
 extends Node3D
 ## A thing struck down breaks up (I62, I69): the pieces of assets/art/3d/<look>_rubble.glb, cut from the model by
 ## art/game/assets/3d/fracture.py, a node per part holding its pieces, fly from the shot as rigid bodies in the part's
-## own material from where the part stands as it dies, land on the slab and on the standing walls
-## (BuildingPlace._wall_body) and sink into the ground. Walls and their storeys, guns, the castle as it falls to
+## own material from where the part stands as it dies, land on the slab, on the standing walls
+## (BuildingPlace._wall_body) and on a castle's ruin (Castle._ruin_body), and sink into the ground. Walls and their storeys, guns, the castle as it falls to
 ## ruins, trees, bushes and boulders. A wall look without pieces of its own wears the plain block's. The heap stands
 ## under the thing's tile at the art's foot, so the slab top is its y 0. The project runs Jolt physics for these bodies,
 ## the game's only ones.
@@ -35,7 +35,7 @@ static func crumble(go: Node3D, from: Vector3, look := "") -> Crumble:
 	if rubble == null:
 		return null
 	# another look than the one worn lends its parts' places and materials
-	var lent: Node3D = Art.instance(look) if look != art.get_meta("art_look", "") else null
+	var lent: Node3D = Art.instance(look, true) if look != art.get_meta("art_look", "") else null
 	var heap := Crumble.new()
 	go.get_parent().add_child(heap)
 	heap.global_position = art.global_position

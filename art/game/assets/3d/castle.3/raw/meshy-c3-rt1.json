@@ -1,0 +1,26 @@
+{
+  "provider": "meshy",
+  "task_id": "01a16841-458a-73f4-be47-df14873e27a9",
+  "inputs": [
+    "game/assets/3d/castle.3/final.glb",
+    "game/assets/3d/castle.3/raw/meshy-c3-e1-style.png"
+  ],
+  "params": {
+    "endpoint": "retexture",
+    "model": "game/assets/3d/castle.3/final.glb",
+    "style_image": "game/assets/3d/castle.3/raw/meshy-c3-e1-style.png",
+    "image_style_url": "sent as data URI",
+    "target_formats": [
+      "glb"
+    ]
+  },
+  "label": "castle.3 retextured by meshy in its own colors (C21 sample)",
+  "credits": 10,
+  "est_cost_usd": 0.2,
+  "elapsed_s": 38,
+  "created": "2026-10-23T12:15:06",
+  "outputs": {
+    "model": "meshy-c3-rt1.glb",
+    "rendered_image": "meshy-c3-rt1-preview.png"
+  }
+}
