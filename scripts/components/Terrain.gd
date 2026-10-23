@@ -40,6 +40,9 @@ var _mass: MeshInstance3D
 ## The drape the mesh was cut from: corner (x, z) sits at board position (x - 0.5, z - 0.5),
 ## so a tile's four corners are itself and its north, east and north-east neighbours.
 var _corners := {}
+## A hill's rim rounding: corner lattice point -> board-space offset, relaxed over the
+## feature's outline so corners pull in and straight runs stay.
+var _disp := {}
 
 
 ## Registers one tile's column of blocks and their health.
@@ -51,10 +54,25 @@ func set_column(tile, height: int) -> void:
 		health += HEALTH_PER_TILE
 
 
+## Steps a column down to `to` blocks without a shell's noise, for the generator's sight
+## pass; the caller re-cuts the drape once the feature settles.
+func lower(tile, to: int) -> void:
+	var hps: Array = _hp[tile]
+	while columns[tile] > to:
+		hps.pop_back()
+		columns[tile] -= 1
+		health -= HEALTH_PER_TILE
+
+
 ## Cuts the blanket for the standing columns: one merged, flat-shaded mesh. Corner heights
 ## pool the cells they touch - hills average them into gentle slopes, rocks take the
 ## tallest for a crag - and deterministic roughness keys on board position, so a re-cut
-## after a block shatters keeps every other crest it had.
+## after a block shatters keeps every other crest it had. The outline leaves the grid as
+## it rises (Sebastian, 2026-10-23: "the very ground layer of vertices can still follow
+## the grid layout, the first floor should already have variation"): feet stand on the
+## tile grid, a rock's first story bulges off it in smooth swells and a hill's rim rounds
+## its corners - and every wall runs through the rim's own lattice points, so the higher
+## stories sit tight on the walls with no gaps between them.
 func drape() -> void:
 	var cells := {}
 	for t in columns:
@@ -79,6 +97,8 @@ func drape() -> void:
 					tallest = maxf(tallest, cells[c])
 			if touched > 0:
 				_corners[Vector2i(i, j)] = (pooled / touched if sort != "rock" else tallest) * LEVEL
+	if sort == "hill":
+		_outline_disp(cells)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var hill := sort == "hill"
@@ -92,29 +112,32 @@ func drape() -> void:
 		var steps := 2 if not hill else 3
 		for u in steps:
 			for v in steps:
-				var a := _lattice(p, top, Vector2(u, v) / steps, hill, peak)
-				var b := _lattice(p, top, Vector2(u + 1, v) / steps, hill, peak)
-				var c2 := _lattice(p, top, Vector2(u + 1, v + 1) / steps, hill, peak)
-				var d := _lattice(p, top, Vector2(u, v + 1) / steps, hill, peak)
+				var a := _lattice(p, top, Vector2(u, v) / steps, hill, peak, Vector2(c.x, c.y) + Vector2(u, v) / steps)
+				var b := _lattice(p, top, Vector2(u + 1, v) / steps, hill, peak, Vector2(c.x, c.y) + Vector2(u + 1, v) / steps)
+				var c2 := _lattice(p, top, Vector2(u + 1, v + 1) / steps, hill, peak, Vector2(c.x, c.y) + Vector2(u + 1, v + 1) / steps)
+				var d := _lattice(p, top, Vector2(u, v + 1) / steps, hill, peak, Vector2(c.x, c.y) + Vector2(u, v + 1) / steps)
 				_face(st, a, b, c2, peak)
 				_face(st, a, c2, d, peak)
-		# each side: its two lattice corners and the neighbour that hides the wall between the
-		# cells - the offset must match the edge (S, E, N, W), a rotated pairing skips real
-		# outer walls and drapes phantom ones inside the mass
+		# each side: the neighbour that hides the wall between the cells - the offset must
+		# match the edge (S, E, N, W), a rotated pairing skips real outer walls and drapes
+		# phantom ones inside the mass
 		for side in [[Vector2(0, 0), Vector2(1, 0), Vector2(0, -1)], [Vector2(1, 0), Vector2(1, 1), Vector2(1, 0)], [Vector2(1, 1), Vector2(0, 1), Vector2(0, 1)], [Vector2(0, 1), Vector2(0, 0), Vector2(-1, 0)]]:
 			if cells.has(c + Vector2i(side[2])):
 				continue  # a neighbour stands here, no wall between them
-			var near := _lattice(p, top, side[0], hill, peak)
-			var far := _lattice(p, top, side[1], hill, peak)
-			var foot := _tint(0.0, peak)
-			var wall: Array = [near, far,
-				{"pos": far["pos"] - Vector3(0, far["pos"].y + 0.25, 0), "tint": foot},
-				{"pos": near["pos"] - Vector3(0, near["pos"].y + 0.25, 0), "tint": foot}]
-			# two triangles down to the ground, matching the top edge's roughness, wound so
-			# the wall faces outward - the other way round, culling hides every skirt and the
-			# blanket floats (Sebastian saw it in play, 2026-10-23)
-			_face(st, wall[0], wall[2], wall[1], peak)
-			_face(st, wall[0], wall[3], wall[2], peak)
+			# the wall runs through the rim's own lattice points, feet on the grid: the
+			# skirt is sewn to the top edge at every fraction, the ground ring keeps the
+			# tile layout, and the battered strip between them already swells off the grid
+			var foot_tint := _tint(0.0, peak)
+			var rim := []
+			var feet := []
+			for k in steps + 1:
+				var f: Vector2 = side[0].lerp(side[1], float(k) / steps)
+				rim.append(_lattice(p, top, f, hill, peak, Vector2(c.x, c.y) + f))
+				var g := Vector2(p.x + f.x - 0.5, p.z - f.y + 0.5)  # the undisplaced grid point
+				feet.append({"pos": Vector3(g.x, -0.25, g.y), "tint": foot_tint})
+			for k in steps:
+				_face(st, rim[k], feet[k + 1], rim[k + 1], peak)
+				_face(st, rim[k], feet[k], feet[k + 1], peak)
 	st.generate_normals()
 	var mesh := st.commit()
 	if _mass == null:
@@ -132,15 +155,68 @@ func _corn(c: Vector2i) -> float:
 	return _corners.get(c, 0.0)
 
 
-## One lattice point of a cell's top, at fraction f of its span: the blanket between its
-## corners, roughened - a little for a hill, jagged for a rock - and its colour.
-func _lattice(p: Vector3, top: Array, f: Vector2, hill: bool, peak: float) -> Dictionary:
+## One lattice point of a cell's top, at fraction f of its span and corner-space position
+## b: the blanket between its corners, roughened - a little for a hill, jagged for a rock -
+## its outline loosened off the grid as it rises, and its colour.
+func _lattice(p: Vector3, top: Array, f: Vector2, hill: bool, peak: float, b: Vector2) -> Dictionary:
 	var y0: float = top[0] + (top[1] - top[0]) * f.x + (top[2] - top[0]) * f.y + (top[0] - top[1] - top[2] + top[3]) * f.x * f.y
 	var q := Vector2(p.x + f.x - 0.5, p.z - f.y + 0.5)  # board z mirrors tile z
 	var rough := _noise(q + Vector2(go.position.x, go.position.z))
 	var y: float = y0 + rough * (0.03 if hill else 0.12)
-	var pos := Vector3(q.x + (0.0 if hill else rough * 0.05), y, q.y + (0.0 if hill else _noise(Vector2(q.y, q.x)) * 0.05))
+	var off := Vector2.ZERO
+	if hill:
+		var d: Vector2 = _disp_at(b)  # board z mirrors: world z runs against board z
+		off = Vector2(d.x, -d.y)
+	else:
+		# a rock's outline swells off the grid through the first story - smooth swells, the
+		# per-point crag only above it, the ground ring untouched
+		var swell := clampf(y0 / LEVEL, 0.0, 1.0)
+		off = Vector2(_noise(q * 0.33 + Vector2(11.3, 7.7)), _noise(q * 0.33 + Vector2(-5.1, 3.9))) * 0.10 * swell
+		off += Vector2(rough, _noise(Vector2(q.y, q.x))) * 0.05 * clampf((y0 - LEVEL) / LEVEL, 0.0, 1.0)
+	var pos := Vector3(q.x + off.x, y, q.y + off.y)
 	return {"pos": pos, "tint": _tint(y, peak)}
+
+
+## A hill's rim rounds its outline (Sebastian, 2026-10-23: "use a method that produces
+## rounder edges") by relaxing the boundary lattice points toward their boundary
+## neighbours: corners pull in, straight runs stay put. No extra vertices - the walls sew
+## to the same points.
+func _outline_disp(cells: Dictionary) -> void:
+	_disp.clear()
+	var outline := {}
+	for i in _corners:
+		var inside := 0
+		for c in [Vector2i(i.x - 1, i.y - 1), Vector2i(i.x, i.y - 1), Vector2i(i.x - 1, i.y), Vector2i(i.x, i.y)]:
+			if cells.has(c):
+				inside += 1
+		if inside > 0 and inside < 4:
+			outline[i] = true
+	for relax in 2:
+		var next := {}
+		for k in outline:
+			var sum := Vector2.ZERO
+			var n := 0
+			for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				var nb: Vector2i = k + d
+				if outline.has(nb):
+					sum += Vector2(nb) + _disp.get(nb, Vector2.ZERO)
+					n += 1
+			if n > 0:
+				var own: Vector2 = Vector2(k) + _disp.get(k, Vector2.ZERO)
+				next[k] = _disp.get(k, Vector2.ZERO) + (sum / n - own) * 0.2
+		for k in next:
+			_disp[k] = next[k]
+
+
+## The hill rim's rounding at corner-space point b, bilinear between the corners.
+func _disp_at(b: Vector2) -> Vector2:
+	var i := Vector2i(floori(b.x), floori(b.y))
+	var f := b - Vector2(i)
+	var d00: Vector2 = _disp.get(i, Vector2.ZERO)
+	var d10: Vector2 = _disp.get(i + Vector2i(1, 0), Vector2.ZERO)
+	var d01: Vector2 = _disp.get(i + Vector2i(0, 1), Vector2.ZERO)
+	var d11: Vector2 = _disp.get(i + Vector2i(1, 1), Vector2.ZERO)
+	return d00.lerp(d10, f.x).lerp(d01.lerp(d11, f.x), f.y)
 
 
 ## Triangle of the drape: position, a flat normal placeholder (generate_normals fills it)

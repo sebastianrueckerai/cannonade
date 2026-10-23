@@ -486,6 +486,54 @@ func _place_terrain() -> void:
 				break
 			for l in landed:
 				map.release_terrain(l[0], l[1])
+	_terrain_sight()
+
+
+## The blanket's south edge pools the columns beside it, so once rocks grew a fourth story
+## (Sebastian, 2026-10-23) a tall crest next to free ground one row south broke the play
+## camera's 60-degree line to that ground - a three-story front passed at a 0.35 margin,
+## four needs free ground half a tile farther. After the whole board stands, any column
+## pooled into a broken line steps down, the one closest to the free ground first, so a
+## deep feature keeps its crest and the front yields (I97's rule, kept for the taller caps).
+func _terrain_sight() -> void:
+	var rise := tan(deg_to_rad(60.0))
+	var near_free := []  # per x: the z of the nearest free tile south of each z, -1 when none
+	for x in map.sizeX:
+		var col: Array = []
+		var seen := -1
+		for z in map.sizeZ:
+			col.append(seen)
+			var t = map.tiles[x][z]
+			if t.structure == null and not t.water and not t.disabled:
+				seen = z
+		near_free.append(col)
+	for go in map.terrain_features:
+		var terr := U.comp(go, "Terrain")
+		var changed := true
+		while changed:
+			changed = false
+			for t in terr.tiles:
+				var zf: int = near_free[t.idxX][t.idxZ]
+				if zf < 0 or terr.surface_at(t.idxX, t.idxZ - 0.5) - t.go.position.y <= (t.idxZ - zf - 0.5) * rise:
+					continue
+				var victim = null
+				var best := 1 << 30
+				for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0)]:
+					var c: Vector2i = Vector2i(t.idxX, t.idxZ) + d
+					if c.x < 0 or c.x >= map.sizeX or c.y < 0 or c.y >= map.sizeZ:
+						continue
+					var tt = map.tiles[c.x][c.y]
+					if tt.structure != go or terr.columns.get(tt, 0) < 2:
+						continue
+					var z3: int = near_free[c.x][c.y]
+					var dist := 1 << 20 if z3 < 0 else c.y - z3  # deep columns yield last
+					if dist < best:
+						best = dist
+						victim = tt
+				if victim != null:
+					terr.lower(victim, terr.columns[victim] - 1)
+					changed = true
+		terr.drape()
 
 
 ## A random anchor for the shape inside the box [lo, hi), flush against an earlier
@@ -609,12 +657,13 @@ func _terrain_fits(cells: Array) -> bool:
 	return true
 
 
-## Column heights for a feature's cells (I97): one box a level, up to three. A level stacks
+## Column heights for a feature's cells (I97): one box a level, rocks up to four stories
+## and hills three (Sebastian, 2026-10-23). A level stacks
 ## only where the feature itself, another feature or the board's north edge backs it: the
 ## play camera (60 degrees up) sees over one level, but a two-level column hides the centre
 ## of the tile directly behind it, so that tile must be terrain too. Profiles: flat,
 ## terraces rising away from the camera, a peak with its shoulder.
-func _terrain_heights(rng: RandomNumberGenerator, all: Array) -> Dictionary:
+func _terrain_heights(rng: RandomNumberGenerator, all: Array, cap: int) -> Dictionary:
 	var own := {}
 	var near := 0
 	var mid := Vector2i.ZERO
@@ -632,10 +681,10 @@ func _terrain_heights(rng: RandomNumberGenerator, all: Array) -> Dictionary:
 	for c: Vector2i in all:
 		var h := 1
 		if kind == 1:
-			h = 1 + mini(2, near - c.y)
+			h = 1 + mini(cap - 1, near - c.y)
 		elif kind == 2:
-			h = maxi(1, 3 - max(absi(c.x - peak.x), absi(c.y - peak.y)))
-		out[c] = mini(3, h) if _backed(c, own) else 1
+			h = maxi(1, cap - max(absi(c.x - peak.x), absi(c.y - peak.y)))
+		out[c] = mini(cap, h) if _backed(c, own) else 1
 	return out
 
 
@@ -656,10 +705,12 @@ func _backed(c: Vector2i, own: Dictionary) -> bool:
 
 ## The feature's GameObject at the centre of its cells: the Terrain component holding the
 ## standing column heights, and one merged mesh draped over them (I100) - a hill's gentle
-## green blanket or a rock's craggy grey one. `rng` draws the column profile; without it
-## every column is flat.
+## green blanket or a rock's craggy grey one. `rng` draws the column profile, rocks
+## standing up to four stories and hills three (Sebastian, 2026-10-23); without it every
+## column is flat.
 func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) -> Node3D:
-	var heights := _terrain_heights(rng, all) if rng != null else {}
+	var cap := 4 if sort == "rock" else 3
+	var heights := _terrain_heights(rng, all, cap) if rng != null else {}
 	var go := Node3D.new()
 	go.name = sort.capitalize()
 	map.go.add_child(go)
