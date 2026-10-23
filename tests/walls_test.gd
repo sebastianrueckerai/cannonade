@@ -20,7 +20,7 @@ var failures: Array = []
 func _ready() -> void:
 	get_tree().root.size = Vector2i(1280, 720)
 	Main.requested_mode = "versus"
-	Main.requested_args = {"seed": "7", "no-decorations": "true"}
+	Main.requested_args = {"seed": "7", "terrain": "0", "no-decorations": "true"}
 	main = Main.new()
 	get_tree().root.add_child.call_deferred(main)
 	await get_tree().process_frame

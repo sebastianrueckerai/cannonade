@@ -392,6 +392,7 @@ func die(from := Vector3.INF, kill_damage := 0.0) -> void:
 		t.structure = null
 		t.player = null
 		map.statesMap.update_tile(t)
+		t.destroy_decorations(from, true)
 		if kill_damage > 0.0:
 			t.damage_ground(kill_damage)
 		for i in columns.get(t, 0):

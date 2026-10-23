@@ -412,27 +412,30 @@ func _process(delta: float) -> void:
 		go.position.y = sin(rads) * (1.0 - scale * scale) * shakeMagnitude * sgn
 
 
-func place_decorations() -> void:
+## Sprinkles a tile's greenery on its ground, or on a hill's drape surface above it: boulders stay
+## off the slope and the y comes from the drape, so the tree flies with the block it stood on (I116).
+func place_decorations(terrain = null) -> void:
 	var min_dist := 0.1
 	var max_step_dist := 0.3
 	var max_deco := 6
 	var max_tries := 1000
-	if customModelMakers.is_empty():
+	var makers := customModelMakers if terrain == null else customModelMakers.filter(func(m): return m.kind != "boulder")
+	if makers.is_empty():
 		return
-	var rand_indices := U.shuffle_index(customModelMakers.size())
+	var rand_indices := U.shuffle_index(makers.size())
 	var n_tries := 0
 	var n_placed := 0
 	var n_batch := 0
 	var n_place_here := 0 if U.value() < 0.35 else U.rint(1, max_deco)
 	var max_batch := U.rint(0, n_place_here)
-	var maker = customModelMakers[rand_indices[n_batch]]
+	var maker = makers[rand_indices[n_batch]]
 	var deco: Node3D = null
 	var reach := 0.0
 	while n_tries < max_tries and n_placed < n_place_here:
 		n_tries += 1
 		if n_batch == max_batch:
 			n_batch = 0
-			maker = customModelMakers[rand_indices[n_batch]]
+			maker = makers[rand_indices[n_batch]]
 			max_batch = U.rint(0, n_place_here - n_placed)
 		if deco == null:
 			deco = maker.get_randomized_model(go)
@@ -447,6 +450,7 @@ func place_decorations() -> void:
 			dir = dir.normalized() * U.rfloat(min_dist, max_step_dist)
 			next_try = last_pos + dir
 			next_try.y = 0.1
+		next_try.y = _deco_y(next_try, terrain)
 		if _can_deco_be_placed(next_try, reach):
 			deco.position = next_try
 			U.set_shadows(deco, false)
@@ -456,6 +460,14 @@ func place_decorations() -> void:
 			n_batch += 1
 	if deco != null:
 		deco.free()
+
+
+## Where a decoration stands: the tile's ground, or on a hill the drape's own surface above
+## it - board z mirrors the tile-local z.
+func _deco_y(p: Vector3, terrain) -> float:
+	if terrain == null:
+		return 0.1
+	return terrain.surface_at(idxX + p.x, idxZ - p.z) - go.position.y + 0.02
 
 
 ## How far a fresh decoration reaches from its origin on the ground, the model taken as round (it turns at

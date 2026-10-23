@@ -638,3 +638,18 @@ ruin still flies it - the clearest sign the castle is alive - paints it in the o
 brown #9c7a4f) in every state, and topples it away with the crumble at become_ruin. The cloth waves in
 [flag.gdshader](/home/womb/repos/grid-cannons/materials/flag.gdshader). Placed castles turn in random
 90-degree steps, drawn from `Art._rng`, so a battle's numbers stay untouched. Session 68, roadmap I115.
+
+## D97. Terrain grows as units; the sheer face is the player's alone (2026-10-23, Sebastian)
+
+"We just pick a few spots on the map and then fill the avilable area [...] make more organix andd rounded
+mountain and hill shapes and wlays make them as big as possible [...] so they always slopa away from the
+player [...] Mountains could have sheer faces, but only towards the player." The shape table of I97 gives way
+to growth: one unit per mass, picked spots eaten outward by cost-noise Dijkstra until a cap or a constraint
+stops it, a two-tile gap keeping units apart so no two dropped blocks read as one ridge. A hill domes at one
+level a tile in every direction (his 00000/01110/01210 example, generalized); a rock keeps its steep face
+only toward the player, eases one level a tile from the far rim, and after the sight trims `_terrain_ease`
+lowers any cell that still stands more than one level above its row neighbours east or west, so the sheer
+face is the player's alone on every side (the sight law itself runs both directions in `_terrain_sight`).
+Sides may drift 10 percent, no more. Hills grow trees on the drape; a tree crumbles with
+the block it stands on. This supersedes I95's flush clustering and I97's bitten-shapes rule; the drapes
+(I100, I105, I111), the shatter (I113) and the destructible families stand. Session 69, roadmap I116.

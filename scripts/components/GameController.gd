@@ -392,117 +392,492 @@ func _river_fair(water: Dictionary) -> bool:
 	return cut[0] == cut[1] and cut[0] >= 1 and cut[0] <= RIVER_CUT_MAX and kept[0] == kept[1]
 
 
-# ------------------------------------------------------------- terrain (I90, I91, I93, I95, I96, I97, I100)
-## The shapes a feature can take, rows from its north-west cell ("up" the map is low z):
-## "#" a blocked cell. Solid masses with bitten, irregular outlines (I97) - no rings or
-## discs, no plain rectangles; the first seven sit inside 4x4, the rest reach 7x7. Features
-## that cluster can still enclose free ground between them, which the placement rolls back.
-const TERRAIN_PATTERNS := [
-	"####/####/##../##..",
-	"####/.##./####",
-	"#.../####/...#/...#",
-	"##../##../.#..",
-	"#../###/..#",
-	"##./##./.##",
-	"##/##",
-	"..##../.####./######/#####./.###../..#...",
-	"..####./.#####./#######/#####../###..../#......",
-	"####../#####./.####./.#####/..####",
-	"##...../##...../##...../##...../##...../#######/#######",
-	"###.###/###.###/#######/###.###",
-	"#######/#######/..###../..###../..###..",
-]
-## Shapes the game draws, hills and rocks alternating by shape: one seat a side with two
-## players, one a quadrant with four, the same shape at every seat so the sides hold the
-## same amount of blocked tiles (I96). --terrain=N overrides.
-const TERRAIN_DEFAULT := 6
+# ------------------------------------------------------------- terrain (I90, I91, I93, I96, I100, I116)
+## Units a side (two players) or a quadrant (four) grows (I116): the first of every three a
+## rock, the rest hills, so every board holds both sorts. --terrain=N overrides.
+const TERRAIN_DEFAULT := 3
 @export var terrainCount := TERRAIN_DEFAULT
-## Spots tried per feature before this map goes without it.
-const TERRAIN_ATTEMPTS := 60
-## A feature joins an earlier one instead of scattering this often, so masses stand in
-## clusters rather than spreading evenly (I95). Overlaps fail _terrain_fits; touching stands.
-const TERRAIN_CLUSTER := 0.5
+## Spot draws a unit takes before this map goes without it.
+const TERRAIN_DRAWS := 24
 ## Terrain keeps this Chebyshev distance from a castle centre, so its 5x5 ring stays buildable.
 const TERRAIN_CASTLE_CLEAR := 3
+## Free tiles between two units (Chebyshev), so masses stand as the units they were grown as,
+## never two shapes dropped flush by accident (I116).
+const TERRAIN_GAP := 2
+## A family's caps: tiles in a unit and its bounding box. Rocks stand up to four stories,
+## hills three (Sebastian, 2026-10-23).
+const HILL_CAP := 30
+const HILL_SPAN := 9
+const ROCK_CAP := 44
+const ROCK_SPAN := 11
+## All units together hold at most this share of the board's free tiles.
+const TERRAIN_SHARE := 0.30
+## How far the sides may drift apart: the poorer keeps at least 1 - this of the richer
+## (Sebastian, 2026-10-23: "The point is not to mayorly give a benefit just to one side").
+const TERRAIN_BAND := 0.10
+const DIRS4 := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 
-## Terrain features over the battlefield (I90, I91, I93, I96): each drawn shape takes one
-## seat a side, its own anchor and rotation, so the sides hold the same amount of blocked
-## tiles in different arrangements - no mirrored board. A seat is anywhere on the
-## battlefield, across the midline too: with two players the shape's second seat must split
-## its tiles above and below the line the opposite of the first's, which keeps the sides
-## level; with four the shape lands once in each quadrant and stays off the quadrant lines.
-## A feature never touches a castle's build ring, water or another structure, and a
-## placement that would cut the last way between castle rings is rolled back.
+
+## Terrain as grown units (I116): each unit picks its spots (the best of TERRAIN_DRAWS
+## scored draws) and eats the open ground around them until a cap or a wall of constraints
+## stops it, so every shape is an organic blob as big as the board allows - no shape table
+## draws these. Rocks seed a short line of spots, one ridge as one unit. The ground ways
+## between castle rings are reserved before anything grows and a candidate that would strand
+## free ground is thrown away whole, so every castle stays reachable and its build ring
+## placeable; the sides end within TERRAIN_BAND of each other. Hills climb one level a tile
+## in every direction, rocks only toward the player, so nothing hides the ground behind it
+## from the camera in the placing round. Hills grow trees once the drapes settle.
 func _place_terrain() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = mapSeed if mapSeed != 0 else randomSeed
-	var shapes: Array = []
-	for pat in TERRAIN_PATTERNS:
-		var cells: Array = []
-		var z := 0
-		for row: String in pat.split("/"):
-			for x in row.length():
-				if row[x] == "#":
-					cells.append(Vector2i(x, z))
-			z += 1
-		shapes.append(cells)
 	var half := Vector2i(map.sizeX / 2, map.sizeZ / 2)
-	var seats: Array = [[Vector2i.ZERO, Vector2i(map.sizeX, map.sizeZ)], null] if players.size() != 4 else [
-			[Vector2i.ZERO, half], [Vector2i(half.x, 0), Vector2i(map.sizeX, half.y)],
+	var seats: Array = [[Vector2i.ZERO, Vector2i(map.sizeX, half.y)], [Vector2i(0, half.y), Vector2i(map.sizeX, map.sizeZ)]]
+	if players.size() == 4:
+		seats = [[Vector2i.ZERO, half], [Vector2i(half.x, 0), Vector2i(map.sizeX, half.y)],
 			[Vector2i(0, half.y), Vector2i(half.x, map.sizeZ)], [half, Vector2i(map.sizeX, map.sizeZ)]]
-	var clusters: Array = []
+	var centres: Array = []
+	for c in map.castles:
+		if U.alive(c.go):
+			centres.append(map.tile_index_at(c.go.global_position))
+	var keep_out := {}  # the castles' clear zones, then every landed unit's gap ring
+	for q in centres:
+		for dx in range(-(TERRAIN_CASTLE_CLEAR - 1), TERRAIN_CASTLE_CLEAR):
+			for dz in range(-(TERRAIN_CASTLE_CLEAR - 1), TERRAIN_CASTLE_CLEAR):
+				keep_out[Vector2i(q.x + dx, q.y + dz)] = true
+	var reach := _terrain_reach({})
+	var ways := _terrain_ways(centres)
+	var units: Array = []  # [sort, cells Dictionary]
+	var blocked := {}  # every landed unit's cells
+	var budget := int(reach.size() * TERRAIN_SHARE)
 	for i in terrainCount:
-		var shape: Array = _terrain_rotated(shapes[rng.randi_range(0, shapes.size() - 1)], rng.randi_range(0, 3))
-		var open_set := _border_reach()
-		var size := Vector2i.ONE
-		for c in shape:
-			size.x = maxi(size.x, c.x + 1)
-			size.y = maxi(size.y, c.y + 1)
-		var sort := "hill" if i % 2 == 0 else "rock"  # alternating, so a board always holds both sorts
-		for attempt in TERRAIN_ATTEMPTS:
-			var landed: Array = []
-			for seat in seats:
-				var cells: Array = []
-				if seat == null:
-					cells = _terrain_partner(rng, shape, landed[0][1], clusters)
-				else:
-					var anchor := _terrain_anchor(rng, size, seat[0], seat[1], clusters)
-					if anchor.x < 0:
-						break
-					for c in shape:
-						cells.append(anchor + c)
-					if not _terrain_fits(cells):
-						break
-				if cells.is_empty():
-					break
-				var go := _terrain_go(sort, cells, rng)
-				map.claim_terrain(go, cells)
-				landed.append([go, cells])
-				if not _rings_connected():
-					break
-			if landed.size() == seats.size() and _ground_open(open_set):
-				for l in landed:
-					clusters.append(l[1])
-				break
-			for l in landed:
-				map.release_terrain(l[0], l[1])
+		var sort := "rock" if i % 3 == 0 else "hill"
+		for seat in seats:
+			var cells := _grow_unit(rng, sort, seat, centres, ways, blocked, keep_out, budget, reach)
+			if cells.is_empty():
+				continue
+			units.append([sort, cells])
+			for c in cells:
+				blocked[c] = true
+				for dx in range(-(TERRAIN_GAP - 1), TERRAIN_GAP):
+					for dz in range(-(TERRAIN_GAP - 1), TERRAIN_GAP):
+						keep_out[c + Vector2i(dx, dz)] = true
+			budget -= cells.size()
+	_terrain_balance(units)
+	for u in units:
+		var go := _terrain_go(u[0], u[1].keys(), _unit_heights(u[0], u[1]))
+		map.claim_terrain(go, u[1].keys())
 	_terrain_sight()
+	_terrain_ease()
+	_terrain_trees()
 
 
-## The blanket's south edge pools the columns beside it, so once rocks grew a fourth story
-## (Sebastian, 2026-10-23) a tall crest next to free ground one row south broke the play
-## camera's 60-degree line to that ground - a three-story front passed at a 0.35 margin,
-## four needs free ground half a tile farther. After the whole board stands, any column
-## pooled into a broken line steps down, the one closest to the free ground first, so a
-## deep feature keeps its crest and the front yields (I97's rule, kept for the taller caps).
+## Grows one unit for `seat` (I116): the best of TERRAIN_DRAWS scored spots seeds a growth
+## that eats open ground until the family's caps, the seat's edge, a castle clear, a reserved
+## way or another unit's gap stops it; then pinholes fill, slivers drop and the largest
+## connected part stays - one mass, one unit. A candidate the board cannot take (it would
+## strand free ground) is thrown away whole and the next draw grows. Rocks seed a short line
+## of spots, a ridge born as one unit.
+func _grow_unit(rng: RandomNumberGenerator, sort: String, seat: Array, centres: Array,
+		ways: Dictionary, blocked: Dictionary, keep_out: Dictionary, budget: int, reach: Dictionary) -> Dictionary:
+	var cap := ROCK_CAP if sort == "rock" else HILL_CAP
+	var span := ROCK_SPAN if sort == "rock" else HILL_SPAN
+	var room := mini(cap, budget)
+	if room < 2:
+		return {}
+	var best := Vector2i(-1, -1)
+	var best_score := -1.0
+	for i in TERRAIN_DRAWS:
+		var spot := Vector2i(rng.randi_range(seat[0].x, seat[1].x - 1), rng.randi_range(seat[0].y, seat[1].y - 1))
+		if not _unit_open(spot, seat, ways, keep_out):
+			continue
+		var score := _seed_score(spot, centres, blocked) + rng.randf() * 0.1
+		if score > best_score:
+			best_score = score
+			best = spot
+	if best.x < 0:
+		return {}
+	var seeds: Array = [best]
+	if sort == "rock":
+		var dirs := [Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(0, -1),
+				Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]
+		var dir: Vector2i = dirs[rng.randi_range(0, dirs.size() - 1)]
+		for k in range(rng.randi_range(2, 4) - 1):
+			var s := best + dir * (k + 1)
+			if _unit_open(s, seat, ways, keep_out):
+				seeds.append(s)
+	var cells := {}
+	var dist := {}
+	var dead := {}  # popped and rejected: never re-offered
+	var frontier: Array = []  # [cost, cell], lowest cost first
+	var lo := Vector2i(map.sizeX, map.sizeZ)
+	var hi := Vector2i.ZERO
+	for s in seeds:
+		dist[s] = 0.0
+		frontier.append([0.0, s])
+	while cells.size() < room:
+		frontier.sort_custom(func(a, b): return a[0] < b[0])
+		var pick = null
+		while pick == null and not frontier.is_empty():
+			var e: Array = frontier.pop_front()
+			if not cells.has(e[1]) and not dead.has(e[1]):
+				pick = e[1]
+		if pick == null:
+			break
+		var c: Vector2i = pick
+		if not _unit_open(c, seat, ways, keep_out) or not _fits_span(c, cells, lo, hi, span):
+			dead[c] = true
+			continue
+		cells[c] = true
+		lo = lo.min(c)
+		hi = hi.max(c)
+		for d in DIRS4:
+			var n: Vector2i = c + d
+			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or dist.has(n):
+				continue
+			dist[n] = dist[c] + 1.0 + 0.4 * _grow_noise(n)
+			frontier.append([dist[n], n])
+	var slim := true
+	while slim:
+		slim = false
+		for c in cells.keys():
+			var alone := true
+			for d in DIRS4:
+				if cells.has(c + d):
+					alone = false
+			if alone:
+				cells.erase(c)
+				slim = true
+	for x in range(lo.x, hi.x + 1):
+		for z in range(lo.y, hi.y + 1):
+			var c := Vector2i(x, z)
+			if cells.has(c):
+				continue
+			var hole := true
+			for d in DIRS4:
+				if not cells.has(c + d):
+					hole = false
+			if hole and _unit_open(c, seat, ways, keep_out):
+				cells[c] = true
+	cells = _largest_part(cells)
+	var taken := blocked.duplicate()
+	for c in cells:
+		taken[c] = true
+	if cells.size() < 2 or not _terrain_open(taken, reach):
+		return {}
+	return cells
+
+
+## What makes a good spot (I116): room from the castles (a ringed castle needs the ground
+## around it) and spread from every landed unit, both in tiles past their margins, clamped
+## so far ground stops mattering.
+func _seed_score(spot: Vector2i, centres: Array, blocked: Dictionary) -> float:
+	var room := 1e9
+	for q in centres:
+		room = minf(room, max(absi(spot.x - q.x), absi(spot.y - q.y)) - TERRAIN_CASTLE_CLEAR)
+	var spread := 1e9
+	for c in blocked:
+		spread = minf(spread, max(absi(spot.x - c.x), absi(spot.y - c.y)) - TERRAIN_GAP)
+	return minf(room, 8.0) + (0.5 * minf(spread, 8.0) if spread < 1e9 else 0.0)
+
+
+## A tile this unit may eat: inside its seat (a side's or quadrant's units stay its own), on
+## free ground no ship sits on, off the castle clears and the reserved ways, and outside
+## every other unit's gap.
+func _unit_open(c: Vector2i, seat: Array, ways: Dictionary, keep_out: Dictionary) -> bool:
+	if c.x < seat[0].x or c.y < seat[0].y or c.x >= seat[1].x or c.y >= seat[1].y:
+		return false
+	var t = map.tiles[c.x][c.y]
+	if not t.is_free() or U.alive(t.ship) or keep_out.has(c) or ways.has(c):
+		return false
+	return true
+
+
+## The unit with `c` added still fits its family's bounding box cap.
+func _fits_span(c: Vector2i, cells: Dictionary, lo: Vector2i, hi: Vector2i, span: int) -> bool:
+	if cells.is_empty():
+		return true
+	var nlo: Vector2i = lo.min(c)
+	var nhi: Vector2i = hi.max(c)
+	return nhi.x - nlo.x < span and nhi.y - nlo.y < span
+
+
+## Deterministic growth wobble, -1 to 1, keyed on board position like the drape's roughness:
+## same board, same blobs, and the layout's rng stream draws only the spot picks.
+func _grow_noise(c: Vector2i) -> float:
+	return fmod(absf(sin(c.x * 91.7 + c.y * 263.3)), 2.0) - 1.0
+
+
+## The largest 4-connected part of a unit's cells: one mass, one unit (I116).
+func _largest_part(cells: Dictionary) -> Dictionary:
+	var seen := {}
+	var best := {}
+	for c in cells:
+		if seen.has(c):
+			continue
+		var part := {}
+		var queue := [c]
+		seen[c] = true
+		part[c] = true
+		var head := 0
+		while head < queue.size():
+			var p: Vector2i = queue[head]
+			head += 1
+			for d in DIRS4:
+				var n: Vector2i = p + d
+				if cells.has(n) and not seen.has(n):
+					seen[n] = true
+					part[n] = true
+					queue.append(n)
+		if part.size() > best.size():
+			best = part
+	return best
+
+
+## The border flood over ground no unit and no sea blocks (rivers cross): the free tiles
+## that reach the board's edge.
+func _terrain_reach(blocked: Dictionary) -> Dictionary:
+	var seen := {}
+	var queue: Array = []
+	for x in map.sizeX:
+		for z in [0, map.sizeZ - 1]:
+			_terrain_seed(Vector2i(x, z), blocked, seen, queue)
+	for z in map.sizeZ:
+		for x in [0, map.sizeX - 1]:
+			_terrain_seed(Vector2i(x, z), blocked, seen, queue)
+	var head := 0
+	while head < queue.size():
+		var p: Vector2i = queue[head]
+		head += 1
+		for d in DIRS4:
+			var n: Vector2i = p + d
+			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or seen.has(n):
+				continue
+			var t = map.tiles[n.x][n.y]
+			if blocked.has(n) or (t.water and not t.river):
+				continue
+			seen[n] = true
+			queue.append(n)
+	return seen
+
+
+func _terrain_seed(p: Vector2i, blocked: Dictionary, seen: Dictionary, queue: Array) -> void:
+	if seen.has(p) or blocked.has(p):
+		return
+	var t = map.tiles[p.x][p.y]
+	if t.water and not t.river:
+		return
+	seen[p] = true
+	queue.append(p)
+
+
+## A candidate unit keeps every free tile's border reach (I116): the flood with the unit's
+## cells blocked reaches everything the empty board's flood did. The castle rings are free
+## ground the castle clears already protect, so they stay reachable through it.
+func _terrain_open(blocked: Dictionary, reach: Dictionary) -> bool:
+	var now := _terrain_reach(blocked)
+	for p in reach:
+		if not blocked.has(p) and not now.has(p):
+			return false
+	return true
+
+
+## The ground ways between castle rings, reserved against growth (I116): a BFS tree from the
+## first castle's ring over ground no sea blocks (rivers cross), and for every other castle
+## the tree path from its ring back to the root. What stays reserved keeps every ring
+## reachable from every other by construction.
+func _terrain_ways(centres: Array) -> Dictionary:
+	var ways := {}
+	if centres.size() < 2:
+		return ways
+	var parent := {}
+	var depth := {}
+	var queue: Array = []
+	for p in _ring_cells(centres[0]):
+		depth[p] = 0
+		queue.append(p)
+	var head := 0
+	while head < queue.size():
+		var p: Vector2i = queue[head]
+		head += 1
+		for d in DIRS4:
+			var n: Vector2i = p + d
+			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or depth.has(n):
+				continue
+			var t = map.tiles[n.x][n.y]
+			if t.water and not t.river:
+				continue
+			depth[n] = depth[p] + 1
+			parent[n] = p
+			queue.append(n)
+	for i in range(1, centres.size()):
+		var best := Vector2i(-1, -1)
+		for p in _ring_cells(centres[i]):
+			if depth.has(p) and (best.x < 0 or depth[p] < depth[best]):
+				best = p
+		if best.x < 0:
+			continue  # the base board already cuts this ring off; no way growth can keep
+		while parent.has(best) and not ways.has(best):
+			ways[best] = true
+			best = parent[best]
+	return ways
+
+
+## The build ring's tiles (Chebyshev 2) of the castle at `centre`, on the map.
+func _ring_cells(centre: Vector2i) -> Array:
+	var out: Array = []
+	for dx in range(-2, 3):
+		for dz in range(-2, 3):
+			var p := Vector2i(centre.x + dx, centre.y + dz)
+			if p.x >= 0 and p.y >= 0 and p.x < map.sizeX and p.y < map.sizeZ:
+				out.append(p)
+	return out
+
+
+## A unit's column heights (I116): a hill domes - BFS depth from its rim, one level a tile
+## in every direction, capped at three - so it reads as his
+## 00000/01110/01210/01110/00000 hill, always overlooked from the player. A rock stands
+## sheer toward the player and eases one level a tile from its far rim, its crest pulled to
+## the player-facing side; the sight passes then trim whatever pooled corners still break a
+## line in either direction, and `_terrain_ease` holds the east and west faces.
+func _unit_heights(sort: String, cells: Dictionary) -> Dictionary:
+	var out := {}
+	if sort == "hill":
+		var depth := {}
+		var queue: Array = []
+		for c in cells:
+			for d in DIRS4:
+				if not cells.has(c + d):
+					depth[c] = 1
+					queue.append(c)
+					break
+		var head := 0
+		while head < queue.size():
+			var p: Vector2i = queue[head]
+			head += 1
+			for d in DIRS4:
+				var n: Vector2i = p + d
+				if cells.has(n) and not depth.has(n):
+					depth[n] = depth[p] + 1
+					queue.append(n)
+		for c in cells:
+			out[c] = mini(3, depth.get(c, 3))
+		return out
+	var top := {}  # a column's far rim: where its north slope starts
+	for c in cells:
+		top[c.x] = maxi(top.get(c.x, c.y), c.y)
+	for c in cells:
+		out[c] = mini(4, 1 + top[c.x] - c.y)
+	return out
+
+
+## The sides' share (I116): each region's tile count stays within TERRAIN_BAND of the
+## richest - roughly equal, not matched exactly. The richer region's largest unit sheds rim
+## cells (one block high, a side neighbour outside) until the band holds; a cell whose loss
+## would split the unit is not taken.
+func _terrain_balance(units: Array) -> void:
+	var four := players.size() == 4
+	var half := Vector2i(map.sizeX / 2, map.sizeZ / 2)
+	for _guard in 400:
+		var counts := {}
+		for u in units:
+			for c in u[1]:
+				var r := _region_of(c, half, four)
+				counts[r] = counts.get(r, 0) + 1
+		var regions := 4 if four else 2
+		var richest := -1
+		var poorest := -1
+		for r in regions:
+			if not counts.has(r):
+				continue
+			if richest < 0 or counts[r] > counts[richest]:
+				richest = r
+			if poorest < 0 or counts[r] < counts[poorest]:
+				poorest = r
+		if richest < 0 or poorest < 0:
+			return
+		if float(counts[poorest]) >= (1.0 - TERRAIN_BAND) * counts[richest]:
+			return
+		var pick = null
+		for u in units:
+			for c in u[1]:
+				if _region_of(c, half, four) == richest:
+					if pick == null or u[1].size() > pick[1].size():
+						pick = u
+					break
+		if pick == null or pick[1].size() <= 3:
+			return
+		var gone = null
+		for c in pick[1]:
+			var rim := false
+			for d in DIRS4:
+				if not pick[1].has(c + d):
+					rim = true
+			if not rim:
+				continue
+			var rest: Dictionary = pick[1].duplicate()
+			rest.erase(c)
+			if _largest_part(rest).size() == rest.size():
+				gone = c
+				break
+		if gone == null:
+			return
+		pick[1].erase(gone)
+
+
+func _region_of(c: Vector2i, half: Vector2i, four: bool) -> int:
+	if four:
+		return (1 if c.y >= half.y else 0) * 2 + (1 if c.x >= half.x else 0)
+	return 1 if c.y >= half.y else 0
+
+
+## After the whole board stands, any column pooled into a broken sight line steps down, the
+## one closest to the free ground first, so a deep feature keeps its crest and the front
+## yields. Both directions (I116): the play camera's 60-degree line to the free ground
+## south of every column (I97's rule), and its mirror north - the sheer face is the
+## player's alone, the far slope keeps its one-level-a-tile ease even where corners pool
+## tall.
 func _terrain_sight() -> void:
+	_sight_pass(false)
+	_sight_pass(true)
+
+
+## After the sight trims, a rock's east and west faces ease one level a tile as well: no
+## cell stands more than one above its row neighbours in x, free ground at ground level,
+## so the sheer face stays the player's alone (I116). Lowering never breaks a sight line.
+func _terrain_ease() -> void:
+	for go in map.terrain_features:
+		var terr := U.comp(go, "Terrain")
+		if terr.sort != "rock":
+			continue
+		var settling := true
+		while settling:
+			settling = false
+			for t in terr.tiles:
+				var side: int = 1 << 30
+				for d in [-1, 1]:
+					var nx: int = t.idxX + d
+					if nx < 0 or nx >= map.sizeX:
+						side = 0
+					else:
+						var tt = map.tiles[nx][t.idxZ]
+						side = mini(side, terr.columns[tt] if tt.structure == go else 0)
+				if terr.columns[t] > side + 1:
+					terr.lower(t, side + 1)
+					settling = true
+		terr.drape()
+
+
+func _sight_pass(from_high: bool) -> void:
 	var rise := tan(deg_to_rad(60.0))
-	var near_free := []  # per x: the z of the nearest free tile south of each z, -1 when none
+	var s := 1 if from_high else -1
+	var near_free := []  # per x: the z of the nearest free tile on this pass's side, -1 when none
 	for x in map.sizeX:
 		var col: Array = []
+		col.resize(map.sizeZ)
 		var seen := -1
-		for z in map.sizeZ:
-			col.append(seen)
+		for i in map.sizeZ:
+			var z: int = map.sizeZ - 1 - i if from_high else i
+			col[z] = seen
 			var t = map.tiles[x][z]
 			if t.structure == null and not t.water and not t.disabled:
 				seen = z
@@ -514,11 +889,11 @@ func _terrain_sight() -> void:
 			changed = false
 			for t in terr.tiles:
 				var zf: int = near_free[t.idxX][t.idxZ]
-				if zf < 0 or terr.surface_at(t.idxX, t.idxZ - 0.5) - t.go.position.y <= (t.idxZ - zf - 0.5) * rise:
+				if zf < 0 or terr.surface_at(t.idxX, t.idxZ + 0.5 * s) - t.go.position.y <= (absi(zf - t.idxZ) - 0.5) * rise:
 					continue
 				var victim = null
 				var best := 1 << 30
-				for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0)]:
+				for d in [Vector2i(-1, s), Vector2i(0, s), Vector2i(1, s), Vector2i(-1, 0), Vector2i(0, 0), Vector2i(1, 0)]:
 					var c: Vector2i = Vector2i(t.idxX, t.idxZ) + d
 					if c.x < 0 or c.x >= map.sizeX or c.y < 0 or c.y >= map.sizeZ:
 						continue
@@ -526,7 +901,7 @@ func _terrain_sight() -> void:
 					if tt.structure != go or terr.columns.get(tt, 0) < 2:
 						continue
 					var z3: int = near_free[c.x][c.y]
-					var dist := 1 << 20 if z3 < 0 else c.y - z3  # deep columns yield last
+					var dist := 1 << 20 if z3 < 0 else absi(c.y - z3)  # deep columns yield last
 					if dist < best:
 						best = dist
 						victim = tt
@@ -536,181 +911,11 @@ func _terrain_sight() -> void:
 		terr.drape()
 
 
-## A random anchor for the shape inside the box [lo, hi), flush against an earlier
-## feature's bounding box TERRAIN_CLUSTER of the time (I95); (-1, -1) when it cannot fit.
-func _terrain_anchor(rng: RandomNumberGenerator, size: Vector2i, lo: Vector2i, hi: Vector2i, clusters: Array) -> Vector2i:
-	if hi.x - lo.x < size.x or hi.y - lo.y < size.y:
-		return Vector2i(-1, -1)
-	var anchor := Vector2i(rng.randi_range(lo.x, hi.x - size.x), rng.randi_range(lo.y, hi.y - size.y))
-	if rng.randf() < TERRAIN_CLUSTER and not clusters.is_empty():
-		var near: Array = clusters[rng.randi_range(0, clusters.size() - 1)]
-		var nlo: Vector2i = near[0]
-		var nhi: Vector2i = near[0]
-		for c in near:
-			nlo = Vector2i(mini(nlo.x, c.x), mini(nlo.y, c.y))
-			nhi = Vector2i(maxi(nhi.x, c.x), maxi(nhi.y, c.y))
-		match rng.randi_range(0, 3):  # flush against a side of the placed feature's bounding box
-			0: anchor = Vector2i(nhi.x + 1, rng.randi_range(nlo.y - size.y + 1, nhi.y))
-			1: anchor = Vector2i(nlo.x - size.x, rng.randi_range(nlo.y - size.y + 1, nhi.y))
-			2: anchor = Vector2i(rng.randi_range(nlo.x - size.x + 1, nhi.x), nhi.y + 1)
-			_: anchor = Vector2i(rng.randi_range(nlo.x - size.x + 1, nhi.x), nlo.y - size.y)
-		anchor = anchor.clamp(lo, hi - size)
-	return anchor
-
-
-## The shape's other seat, anywhere its tiles above the midline number what the first
-## placed below it, so both sides keep the same amount of blocked tiles (I96). Seats flush
-## against a placed feature come first TERRAIN_CLUSTER of the time.
-func _terrain_partner(rng: RandomNumberGenerator, shape: Array, first: Array, clusters: Array) -> Array:
-	var mid: int = map.sizeZ / 2
-	var below := 0
-	for c: Vector2i in first:
-		if c.y >= mid:
-			below += 1
-	var cands: Array = []
-	for rot in 4:
-		var pat: Array = _terrain_rotated(shape, rot)
-		var size := Vector2i.ONE
-		var rows := {}
-		for c: Vector2i in pat:
-			size.x = maxi(size.x, c.x + 1)
-			size.y = maxi(size.y, c.y + 1)
-			rows[c.y] = rows.get(c.y, 0) + 1
-		for az in range(map.sizeZ - size.y + 1):
-			var above := 0
-			for r in rows:
-				if az + r < mid:
-					above += rows[r]
-			if above != below:
-				continue
-			for ax in range(map.sizeX - size.x + 1):
-				cands.append([Vector2i(ax, az), pat, size])
-	while cands.size() > 120:  # a bounded draw keeps the rng stream short
-		cands.remove_at(rng.randi_range(0, cands.size() - 1))
-	for i in range(cands.size() - 1, 0, -1):
-		var j := rng.randi_range(0, i)
-		var t = cands[i]
-		cands[i] = cands[j]
-		cands[j] = t
-	if rng.randf() < TERRAIN_CLUSTER and not clusters.is_empty():
-		var pri: Array = []
-		var sec: Array = []
-		for cand in cands:
-			if _terrain_flush(cand[0], cand[2], clusters):
-				pri.append(cand)
-			else:
-				sec.append(cand)
-		cands = pri + sec
-	for cand in cands:
-		var cells: Array = []
-		for c: Vector2i in cand[1]:
-			cells.append(cand[0] + c)
-		if _terrain_fits(cells):
-			return cells
-	return []
-
-
-## True when the shape's box at anchor stands flush against a placed feature's box.
-func _terrain_flush(anchor: Vector2i, size: Vector2i, clusters: Array) -> bool:
-	var hi := anchor + size - Vector2i.ONE
-	for near: Array in clusters:
-		var nlo: Vector2i = near[0]
-		var nhi: Vector2i = near[0]
-		for c in near:
-			nlo = Vector2i(mini(nlo.x, c.x), mini(nlo.y, c.y))
-			nhi = Vector2i(maxi(nhi.x, c.x), maxi(nhi.y, c.y))
-		if anchor.x <= nhi.x + 1 and hi.x + 1 >= nlo.x and anchor.y <= nhi.y + 1 and hi.y + 1 >= nlo.y:
-			return true
-	return false
-
-
-## The shape turned a quarter turn, this many times.
-func _terrain_rotated(cells: Array, turns: int) -> Array:
-	var out: Array = cells.duplicate()
-	for t in turns:
-		var size := Vector2i.ONE
-		for c in out:
-			size.x = maxi(size.x, c.x + 1)
-			size.y = maxi(size.y, c.y + 1)
-		var nxt: Array = []
-		for c in out:
-			nxt.append(Vector2i(size.y - 1 - c.y, c.x))
-		out = nxt
-	return out
-
-
-## On the map, on free ground no ship sits on, and clear of every castle's build ring.
-func _terrain_fits(cells: Array) -> bool:
-	var centres: Array = []
-	for c in map.castles:
-		if U.alive(c.go):
-			centres.append(map.tile_index_at(c.go.global_position))
-	for c in cells:
-		if c.x < 0 or c.y < 0 or c.x >= map.sizeX or c.y >= map.sizeZ:
-			return false
-		var t = map.tiles[c.x][c.y]
-		if not t.is_free() or U.alive(t.ship):
-			return false
-		for q in centres:
-			if max(absi(c.x - q.x), absi(c.y - q.y)) < TERRAIN_CASTLE_CLEAR:
-				return false
-	return true
-
-
-## Column heights for a feature's cells (I97): one box a level, rocks up to four stories
-## and hills three (Sebastian, 2026-10-23). A level stacks
-## only where the feature itself, another feature or the board's north edge backs it: the
-## play camera (60 degrees up) sees over one level, but a two-level column hides the centre
-## of the tile directly behind it, so that tile must be terrain too. Profiles: flat,
-## terraces rising away from the camera, a peak with its shoulder.
-func _terrain_heights(rng: RandomNumberGenerator, all: Array, cap: int) -> Dictionary:
-	var own := {}
-	var near := 0
-	var mid := Vector2i.ZERO
-	for c: Vector2i in all:
-		own[c] = true
-		near = maxi(near, c.y)
-		mid += c
-	mid /= all.size()
-	var peak: Vector2i = all[0]
-	for c: Vector2i in all:
-		if max(absi(c.x - mid.x), absi(c.y - mid.y)) < max(absi(peak.x - mid.x), absi(peak.y - mid.y)):
-			peak = c
-	var kind := rng.randi_range(0, 2)
-	var out := {}
-	for c: Vector2i in all:
-		var h := 1
-		if kind == 1:
-			h = 1 + mini(cap - 1, near - c.y)
-		elif kind == 2:
-			h = maxi(1, cap - max(absi(c.x - peak.x), absi(c.y - peak.y)))
-		out[c] = mini(cap, h) if _backed(c, own) else 1
-	return out
-
-
-## A column may rise past level 1 only with an apron of terrain south and beside it -
-## west, east and both diagonals - or the map edge. The drape's corners pool every cell
-## they touch, so a tall column's shoulder would otherwise hang over free ground beside
-## it and hide that tile from the camera, which looks north over the board.
-func _backed(c: Vector2i, own: Dictionary) -> bool:
-	for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1), Vector2i(-1, 0), Vector2i(1, 0)]:
-		var n: Vector2i = c + d
-		if n.x < 0 or n.x >= map.sizeX or n.y < 0 or own.has(n):
-			continue
-		var t = map.tiles[n.x][n.y]
-		if not (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
-			return false
-	return true
-
-
 ## The feature's GameObject at the centre of its cells: the Terrain component holding the
 ## standing column heights, and one merged mesh draped over them (I100) - a hill's gentle
-## green blanket or a rock's craggy grey one. `rng` draws the column profile, rocks
-## standing up to four stories and hills three (Sebastian, 2026-10-23); without it every
-## column is flat.
-func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) -> Node3D:
-	var cap := 4 if sort == "rock" else 3
-	var heights := _terrain_heights(rng, all, cap) if rng != null else {}
+## green blanket or a rock's craggy grey one. `heights` maps cell to column height (I116);
+## a cell without one stands a single block.
+func _terrain_go(sort: String, all: Array, heights := {}) -> Node3D:
 	var go := Node3D.new()
 	go.name = sort.capitalize()
 	map.go.add_child(go)
@@ -738,107 +943,17 @@ func _terrain_go(sort: String, all: Array, rng: RandomNumberGenerator = null) ->
 	return go
 
 
-## The free, dry tiles that reach the board's border over ground no terrain and no sea blocks
-## (I97), across a river, which walls bridge (I104): a pair may not strand free ground behind it.
-func _border_reach() -> PackedByteArray:
-	var seen := PackedByteArray()
-	seen.resize(map.sizeX * map.sizeZ)
-	var queue: Array[Vector2i] = []
-	for x in map.sizeX:
-		for z in [0, map.sizeZ - 1]:
-			_reach_seed(Vector2i(x, z), seen, queue)
-	for z in map.sizeZ:
-		for x in [0, map.sizeX - 1]:
-			_reach_seed(Vector2i(x, z), seen, queue)
-	var head := 0
-	while head < queue.size():
-		var p: Vector2i = queue[head]
-		head += 1
-		for v in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			var n: Vector2i = p + v
-			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ or seen[n.x * map.sizeZ + n.y]:
-				continue
-			var t = map.tiles[n.x][n.y]
-			if (t.water and not t.river) or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
-				continue
-			seen[n.x * map.sizeZ + n.y] = 1
-			queue.append(n)
-	return seen
-
-
-func _reach_seed(p: Vector2i, seen: PackedByteArray, queue: Array[Vector2i]) -> void:
-	var t = map.tiles[p.x][p.y]
-	if (t.water and not t.river) or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
-		return
-	seen[p.x * map.sizeZ + p.y] = 1
-	queue.append(p)
-
-
-## True when no free tile the board reached before this pair lost that reach (I97).
-func _ground_open(before: PackedByteArray) -> bool:
-	var now := _border_reach()
-	for x in map.sizeX:
-		for z in map.sizeZ:
-			if before[x * map.sizeZ + z] and not now[x * map.sizeZ + z]:
-				var t = map.tiles[x][z]
-				if t.structure == null and not t.water and not t.disabled:
-					return false
-	return true
-
-
-## The encirclement guarantee (I91): every castle's build ring (Chebyshev 2 of its centre)
-## still reaches every other's over ground no terrain and no sea blocks; walls bridge a river (I104).
-## Walls and other buildings are the way itself, so they never block it.
-func _rings_connected() -> bool:
-	var centres: Array = []
-	for c in map.castles:
-		if U.alive(c.go):
-			centres.append(map.tile_index_at(c.go.global_position))
-	if centres.size() < 2:
-		return true
-	var seen := PackedByteArray()
-	seen.resize(map.sizeX * map.sizeZ)
-	var queue: Array[Vector2i] = []
-	_ring_seeds(centres[0], seen, queue)
-	var head := 0
-	while head < queue.size():
-		var p: Vector2i = queue[head]
-		head += 1
-		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			var n: Vector2i = p + d
-			if n.x < 0 or n.y < 0 or n.x >= map.sizeX or n.y >= map.sizeZ:
-				continue
-			var i: int = n.x * map.sizeZ + n.y
-			if seen[i] != 0:
-				continue
-			var t = map.tiles[n.x][n.y]
-			if (t.water and not t.river) or (U.alive(t.structure) and U.comp(t.structure, "Terrain") != null):
-				continue
-			seen[i] = 1
-			queue.append(n)
-	for q in centres:
-		var shell: Array[Vector2i] = []
-		_ring_seeds(q, PackedByteArray(), shell)
-		var reached := false
-		for p in shell:
-			if seen[p.x * map.sizeZ + p.y] != 0:
-				reached = true
-				break
-		if not reached:
-			return false
-	return true
-
-
-## The build ring's tiles of the castle at `centre`, into `queue` marked in `seen`.
-func _ring_seeds(centre: Vector2i, seen: PackedByteArray, queue: Array[Vector2i]) -> void:
-	for dx in range(-2, 3):
-		for dz in range(-2, 3):
-			var p := Vector2i(centre.x + dx, centre.y + dz)
-			if p.x < 0 or p.y < 0 or p.x >= map.sizeX or p.y >= map.sizeZ:
-				continue
-			if not seen.is_empty():
-				seen[p.x * map.sizeZ + p.y] = 1
-			queue.append(p)
+## Hills grow trees (I116): after the sight pass settles the drapes, every standing hill
+## column sprouts its green decorations on the drape's own surface - the boulder stays off
+## the slope. When the block under a tree shatters, the tree crumbles away with it.
+func _terrain_trees() -> void:
+	for go in map.terrain_features:
+		var terr := U.comp(go, "Terrain")
+		if terr.sort != "hill":
+			continue
+		for t in terr.tiles:
+			if terr.columns.get(t, 0) > 0:
+				t.place_decorations(terr)
 
 
 func _castle_far(c: Vector2i, placed: Array) -> bool:

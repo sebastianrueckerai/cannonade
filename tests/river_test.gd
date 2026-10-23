@@ -394,8 +394,7 @@ func _bridges(the_seed: int) -> void:
 ## A ring round river ground never closes, the flood runs under its bridges; the same build on the
 ## far bank's land closes a room there.
 func _rings(water: Dictionary, region: Dictionary, home: int) -> void:
-	var across := Vector2i(-1, -1)
-	var room := Vector2i(-1, -1)
+	var spots := [[], []]
 	for x in range(3, map.sizeX - 3):
 		for z in range(3, map.sizeZ - 3):
 			var c := Vector2i(x, z)
@@ -407,12 +406,20 @@ func _rings(water: Dictionary, region: Dictionary, home: int) -> void:
 					ok = ok and not U.alive(t.structure) and t.wall_free() and t.ringOwner == null
 					if r == 2 and (water.has(Vector2i(x + dx, z + dz)) or region[Vector2i(x + dx, z + dz)] == home):
 						ok = false
-			if not ok:
-				continue
-			if r == 3 and across.x < 0:
-				across = c
-			elif r == 2 and room.x < 0:
-				room = c
+			if ok:
+				spots[r - 2].append(c)
+	# the rings stamp walls round their centre (Chebyshev 2 for the room, 3 for the across ring),
+	# so a pair closer than 6 puts one ring's walls inside the other's ground
+	var across := Vector2i(-1, -1)
+	var room := Vector2i(-1, -1)
+	for a: Vector2i in spots[1]:
+		for m: Vector2i in spots[0]:
+			if maxi(absi(a.x - m.x), absi(a.y - m.y)) >= 6:
+				across = a
+				room = m
+				break
+		if across.x >= 0:
+			break
 	check(across.x >= 0 and room.x >= 0, "free spots for a ring across the river and a room on the far bank")
 	if across.x < 0 or room.x < 0:
 		return

@@ -1,13 +1,14 @@
 extends Node
-## Terrain on the battlefield (I90-I97): both sides hold the same amount of blocked tiles
-## in different arrangements and features cross the midline, every
-## feature is a solid clumped shape inside 7x7 that walls no free ground in, a mass five
-## tiles across or more is never a filled rectangle, neighbours gather in clusters,
-## columns rise in stacked levels that hide no ground behind them, the count is a knob
-## (--terrain=N), castle rings keep their reach round every feature, every family
-## shatters block by block and frees its ground tile by tile, a family with its break flag
-## off absorbs every hit, placement refuses the tiles, and the AI shoots the rocks that
-## block its own way but never the ones that would open the enemy's.
+## Terrain on the battlefield (I90-I97, I116): hills and mountains grow as units - one
+## organic mass per ridge, both sides within a tenth of each other in different
+## arrangements, a two-tile gap between units, hills doming one level a tile and rocks
+## climbing sheer toward the player alone, no column hiding the ground behind it from
+## either direction, no free ground walled in, the count a knob (--terrain=N), castle
+## rings keeping their reach round every feature, every family shattering block by block
+## and freeing its ground tile by tile, a family with its break flag off absorbing every
+## hit, placement refusing the tiles, hills growing trees that fly with the block they
+## stand on, and the AI shooting the rocks that block its own way but never the ones that
+## would open the enemy's.
 ##   godot --headless --fixed-fps 30 res://tests/terrain_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -36,6 +37,7 @@ func _ready() -> void:
 	enemy.dormant = true
 	await _versus_board()
 	await _ai_board()
+	await _tree_board()
 	var ok: bool = failures.is_empty() and ran >= 18
 	print("TERRAIN TEST PASSED" if ok else "TERRAIN TEST FAILED: %s" % [failures])
 	get_tree().quit(0 if ok else 1)
@@ -60,9 +62,9 @@ func centre(c) -> Vector2i:
 ## Builds a game in place once frames are flowing: with no decorations the whole map goes
 ## up inside add_child, so the board is readable the line after (each sweep game is freed
 ## before a frame passes, so no AI coroutine starts either).
-func _start(mode: String, seed := 4, terrain := -1) -> void:
+func _start(mode: String, seed := 4, terrain := -1, decorations := false) -> void:
 	Main.requested_mode = mode
-	Main.requested_args = {"seed": str(seed), "no-decorations": "true"}
+	Main.requested_args = {"seed": str(seed)} if decorations else {"seed": str(seed), "no-decorations": "true"}
 	if terrain >= 0:
 		Main.requested_args["terrain"] = str(terrain)
 	main = Main.new()
@@ -161,22 +163,34 @@ func _versus_board() -> void:
 	check(broken == 0,
 			"every feature tile is its structure, mini 255, dry, and Chebyshev 3 off every castle centre")
 
-	var oversize := 0
+	# I116: one unit is one mass inside its family's span cap, and units never stand flush
+	var span_bad := 0
+	var feats: Array = []
 	for go in map.terrain_features:
 		var terr := U.comp(go, "Terrain")
-		for half in [0, 1]:
-			var cells: Array = terr.tiles.filter(
-					func(t): return (0 if t.idxZ < map.sizeZ / 2 else 1) == half)
-			if cells.is_empty():
-				continue
-			var lo := Vector2i(map.sizeX, map.sizeZ)
-			var hi := Vector2i.ZERO
-			for t in cells:
-				lo = lo.min(Vector2i(t.idxX, t.idxZ))
-				hi = hi.max(Vector2i(t.idxX, t.idxZ))
-			if hi.x - lo.x > 6 or hi.y - lo.y > 6:
-				oversize += 1
-	check(oversize == 0, "every feature fits a 7x7 box on each half (%d oversize)" % [oversize])
+		var cells := {}
+		for t in terr.tiles:
+			cells[Vector2i(t.idxX, t.idxZ)] = true
+		feats.append(cells)
+		var lo := Vector2i(map.sizeX, map.sizeZ)
+		var hi := Vector2i.ZERO
+		for c in cells:
+			lo = lo.min(c)
+			hi = hi.max(c)
+		var span: int = game.ROCK_SPAN if terr.sort == "rock" else game.HILL_SPAN
+		if hi.x - lo.x >= span or hi.y - lo.y >= span:
+			span_bad += 1
+	check(span_bad == 0, "every unit fits its family's span cap (%d oversize)" % [span_bad])
+	var gap_bad := 0
+	for i in feats.size():
+		for j2 in range(i + 1, feats.size()):
+			var gap := 99
+			for a: Vector2i in feats[i]:
+				for b: Vector2i in feats[j2]:
+					gap = mini(gap, maxi(absi(a.x - b.x), absi(a.y - b.y)))
+			if gap < game.TERRAIN_GAP:
+				gap_bad += 1
+	check(gap_bad == 0, "units keep a free tile between them (%d pairs too close)" % [gap_bad])
 
 	var mismatch := 0
 	var counts := [0, 0]
@@ -186,8 +200,8 @@ func _versus_board() -> void:
 				counts[0 if z < map.sizeZ / 2 else 1] += 1
 			if _blocked(x, z) != _blocked(x, map.sizeZ - 1 - z):
 				mismatch += 1
-	check(counts[0] == counts[1] and mismatch > 0,
-			"the sides hold the same amount of blocked tiles in different arrangements (%d and %d, %d tiles off the flip)" % [counts[0], counts[1], mismatch])
+	check(counts[0] > 0 and counts[1] > 0 and absi(counts[0] - counts[1]) <= 0.1 * maxi(counts[0], counts[1]) + 1 and mismatch > 0,
+			"the sides hold roughly the same amount of blocked tiles in different arrangements (%d and %d, %d tiles off the flip)" % [counts[0], counts[1], mismatch])
 	check(_rings_reach(), "every castle's build ring reaches every other's round the terrain")
 
 	# a clump's holes stay ground (I93): a horseshoe claimed on open tiles leaves its mouth
@@ -468,15 +482,18 @@ func _seed_sweep() -> void:
 	var kinds := {"rock": 0, "hill": 0}
 	var big := 0
 	var solid_big := 0
-	var pairs := 0
-	var crossing := 0
+	var gap_bad := 0
+	var span_bad := 0
+	var dome_bad := 0
+	var far_bad := 0
+	var side_bad := 0
 	var tall := 0
 	var draped := 0
 	var fam_max := {}
 	var over := 0
 	var sfeet := 0
 	var steep_feet := 0
-	for s in range(10, 18):
+	for s in [2] + range(10, 18):  # seed 2: a board the growth leaves one side rich until balanced
 		_start("versus", s)
 		var mismatch := 0
 		var counts := [0, 0]
@@ -488,43 +505,63 @@ func _seed_sweep() -> void:
 					mismatch += 1
 		for go in map.terrain_features:
 			kinds[U.comp(go, "Terrain").sort] += 1
-		# I95: the bigger masses (five tiles across or more) are never filled rectangles, and
-		# features gather: a pair touches when some two of their cells lie side by side.
-		# I96: a feature may sit across the midline, its split keeping the sides level.
+		# I116: a unit is one mass inside its family's span cap, never a filled rectangle, a
+		# hill doming one level a tile (rim at one story) and a rock easing one level a tile
+		# from its far rim; no two units stand flush against each other.
 		var feats: Array = []
 		for go in map.terrain_features:
 			var terr := U.comp(go, "Terrain")
-			var cells: Array = []
-			var above := false
-			var below := false
+			var cells := {}
 			for t in terr.tiles:
-				cells.append(Vector2i(t.idxX, t.idxZ))
-				if t.idxZ < map.sizeZ / 2:
-					above = true
-				else:
-					below = true
-			if above and below:
-				crossing += 1
+				cells[Vector2i(t.idxX, t.idxZ)] = true
 			feats.append(cells)
 			var lo := Vector2i(map.sizeX, map.sizeZ)
 			var hi := Vector2i.ZERO
-			for c: Vector2i in cells:
+			for c in cells:
 				lo = lo.min(c)
 				hi = hi.max(c)
 			if hi.x - lo.x >= 4 or hi.y - lo.y >= 4:
 				big += 1
 				if cells.size() == (hi.x - lo.x + 1) * (hi.y - lo.y + 1):
 					solid_big += 1
+			var span: int = game.ROCK_SPAN if terr.sort == "rock" else game.HILL_SPAN
+			if hi.x - lo.x >= span or hi.y - lo.y >= span:
+				span_bad += 1
+			if terr.sort == "hill":
+				for c in cells:
+					var rim := false
+					for v in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+						if not cells.has(c + v):
+							rim = true
+						elif absi(terr.columns[map.tiles[c.x + v.x][c.y + v.y]] - terr.columns[map.tiles[c.x][c.y]]) > 1:
+							dome_bad += 1
+					if rim and terr.columns[map.tiles[c.x][c.y]] != 1:
+						dome_bad += 1
+			else:
+				var top := {}  # each x-column's far rim, where its north slope starts
+				for c in cells:
+					top[c.x] = maxi(top.get(c.x, c.y), c.y)
+				for c in cells:
+					if terr.columns[map.tiles[c.x][c.y]] > 1 + top[c.x] - c.y:
+						far_bad += 1
+					for d in [Vector2i(1, 0), Vector2i(-1, 0)]:
+						var n: Vector2i = c + d
+						if n.x < 0 or n.x >= map.sizeX:
+							continue
+						var n_cols: int = terr.columns[map.tiles[n.x][n.y]] if cells.has(n) else 0
+						if absi(terr.columns[map.tiles[c.x][c.y]] - n_cols) > 1:
+							side_bad += 1
 		for i in feats.size():
 			for j2 in range(i + 1, feats.size()):
 				var gap := 99
 				for a: Vector2i in feats[i]:
 					for b: Vector2i in feats[j2]:
 						gap = mini(gap, maxi(absi(a.x - b.x), absi(a.y - b.y)))
-				if gap <= 1:
-					pairs += 1
-		check(map.terrain_features.size() > 0 and counts[0] == counts[1] and mismatch > 0 and _rings_reach(),
-				"seed %d: terrain grows, the sides level and different, the rings connected (%d features)" % [s, map.terrain_features.size()])
+				if gap < game.TERRAIN_GAP:
+					gap_bad += 1
+		check(map.terrain_features.size() > 0 and counts[0] > 0 and counts[1] > 0
+				and absi(counts[0] - counts[1]) <= 0.1 * maxi(counts[0], counts[1]) + 1 and mismatch > 0 and _rings_reach(),
+				"seed %d: terrain grows, the sides near level and different, the rings connected (%d features)" % [s, map.terrain_features.size()])
 		# I97: solid shapes and open ground. No free tile is walled in by terrain (a ring
 		# would strand the tiles inside it); every column stands on levels that leave the
 		# ground behind it visible from the 60-degree play camera: a column hides the centre
@@ -566,6 +603,13 @@ func _seed_sweep() -> void:
 						continue
 					if terr2.surface_at(t2.idxX, t2.idxZ - 0.5) - t2.go.position.y > (z2 - z - 0.5) * rise:
 						views += 1
+				for z2 in range(z):
+					var t2 = map.tiles[x][z2]
+					var terr2 = U.comp(t2.structure, "Terrain") if U.alive(t2.structure) else null
+					if terr2 == null:
+						continue
+					if terr2.surface_at(t2.idxX, t2.idxZ + 0.5) - t2.go.position.y > (z - z2 - 0.5) * rise:
+						views += 1
 		for go in map.terrain_features:
 			var terr3 := U.comp(go, "Terrain")
 			var m3: MeshInstance3D = go.get_node_or_null("Mass")
@@ -597,14 +641,16 @@ func _seed_sweep() -> void:
 					if terr3._corners[c] > lim:
 						steep_feet += 1
 		check(enclosed == 0 and views == 0,
-				"seed %d: no free tile walled in (%d), no column hides the ground behind it (%d)" % [s, enclosed, views])
+				"seed %d: no free tile walled in (%d), no column hides the ground behind it from either direction (%d)" % [s, enclosed, views])
 		main.free()
 	check(kinds["rock"] > 0 and kinds["hill"] > 0,
 			"across the seeds both sorts appear (%d rocks, %d hills)" % [kinds["rock"], kinds["hill"]])
 	check(big >= 4 and solid_big == 0,
 			"bigger masses appear (%d of five tiles across or more) and none is a filled rectangle (%d solid)" % [big, solid_big])
-	check(pairs >= 20, "features gather in clusters (%d touching pairs across the seeds)" % [pairs])
-	check(crossing >= 4, "features sit across the midline (%d across the seeds)" % [crossing])
+	check(gap_bad == 0 and span_bad == 0,
+			"units keep their gap (%d pairs flush) and their span caps (%d oversize)" % [gap_bad, span_bad])
+	check(dome_bad == 0 and far_bad == 0 and side_bad == 0,
+			"hills dome one level a tile with a one-story rim (%d breaks), rocks ease one level a tile from their far rim (%d breaks) and on their east and west faces (%d breaks)" % [dome_bad, far_bad, side_bad])
 	check(tall >= 100, "terrain rises in stacked levels (%d columns two high or more across the seeds)" % [tall])
 	check(draped == 0, "every drape stands inside its levels (%d features out of band)" % [draped])
 	check(fam_max.get("rock", 0) == 4 and fam_max.get("hill", 0) == 3 and over == 0,
@@ -615,7 +661,7 @@ func _seed_sweep() -> void:
 			% [steep_feet, sfeet])
 	_start("versus", 19, 3)
 	check(map.terrain_features.size() == 6,
-			"--terrain=3 draws three shapes, one seat a side each (%d features)" % [map.terrain_features.size()])
+			"--terrain=3 grows three units a side (%d features)" % [map.terrain_features.size()])
 	main.free()
 	_start("versus", 19, 0)
 	check(map.terrain_features.is_empty(), "--terrain=0 clears the battlefield")
@@ -626,8 +672,48 @@ func _seed_sweep() -> void:
 		for z in map.sizeZ:
 			if _blocked(x, z):
 				quads[(1 if z >= map.sizeZ / 2 else 0) * 2 + (1 if x >= map.sizeX / 2 else 0)] += 1
-	check(map.terrain_features.size() > 0 and quads[0] == quads[1] and quads[0] == quads[2] and quads[0] == quads[3] and _rings_reach(),
-			"four players: the quarters hold the same amount of blocked tiles (%d each) and the rings stay connected" % [quads[0]])
+	check(map.terrain_features.size() > 0 and maxi(maxi(quads[0], quads[1]), maxi(quads[2], quads[3]))
+			- mini(mini(quads[0], quads[1]), mini(quads[2], quads[3])) <= 0.1 * maxi(maxi(quads[0], quads[1]), maxi(quads[2], quads[3])) + 1 and _rings_reach(),
+			"four players: the quarters hold near the same amount of blocked tiles (%s) and the rings stay connected" % [str(quads)])
+	main.free()
+
+
+## Hills grow trees on the drape and a tree flies with the block it stood on (I116).
+func _tree_board() -> void:
+	_start("versus", 4, -1, true)
+	var hill = null
+	var rock = null
+	for go in map.terrain_features:
+		var terr := U.comp(go, "Terrain")
+		if terr.sort == "hill" and hill == null:
+			hill = terr
+		elif terr.sort == "rock" and rock == null:
+			rock = terr
+	check(hill != null, "a hill stands on the decorated board")
+	check(rock != null, "a rock stands on the decorated board")
+	if hill == null or rock == null:
+		main.free()
+		return
+	var treed := 0
+	var highest := 0.0
+	for t in hill.tiles:
+		for d in t.decorations:
+			treed += 1
+			highest = maxf(highest, d.position.y)
+	check(treed > 0, "hills grow trees (%d decorations)" % [treed])
+	check(highest > 0.5, "a tree stands above the board's ground on the drape's slope (%.2f m)" % [highest])
+	var bare := 0
+	for t in rock.tiles:
+		bare += t.decorations.size()
+	check(bare == 0, "rocks stay bare (%d decorations)" % [bare])
+	var block_tile = null
+	for t in hill.tiles:
+		if not t.decorations.is_empty():
+			block_tile = t
+			break
+	if block_tile != null:
+		block_tile.damage_building_place(10.0)
+		check(block_tile.decorations.is_empty(), "the tree flies with the block it stood on")
 	main.free()
 
 
