@@ -261,6 +261,46 @@ func _versus_board() -> void:
 						wrong += 1
 			check(skirts > 0 and wrong == 0,
 					"the blanket's sides face outward (%d east skirts, %d wound inward)" % [skirts, wrong])
+
+			# every wall stands on one of the feature's exposed edges: the S/E/N/W neighbour
+			# pairing shipped rotated once, walls stood inside the mass and the open sides
+			# stayed bare (found in play, 2026-10-23)
+			var vcells := {}
+			for t3 in victim.tiles:
+				vcells[Vector2i(t3.idxX, t3.idxZ)] = true
+			var vedges: Array = []
+			for c in vcells:
+				var vbase: Vector3 = map.tile_position(c.x, c.y) - victim.go.position
+				for d in [[Vector2i(1, 0), Vector2(0.5, 0), Vector2(0, 1)], [Vector2i(-1, 0), Vector2(-0.5, 0), Vector2(0, 1)],
+						[Vector2i(0, 1), Vector2(0, -0.5), Vector2(1, 0)], [Vector2i(0, -1), Vector2(0, 0.5), Vector2(1, 0)]]:
+					if not vcells.has(c + d[0]):
+						vedges.append([Vector2(vbase.x, vbase.z) + d[1] - d[2] / 2.0, Vector2(vbase.x, vbase.z) + d[1] + d[2] / 2.0])
+			var vwalls := 0
+			var voff := 0
+			var vbare := 0
+			var vhit := []
+			for e in vedges:
+				vhit.append(false)
+			for i in range(0, wv.size(), 3):
+				if wv[i].y < -0.2 or wv[i + 1].y < -0.2 or wv[i + 2].y < -0.2:
+					vwalls += 1
+					var m2 := Vector2((wv[i].x + wv[i + 1].x + wv[i + 2].x) / 3.0, (wv[i].z + wv[i + 1].z + wv[i + 2].z) / 3.0)
+					var on_edge := false
+					for ei in vedges.size():
+						var e: Array = vedges[ei]
+						var ab: Vector2 = e[1] - e[0]
+						var t2 := clampf((m2 - e[0]).dot(ab) / ab.length_squared(), 0.0, 1.0)
+						if (e[0] + ab * t2).distance_to(m2) < 0.15:
+							on_edge = true
+							vhit[ei] = true
+					if not on_edge:
+						voff += 1
+			for h in vhit:
+				if not h:
+					vbare += 1
+			check(vwalls == vedges.size() * 2 and voff == 0 and vbare == 0,
+					"every wall stands on an exposed edge (%d walls, %d off, %d of %d edges bare)"
+					% [vwalls, voff, vbare, vedges.size()])
 		var cut: Mesh = mass.mesh if mass != null else null
 		var column: int = victim.columns[first]
 		for i in column - 1:

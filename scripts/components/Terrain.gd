@@ -98,7 +98,10 @@ func drape() -> void:
 				var d := _lattice(p, top, Vector2(u, v + 1) / steps, hill, peak)
 				_face(st, a, b, c2, peak)
 				_face(st, a, c2, d, peak)
-		for side in [[Vector2(0, 0), Vector2(1, 0), Vector2(1, 0)], [Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)], [Vector2(1, 1), Vector2(0, 1), Vector2(-1, 0)], [Vector2(0, 1), Vector2(0, 0), Vector2(0, -1)]]:
+		# each side: its two lattice corners and the neighbour that hides the wall between the
+		# cells - the offset must match the edge (S, E, N, W), a rotated pairing skips real
+		# outer walls and drapes phantom ones inside the mass
+		for side in [[Vector2(0, 0), Vector2(1, 0), Vector2(0, -1)], [Vector2(1, 0), Vector2(1, 1), Vector2(1, 0)], [Vector2(1, 1), Vector2(0, 1), Vector2(0, 1)], [Vector2(0, 1), Vector2(0, 0), Vector2(-1, 0)]]:
 			if cells.has(c + Vector2i(side[2])):
 				continue  # a neighbour stands here, no wall between them
 			var near := _lattice(p, top, side[0], hill, peak)
