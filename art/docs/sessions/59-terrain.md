@@ -399,3 +399,37 @@ with board gold showing where the flanks eased off. Crops: /tmp/crop_hill_g.png,
 /tmp/crop_rock_g.png. Process note: the guard's first run hung the runner - `var lim :=
 (0.35 if ...) * ...` is `:=` from a Variant ternary, the documented parse-error-hang
 gotcha; declared the type and it ran.
+
+**Follow-up 6, same day.** His play found the shatter broken ("The terrain does not
+properly shatter upon impact. I have the impression that firing at a piece just removes
+it and leaves a perfect cube in place... What I want is for the terrain to be locally
+recalculated to still look right after a piece is removed by gun fire. When removing a
+piece I want flying debris just like when walls are shattered."). The cube he saw was the
+bug, not the re-cut: `_debris` handed a bare MeshInstance3D to `Crumble.crumble`, which
+refuses a node without art and returns null - nothing flew and the cube stayed standing
+under map.go forever, one per shot block. Two changes in
+[Terrain.gd](../../scripts/components/Terrain.gd):
+
+1. `_debris` builds the walls' break-up by hand on a Crumble heap: six family-tinted cut
+   boxes per block spawn inside the hole as RigidBody3D on the stone material, launched
+   with crumble's own velocity formula out of the shot's direction, landing on the shared
+   slab plane and sinking after Crumble's 4 s life. The mass has no rubble art, so the
+   pieces are code-cut boxes, not fracture.py parts.
+2. The re-cut crumbles instead of carving: take_damage marks every bitten cell in
+   `_wounds`, and drape() sags each corner pooling a wounded cell by a bite keyed on the
+   corner's board place (absf noise, up to 0.28 levels, floored at the ground) - the same
+   corner keeps the same bite on every later re-cut, so distant crests stay bit-stable.
+   A cell bitten to nothing still wounds: it leaves `columns` when its tile frees, and the
+   first draft checked the wound inside `cells.has(c)`, so the hole's own rim never
+   sagged; the check now runs on any of the four cells, standing or freed.
+
+[terrain_test](../../../tests/terrain_test.gd) grew two guards: a shot-out block bursts
+into flying rubble (Crumble heaps and RigidBody3D pieces counted under map.go, and no
+static BoxMesh child left standing - watched red on the old code: 9 cubes, 0 heaps,
+0 pieces), and the lip of a wound sags exactly its bite on a rock's interior corner
+(pooled value against tallest-after minus the keyed bite - red: 0.750 unbitten against
+the 0.575 derived). Render evidence, seed 2, a placed cannon at 46,16 firing on the
+4-high rock at 48,14: the boards match to 0.1 percent of pixels before impact, the impact
+frame differs in 17 percent - master leaves the cube standing in the notch, the fix
+leaves chunks around a sagged lip. Crops: /tmp/crop_i107_impact+1.6s.png,
+/tmp/crop_i107_moment.png.

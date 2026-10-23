@@ -5,7 +5,8 @@ extends "res://scripts/components/Component.gd"
 ## standing columns (I100): hills wear the board's grass green with gentle slopes, rocks
 ## the warm greys of the boulder family with jagged crests and steep skirts. A shell
 ## shatters the top block of the tile it hits, the column steps down and the drape is
-## re-cut for the shorter stack, the tile frees when its last block goes - the killing
+## re-cut for the shorter stack with the wound's lip crumbled, the tile frees when its
+## last block goes - the killing
 ## blow also scarring the ground it frees (I74) - and the feature dies with its last
 ## column. Each family carries its break flag; a flag-off family absorbs every hit.
 
@@ -43,6 +44,9 @@ var _corners := {}
 ## A hill's rim rounding: corner lattice point -> board-space offset, relaxed over the
 ## feature's outline so corners pull in and straight runs stay.
 var _disp := {}
+## The cells a shell has bitten (I113): a re-cut sags every corner pooling a wounded cell,
+## so the hole's lip crumbles instead of reading as a carved cube.
+var _wounds := {}
 
 
 ## Registers one tile's column of blocks and their health.
@@ -95,11 +99,15 @@ func drape() -> void:
 			var touched := 0
 			var pooled := 0.0
 			var tallest := 0.0
+			var wounded := false
 			for c in [Vector2i(i - 1, j - 1), Vector2i(i, j - 1), Vector2i(i - 1, j), Vector2i(i, j)]:
 				if cells.has(c):
 					touched += 1
 					pooled += cells[c]
 					tallest = maxf(tallest, cells[c])
+				# a cell bitten to nothing still wounds: its corner is the hole's rim
+				if _wounds.has(c):
+					wounded = true
 			if touched > 0:
 				var h: float = tallest if sort == "rock" else pooled / touched
 				if sort != "rock":
@@ -113,6 +121,11 @@ func drape() -> void:
 					h *= rim if touched < 4 else 1.0
 					var t: float = clampf(h / peak_cells, 0.0, 1.0)
 					h = peak_cells * (t * t * (3.0 - 2.0 * t))
+				if wounded:
+					# the lip of a shot-out block crumbles: the corner sags by a bite keyed
+					# on its place, deterministic as the roughness, so the re-cut reads as
+					# broken ground and every later re-cut keeps the same bite
+					h = maxf(0.0, h - absf(_noise(Vector2(i, j) + Vector2(go.position.x, go.position.z) + Vector2(97.3, 45.1))) * 0.28)
 				_corners[Vector2i(i, j)] = h * LEVEL
 	if sort == "hill":
 		_outline_disp(cells)
@@ -287,7 +300,8 @@ func top_of(tile) -> float:
 
 ## A shell breaks blocks from the top of the hit tile's column; damage left over falls to
 ## the block below. A block that survives cracks (the wall hit), one that dies shatters:
-## a debris cube flies from its spot and the drape is re-cut without it.
+## chunks burst from its spot and the drape is re-cut without it, the wound's lip sagging
+## as it crumbles.
 func take_damage(damage: float, from := Vector3.INF, tile = null) -> void:
 	if not destructible or tile == null or not columns.has(tile):
 		Sound.play("hit_wall")
@@ -305,6 +319,7 @@ func take_damage(damage: float, from := Vector3.INF, tile = null) -> void:
 		columns[tile] -= 1
 		health -= HEALTH_PER_TILE
 		fell = true
+		_wounds[Vector2i(tile.idxX, tile.idxZ)] = true
 		_debris(tile, columns[tile], from)
 		if columns[tile] == 0:
 			_free_tile(tile, hit)
@@ -313,19 +328,39 @@ func take_damage(damage: float, from := Vector3.INF, tile = null) -> void:
 	Sound.play("crumble" if fell else "hit_wall")
 
 
-## The block that just left column `tile`'s step `over` flies apart: a family-coloured
-## cube crumbles in its place, the drape's re-cut does the rest.
+## The block that just left column `tile`'s step `over` breaks up the walls' way (I113):
+## family-tinted chunks burst from the hole on a Crumble heap, land and sink. The mass has
+## no rubble art, so the pieces are cut boxes, not fracture.py parts.
 func _debris(tile, over: int, from: Vector3) -> void:
-	var cube := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(0.94, LEVEL, 0.94)
-	cube.mesh = box
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = _tint((over + 0.5) * LEVEL, 3 * LEVEL)
-	cube.material_override = mat
-	map.go.add_child(cube)
-	cube.position = Vector3(tile.go.position.x, go.position.y + (over + 0.5) * LEVEL - 0.05, tile.go.position.z)
-	Crumble.crumble(cube, from)
+	var heap := Crumble.new()
+	map.go.add_child(heap)
+	heap.global_position = Vector3(tile.go.position.x, go.position.y + (over + 0.5) * LEVEL - 0.05, tile.go.position.z)
+	Crumble._ground(get_tree(), go.position.y)
+	var dir := (heap.global_position - from) * Vector3(1, 0, 1) if from.is_finite() else Vector3.ZERO
+	if dir.length() < 0.1:
+		dir = Vector3(Art._rng.randf() - 0.5, 0.0, Art._rng.randf() - 0.5)
+	dir = dir.normalized()
+	for i in 6:
+		var body := RigidBody3D.new()
+		body.physics_material_override = Crumble._stone_material()
+		var mi := MeshInstance3D.new()
+		var box := BoxMesh.new()
+		var s := 0.14 + 0.20 * Art._rng.randf()
+		box.size = Vector3(s * (0.7 + 0.6 * Art._rng.randf()), s, s * (0.7 + 0.6 * Art._rng.randf()))
+		mi.mesh = box
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = _tint((over + 0.5) * LEVEL, 3 * LEVEL)
+		mi.material_override = mat
+		body.add_child(mi)
+		var shape := CollisionShape3D.new()
+		shape.shape = Crumble._shape(box)
+		shape.scale = Vector3.ONE * Crumble.SHRINK
+		body.add_child(shape)
+		heap.add_child(body)
+		body.position = Vector3(Art._rng.randf() - 0.5, Art._rng.randf() - 0.5, Art._rng.randf() - 0.5) * Vector3(0.7, 0.5, 0.7)
+		body.linear_velocity = dir * (1.5 + 2.5 * Art._rng.randf()) + Vector3.UP * (1.0 + 3.0 * Art._rng.randf()) + Crumble._scatter(0.8)
+		body.angular_velocity = Crumble._scatter(8.0)
+	heap._fade()
 
 
 func _free_tile(tile, scar: float) -> void:
