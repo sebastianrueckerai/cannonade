@@ -364,7 +364,7 @@ func _versus_board() -> void:
 		check(heaps > 0 and pieces >= 4 and frozen == 0,
 				"a shot-out block bursts into flying rubble (%d heaps, %d pieces, %d cubes left standing)"
 				% [heaps, pieces, frozen])
-		first.damage_building_place(10.0)
+		first.damage_building_place(25.0)  # overkill: a shell's leftover damage must stop at the freed tile
 		await frames(2)
 		check(first.structure == null and first.is_free() and map.get_mini(first.idxX, first.idxZ) == 0
 				and map.terrain_features.has(victim.go),

@@ -150,3 +150,18 @@ Round 25 made the grade part of the kit's rules and of the render pipeline. The 
   export must measure the budgets itself, because session 67 shipped castles against stale report.json
   numbers. The flag is authored in the kit and docks per castle state; the castle damage chain needed its
   rubble re-cut for the same reason as session 67's.
+- Session 69 (C23): the sharp pass. [kit.py](../pipeline/kit.py) gained `sharpen`: every mesh face set
+  smooth, then every edge whose two faces meet over 35 deg marked sharp (bmesh's `edge.smooth = False` -
+  the flag reads inverted); the organic trees and bushes are skipped whole. `build` and `add` run it on
+  what they fold, `add` only its ids, so a hand-cleared mark in the tuned kit survives another asset's
+  rerun; `export` never re-marks, so the marks in kit.blend are the truth a ship carries. One run: 89408
+  edges marked over 100 of 106 collections, 14072 flat faces smoothed (the wall blocks' old flat shading
+  and the flag pole's), no custom normals anywhere. Verified on the shipped glbs as positions whose
+  vertex normals split 30 deg or more (UV seams copy one normal, so a smooth model measures 0): castle 0
+  to 1288 (max 180 deg), ship 0 to 555, cannon 539 to 496 - the guns' soft regions got smoother, the
+  flat era had split everything - and the trees and bushes at 0.0 deg max, untouched. The guard lives in
+  castle_test (`_splits` on the imported mesh, watched red both ways: 0 before the pass, and a scratch
+  kit sharpened with the exemption removed ships the tree with 20 hard positions at 91 deg). The
+  baseline suite run also caught Terrain.take_damage re-reading a column block that _free_tile had just
+  erased when a shell's leftover damage overkilled the last block - intermittent by design, a `break`
+  after the free and terrain_test's last blow at 25.0 overkill make it deterministic.

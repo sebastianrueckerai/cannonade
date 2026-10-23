@@ -38,7 +38,8 @@ flowchart TB
     CRIT -->|corrections| FIX
     CRIT -->|pass| OUT["export.py: final.glb, source.blend, previews/, manifest.json"]
     OUT --> KIT["kit.py build: fold every source.blend into kit.blend [M]"]
-    KIT --> SYNC["kit.py export: fresh budget gate, glbs + manifest to the game, rubble recut; see integration.md"]
+    KIT --> SHARP["kit.py sharpen: smooth shading, edges over 35 deg marked sharp, organics exempt [M]"]
+    SHARP --> SYNC["kit.py export: fresh budget gate, glbs + manifest to the game, rubble recut; see integration.md"]
 ```
 
 ## Which route

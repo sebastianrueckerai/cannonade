@@ -10,9 +10,9 @@
       "base"
     ],
     "tris": 580,
-    "source_sha": "167d178c5ef5",
+    "source_sha": "cece85d19b51",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "base.2": {
     "size": [
@@ -25,9 +25,9 @@
       "base"
     ],
     "tris": 561,
-    "source_sha": "d3ef2e5cdfe9",
+    "source_sha": "3662107df05a",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "base.3": {
     "size": [
@@ -40,9 +40,9 @@
       "base"
     ],
     "tris": 549,
-    "source_sha": "4e80d7c2773d",
+    "source_sha": "124680ae6ea4",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "cannon": {
     "size": [
@@ -57,9 +57,9 @@
       "plate"
     ],
     "tris": 1106,
-    "source_sha": "280bf091b723",
+    "source_sha": "ac3cf2eb4507",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "cannon.3": {
     "size": [
@@ -74,9 +74,9 @@
       "plate"
     ],
     "tris": 982,
-    "source_sha": "74e9fa3f12d8",
+    "source_sha": "e1c1610b90be",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "cannon22a": {
     "size": [
@@ -91,9 +91,9 @@
       "plate"
     ],
     "tris": 1470,
-    "source_sha": "e53d854294ce",
+    "source_sha": "fa902375cb94",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "cannon22b": {
     "size": [
@@ -108,9 +108,9 @@
       "plate"
     ],
     "tris": 1107,
-    "source_sha": "30f2957b15c6",
+    "source_sha": "329283bf1b70",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "cannon33a": {
     "size": [
@@ -125,9 +125,9 @@
       "plate"
     ],
     "tris": 2961,
-    "source_sha": "265bbe0d47b4",
+    "source_sha": "ca23f3a3df25",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle": {
     "size": [
@@ -140,9 +140,9 @@
       "castle"
     ],
     "tris": 3121,
-    "source_sha": "1a4ab937604e",
+    "source_sha": "9c81daaaa9b5",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle.3": {
     "size": [
@@ -155,9 +155,9 @@
       "castle"
     ],
     "tris": 3064,
-    "source_sha": "a4fc44635a56",
+    "source_sha": "3c0682e7d99e",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle.6": {
     "size": [
@@ -170,9 +170,9 @@
       "castle"
     ],
     "tris": 3246,
-    "source_sha": "18f031021eb4",
+    "source_sha": "7a5abd61db3f",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d1": {
     "size": [
@@ -185,9 +185,9 @@
       "castle_d1"
     ],
     "tris": 3274,
-    "source_sha": "b882a41f1fd5",
+    "source_sha": "55c01bcff895",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d1.3": {
     "size": [
@@ -200,9 +200,9 @@
       "castle_d1.3"
     ],
     "tris": 3107,
-    "source_sha": "b9f7bc7637d1",
+    "source_sha": "0646ccfe2f01",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d1.6": {
     "size": [
@@ -215,9 +215,9 @@
       "castle_d1.6"
     ],
     "tris": 3078,
-    "source_sha": "551a11d5435e",
+    "source_sha": "45b2e8e45312",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d2": {
     "size": [
@@ -230,9 +230,9 @@
       "castle_d2"
     ],
     "tris": 2726,
-    "source_sha": "db3f9019fbe0",
+    "source_sha": "d34e705b6d83",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d2.3": {
     "size": [
@@ -245,9 +245,9 @@
       "castle_d2.3"
     ],
     "tris": 2965,
-    "source_sha": "261d5b09b52b",
+    "source_sha": "226875f0d97c",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d2.6": {
     "size": [
@@ -260,9 +260,9 @@
       "castle_d2.6"
     ],
     "tris": 2839,
-    "source_sha": "ecdfaa6ab2be",
+    "source_sha": "6b72cd0baf00",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d3": {
     "size": [
@@ -275,9 +275,9 @@
       "castle_d3"
     ],
     "tris": 2957,
-    "source_sha": "51eb747e7e09",
+    "source_sha": "acbdc5f47528",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d3.3": {
     "size": [
@@ -290,9 +290,9 @@
       "castle_d3.3"
     ],
     "tris": 3052,
-    "source_sha": "5a5596a5b842",
+    "source_sha": "9153eb3d45a4",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d3.6": {
     "size": [
@@ -305,9 +305,9 @@
       "castle_d3.6"
     ],
     "tris": 2912,
-    "source_sha": "00047cd584c2",
+    "source_sha": "62a3e9c5af21",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d4": {
     "size": [
@@ -320,9 +320,9 @@
       "castle_d4"
     ],
     "tris": 3105,
-    "source_sha": "e035c892db9e",
+    "source_sha": "c5688e7487e1",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d4.3": {
     "size": [
@@ -335,9 +335,9 @@
       "castle_d4.3"
     ],
     "tris": 2031,
-    "source_sha": "881bbd9fae34",
+    "source_sha": "b489feb8c05e",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "castle_d4.6": {
     "size": [
@@ -350,9 +350,9 @@
       "castle_d4.6"
     ],
     "tris": 2624,
-    "source_sha": "c99cfa22aee7",
+    "source_sha": "4e3d5bda2307",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "cluster_bomb": {
     "size": [
@@ -365,9 +365,9 @@
       "cluster_bomb"
     ],
     "tris": 96,
-    "source_sha": "ae8fbee8fd6f",
+    "source_sha": "74ff9f2ccf4a",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "cluster_shard": {
     "size": [
@@ -380,9 +380,9 @@
       "cluster_shard"
     ],
     "tris": 16,
-    "source_sha": "da6652c0215e",
+    "source_sha": "999dbc184b2e",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "flag": {
     "size": [
@@ -398,7 +398,7 @@
     "tris": 96,
     "source_sha": "cef012e3f0f5",
     "approved_by": "the flag round (I115)",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "flak22": {
     "size": [
@@ -413,9 +413,9 @@
       "plate"
     ],
     "tris": 1003,
-    "source_sha": "2b291d1a0c64",
+    "source_sha": "3e95645d7910",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "heavy_shell": {
     "size": [
@@ -428,9 +428,9 @@
       "heavy_shell"
     ],
     "tris": 384,
-    "source_sha": "9c8daf76636d",
+    "source_sha": "8745d5945d29",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_boulder": {
     "size": [
@@ -443,9 +443,9 @@
       "nature_boulder"
     ],
     "tris": 80,
-    "source_sha": "f8557ff31c46",
+    "source_sha": "754b009034bf",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_boulder.2": {
     "size": [
@@ -458,9 +458,9 @@
       "nature_boulder.2"
     ],
     "tris": 80,
-    "source_sha": "80d4772dcac7",
+    "source_sha": "d33554d6bbd9",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_boulder.3": {
     "size": [
@@ -473,9 +473,9 @@
       "nature_boulder.3"
     ],
     "tris": 80,
-    "source_sha": "66717678e5ab",
+    "source_sha": "cf9bf46af8d0",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_bush": {
     "size": [
@@ -490,7 +490,7 @@
     "tris": 80,
     "source_sha": "a455f2b975a9",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_bush.2": {
     "size": [
@@ -505,7 +505,7 @@
     "tris": 80,
     "source_sha": "9a872cddbd3a",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_bush.3": {
     "size": [
@@ -520,7 +520,7 @@
     "tris": 80,
     "source_sha": "75f0482e0288",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_leaf_tree": {
     "size": [
@@ -535,7 +535,7 @@
     "tris": 118,
     "source_sha": "352e1d52e4e0",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_leaf_tree.2": {
     "size": [
@@ -550,7 +550,7 @@
     "tris": 118,
     "source_sha": "d1d0338ec645",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "nature_leaf_tree.3": {
     "size": [
@@ -565,7 +565,7 @@
     "tris": 118,
     "source_sha": "fad155372922",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "shell": {
     "size": [
@@ -578,9 +578,9 @@
       "shell"
     ],
     "tris": 288,
-    "source_sha": "30b3495d4104",
+    "source_sha": "c06943ace9eb",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "ship": {
     "size": [
@@ -594,9 +594,9 @@
       "ship_cannon"
     ],
     "tris": 1408,
-    "source_sha": "d935c616486f",
+    "source_sha": "05a645d65ff7",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply": {
     "size": [
@@ -609,9 +609,9 @@
       "supply"
     ],
     "tris": 544,
-    "source_sha": "5cd61840bb0f",
+    "source_sha": "bb68ed207145",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply.2": {
     "size": [
@@ -624,9 +624,9 @@
       "supply"
     ],
     "tris": 268,
-    "source_sha": "e11afbb4a7f9",
+    "source_sha": "91f3b9416694",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply.3": {
     "size": [
@@ -639,9 +639,9 @@
       "supply"
     ],
     "tris": 513,
-    "source_sha": "bd88f794b828",
+    "source_sha": "bf3b5843dcc8",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply.4": {
     "size": [
@@ -654,9 +654,9 @@
       "supply"
     ],
     "tris": 547,
-    "source_sha": "527061379477",
+    "source_sha": "ad1f5168a1fd",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply22": {
     "size": [
@@ -669,9 +669,9 @@
       "supply22"
     ],
     "tris": 448,
-    "source_sha": "4925741c2b80",
+    "source_sha": "90bd10bb977e",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply22.2": {
     "size": [
@@ -684,9 +684,9 @@
       "supply22"
     ],
     "tris": 487,
-    "source_sha": "20e0ad5ccc65",
+    "source_sha": "a5bf01ad4775",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply22.3": {
     "size": [
@@ -699,9 +699,9 @@
       "supply22"
     ],
     "tris": 451,
-    "source_sha": "eecca06a5547",
+    "source_sha": "37213bf730db",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply33": {
     "size": [
@@ -714,9 +714,9 @@
       "supply33"
     ],
     "tris": 467,
-    "source_sha": "c87c660c28e2",
+    "source_sha": "0ae1ca33bc32",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply33.2": {
     "size": [
@@ -729,9 +729,9 @@
       "supply33"
     ],
     "tris": 487,
-    "source_sha": "30e23b6876ea",
+    "source_sha": "de6ddd5cabc8",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "supply33.3": {
     "size": [
@@ -744,9 +744,9 @@
       "supply33"
     ],
     "tris": 385,
-    "source_sha": "e17f2681a7b6",
+    "source_sha": "9f023402d89c",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "terrain_crate": {
     "size": [
@@ -759,9 +759,9 @@
       "terrain_crate"
     ],
     "tris": 232,
-    "source_sha": "acb9287f48c5",
+    "source_sha": "74ee9e1a934e",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "terrain_crate.2": {
     "size": [
@@ -774,9 +774,9 @@
       "terrain_crate.2"
     ],
     "tris": 192,
-    "source_sha": "ad4fb5069db0",
+    "source_sha": "eaf246699c33",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "terrain_crate.3": {
     "size": [
@@ -789,9 +789,9 @@
       "terrain_crate.3"
     ],
     "tris": 502,
-    "source_sha": "2594b3dd9671",
+    "source_sha": "e5bc42ddc02d",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "terrain_stone": {
     "size": [
@@ -804,9 +804,9 @@
       "terrain_stone"
     ],
     "tris": 44,
-    "source_sha": "729ea9323b09",
+    "source_sha": "4bf6c668c497",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "terrain_stone.2": {
     "size": [
@@ -819,9 +819,9 @@
       "terrain_stone.2"
     ],
     "tris": 44,
-    "source_sha": "80afaf723db1",
+    "source_sha": "de48753bdfb7",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "terrain_stone.3": {
     "size": [
@@ -834,9 +834,9 @@
       "terrain_stone.3"
     ],
     "tris": 44,
-    "source_sha": "58464c93cd12",
+    "source_sha": "21e3d7da2291",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "tile": {
     "size": [
@@ -851,7 +851,7 @@
     "tris": 20,
     "source_sha": "0306ebfa5880",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "tile_dirt_d1": {
     "size": [
@@ -902,7 +902,7 @@
     "tris": 20,
     "source_sha": "8c45522cd054",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "tile_mud_d1": {
     "size": [
@@ -951,9 +951,9 @@
       "upgrade_a"
     ],
     "tris": 572,
-    "source_sha": "a859b963b1c5",
+    "source_sha": "356f3b0f7475",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "upgrade_b": {
     "size": [
@@ -966,9 +966,9 @@
       "upgrade_b"
     ],
     "tris": 485,
-    "source_sha": "df4021649b1d",
+    "source_sha": "071be1597ed4",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall": {
     "size": [
@@ -983,7 +983,7 @@
     "tris": 308,
     "source_sha": "ffce0ff7bbee",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_bridge": {
     "size": [
@@ -996,9 +996,9 @@
       "wall"
     ],
     "tris": 518,
-    "source_sha": "5642ea627d28",
+    "source_sha": "40a1f9d2d50d",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_corbel": {
     "size": [
@@ -1011,9 +1011,9 @@
       "wall"
     ],
     "tris": 508,
-    "source_sha": "bff26d377995",
+    "source_sha": "1eaeb6200608",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_corbel_upper": {
     "size": [
@@ -1026,9 +1026,9 @@
       "wall"
     ],
     "tris": 508,
-    "source_sha": "91e2414ed555",
+    "source_sha": "570b8281427c",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_course": {
     "size": [
@@ -1043,7 +1043,7 @@
     "tris": 612,
     "source_sha": "3c4e866c30ab",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_course_upper": {
     "size": [
@@ -1058,7 +1058,7 @@
     "tris": 612,
     "source_sha": "9abd7131de62",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_cross_base": {
     "size": [
@@ -1073,7 +1073,7 @@
     "tris": 200,
     "source_sha": "8b29c2006f45",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_cross_upper": {
     "size": [
@@ -1088,7 +1088,7 @@
     "tris": 200,
     "source_sha": "556f5bb1fbdf",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_curve_base": {
     "size": [
@@ -1103,7 +1103,7 @@
     "tris": 108,
     "source_sha": "0f80aaaf874d",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_curve_upper": {
     "size": [
@@ -1118,7 +1118,7 @@
     "tris": 112,
     "source_sha": "50be9c92bfbd",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_line_base": {
     "size": [
@@ -1133,7 +1133,7 @@
     "tris": 124,
     "source_sha": "9a369284e1e2",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_line_upper": {
     "size": [
@@ -1148,7 +1148,7 @@
     "tris": 124,
     "source_sha": "24ad0cdcd4e9",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_pilaster": {
     "size": [
@@ -1161,9 +1161,9 @@
       "wall"
     ],
     "tris": 606,
-    "source_sha": "0b6b7eb0ad27",
+    "source_sha": "e64a178555a9",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_pilaster_upper": {
     "size": [
@@ -1176,9 +1176,9 @@
       "wall"
     ],
     "tris": 606,
-    "source_sha": "c75233fc5de5",
+    "source_sha": "5273d9baecf2",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_tri_base": {
     "size": [
@@ -1193,7 +1193,7 @@
     "tris": 136,
     "source_sha": "cfaf55306b22",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_tri_upper": {
     "size": [
@@ -1208,7 +1208,7 @@
     "tris": 136,
     "source_sha": "3e2033d249d1",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   },
   "wall_upper": {
     "size": [
@@ -1223,6 +1223,6 @@
     "tris": 308,
     "source_sha": "236e15509929",
     "approved_by": "Sebastian",
-    "synced": "2026-10-23T20:10:07+02:00"
+    "synced": "2026-10-23T21:54:01+02:00"
   }
 }

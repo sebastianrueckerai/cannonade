@@ -323,6 +323,7 @@ func take_damage(damage: float, from := Vector3.INF, tile = null) -> void:
 		_debris(tile, columns[tile], from)
 		if columns[tile] == 0:
 			_free_tile(tile, hit)
+			break   # the freed tile is gone from columns; the loop condition must not read it again
 	if fell:
 		drape()
 	Sound.play("crumble" if fell else "hit_wall")

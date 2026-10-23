@@ -2,7 +2,8 @@ extends Node
 ## The castle looks (C20): every healthy look on disk owns its four damage states and its d3
 ## rubble, and every placed castle keeps the look it was dealt through its whole damage chain,
 ## the ruin included. The flag (I115) flies over every state, re-docked a little lower each hit, in
-## the owner colour until the fall takes it down; a randomly placed castle faces a random quarter.
+## the owner colour until the fall takes it down; a randomly placed castle faces a random quarter. The shipped castle model carries the sharp
+## pass's creases, the organic trees and bushes stay smooth.
 ##   godot --headless --fixed-fps 30 res://tests/castle_test.tscn
 
 const Main = preload("res://scripts/Main.gd")
@@ -102,3 +103,48 @@ func _run() -> void:
 	check(victim.go.get_node_or_null("Flag") != null, "the fall keeps the flag up while the castle breaks (I115)")
 	await get_tree().create_timer(1.6).timeout
 	check(victim.go.get_node_or_null("Flag") == null, "the flag goes down with the crumbled castle (I115)")
+	# the sharp pass (kit.py sharpen): creases where the surface bends over 35 deg, the
+	# organic trees and bushes exempt
+	_check_creases()
+
+
+## The sharp pass of kit.py (Sebastian, 2026-10-23): everything smooth shaded, edges over
+## 35 deg creased, the organic trees and bushes exempt. Read on the shipped glbs as model
+## positions whose vertex normals split 30 deg or more.
+func _check_creases() -> void:
+	var creases := _splits("castle")
+	check(creases >= 800,
+			"the castle ships creased at its hard bends, not blob-smooth: %d split positions" % creases)
+	check(_splits("nature_leaf_tree") == 0 and _splits("nature_bush") == 0,
+			"the organic trees and bushes stay fully smooth")
+
+
+## Positions of shipped model `id` whose vertex normals split 30 degrees or more: the hard
+## edges of the shipped shading. A fully smooth model has none; its UV seams copy one normal.
+func _splits(id: String) -> int:
+	var normals := {}
+	var inst := Art.instance(id, true)
+	for mi in U.meshes(inst):
+		var mesh: ArrayMesh = mi.mesh
+		for s in mesh.get_surface_count():
+			var arrays: Array = mesh.surface_get_arrays(s)
+			var vs: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			var ns: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+			for i in vs.size():
+				if not normals.has(vs[i]):
+					normals[vs[i]] = []
+				normals[vs[i]].append(ns[i])
+	inst.free()   # unparented instances leak into the runner's ERROR-at-exit gate
+	var hard := 0
+	for group in normals.values():
+		var split := false
+		for a in group.size():
+			for b in range(a + 1, group.size()):
+				if (group[a] as Vector3).dot(group[b]) as float < cos(deg_to_rad(30.0)):
+					split = true
+					break
+			if split:
+				break
+		if split:
+			hard += 1
+	return hard
