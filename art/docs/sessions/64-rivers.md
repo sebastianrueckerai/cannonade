@@ -112,3 +112,19 @@ terrain then seats around it, as before.
   terrain never seats on river ground (`_terrain_fits` through `is_free`), and a river tile
   counts as no terrain for `_backed`, so no shoulder hangs over the water. The river itself
   is unchanged by the merge: castles and map shape feed its carve, terrain seats around it.
+- The merge broke two weapons checks ("the effects clean themselves up", "the splash cleans
+  itself up") - not an FX leak. The flat arc (J6, from master) lands the ground-scar
+  section's shell in 0.37 s where the steep arc took longer than an FX root's 2.6 s life,
+  so the fx section now fires while the scar section's muzzle and plume roots are still
+  playing. Its own muzzle/plume then rename (`@Node3D@N`, sibling name collision) and
+  `_fx_at("impact")` returns the stale scar plume: the plume check passes vacuously and the
+  3.0 s cleanup wait ends 0.08 s before the real plume (born 0.6 s later, rivers moved the
+  open_patch picks) dies at 2.6 s. An FXBORN/FXDIE instrumented run proved every root dies
+  exactly on its timer. Fix in the test: drain `_fx_count()` to zero (capped at 15 s like
+  every other wait) before the fx section fires, so its checks measure only its own roots.
+  Watched red with `_root` life forced to 1e6: both cleanup checks fail, and the smoke check
+  fails too - immortal roots from the first sections still stand, so its `_fx_at` lookup
+  matches a stale one. The cap matters: the first red attempt drained unbounded, and a
+  SceneTreeTimer counts engine seconds - under `--fixed-fps` headless the engine races far
+  ahead of `U.time`, so the drain spun a million game-seconds, ran the round clock out and
+  the round-end teardown destroyed the board under the test.

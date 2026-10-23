@@ -331,6 +331,13 @@ func _run() -> void:
 	water.damage_building_place(10.0)
 	check(not U.alive(ship_go) and not game.fleet.ships.has(ship), "a ship sinks when its health is used up")
 
+	# the flat arc lands the last section's shell while its effects still play
+	# (J6): wait them out, or _fx_at picks up the stale plume and the cleanup
+	# checks pass on the wrong root
+	var drain_end: float = U.time + 15.0
+	while U.time < drain_end and _fx_count() > 0:
+		await get_tree().process_frame
+
 	# fire and impact effects: firing pops a muzzle effect at the barrel, the
 	# landing raises a plume on bare ground and a splash on water, both clean
 	# themselves up (I74)
