@@ -23,7 +23,7 @@ Values between the health steps change nothing. 41 to 59 play as 40, and 61 to 7
 
 ## Lab
 
-The scenario [heavy_vs_cannons](/home/womb/repos/grid-cannons/data/scenarios/heavy_vs_cannons.tres) rings both castles as [mirror_forts](/home/womb/repos/grid-cannons/data/scenarios/mirror_forts.tres) does. Blue holds four cannons, spread out so they do not fuse. Red holds one heavy cannon. Every seed plays twice, the second time with the layouts swapped. The AI acts every 0.5 s (D76).
+The scenario [heavy_vs_cannons](/home/womb/repos/cannonade/data/scenarios/heavy_vs_cannons.tres) rings both castles as [mirror_forts](/home/womb/repos/cannonade/data/scenarios/mirror_forts.tres) does. Blue holds four cannons, spread out so they do not fuse. Red holds one heavy cannon. Every seed plays twice, the second time with the layouts swapped. The AI acts every 0.5 s (D76).
 
 In the gun duel, the AI shoots guns first, then castles (`--targets=auto,auto`, 10 seeds). This table shows who wins the duel at each damage.
 
@@ -57,14 +57,14 @@ The heavy stays weak against walls. The cannons open four wall tiles in the time
 ## What shipped
 
 - [heavy_shell](../../game/assets/3d/heavy_shell/): a pointed iron shell with a driving band, 0.32 m wide and 0.64 m long against the 0.28 m ball, 384 triangles, built by [build.py](../../game/assets/3d/heavy_shell/build.py) with the shell's iron paint. It is synced unapproved and waits on Sebastian's pass (C16).
-- [heavy_shell.tres](/home/womb/repos/grid-cannons/data/projectiles/heavy_shell.tres) and [HeavyShell.tscn](/home/womb/repos/grid-cannons/prefabs/HeavyShell.tscn). The art layer hangs a projectile's model beside the body that the flight pitches, so the ball never turned. The prefab names its body `HeavyShell`, so `Art.attach` moves the model's `heavy_shell` part under the body. The shell now pitches with its arc and rolls about its nose.
-- [cannon22a.tres](/home/womb/repos/grid-cannons/data/buildings/cannon22a.tres): the projectile `heavy_shell`, damage 40.
-- [shoot_battle.gd](/home/womb/repos/grid-cannons/tools/shoot_battle.gd): its forts asked for the parked `base` and upgrade blocks, and without castles the sandbox ended the battle at once. The forts now hold a castle.
+- [heavy_shell.tres](/home/womb/repos/cannonade/data/projectiles/heavy_shell.tres) and [HeavyShell.tscn](/home/womb/repos/cannonade/prefabs/HeavyShell.tscn). The art layer hangs a projectile's model beside the body that the flight pitches, so the ball never turned. The prefab names its body `HeavyShell`, so `Art.attach` moves the model's `heavy_shell` part under the body. The shell now pitches with its arc and rolls about its nose.
+- [cannon22a.tres](/home/womb/repos/cannonade/data/buildings/cannon22a.tres): the projectile `heavy_shell`, damage 40.
+- [shoot_battle.gd](/home/womb/repos/cannonade/tools/shoot_battle.gd): its forts asked for the parked `base` and upgrade blocks, and without castles the sandbox ended the battle at once. The forts now hold a castle.
 - The tutorial, the README and section 4 of [rules-v3-draft.md](../../game/design/rules-v3-draft.md) give the heavy shell's damage.
 
 ## Tests
 
-[tests/weapons.gd](/home/womb/repos/grid-cannons/tests/weapons.gd) fires the fused gun once at a cannon. It checks that the shell's model rides on the flying body, that the nose climbs while the shell rises and dips while it falls, that the nose points along the flight, and that the one shell destroys the cannon. Two breaks ran red. With damage 10, the kill check failed. With the shell on the old `Bullet.tscn` prefab, which leaves the model beside the body, the model check failed and the nose pointed backwards (-1.00). The suite is green, 18 entries.
+[tests/weapons.gd](/home/womb/repos/cannonade/tests/weapons.gd) fires the fused gun once at a cannon. It checks that the shell's model rides on the flying body, that the nose climbs while the shell rises and dips while it falls, that the nose points along the flight, and that the one shell destroys the cannon. Two breaks ran red. With damage 10, the kill check failed. With the shell on the old `Bullet.tscn` prefab, which leaves the model beside the body, the model check failed and the nose pointed backwards (-1.00). The suite is green, 18 entries.
 
 ## Picture
 

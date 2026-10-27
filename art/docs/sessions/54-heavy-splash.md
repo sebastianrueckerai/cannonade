@@ -8,13 +8,13 @@ one) with a impact effect over all 3 fields?"
 - I84 (roadmap): cannon22a's heavy shell hits every tile of the 3x3 round its
   target at 20 a tile, twice the small cannon's 10, the shooter's own side and
   bare ground included. Data only: damage 20 in
-  /home/womb/repos/grid-cannons/data/buildings/cannon22a.tres, splash_range 1 in
-  /home/womb/repos/grid-cannons/data/projectiles/heavy_shell.tres; TileImpactor
+  /home/womb/repos/cannonade/data/buildings/cannon22a.tres, splash_range 1 in
+  /home/womb/repos/cannonade/data/projectiles/heavy_shell.tres; TileImpactor
   already splashes get_surrounding_tiles(splashRange) owner-blind.
 - The landing effect covers the 3x3: FX.impact takes the splash span in metres,
   widens the plume and raises a dirt puff on each hit tile
-  (/home/womb/repos/grid-cannons/scripts/FX.gd,
-  /home/womb/repos/grid-cannons/scripts/components/TileImpactor.gd).
+  (/home/womb/repos/cannonade/scripts/FX.gd,
+  /home/womb/repos/cannonade/scripts/components/TileImpactor.gd).
 - tests/weapons.gd: the fused gun's shell takes 20 off every building of the 3x3
   whatever the owner, kills a 10-health wall, scars bare tiles by 20, leaves the
   tile outside clean.

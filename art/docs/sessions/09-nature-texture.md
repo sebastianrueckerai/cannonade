@@ -14,7 +14,7 @@ Roadmap items: B6 (flat palette or textured, decided on variants of one asset), 
 
 - The bible: D41 and the cover art [marketing_style.png](../../game/art-direction/anchors/marketing_style.png) for the look, [palette.json](../../game/art-direction/palette.json) for leaf, grass and stone, [geometry_rules.yaml](../../game/art-direction/geometry_rules.yaml) for the budgets.
 - The builder: [nature_build.py](../../game/assets/3d/nature_build.py) and its parameter table; [materials.py](../../pipeline/blender/materials.py) for palette materials; the textured view `6_texture.png` and the wire view of the acceptance ladder in [assets-3d.md](../process/assets-3d.md).
-- The game: [tools/screenshot.tscn](/home/womb/repos/grid-cannons/tools/screenshot.tscn) in single mode, `check_art.tscn` after sync, [grid-cannons.md](../grid-cannons.md).
+- The game: [tools/screenshot.tscn](/home/womb/repos/cannonade/tools/screenshot.tscn) in single mode, `check_art.tscn` after sync, [grid-cannons.md](../grid-cannons.md).
 - [blender.md](../blender.md) before any bpy, [providers.md](../providers.md) before any paid call.
 - Standing rules from D48: boards show assets big; every part inspected magnified before the board, because the game must look decent zoomed in.
 

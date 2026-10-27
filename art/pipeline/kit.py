@@ -3,27 +3,36 @@
 # requires-python = ">=3.11"
 # dependencies = ["pyyaml"]
 # ///
-"""One Blender file holds every asset (C22): game/assets/3d/kit.blend, one collection an asset, its
-objects named <asset_id>.<part>, one material a part named for its palette role. Tune meshes and face
-assignments in Blender there, then ship to the game:
+"""One Blender file holds every asset (C22, C24): game/assets/3d/kit.blend. Two roots: `kit` holds what the
+game plays, `parked` (excluded from the view layer) what an asset manifest parks. A plain asset is one
+collection named by its game id; a family with damage stages (the castle) is one group a look with the
+stages nested inside, so a look's healthy model and its ruins sit together:
 
+    kit
+      castle          castle.d0 (castle.glb) ... castle.d4 (castle_d4.glb)
+      castle.3        castle.3.d0 (castle.3.glb) ... castle.3.d4 (castle_d4.3.glb)
+      cannon, cannon.3, cannon22a, ... wall, wall_upper, ... flag
+    parked
+      base, base.2, base.3, cannon.2, ... castle.2 (its stages inside), ...
+
+Objects are named <collection>.<part>, one material a part named for its palette role, `team` the slot the
+game paints per player. Tune meshes and face assignments in Blender there, then ship to the game:
+
+    pipeline/kit.py export [id]...   ship collections to the game: glb + .import + manifest entry, budgets
+                                     re-checked from asset.yaml, the rubble of every shipped crumbling model
+                                     re-cut, a parked asset's files and entry pruned; default: every approved
+                                     asset plus the flag; --force ships unapproved ones too
+    pipeline/kit.py add <id>...      a pipeline step rebuilt an asset: replace its collection from the fresh
+                                     source.blend, placed by its manifest (a castle stage gets its dock
+                                     re-drawn)
     pipeline/kit.py build            the first fold: every asset's source.blend appended in, the flag
-                                     authored, the keepers' castle states docked for it, the materials
-                                     unified by name (a palette role keeps its palette colour)
-    pipeline/kit.py add <id>...      a pipeline step rebuilt an asset: replace its collection from the
-                                     fresh source.blend (a keeper castle state gets its dock re-drawn)
-    pipeline/kit.py export [id]...   ship collections to the game: glb + .import + manifest entry,
-                                     budgets re-checked from asset.yaml, the rubble of every shipped
-                                     crumbling model re-cut; default: every approved asset plus the
-                                     flag; --force ships unapproved ones too
+                                     authored, the castle stages docked, the materials unified by name (a
+                                     palette role keeps its palette colour)
+    pipeline/kit.py sharpen          the sharp pass on the tuned kit: every collection except the organic
+                                     trees and bushes goes smooth shaded with edges over 35 deg marked sharp
+                                     (build and add run it on what they fold)
 
-    pipeline/kit.py sharpen          the sharp pass on the tuned kit: every collection except the
-                                     organic trees and bushes goes smooth shaded with edges over
-                                     35 deg marked sharp (build and add run it on what they fold)
-
-The game repo comes from game_repo in game/art-direction/gameplay_contract.yaml, GAME_REPO overrides
-it. Replaces godot_sync.py: after the fold kit.blend is the one source, the pipeline steps end at
-`kit.py add`."""
+The game repo comes from game_repo in game/art-direction/gameplay_contract.yaml, GAME_REPO overrides it."""
 import datetime as dt
 import hashlib
 import json
@@ -45,9 +54,9 @@ CONTRACT = yaml.safe_load((ROOT / "game" / "art-direction" / "gameplay_contract.
 GAME = Path(os.environ.get("GAME_REPO") or CONTRACT["game_repo"])
 ART = GAME / "assets" / "art"
 BLENDER = shutil.which("blender") or str(Path.home() / "Applications/blender-5.2.2-linux-x64/blender")
-KEEPERS = ("", ".3", ".6")   # the castle looks in the game (D93)
-DOCK_STATES = ("castle", "castle_d1", "castle_d2", "castle_d3")
-ORGANIC = ("nature_leaf_tree", "nature_bush")   # collections the sharp pass leaves untouched
+ORGANIC = ["nature_leaf_tree", "nature_bush"]   # collections the sharp pass leaves untouched
+# a game id: family, damage stage, look - castle_d1.3 is stage 1 of look 3 of the castle
+ID_RE = re.compile(r"^(?P<fam>[a-z0-9_]+?)(?:_d(?P<n>\d))?(?P<look>\.\d+)?$")
 
 IMPORT = """[remap]
 
@@ -60,37 +69,110 @@ type="PackedScene"
 gltf/embedded_image_handling=3
 """
 
-BUILD = r'''
-import json, re
+
+def manifest(aid: str) -> dict:
+    p = A3 / aid / "manifest.json"
+    return json.loads(p.read_text()) if p.is_file() else {}
+
+
+def place(aid: str) -> list:
+    """[collection, group or None, root] of a game id in the kit: a staged family nests <look>.d<n> inside
+    the look's group, a parked asset goes under the parked root."""
+    m = ID_RE.match(aid)
+    fam, n, look = m["fam"], m["n"], m["look"] or ""
+    root = "parked" if manifest(aid).get("parked") else "kit"
+    if n is None and not (A3 / (fam + "_d1")).is_dir():
+        return [aid, None, root]
+    return [f"{fam}{look}.d{n or 0}", fam + look, root]
+
+
+# Every Blender script starts with this: the parameters come as a JSON file after `--`, so the scripts hold
+# no `%` placeholders.
+COMMON = r'''
+import json, re, sys
 from pathlib import Path
 import bmesh, bpy
 from mathutils import Vector
-from mathutils.bvhtree import BVHTree
 
-A3 = Path(%r)
-KIT_PATH = %r
-KEEPERS = %r
-DOCK_STATES = %r
+P = json.loads(Path(sys.argv[-1]).read_text())
 INF = float("inf")
+COL_RE = re.compile(r"^(?P<fam>[a-z0-9_]+?)(?P<look>\.\d+)?(?:\.d(?P<n>\d))?$")
 
-bpy.ops.wm.read_homefile(use_empty=True)
-kit = bpy.data.collections.new("kit")
-bpy.context.scene.collection.children.link(kit)
+
+def id_of(name):
+    # the collection name back to the game id: castle.3.d1 is castle_d1.3, castle.3.d0 is castle.3
+    m = COL_RE.match(name)
+    fam, look, n = m["fam"], m["look"] or "", m["n"]
+    return fam + look if n in (None, "0") else f"{fam}_d{n}{look}"
+
+
+def assets():
+    # every collection holding objects under the kit and parked roots; a group holds only collections
+    out = []
+    def walk(c):
+        if c.objects:
+            out.append(c)
+        for k in c.children:
+            walk(k)
+    for r in ("kit", "parked"):
+        c = bpy.data.collections.get(r)
+        if c is not None:
+            walk(c)
+    return out
+
+
+def root_col(name):
+    c = bpy.data.collections.get(name)
+    if c is None:
+        c = bpy.data.collections.new(name)
+        bpy.context.scene.collection.children.link(c)
+        if name == "parked":
+            bpy.context.view_layer.layer_collection.children[name].exclude = True
+    return c
+
+
+def group_col(parent, name):
+    # the look's group; a group that moved roots (a parked flip) is re-hung under the new parent
+    g = bpy.data.collections.get(name)
+    if g is None:
+        g = bpy.data.collections.new(name)
+        parent.children.link(g)
+    elif name not in parent.children:
+        for c in bpy.data.collections:
+            if name in c.children:
+                c.children.unlink(g)
+        parent.children.link(g)
+    return g
+
+'''
+
+BUILD = COMMON + r'''
+A3 = Path(P["a3"])
+PLACE = P["place"]   # game id: [collection, group, root]
+ADD = P["add"]       # ids to re-fold into the existing kit, or None for the first fold
 
 
 def fold(aid):
-    # every object of the asset's source.blend, its name prefixed with the asset id: the kit file's
-    # object names are unique, the prefix goes away again at export so the game sees the pipeline's
-    col = bpy.data.collections.new(aid)
-    kit.children.link(col)
+    # every mesh and empty of the asset's source.blend, named <collection>.<part>: the kit's object names
+    # are unique, the prefix goes away at export so the game sees the pipeline's part names. A part named
+    # for its asset (castle_d1.3) is the family's body (castle). A source's render sun is not a part.
+    col_name, group, root = PLACE[aid]
+    parent = root_col(root)
+    if group:
+        parent = group_col(parent, group)
+    col = bpy.data.collections.new(col_name)
+    parent.children.link(col)
+    fam = COL_RE.match(col_name)["fam"]
     with bpy.data.libraries.load(str(A3 / aid / "source.blend"), link=False) as (df, dt):
         dt.objects = df.objects
     n = 0
     for ob in dt.objects:
-        if ob is None:
+        if ob is None or ob.type not in ("MESH", "EMPTY"):
             continue
         col.objects.link(ob)
-        ob.name = f"{aid}.{ob.name}"
+        ob.name = f"{col_name}.{fam if ob.name == aid else ob.name}"
+        if ob.type == "MESH":
+            ob.data.name = ob.name
         n += 1
     return n
 
@@ -143,7 +225,7 @@ def make_flag():
     # slot the game repaints per player. UV.x runs 0 at the pole to 1 at the fly end
     pal, lin = palette()
     col = bpy.data.collections.new("flag")
-    kit.children.link(col)
+    root_col("kit").children.link(col)
     team = bpy.data.materials.get("team") or bpy.data.materials.new("team")
     if team.node_tree is None:
         team.use_nodes = True
@@ -180,6 +262,7 @@ def make_flag():
 
 
 def surface_z(obs, x, y):
+    from mathutils.bvhtree import BVHTree
     best = -INF
     for o in obs:
         bm = bmesh.new()
@@ -193,13 +276,13 @@ def surface_z(obs, x, y):
     return best
 
 
-def docks(states=None):
-    # a flag_dock empty on every keeper castle state: x/y the centroid of the severe ruin's top
-    # vertices (the surviving keep), z each state's own surface, so the flag rides lower every hit
+def docks(only=None):
+    # a flag_dock empty on stages d0 to d3 of every castle look: x/y the centroid of the severe ruin's
+    # top vertices (the surviving keep), z each stage's own surface, so the flag rides lower every hit
     made = 0
-    for look in KEEPERS:
-        d3 = bpy.data.collections.get("castle_d3" + look)
-        if d3 is None:
+    for d3 in assets():
+        m = COL_RE.match(d3.name)
+        if m["fam"] != "castle" or m["n"] != "3":
             continue
         tops = [(o.matrix_world @ v.co).copy() for o in d3.objects if o.type == "MESH" for v in o.data.vertices]
         if not tops:
@@ -209,12 +292,13 @@ def docks(states=None):
         near = [v for v in tops if v.z >= hi - 0.08 * (hi - lo)]
         x = sum(v.x for v in near) / len(near)
         y = sum(v.y for v in near) / len(near)
-        for st in DOCK_STATES if states is None else states:
-            col = bpy.data.collections.get(st + look)
-            if col is None or any(o.name.endswith(".flag_dock") for o in col.objects):
+        for n in range(4):
+            name = f"castle{m['look'] or ''}.d{n}"
+            col = bpy.data.collections.get(name)
+            if col is None or only is not None and name not in only or any(o.name.endswith(".flag_dock") for o in col.objects):
                 continue
             z = surface_z([o for o in col.objects if o.type == "MESH"], x, y)
-            e = bpy.data.objects.new(f"{st + look}.flag_dock", None)
+            e = bpy.data.objects.new(f"{name}.flag_dock", None)
             e.empty_display_type = "PLAIN_AXES"
             e.location = (x, y, z + 0.01)
             col.objects.link(e)
@@ -222,21 +306,19 @@ def docks(states=None):
     return made
 
 
-if %r:  # build: fold every asset; add: just the given ones into the existing kit
-    ids = [d.name for d in sorted(A3.iterdir()) if (d / "source.blend").is_file()]
-    counts = {aid: fold(aid) for aid in ids}
+if ADD is None:
+    bpy.ops.wm.read_homefile(use_empty=True)
+    counts = {aid: fold(aid) for aid in PLACE}
     merged = unify()
     make_flag()
     docked = docks()
-    bpy.data.orphans_purge(do_recursive=True)
-    bpy.ops.wm.save_as_mainfile(filepath=str(KIT_PATH), compress=True)
-    print("KIT_BUILD " + json.dumps({"assets": len(ids), "objects": sum(counts.values()), "merged": merged, "docks": docked}))
+    out = {"assets": len(PLACE), "objects": sum(counts.values()), "merged": merged, "docks": docked}
 else:
-    bpy.ops.wm.read_homefile(filepath=str(KIT_PATH))
-    kit = bpy.data.collections.get("kit")
-    states = []
-    for aid in %r:
-        col = bpy.data.collections.get(aid)
+    bpy.ops.wm.read_homefile(filepath=P["kit"])
+    folded = []
+    for aid in ADD:
+        col_name = "flag" if aid == "flag" else PLACE[aid][0]
+        col = bpy.data.collections.get(col_name)
         if col is not None:
             for ob in list(col.objects):
                 bpy.data.objects.remove(ob, do_unlink=True)
@@ -245,35 +327,30 @@ else:
             make_flag()   # the flag is authored in the kit, it has no source.blend
         else:
             fold(aid)
-        if re.match(r"castle(_d[0-3])?(\.[236])?$", aid):
-            states.append(aid)
+            folded.append(col_name)
     merged = unify()
-    docked = docks(states) if states else 0
-    bpy.data.orphans_purge(do_recursive=True)
-    bpy.ops.wm.save_as_mainfile(filepath=str(KIT_PATH), compress=True)
-    print("KIT_BUILD " + json.dumps({"assets": len(%r), "merged": merged, "docks": docked}))
+    docked = docks(folded)
+    out = {"assets": len(ADD), "merged": merged, "docks": docked}
+bpy.data.orphans_purge(do_recursive=True)
+bpy.ops.wm.save_as_mainfile(filepath=P["kit"], compress=True)
+print("KIT_BUILD " + json.dumps(out))
 
 '''
 
-EXPORT = r'''
-import json
-from pathlib import Path
-import bpy
-from mathutils import Vector
-
-KIT_PATH = Path(%r)
-OUT = Path(%r)
-PLAN = json.loads(%r)
-INF = float("inf")
+EXPORT = COMMON + r'''
+KIT_PATH = Path(P["kit"])
+OUT = Path(P["out"])
+PLAN = P["plan"]   # game id: {col, max_tris, max_materials, approved_by}
 res = {}
 for aid, meta in PLAN.items():
     bpy.ops.wm.read_homefile(use_empty=True)
+    col_name = meta["col"]
     try:
-        bpy.ops.wm.append(directory=str(KIT_PATH / "Collection"), filename=aid, link=False)
+        bpy.ops.wm.append(directory=str(KIT_PATH / "Collection"), filename=col_name, link=False)
     except RuntimeError as e:
         res[aid] = {"error": str(e)[:200]}
         continue
-    col = bpy.data.collections.get(aid)
+    col = bpy.data.collections.get(col_name)
     obs = []
     def walk(o):
         if o not in obs:
@@ -282,9 +359,9 @@ for aid, meta in PLAN.items():
                 walk(c)
     for o in list(col.objects):
         walk(o)
-    for o in obs:  # the kit's asset prefix goes away: the game sees the pipeline's part names
-        if o.name.startswith(aid + "."):
-            o.name = o.name[len(aid) + 1:]
+    for o in obs:  # the kit's collection prefix goes away: the game sees the pipeline's part names
+        if o.name.startswith(col_name + "."):
+            o.name = o.name[len(col_name) + 1:]
     meshes = [o for o in obs if o.type == "MESH"]
     lo, hi = Vector((INF,) * 3), Vector((-INF,) * 3)
     for o in meshes:  # the game sizes the imported AABB, which rotates each part's local box:
@@ -325,21 +402,17 @@ print("KIT_EXPORT " + json.dumps(res))
 
 '''
 
-SHARPEN = r'''
-import json
+SHARPEN = COMMON + r'''
 from math import radians
-import bmesh, bpy
 
-KIT_PATH = %r
-IDS = %r   # None: every collection; the add pass sends just its ids
-ORGANIC = %r   # the organics stay untouched
+ONLY = P["only"]   # collection names; None: every collection
+ORGANIC = tuple(P["organic"])   # the organics stay untouched
 LIMIT = radians(35.0)
 
-bpy.ops.wm.read_homefile(filepath=str(KIT_PATH))
-kit = bpy.data.collections.get("kit")
+bpy.ops.wm.read_homefile(filepath=P["kit"])
 res = {"assets": 0, "meshes": 0, "flat": 0, "edges": 0}
-for col in kit.children:
-    if col.name.startswith(ORGANIC) or IDS is not None and col.name not in IDS:
+for col in assets():
+    if col.name.startswith(ORGANIC) or ONLY is not None and col.name not in ONLY:
         continue
     res["assets"] += 1
     for ob in col.objects:
@@ -358,21 +431,25 @@ for col in kit.children:
         bm.to_mesh(ob.data)
         bm.free()
         res["meshes"] += 1
-bpy.ops.wm.save_as_mainfile(filepath=str(KIT_PATH), compress=True)
+bpy.ops.wm.save_as_mainfile(filepath=P["kit"], compress=True)
 print("KIT_SHARPEN " + json.dumps(res))
 
 '''
 
 
-def run_blender(script: str, timeout: int) -> dict:
+def run_blender(script: str, params: dict, timeout: int) -> dict:
     with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
         f.write(script)
         tmp = f.name
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+        json.dump({"kit": str(KIT), **params}, f)
+        tmpj = f.name
     try:
-        p = subprocess.run([BLENDER, "--background", "--python", tmp],
+        p = subprocess.run([BLENDER, "--background", "--python", tmp, "--", tmpj],
                            capture_output=True, text=True, timeout=timeout)
     finally:
         os.unlink(tmp)
+        os.unlink(tmpj)
     for line in p.stdout.splitlines():
         if line.startswith("KIT_"):
             return json.loads(line.partition(" ")[2])
@@ -383,8 +460,9 @@ def run_blender(script: str, timeout: int) -> dict:
 def cmd_build() -> None:
     if KIT.exists():
         sys.exit(f"{KIT.relative_to(ROOT)} exists: rebuild single assets with `kit.py add <id>`")
-    run_blender(BUILD % (str(A3), str(KIT), KEEPERS, DOCK_STATES, True, [], []), 5400)
-    res = run_blender(SHARPEN % (str(KIT), None, ORGANIC), 3600)
+    ids = [d.name for d in sorted(A3.iterdir()) if (d / "source.blend").is_file()]
+    run_blender(BUILD, {"a3": str(A3), "place": {aid: place(aid) for aid in ids}, "add": None}, 5400)
+    res = run_blender(SHARPEN, {"only": None, "organic": ORGANIC}, 3600)
     print(f"folded the sources into {KIT.relative_to(ROOT)}, {res['edges']} edges over 35 deg sharp")
 
 
@@ -392,15 +470,17 @@ def cmd_add(ids: list[str]) -> None:
     for aid in ids:
         if aid != "flag" and not (A3 / aid / "source.blend").is_file():
             sys.exit(f"no source.blend for {aid}")
-    run_blender(BUILD % (str(A3), str(KIT), KEEPERS, DOCK_STATES, False, ids, ids), 3600)
-    res = run_blender(SHARPEN % (str(KIT), tuple(ids), ORGANIC), 3600)   # just the folded ids: hand-cleared marks on the rest survive
-    print(f"replaced {' '.join(ids)} in {KIT.relative_to(ROOT)}, {res['edges']} edges over 35 deg sharp")
+    placed = {aid: place(aid) for aid in ids if aid != "flag"}
+    run_blender(BUILD, {"a3": str(A3), "place": placed, "add": ids}, 3600)
+    cols = [p[0] for p in placed.values()] + (["flag"] if "flag" in ids else [])
+    res = run_blender(SHARPEN, {"only": cols, "organic": ORGANIC}, 3600)   # just the folded ones: hand-cleared marks on the rest survive
+    print(f"replaced {' '.join(cols)} in {KIT.relative_to(ROOT)}, {res['edges']} edges over 35 deg sharp")
 
 
 def cmd_sharpen() -> None:
     if not KIT.exists():
         sys.exit(f"no {KIT.relative_to(ROOT)} to sharpen")
-    res = run_blender(SHARPEN % (str(KIT), None, ORGANIC), 3600)
+    res = run_blender(SHARPEN, {"only": None, "organic": ORGANIC}, 3600)
     print(f"sharpened {res['assets']} assets: {res['edges']} edges over 35 deg sharp, "
           f"{res['flat']} flat faces smoothed")
 
@@ -412,19 +492,22 @@ def budget(aid: str) -> dict:
 
 
 def cmd_export(ids: list[str], force: bool) -> None:
-    plan = {"flag": {"approved_by": "the flag round (I115)"}}
+    plan = {"flag": {"col": "flag", "approved_by": "the flag round (I115)"}}
+    parked = []
     for m in sorted(A3.glob("*/manifest.json")):
         man = json.loads(m.read_text())
+        aid = man["asset_id"]
         if man.get("parked"):
+            parked.append(aid)
             continue
         if not man.get("approved") and not force:
-            print(f"skip {man['asset_id']}: not approved")
+            print(f"skip {aid}: not approved")
             continue
-        plan[man["asset_id"]] = {"approved_by": man.get("approved_by"), **budget(man["asset_id"])}
+        plan[aid] = {"col": place(aid)[0], "approved_by": man.get("approved_by"), **budget(aid)}
     if ids:
         keep = set(ids) | {"flag"}
         plan = {k: v for k, v in plan.items() if k in keep}
-    data = run_blender(EXPORT % (str(KIT), str(ART / "3d"), json.dumps(plan)), 5400)
+    data = run_blender(EXPORT, {"out": str(ART / "3d"), "plan": plan}, 5400)
     mpath = ART / "manifest.json"
     gm = json.loads(mpath.read_text()) if mpath.exists() else {}
     bad = [f"{a}: {r}" for a, r in sorted(data.items()) if "limits" in r or "error" in r]
@@ -441,9 +524,18 @@ def cmd_export(ids: list[str], force: bool) -> None:
                    "approved_by": plan[aid].get("approved_by"),
                    "synced": dt.datetime.now().astimezone().isoformat(timespec="seconds")}
         shipped.append(f"{aid} size {r['size']} tris {r['tris']} mats {r['materials']}")
+    gone = []   # a parked asset leaves the game: its glb, import, rubble and manifest entry
+    for aid in parked:
+        for name in (f"{aid}.glb", f"{aid}.glb.import", f"{aid}_rubble.glb", f"{aid}_rubble.glb.import"):
+            p = ART / "3d" / name
+            if p.exists():
+                p.unlink()
+                gone.append(name)
+        if gm.pop(aid, None) is not None:
+            gone.append(f"{aid} (manifest entry)")
     mpath.write_text(json.dumps(dict(sorted(gm.items())), indent=2) + "\n")
     models = set(re.findall(r'"([^"]+)":\s*\d+', FRACTURE.read_text().partition("MODELS = ")[2].partition("}")[0]))
-    rubbles = sorted(set(gm) & models)
+    rubbles = sorted((set(data) if ids else set(gm)) & models)   # a partial ship recuts only what it shipped
     p = subprocess.run([BLENDER, "--background", "--python", str(FRACTURE)],
                        env={**os.environ, "GAME_REPO": str(GAME), "FRACTURE_MODELS": ",".join(rubbles)},
                        capture_output=True, text=True, timeout=5400)
@@ -452,6 +544,8 @@ def cmd_export(ids: list[str], force: bool) -> None:
         sys.exit("fracture produced no FRACTURE line:\n" + "\n".join(p.stdout.splitlines()[-10:]))
     print("\n".join(shipped))
     print(f"{len(shipped)} shipped to {mpath.relative_to(GAME)}, rubble recut: {', '.join(sorted(json.loads(line[9:])))}")
+    if gone:
+        print(f"parked, pruned from the game: {', '.join(gone)}")
     if bad:
         print("FAILED:\n" + "\n".join(bad))
         sys.exit(1)

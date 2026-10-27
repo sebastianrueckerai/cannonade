@@ -6,12 +6,12 @@ Roadmap: I63.
 
 ## Change
 
-- [AI.gd](/home/womb/repos/grid-cannons/scripts/components/AI.gd) splits I49's one reaction time
+- [AI.gd](/home/womb/repos/cannonade/scripts/components/AI.gd) splits I49's one reaction time
   in two: `secondsBetweenBuilds`, 1.0 s after every build action (a placed piece or gun, a
   stacked block, a dropped piece, a discarded gun), and `secondsBetweenShots`, 0.5 s after every
   shot. The battle keeps its pace; only the build is slower.
 - The idle retry stays 0.15 s: a wait with nothing to do is no action.
-- [rules.md](/home/womb/repos/grid-cannons/art/game/design/rules.md) section 8 names both.
+- [rules.md](/home/womb/repos/cannonade/art/game/design/rules.md) section 8 names both.
 
 ## Tests
 

@@ -6,7 +6,7 @@ border, and neither reads as belonging to the other.
 
 ## Root cause
 
-The parchment panel skin is a 9-slice of [ui/panel.png](/home/womb/repos/grid-cannons/assets/art/ui/panel.png),
+The parchment panel skin is a 9-slice of [ui/panel.png](/home/womb/repos/cannonade/assets/art/ui/panel.png),
 917x512, whose design element is the thin double-line inner frame. Measured on
 the texture, that frame sits 31-36 px from the top edge, 35-41 px from the
 bottom, 33-38 px from the left and 878-883 px from the right — and with slice
@@ -14,7 +14,7 @@ margins of 46 those bands render unscaled in every panel, so the frame always
 occupies those insets regardless of panel size.
 
 The skin's declared content margins in
-[ui/manifest.json](/home/womb/repos/grid-cannons/assets/art/ui/manifest.json) were
+[ui/manifest.json](/home/womb/repos/cannonade/assets/art/ui/manifest.json) were
 (26, 12, 26, 12): the content area starts inside the frame and crosses it. The
 menu panels had the same disease, milder — the frame lines ran behind the
 buttons. On the loading screen it glared: at 412x88 the panel's 9-slice

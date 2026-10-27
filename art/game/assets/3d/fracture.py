@@ -16,7 +16,7 @@ import bmesh
 import bpy
 from mathutils import Matrix, Vector
 
-ROOT = Path(os.environ.get("GAME_REPO", "/home/womb/repos/grid-cannons"))
+ROOT = Path(os.environ.get("GAME_REPO", "/home/womb/repos/cannonade"))
 ## model id: pieces, shared among its parts by bounding-box volume, at least 3 a part
 MODELS = {"wall": 16, "wall_upper": 14, "cannon": 12, "cannon22a": 18, "cannon22b": 18, "flak22": 12, "castle_d3": 36,
           "castle_d3.2": 36, "castle_d3.3": 36, "castle_d3.4": 36, "castle_d3.5": 36, "castle_d3.6": 36,

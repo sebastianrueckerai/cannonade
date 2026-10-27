@@ -8,7 +8,7 @@ Roadmap: I53, I54, I55.
 
 ## Stacking (I53)
 
-**Root cause.** [PlayerController._pick](/home/womb/repos/grid-cannons/scripts/components/PlayerController.gd)
+**Root cause.** [PlayerController._pick](/home/womb/repos/cannonade/scripts/components/PlayerController.gd)
 took the tile under the ground point of the view ray. A wall block stands 1.1 m tall, so a cursor
 on its top met the ground up to half a tile behind it, more when zoomed in. Zoomed in on the
 start ring with a single block in hand, the cursor on a wall's top:
@@ -49,7 +49,7 @@ after the end.
 
 ## Tests
 
-[tests/human.gd](/home/womb/repos/grid-cannons/tests/human.gd), through real wheel, mouse and key events:
+[tests/human.gd](/home/womb/repos/cannonade/tests/human.gd), through real wheel, mouse and key events:
 - Zoomed in, the cursor on the far half of an east wall's walkway picks that wall, shows the
   darkened storey, stacks there and not on the wall behind, and the storey stands where its
   ghost stood.

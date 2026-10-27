@@ -45,16 +45,16 @@ terrain then seats around it, as before.
 
 ## Touch points
 
-- [GameController.gd](/home/womb/repos/grid-cannons/scripts/components/GameController.gd): `_place_rivers`
+- [GameController.gd](/home/womb/repos/cannonade/scripts/components/GameController.gd): `_place_rivers`
   between the castles and the terrain; the terrain's ring guarantee and border reach cross the river.
-- [Map.gd](/home/womb/repos/grid-cannons/scripts/components/Map.gd): a river tile (water, `river`, no
+- [Map.gd](/home/womb/repos/cannonade/scripts/components/Map.gd): a river tile (water, `river`, no
   decorations).
-- [BuildingPlace.gd](/home/womb/repos/grid-cannons/scripts/components/BuildingPlace.gd): `river`, `wall_free`.
-- [StatesMap.gd](/home/womb/repos/grid-cannons/scripts/StatesMap.gd): a bridge leaves its tile open.
-- [PlayerController.gd](/home/womb/repos/grid-cannons/scripts/components/PlayerController.gd): pieces go on
+- [BuildingPlace.gd](/home/womb/repos/cannonade/scripts/components/BuildingPlace.gd): `river`, `wall_free`.
+- [StatesMap.gd](/home/womb/repos/cannonade/scripts/StatesMap.gd): a bridge leaves its tile open.
+- [PlayerController.gd](/home/womb/repos/cannonade/scripts/components/PlayerController.gd): pieces go on
   river tiles; no storey on a bridge.
-- [Wall.gd](/home/womb/repos/grid-cannons/scripts/components/Wall.gd): a block on a river wears `wall_bridge`.
-- [AI.gd](/home/womb/repos/grid-cannons/scripts/components/AI.gd): its terrain route crosses the river; its
+- [Wall.gd](/home/womb/repos/cannonade/scripts/components/Wall.gd): a block on a river wears `wall_bridge`.
+- [AI.gd](/home/womb/repos/cannonade/scripts/components/AI.gd): its terrain route crosses the river; its
   approach already walks straight over (Chebyshev), its rings already stay on land.
 - Art: `wall_bridge`, the plain block with a through arch on both axes, from
   [wall_block.py](../../game/assets/3d/wall_block.py) style `bridge`. Synced unapproved like the terrain boxes,

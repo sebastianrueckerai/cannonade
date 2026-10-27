@@ -33,7 +33,7 @@
 - Alignment gate (round 27 align.py): mount minus plate 0.0 / 0.0 on both new guns.
 - Found for session 13: the Shooter sleeps every gun at -10 degrees. The mortar then lies with its mouth forward like a short cannon. A per-gun rest angle is gameplay code.
 
-## Game side (worktree /home/womb/repos/grid-cannons-s12, branch session12)
+## Game side (worktree /home/womb/repos/cannonade-s12, branch session12)
 
 - supply33.tres: 3x3, 16 supply, no recipe, model prefab Supply22.tscn (the art hides its placeholder).
 - Art.gd: the probe found two faults with the flak. (1) The prefab's `Guns` is a MeshInstance3D placeholder, so attach hid it, and the art guns under it were invisible. (2) After look_at the art pointed 43 degrees above the target, because the anchor kept the prefab's orientation and the part kept its rest pitch relative to it. Fixed: the anchor of an AIMED part (guns) takes the part's rest orientation. A placeholder mesh anchor shows again with its mesh dropped. MOVING parts (barrel, guns) both lift the indicators. Probe after the fix: visible, aim error 0.000004 degrees.

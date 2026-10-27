@@ -71,7 +71,7 @@ They sync unapproved under their own ids into the worktree's art layer for the b
 
 ## The in-game boards
 
-[tools/shoot_battle.gd](/home/womb/repos/grid-cannons/tools/shoot_battle.gd) gains three tool-side
+[tools/shoot_battle.gd](/home/womb/repos/cannonade/tools/shoot_battle.gd) gains three tool-side
 flags: `--wall=idA,idB` swaps each side's wall art, `--team=deck=K,merlons=K,body=K,floor=K` tints
 the named parts toward the owner's team colour by K (the enclosed ground by the ring owner the
 check computes), `--eye=Y,Z` sets the close camera's offset so a low angle can show a wall's faces.
@@ -131,7 +131,7 @@ the picks are open. Findings, in the order the round made them:
 Open for Sebastian: the two looks and the budget (C17), the colour scheme (I51). Flagged: the sandbox
 sides are blue and red, in play the AI is purple; a storey (`wall_upper`) exists only for the shipped
 block until a look is picked; after the pick the preview restore in
-[PlayerController.gd](/home/womb/repos/grid-cannons/scripts/components/PlayerController.gd) must keep
+[PlayerController.gd](/home/womb/repos/cannonade/scripts/components/PlayerController.gd) must keep
 each part's own colour, because `U.get_color` reads one mesh.
 
 ## Second pass: the picks in the game
@@ -147,7 +147,7 @@ Recorded as D78.
 calls, and a long game holds hundreds of blocks (K7). So [wall_block.py](../../game/assets/3d/wall_block.py)
 builds the deck as one plate, cuts it along the region planes and writes a region id into a second UV layer
 per face: the centre square, four corridors, their four caps at the tile edge, the four corner squares, a rim
-frame and the band round the body's top. [materials/wall.gdshader](/home/womb/repos/grid-cannons/materials/wall.gdshader)
+frame and the band round the body's top. [materials/wall.gdshader](/home/womb/repos/cannonade/materials/wall.gdshader)
 multiplies the painted texture by one colour per region, with a `shade` for the placement preview. The deck's
 rows of the texture are painted white (`white_band`), so the colour is the region's own. One material per
 block, one draw call, as before.
@@ -205,7 +205,7 @@ in a game close-up. d3 and d4 carry no team part (D72).
 
 **The looks in the game.** [looks-in-game.jpg](../../game/art-direction/rounds/35-faction-walls/looks-in-game.jpg):
 a four-player game at its start, each player's castle ring close up at the game's angle and from a low angle,
-so the four looks stand side by side with their colours, shot by [tools/screenshot.gd](/home/womb/repos/grid-cannons/tools/screenshot.gd)
+so the four looks stand side by side with their colours, shot by [tools/screenshot.gd](/home/womb/repos/cannonade/tools/screenshot.gd)
 with its new `--castle=N` and `--eye=Y,Z`.
 
 ## Fifth pass: the tops differ

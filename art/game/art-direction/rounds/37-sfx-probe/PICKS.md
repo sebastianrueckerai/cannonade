@@ -30,7 +30,7 @@ Sebastian, 2026-10-20, on the page, the page open in his tabs:
 
 The picks live in [picks.json](picks.json), one list of clip stems per cue, and the page shows them
 ticked. New ticks come back as a pasted list and go into that file. The picks are game assets in [game/assets/audio/](../../assets/audio) and copies in the game's
-[assets/audio/](/home/womb/repos/grid-cannons/assets/audio), made by `audio.py finals`, named after the cue and numbered when it has several: silence cut at
+[assets/audio/](/home/womb/repos/cannonade/assets/audio), made by `audio.py finals`, named after the cue and numbered when it has several: silence cut at
 both ends, the loudest 400 ms at -16 LUFS (UI -22), peaks under -1 dBTP, 44.1 kHz 16-bit WAV, a sidecar
 naming the source clip. Decision D83.
 

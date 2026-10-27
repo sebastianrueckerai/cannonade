@@ -53,6 +53,8 @@ func _run() -> void:
 	var looks := Art.variants("castle")
 	check(looks == ["castle", "castle.3", "castle.6"],
 			"the game ships the three keeper looks, rejected ones parked (C21): %s" % [looks])
+	check(not Art.has_model("base") and Art.variants("base").is_empty(),
+			"the parked base ships no model, the castle is the start building (C24)")
 	for id in looks:
 		var v: int = 1 if id == "castle" else id.get_slice(".", 1).to_int()
 		for n in 4:

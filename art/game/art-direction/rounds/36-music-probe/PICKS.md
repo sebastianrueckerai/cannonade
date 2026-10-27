@@ -13,6 +13,6 @@ Sebastian, 2026-10-20, with the page open in his tabs:
 | chipsail-battle--acestep | "Use these two musics" | `battle`, the battle theme |
 
 The themes are game assets in [game/assets/audio/music/](../../assets/audio/music) and copies in the
-game's [assets/audio/music/](/home/womb/repos/grid-cannons/assets/audio/music): Vorbis, -16 LUFS
+game's [assets/audio/music/](/home/womb/repos/cannonade/assets/audio/music): Vorbis, -16 LUFS
 integrated, peaks under -1 dBTP, the full clip, not yet cut to a loop. Decision D84. The sad, happy and
 menu versions are round [38](../38-theme-versions/index.html).

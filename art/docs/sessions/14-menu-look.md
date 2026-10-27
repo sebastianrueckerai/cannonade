@@ -4,7 +4,7 @@ Roadmap: D7 (new), feeds D2 and D4.
 
 Sebastian, 2026-10-18: "While this is going on I want you to find a cooler version of the designed menu. I mean font, shape and possible texture use. Like maybe a menu that looks like a wooden sign... So I want you to search for references, then make a few prototypes, first go die, then iterate using a critic and then show me the best alternatives."
 
-The web-menu thread owns [Menu.gd](/home/womb/repos/grid-cannons/scripts/Menu.gd), [menu.tscn](/home/womb/repos/grid-cannons/scenes/menu.tscn) and [menu_test.gd](/home/womb/repos/grid-cannons/tests/menu_test.gd) this session. This round touches none of them: candidates go through the [Art.gd](/home/womb/repos/grid-cannons/scripts/Art.gd) drop-in slots in this worktree only.
+The web-menu thread owns [Menu.gd](/home/womb/repos/cannonade/scripts/Menu.gd), [menu.tscn](/home/womb/repos/cannonade/scenes/menu.tscn) and [menu_test.gd](/home/womb/repos/cannonade/tests/menu_test.gd) this session. This round touches none of them: candidates go through the [Art.gd](/home/womb/repos/cannonade/scripts/Art.gd) drop-in slots in this worktree only.
 
 ## Why these deliverables
 
@@ -12,14 +12,14 @@ The web-menu thread owns [Menu.gd](/home/womb/repos/grid-cannons/scripts/Menu.gd
 - Four directions built in the real menu through the Art.gd slots (font.ttf, button.png, panel.png, manifest margins, theme colours) and shot at 1280 by 720 and 390 wide. The review unit is the real screen, because font and texture are details a concept image cannot draw ([assets-2d.md](../process/assets-2d.md)). Feeds D4.
 - Gen 1 dies: a calibration pass that exists to tune prompts and slice margins. Its generated files are deleted, its learnings go into the brief. Sebastian's instruction.
 - Two critics (Gemini through fal, GLM on Z.ai), at most two loops, every legibility claim checked against a crop before it changes a candidate ([providers.md](../docs/providers.md)).
-- Boards plus [PICKS.md](../game/art-direction/rounds/30-menu-look/PICKS.md) with the director's recommendation and runner-up. Sebastian's pick ships to the [ui/ slots](/home/womb/repos/grid-cannons/assets/art/ui/) in a follow-up commit.
+- Boards plus [PICKS.md](../game/art-direction/rounds/30-menu-look/PICKS.md) with the director's recommendation and runner-up. Sebastian's pick ships to the [ui/ slots](/home/womb/repos/cannonade/assets/art/ui/) in a follow-up commit.
 
 ## Plan
 
 1. References: web pass over cozy and period strategy menus, plus the kit's own logo language and [art_bible.md](../game/art-direction/art_bible.md) chapter 5. Notes into the [round brief](../game/art-direction/rounds/30-menu-look/brief.md).
 2. Fonts: four OFL candidates into the round folder (Signika, Alegreya, Metamorphous, IM Fell English), one weight per direction for the round; the pick gets the full family at integration.
 3. Textures: panel and button 9-slice PNGs per direction from the style anchors through [img.py](../pipeline/img.py) gen, prompts carry no text. Hover and pressed states derive in Art.gd until the pick.
-4. Build: each direction's files into [assets/art/ui/](/home/womb/repos/grid-cannons/assets/art/ui/) in this worktree, shoot menu.tscn at both widths with [shoot_ui.tscn](/home/womb/repos/grid-cannons/tools/shoot_ui.tscn) through [godot_render.sh](/home/womb/repos/grid-cannons/tools/godot_render.sh), montage the boards. Gen 1's generated files deleted after its critique.
+4. Build: each direction's files into [assets/art/ui/](/home/womb/repos/cannonade/assets/art/ui/) in this worktree, shoot menu.tscn at both widths with [shoot_ui.tscn](/home/womb/repos/cannonade/tools/shoot_ui.tscn) through [godot_render.sh](/home/womb/repos/cannonade/tools/godot_render.sh), montage the boards. Gen 1's generated files deleted after its critique.
 5. Critics on the boards, claims checked in crops, one fix loop and one compare loop.
 6. Boards presented to Sebastian by number, PICKS.md filled with recommendation and runner-up.
 

@@ -28,25 +28,25 @@ next phase switch ended it. Two things made it look as if the AI gave up:
 
 ## Change
 
-- [AI.gd](/home/womb/repos/grid-cannons/scripts/components/AI.gd): `aquire_targets` is one list,
+- [AI.gd](/home/womb/repos/cannonade/scripts/components/AI.gd): `aquire_targets` is one list,
   best first. In "auto": the enemy's guns (shuffled), the castles the enemy holds, the nearest to
   ruin first, then the enemy's walls, the most walled-in first. Neutral castles are never in it.
   An explicit sandbox mode leads with its own pool and the walls follow. `search_and_fire_at_targets`
   walks the guns in random order and each gun takes the first target in its reach; the first
   loaded one fires, one shot per action as before. A gun still reloading stays aimed at its target.
-- [GameController.gd](/home/womb/repos/grid-cannons/scripts/components/GameController.gd):
+- [GameController.gd](/home/womb/repos/cannonade/scripts/components/GameController.gd):
   `decide()` holds the end rule (fewer than two holders: the last one wins, none a draw). The check
-  calls it as before, and [Castle.gd](/home/womb/repos/grid-cannons/scripts/components/Castle.gd)
+  calls it as before, and [Castle.gd](/home/womb/repos/cannonade/scripts/components/Castle.gd)
   calls it the moment a shell leaves the castle a ruin. The burn at the check does not call it
   early: the claims of the same check come first.
-- [Indicators.gd](/home/womb/repos/grid-cannons/scripts/Indicators.gd): `shows(player)` is the one
+- [Indicators.gd](/home/womb/repos/cannonade/scripts/Indicators.gd): `shows(player)` is the one
   rule for whose aim shows, the arc and the light cube alike.
-  [Shooter.gd](/home/womb/repos/grid-cannons/scripts/components/Shooter.gd) uses it for the arc,
-  [TileImpactor.gd](/home/womb/repos/grid-cannons/scripts/components/TileImpactor.gd) for the light;
+  [Shooter.gd](/home/womb/repos/cannonade/scripts/components/Shooter.gd) uses it for the arc,
+  [TileImpactor.gd](/home/womb/repos/cannonade/scripts/components/TileImpactor.gd) for the light;
   a shell remembers whether it lit its tile and puts out only its own light, so an AI shell
   landing on a tile the human aims at leaves the human's light.
-- [rules.md](/home/womb/repos/grid-cannons/art/game/design/rules.md) section 8 names the target
-  order; [rules-v3-draft.md](/home/womb/repos/grid-cannons/art/game/design/rules-v3-draft.md) and
+- [rules.md](/home/womb/repos/cannonade/art/game/design/rules.md) section 8 names the target
+  order; [rules-v3-draft.md](/home/womb/repos/cannonade/art/game/design/rules-v3-draft.md) and
   the README name the end at once.
 
 ## Tests

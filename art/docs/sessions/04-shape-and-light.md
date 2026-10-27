@@ -26,7 +26,7 @@ Roadmap items: B11 (shape language and detail level), B12 (lighting and atmosphe
 1. Phase C. Six edits of the fortress corner from the recoloured frame: detail levels Kingdoms and Castles, River Towns, Foundation, in the languages rounded-and-chunky and faceted-and-sharp. One sheet of the shipwright's structures in the toy language. One river map and one land map frame. Draft `geometry_rules.yaml` in words and numbers: bevel width, facet size, silhouette rules, parts per building, detail per tier, what a wall shows at 13 pixels. Contact sheet, both critics, `PICKS.md`, the images open in Sebastian's editor, one question. About 1.50 USD.
 2. Phase D, after the pick. Four to six lighting edits of the picked frame: time of day, fog depth, shadow strength, sea treatment. `lighting_rules.yaml`. The world anchor into `anchors/world_style.png`. Same round shape, one question. Under 1 USD.
 3. After the pick: chapters 3 and 4 of the bible with the sheets inline, a decision entry per pick, the process-log lines, the roadmap ticks, the plan for session 05 with reasons.
-4. F10 in the game repo: `PLAYER_COLORS` in [scripts/Main.gd](/home/womb/repos/grid-cannons/scripts/Main.gd) from the team set, the sandbox test run headless, one screenshot through [tools/godot_render.sh](/home/womb/repos/grid-cannons/tools/godot_render.sh) as proof, committed on `master` there.
+4. F10 in the game repo: `PLAYER_COLORS` in [scripts/Main.gd](/home/womb/repos/cannonade/scripts/Main.gd) from the team set, the sandbox test run headless, one screenshot through [tools/godot_render.sh](/home/womb/repos/cannonade/tools/godot_render.sh) as proof, committed on `master` there.
 
 ## Limits
 

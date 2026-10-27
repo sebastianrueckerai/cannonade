@@ -7,7 +7,7 @@ Roadmap: I57.
 
 ## What was wrong
 
-Three faults in [Menu._show_help](/home/womb/repos/grid-cannons/scripts/Menu.gd) and the theme.
+Three faults in [Menu._show_help](/home/womb/repos/cannonade/scripts/Menu.gd) and the theme.
 
 - **Too tall.** One 560 px column: the title, the tutorial in 14 lines, ten control rows and the
   Close button stood about 1020 px tall (headless: Close at y 930) in the 1280 x 720 canvas.
@@ -31,7 +31,7 @@ Three faults in [Menu._show_help](/home/womb/repos/grid-cannons/scripts/Menu.gd)
 - Three labels shorter so the grid fits beside the text: "place the wall piece / stack a
   block", "place the building / fuse four cannons", "switch build and battle (Practice)".
   The binding buttons are 200 px wide.
-- [ui/theme.tres](/home/womb/repos/grid-cannons/assets/art/ui/theme.tres) sets
+- [ui/theme.tres](/home/womb/repos/cannonade/assets/art/ui/theme.tres) sets
   `Button/colors/font_focus_color` to the ink colour.
 
 ![before and after](30-help.jpg)

@@ -12,7 +12,7 @@ Blender to `.glb` to Godot ran on `wall_straight`. Scale and axes matched the co
 
 The image chain ran too: `img.py` ported, one generation and one critique as proof. The critic returned an empty answer once with exit 0 and the sidecar written. `img.py` now exits 1 on an empty answer so a round does not count a blank as a verdict.
 
-Added to the process without changing the chart: `round.py` runs direction times frame times model from one `round.json`, and the game repo got [tools/preview_glb.tscn](/home/womb/repos/grid-cannons/tools/preview_glb.tscn) for the integration screenshot. The three frames every direction renders are fixed as world, cannon and menu.
+Added to the process without changing the chart: `round.py` runs direction times frame times model from one `round.json`, and the game repo got [tools/preview_glb.tscn](/home/womb/repos/cannonade/tools/preview_glb.tscn) for the integration screenshot. The three frames every direction renders are fixed as world, cannon and menu.
 
 The probe ran as planned and picked one model per frame instead of one model for everything. `round.py` therefore takes a `frames` list per model. The chart is unchanged. GPT-5 disappeared from fal's any-llm endpoint, and the Z.AI account has no balance, so Gemini 2.5 Pro was the only critic this session. A second critic needs the Z.AI top-up.
 
@@ -22,7 +22,7 @@ The integration stage got its mechanism before any art existed. The chart said "
 
 Two lessons. A project-wide Godot theme changes the size of every panel, and the sandbox test clicks at screen positions, so the theme is scoped to the menu screens until the HUD is styled. Headless Chrome with a virtual-time budget never reaches the engine's first frame, Playwright with a real wait does, so the web smoke test is a Playwright script.
 
-Later the same day: image slots for the menu screens. `ui/button.png`, `ui/panel.png` and `ui/font.ttf` are 9-slice styles and a font on top of the theme, proven with generated placeholders in [02-menu-with-image-slots.png](sessions/02-menu-with-image-slots.png). Sebastian's rule from the AvatarAnimations repo applies here too: Godot runs headless or under Xvfb, never with a window on the real display. The screenshot tools go through [tools/godot_render.sh](/home/womb/repos/grid-cannons/tools/godot_render.sh).
+Later the same day: image slots for the menu screens. `ui/button.png`, `ui/panel.png` and `ui/font.ttf` are 9-slice styles and a font on top of the theme, proven with generated placeholders in [02-menu-with-image-slots.png](sessions/02-menu-with-image-slots.png). Sebastian's rule from the AvatarAnimations repo applies here too: Godot runs headless or under Xvfb, never with a window on the real display. The screenshot tools go through [tools/godot_render.sh](/home/womb/repos/cannonade/tools/godot_render.sh).
 
 ## 2026-10-11 The art-direction stage rewritten before it ran
 
@@ -68,7 +68,7 @@ Phase I started with the guns, because their designs were already picked, and tu
 
 Three process lessons came with it. Tripo's API credits are a separate wallet from Tripo Studio, so a test needs the API platform's balance checked first. Several views must go in as separate files, never as one sheet, and an image model's turnaround needs a fault check like any other image: one repeated its left side in the right-side cell. And the spending cap counted every sidecar ever written, so it now counts only those since `SESSION_START`.
 
-Sebastian then asked how many views a gun needs. None beyond one: the large gun's short barrel came from Meshy's low-poly model reading the three-quarter view, and one side view on that model kept the length, the parts and the price. He chose Git LFS for new binaries (D35) and Meshy for the 3D work, with Tripo's leftover credits for simple shapes (D36). The guns now stand on a bench in the game, [tools/gun_test.tscn](/home/womb/repos/grid-cannons/tools/gun_test.tscn), where he turns them and tilts their barrels to judge the pivots and the face counts.
+Sebastian then asked how many views a gun needs. None beyond one: the large gun's short barrel came from Meshy's low-poly model reading the three-quarter view, and one side view on that model kept the length, the parts and the price. He chose Git LFS for new binaries (D35) and Meshy for the 3D work, with Tripo's leftover credits for simple shapes (D36). The guns now stand on a bench in the game, [tools/gun_test.tscn](/home/womb/repos/cannonade/tools/gun_test.tscn), where he turns them and tilts their barrels to judge the pivots and the face counts.
 
 The bench found what the renders had hidden. Sebastian picked the second-lowest face count of each gun, then saw body pieces moving with every barrel and a gap under the small gun's yoke. The automatic split had judged pieces by their position alone. So the generative route now has a required cleanup by hand: [barrel.py](../pipeline/barrel.py) numbers every loose piece in a sheet, a `split.json` per asset names the barrel pieces, the pivot pieces and the fixes, and the final sheet and magnified crops check the result before the bench (D37, the step list in [assets-3d.md](process/assets-3d.md)).
 
@@ -76,7 +76,7 @@ The bench found what the renders had hidden. Sebastian picked the second-lowest 
 
 Phase I put the whole first batch of D33 into the art layer: the three guns, four depot looks, three base looks, both blocks, the tile, the cannonball and the cornice walls in every slot, under the afternoon light of the rules. Round [19](../game/art-direction/rounds/19-first-batch) painted three wall looks, four depots and four bases on five boards. Sebastian picked a wall look and, for the depot and the base, several designs at once, so the art layer learned variants: `<id>.2.glb` and on, one picked at random per building (D38). The walls changed from one art file per FBX slot to one per shape and level, so one look fills every slot without copies (roadmap F11).
 
-The generative route grew a branch for models that do not move. [cleanup.py](../pipeline/cleanup.py) with a hand-written `cleanup.json` turns the front to the camera, sets the size and the origin, scales the texture to 512 px and, for the base, moves the royal blue faces to a first material the game paints in the team colour. [asset.py](../pipeline/asset.py) now reports and renders a generated `final.glb` too, and `asset.py approve` records Sebastian's pass, so [godot_sync.py](../pipeline/godot_sync.py) gates every asset the same way. The game check of these models is a sandbox battle, [tools/shoot_battle.tscn](/home/womb/repos/grid-cannons/tools/shoot_battle.tscn), not the bench. The chart of [assets-3d.md](process/assets-3d.md) shows both.
+The generative route grew a branch for models that do not move. [cleanup.py](../pipeline/cleanup.py) with a hand-written `cleanup.json` turns the front to the camera, sets the size and the origin, scales the texture to 512 px and, for the base, moves the royal blue faces to a first material the game paints in the team colour. [asset.py](../pipeline/asset.py) now reports and renders a generated `final.glb` too, and `asset.py approve` records Sebastian's pass, so [godot_sync.py](../pipeline/godot_sync.py) gates every asset the same way. The game check of these models is a sandbox battle, [tools/shoot_battle.tscn](/home/womb/repos/cannonade/tools/shoot_battle.tscn), not the bench. The chart of [assets-3d.md](process/assets-3d.md) shows both.
 
 Lessons from the models:
 
@@ -165,3 +165,14 @@ Round 25 made the grade part of the kit's rules and of the render pipeline. The 
   baseline suite run also caught Terrain.take_damage re-reading a column block that _free_tile had just
   erased when a shell's leftover damage overkilled the last block - intermittent by design, a `break`
   after the free and terrain_test's last blow at 25.0 overkill make it deterministic.
+- Session 75 (C24): the kit regrouped in place. [kit.blend](../game/assets/3d/kit.blend) gets two roots,
+  `kit` and an excluded `parked`, and a castle look is one group with its stages `castle.3.d0` to
+  `castle.3.d4` nested; [kit.py](../pipeline/kit.py) maps the game id to its collection (`place`) and
+  back (`id_of`), so export reads the layout instead of a flat list, and it prunes a parked asset's files
+  and manifest entry from the game - the three bases had stayed shipped for days after their building was
+  parked. Lessons: a one-off migration that renames and re-hangs the existing collections keeps every
+  sharp mark and hand edit, where a re-fold would have lost them (the sources are gone); the Blender
+  scripts take their parameters as a JSON file after `--` now, which retires the `%` trap of session 68;
+  a source's render sun had been folded into every collection as an object (41 lights), so fold keeps
+  meshes and empties only. The re-export changed no size or tri count, and tools/damage_view's board is
+  byte-identical before and after.

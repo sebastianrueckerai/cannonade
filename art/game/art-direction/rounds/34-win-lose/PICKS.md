@@ -17,7 +17,7 @@ Cost: 0.96 USD of the session's 10 USD cap (6 × 0.15 generation, 2 × 0.03 crit
 
 ## Pick one a side for the game-over screen
 
-The pick lands behind the overlay's Art gate as [win.png](/home/womb/repos/grid-cannons/assets/art/ui/win.png) and [lose.png](/home/womb/repos/grid-cannons/assets/art/ui/lose.png).
+The pick lands behind the overlay's Art gate as [win.png](/home/womb/repos/cannonade/assets/art/ui/win.png) and [lose.png](/home/womb/repos/cannonade/assets/art/ui/lose.png).
 
 - [ ] 1  - [ ] 2  - [x] 3  - [ ] 4  - [x] 5  - [ ] 6
 

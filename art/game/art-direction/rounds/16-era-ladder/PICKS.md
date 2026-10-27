@@ -7,7 +7,7 @@ His inputs for the restart:
 - **Guns.** Sketches of cannons. No wheels, turnable, dark iron, wood on the smaller models. No multiple barrels, no mortars. Standard artillery-style cannons. Each one visibly better and more advanced than the last, not the same model upsized. Cozy, in the style of the reference images.
 - **Resources.** Blocks, so they are easy to see and visibly drop into square fields. They also need to stack. Hence the box shape.
 
-Phase F. A comment round, no pick of the metaphor (D17). The ladder in words is [tiers.md](tiers.md). Every footprint is a square of 1, 2 or 3 tiles, as `size` in [BuildingDef.gd](/home/womb/repos/grid-cannons/scripts/data/BuildingDef.gd) defines it, so the ladder has one gun per size.
+Phase F. A comment round, no pick of the metaphor (D17). The ladder in words is [tiers.md](tiers.md). Every footprint is a square of 1, 2 or 3 tiles, as `size` in [BuildingDef.gd](/home/womb/repos/cannonade/scripts/data/BuildingDef.gd) defines it, so the ladder has one gun per size.
 
 The current sheet is [ladder-sizes.png](ladder-sizes.png): the 1x1, 2x2 and 3x3 gun at about 1 : 2 : 3, and the four resource blocks Sebastian chose.
 

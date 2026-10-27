@@ -20,8 +20,8 @@ region 0, the body stone, so the game's wall shader paints the pieces like the b
 piece is one object with its origin at the centre of its bounding box.
 
 The export writes
-[wall_rubble.glb](/home/womb/repos/grid-cannons/assets/art/3d/wall_rubble.glb) and
-[wall_rubble_upper.glb](/home/womb/repos/grid-cannons/assets/art/3d/wall_rubble_upper.glb)
+[wall_rubble.glb](/home/womb/repos/cannonade/assets/art/3d/wall_rubble.glb) and
+[wall_rubble_upper.glb](/home/womb/repos/cannonade/assets/art/3d/wall_rubble_upper.glb)
 without materials. The game gives the pieces the block's material.
 
 | model | pieces | triangles | KB |
@@ -31,7 +31,7 @@ without materials. The game gives the pieces the block's material.
 
 ## In the game
 
-[Crumble.gd](/home/womb/repos/grid-cannons/scripts/Crumble.gd). When a shot's damage kills a
+[Crumble.gd](/home/womb/repos/cannonade/scripts/Crumble.gd). When a shot's damage kills a
 wall block (`BuildingPlace.damage_structure`) or a storey (`damage_stacked_wall`), the tile
 calls `Crumble.crumble` before the block goes. The heap is a `Node3D` under the tile at the
 block's art, so the slab top is its y 0. Every piece becomes a `RigidBody3D` with the piece

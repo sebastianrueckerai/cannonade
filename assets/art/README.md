@@ -1,10 +1,10 @@
 # assets/art: the art layer
 
-Drop a file here with the right name and the game uses it. Nothing else to wire. [scripts/Art.gd](../../scripts/Art.gd) does the work. The 3D files come from [pipeline/kit.py](/home/womb/repos/grid-cannons/art/pipeline/kit.py), which exports the collections of one kit.blend into the game and also writes [manifest.json](manifest.json).
+Drop a file here with the right name and the game uses it. Nothing else to wire. [scripts/Art.gd](../../scripts/Art.gd) does the work. The 3D files come from [pipeline/kit.py](/home/womb/repos/cannonade/art/pipeline/kit.py), which exports the collections of one kit.blend into the game, prunes what the art manifests park and writes [manifest.json](manifest.json).
 
 | file | used by |
 |---|---|
-| `3d/<building id>.glb` | every building from `data/buildings/*.tres`: `cannon`, `cannon22a`, `flak22`, `supply`, `base`, ... |
+| `3d/<building id>.glb` | every building from `data/buildings/*.tres`: `cannon`, `cannon22a`, `flak22`, `supply`, `castle`, ... |
 | `3d/<id>.2.glb`, `3d/<id>.3.glb` | more looks of any id, numbered from 2 without a gap. One look is picked at random for each instance |
 | `3d/<projectile id>.glb` | every shot of the projectile with that file name in `data/projectiles/`, for example `shell`. Origin at its centre |
 | `3d/ship.glb` | the fleet ships |

@@ -27,7 +27,7 @@ in the test below.
 
 ## Change
 
-- [ArtPlate.gd](/home/womb/repos/grid-cannons/scripts/ArtPlate.gd): the plate stays the gun's
+- [ArtPlate.gd](/home/womb/repos/cannonade/scripts/ArtPlate.gd): the plate stays the gun's
   child, so the scene tree carries it wherever the gun goes: from the hand onto a hovered tile, onto
   a 2x2 square's centre. It keeps its global basis from its first entry and takes back the
   gun's turn on `NOTIFICATION_TRANSFORM_CHANGED`. The engine sends that after every node's process

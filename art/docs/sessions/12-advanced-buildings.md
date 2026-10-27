@@ -34,8 +34,8 @@ One look per building. The depots of D38 got four looks because a map holds many
 ## Game changes named
 
 - `data/buildings/supply33.tres`: 3x3, 16 supply, no recipe yet. The sandbox needs it to place the model. The recipes stay as today until session 13.
-- [tools/shoot_battle.tscn](/home/womb/repos/grid-cannons/tools/shoot_battle.tscn): both forts hold the four new buildings.
-- [scripts/Art.gd](/home/womb/repos/grid-cannons/scripts/Art.gd): the `guns` anchor checked with the flak the way F8 checked `barrel`.
+- [tools/shoot_battle.tscn](/home/womb/repos/cannonade/tools/shoot_battle.tscn): both forts hold the four new buildings.
+- [scripts/Art.gd](/home/womb/repos/cannonade/scripts/Art.gd): the `guns` anchor checked with the flak the way F8 checked `barrel`.
 - Nothing else in the game. Gameplay code waits for session 13.
 
 ## Limits

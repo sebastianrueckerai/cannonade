@@ -13,7 +13,7 @@ writes `castle_d3.<v>_rubble.glb` for the fall to ruins.
 
 ## Deliverables
 
-1. **The game pins the look** (I104): [Castle.gd](/home/womb/repos/grid-cannons/scripts/components/Castle.gd)
+1. **The game pins the look** (I104): [Castle.gd](/home/womb/repos/cannonade/scripts/components/Castle.gd)
    reads the drawn look off its Art node and resolves its five state ids through it, the ruin crumbles as its own
    look's d3. A test guards the pinning and the completeness rule: every healthy look on disk owns its four
    damage states and its d3 rubble.
@@ -28,7 +28,7 @@ writes `castle_d3.<v>_rubble.glb` for the fall to ruins.
      "just generate variations on the existing ones"), different part arrangements in the same Bergfried
      language of D68: one main mass, joined smaller volumes, royal blue team parts.
 4. **The board**: one sheet of all eight looks × five states (pipeline renders), a battle screenshot at several
-   art seeds, and [tools/damage_view.tscn](/home/womb/repos/grid-cannons/tools/damage_view.tscn) widened, for
+   art seeds, and [tools/damage_view.tscn](/home/womb/repos/cannonade/tools/damage_view.tscn) widened, for
    Sebastian's pass. The looks ship synced unapproved like the faction walls did (C17); his pick or rework
    closes C21.
 

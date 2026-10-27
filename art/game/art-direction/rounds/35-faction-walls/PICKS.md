@@ -34,7 +34,7 @@ answer, because the camera sees the tops, not the sides.
 ## What the game showed
 
 **The side treatments do not survive the camera.** The game looks down at 60 degrees and zooming keeps
-that pitch ([CameraRig.gd](/home/womb/repos/grid-cannons/scripts/CameraRig.gd) moves the camera along one
+that pitch ([CameraRig.gd](/home/womb/repos/cannonade/scripts/CameraRig.gd) moves the camera along one
 line), so a wall face is a 5 px band at the default view and a foreshortened strip even at the near corner.
 In [models.jpg](models.jpg) the arch, pilaster and course blocks are the plain block from both game angles;
 only the low-angle cell shows their faces. What does survive is on top: the corbel's overhang draws a

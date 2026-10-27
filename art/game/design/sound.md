@@ -1,7 +1,7 @@
 # Cannonade sound design: the cue list
 
 Session 31, 2026-10-20, for roadmap K5. The game has no audio yet: no AudioStreamPlayer, no clip, no
-call. Every row below is a hook to add. Script lines are from [scripts/](/home/womb/repos/grid-cannons/scripts)
+call. Every row below is a hook to add. Script lines are from [scripts/](/home/womb/repos/cannonade/scripts)
 at commit 90b875b. The models that make the clips and what they cost are in
 [ai-audio-providers.md](../../docs/research/ai-audio-providers.md). The probes of this session are
 rounds [36-music-probe](../art-direction/rounds/36-music-probe) and [37-sfx-probe](../art-direction/rounds/37-sfx-probe).
@@ -150,7 +150,7 @@ Counts: 33 clip sets in A, 21 in B, about 70 files with the variations.
   Silence is cut at both ends. The sheet of a round shows the numbers.
 - Formats: effects as 44.1 kHz 16-bit WAV, music as OGG Vorbis with loop points. The kit's copies are
   in [game/assets/audio/](../assets/audio) with a sidecar naming the source clip, the game's in
-  [assets/audio/](/home/womb/repos/grid-cannons/assets/audio).
+  [assets/audio/](/home/womb/repos/cannonade/assets/audio).
 
 ## Picked so far
 
@@ -170,14 +170,14 @@ full length. The five music cues are picked.
 
 ## In the game
 
-[Sound.gd](/home/womb/repos/grid-cannons/scripts/Sound.gd) is the autoload. It loads every clip of
-[assets/audio/](/home/womb/repos/grid-cannons/assets/audio) at start, `sfx/` and `ui/` by cue, a cue's
+[Sound.gd](/home/womb/repos/cannonade/scripts/Sound.gd) is the autoload. It loads every clip of
+[assets/audio/](/home/womb/repos/cannonade/assets/audio) at start, `sfx/` and `ui/` by cue, a cue's
 variants from the `_n` suffix, and plays a cue with `Sound.play(cue, db)`: a random variant, never the
 same twice in a row, at most three voices per cue with the oldest stolen, on the clip's bus. A cue with no
 clip plays nothing, so every hook of the cue list is in the code and a new clip only needs its file. A
 cue in `Sound.ALIAS` borrows another's clip until it has one: ui_hover, countdown, shot_ship, stack_block,
 hit_gun and hit_castle. `Sound.music(cue)` loops `music/<cue>.ogg` on the Music bus. The buses are
-Master, Music, SFX and UI in [default_bus_layout.tres](/home/womb/repos/grid-cannons/default_bus_layout.tres).
+Master, Music, SFX and UI in [default_bus_layout.tres](/home/womb/repos/cannonade/default_bus_layout.tres).
 Another player's action plays 6 dB down. The clips draw their randomness from the autoload's own
 generator, so seeded battles and the lab stay as they were.
 
@@ -185,7 +185,7 @@ The hooks: the menu, the loading screen, GameController (music, horns, countdown
 ruin), PlayerController (piece, stack, gun, refused, fusion, rotate, draw, ring closed), Shooter (the
 shot by projectile and ship), TileImpactor (water, ground), BuildingPlace (hits, crumble, gun destroyed),
 UpgradeCluster (one sound for one structure), Ship (hit, sink), Main (win, lose, the end buttons).
-[tests/sound_test.gd](/home/womb/repos/grid-cannons/tests/sound_test.gd) drives them.
+[tests/sound_test.gd](/home/womb/repos/cannonade/tests/sound_test.gd) drives them.
 
 Not in yet: panning by map side, the loop cut of the music, the B list.
 

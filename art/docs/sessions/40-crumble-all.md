@@ -40,7 +40,7 @@ or 7 of 8. The exact boolean runs hole tolerant, since the generated models are 
 ## In the game
 
 `Art.instance` now records the look it picked on the node (`art_look`), so a decoration knows
-which of its three looks it wears. [Crumble.crumble](/home/womb/repos/grid-cannons/scripts/Crumble.gd)
+which of its three looks it wears. [Crumble.crumble](/home/womb/repos/cannonade/scripts/Crumble.gd)
 takes any node with a look: a building with its art under it, or a decoration, which is its
 own art. For every part node of the rubble it finds the live part by name under the dying
 thing, and places each piece at the part's global transform times the piece's own, so a

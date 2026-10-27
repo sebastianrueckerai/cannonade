@@ -12,5 +12,5 @@ Sebastian, 2026-10-20: "Use these 3".
 | sail-build-sad--sa25 | Stable Audio 2.5 audio-to-audio of the build theme at strength 0.6: very slow, minor, mournful, a lament | `lose.ogg` |
 
 All three are the full 90 s, Vorbis at -16 LUFS, in [game/assets/audio/music/](../../assets/audio/music)
-and the game's [assets/audio/music/](/home/womb/repos/grid-cannons/assets/audio/music). The end screens
+and the game's [assets/audio/music/](/home/womb/repos/cannonade/assets/audio/music). The end screens
 play them whole until Retry or Menu. A shorter sting is one cut away if the screens want one. Decision D85.

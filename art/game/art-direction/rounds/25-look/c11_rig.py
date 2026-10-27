@@ -7,8 +7,8 @@ import math
 import sys
 from pathlib import Path
 
-PIPELINE = Path("/home/womb/repos/grid-cannons/art/pipeline")
-GAME = Path("/home/womb/repos/grid-cannons/assets/art/3d")
+PIPELINE = Path("/home/womb/repos/cannonade/art/pipeline")
+GAME = Path("/home/womb/repos/cannonade/assets/art/3d")
 sys.path.insert(0, str(PIPELINE))
 
 import bpy  # noqa: E402

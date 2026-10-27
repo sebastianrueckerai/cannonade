@@ -9,7 +9,7 @@ Roadmap: I61.
 
 ## Change
 
-- [Menu.INTRO](/home/womb/repos/grid-cannons/scripts/Menu.gd) drops the exact rules: the tile
+- [Menu.INTRO](/home/womb/repos/cannonade/scripts/Menu.gd) drops the exact rules: the tile
   rule, the shell count, the damage states, the reload penalty. Four paragraphs, the longest
   three lines where it ran six.
 - The tutorial labels get font size 17; the controls keep the theme's 20, so the two columns

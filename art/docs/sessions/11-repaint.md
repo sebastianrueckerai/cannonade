@@ -15,7 +15,7 @@ Roadmap items: C12 (the flat set painted on the D49 path).
 - The painted path: D49 (painted, not flat bands), D48 (every part magnified on boards), D50 (the gate that passed). The reference implementation: [nature_build.py](../../game/assets/3d/nature_build.py), `painted_material`.
 - The builders: [wall_cornice.py](../../game/assets/3d/wall_cornice.py) for the nine pieces, the build.py of [tile](../../game/assets/3d/tile/build.py) and [shell](../../game/assets/3d/shell/build.py). The gun plates came with the guns (D39).
 - The colours: [palette.json](../../game/art-direction/palette.json) and the bible's cream stone, judged under the D52 light.
-- The ground: [Map.gd](/home/womb/repos/grid-cannons/scripts/components/Map.gd) lerps each white tile from a lighter to a darker green by height, so the grain goes into a near-white tile texture and the lerp keeps working.
+- The ground: [Map.gd](/home/womb/repos/cannonade/scripts/components/Map.gd) lerps each white tile from a lighter to a darker green by height, so the grain goes into a near-white tile texture and the lerp keeps working.
 - The game: [grid-cannons.md](../grid-cannons.md) before touching the game repo.
 
 ## Plan

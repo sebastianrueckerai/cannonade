@@ -1,6 +1,6 @@
 # Grid Cannons rules v2: the fort, the guns and the upgrade tree
 
-The target rule set for [the game repo](/home/womb/repos/grid-cannons), decided with Sebastian on 2026-10-14 (D59). Every number is a starting value for the lab of section 9. Nothing here is tuned.
+The target rule set for [the game repo](/home/womb/repos/cannonade), decided with Sebastian on 2026-10-14 (D59). Every number is a starting value for the lab of section 9. Nothing here is tuned.
 
 The game is quick strategy, tower defence meets Tetris. Matches are short, every shot is a choice, nothing has a health bar. Walls die in one hit, a double wall in two, and the only things that last are the base and the ground.
 
@@ -90,7 +90,7 @@ Why counts and not shapes: a 2x2 has six patterns, a 3x3 has 140. Nobody learns 
 ## 8. The AI plays the human's game
 
 - The same draws, the same hold slots, the same queue and skip.
-- Two reaction times in seconds in [AI.gd](/home/womb/repos/grid-cannons/scripts/components/AI.gd), never 0. `secondsBetweenShots`, 0.5 by default, is the wait after every shot, the aim move and the click: a human lands about one shot per 0.5 to 0.8 s. `secondsBetweenBuilds`, 1.0 by default, is the wait after every build action, whether a placed piece or gun, a stacked block, a dropped piece or a discarded gun: a human turns and places a piece slower than it fires. D76 had one wait of 0.5 for both, which built too fast (2026-10-20, I63); the two waits planned here before, `reaction` and `switch`, stay replaced.
+- Two reaction times in seconds in [AI.gd](/home/womb/repos/cannonade/scripts/components/AI.gd), never 0. `secondsBetweenShots`, 0.5 by default, is the wait after every shot, the aim move and the click: a human lands about one shot per 0.5 to 0.8 s. `secondsBetweenBuilds`, 1.0 by default, is the wait after every build action, whether a placed piece or gun, a stacked block, a dropped piece or a discarded gun: a human turns and places a piece slower than it fires. D76 had one wait of 0.5 for both, which built too fast (2026-10-20, I63); the two waits planned here before, `reaction` and `switch`, stay replaced.
 - It shoots, best first: the enemy's guns, then the castles the enemy holds, the nearest to ruin first, then the enemy's walls, the most walled-in first. Every loaded gun fires at the first of these in its reach, so the guns gang up on what decides the game. A neutral castle it rings and claims, never shoots (2026-10-20, I65).
 - When nothing is left to ring or claim, it keeps building: the largest room it can, sited toward the castles it does not hold — territory for its guns, and staging for a claim once the walls before it fall (2026-10-21, I76).
 - It knows every recipe of section 7 and can lay a 3x3. Today its integer square root returns 4 for 9.
@@ -98,7 +98,7 @@ Why counts and not shapes: a 2x2 has six patterns, a 3x3 has 140. Nobody learns 
 
 ## 9. The lab decides the numbers
 
-[tools/lab.tscn](/home/womb/repos/grid-cannons/tools/lab.tscn) runs AI against AI with `--set` and `--sweep`. The personalities and the AI's reaction time become `--set` values.
+[tools/lab.tscn](/home/womb/repos/cannonade/tools/lab.tscn) runs AI against AI with `--set` and `--sweep`. The personalities and the AI's reaction time become `--set` values.
 
 - Round robin: every personality against every other, 100 matches per pair, both seats. The win matrix must show no personality above 60 of 100 against the field, and flak over swarm.
 - Targets per 30 s battle, for a fort that was intact at its start:
@@ -110,7 +110,7 @@ Why counts and not shapes: a 2x2 has six patterns, a 3x3 has 140. Nobody learns 
 | rebuild in 45 s | closes with 5 to 10 s to spare |
 
 - Ablation: mixed against mixed with one gun removed from its roster, 100 matches, for every gun. A gun whose removal costs no wins has no job and is cut or changed.
-- The matrix runs in [run_tests.sh](/home/womb/repos/grid-cannons/run_tests.sh) beside the three sims, so a later change that breaks a gun fails the gate.
+- The matrix runs in [run_tests.sh](/home/womb/repos/cannonade/run_tests.sh) beside the three sims, so a later change that breaks a gun fails the gate.
 - Then ten matches by hand. The lab cannot judge feel.
 
 ## 10. Bugs that go with it

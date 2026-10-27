@@ -16,7 +16,7 @@ from pathlib import Path
 import bmesh
 import bpy
 
-ROOT = Path(os.environ.get("GAME_REPO", "/home/womb/repos/grid-cannons"))
+ROOT = Path(os.environ.get("GAME_REPO", "/home/womb/repos/cannonade"))
 
 GRID = 14          # cuts per side of the top face; the facets of a dent catch the light
 BORDER = 0.42      # craters stay inside this radius, so the slab border never dips

@@ -14,8 +14,8 @@ Roadmap items: C2 (the rest of the vertical slice: rock, tree, bush), C4 (rock: 
 
 - The route: [assets-3d.md](../process/assets-3d.md), the procedural route with [wall_cornice.py](../../game/assets/3d/wall_cornice.py) as an example of a shared build script, the generative route with [cleanup.py](../../pipeline/cleanup.py) for models that do not move.
 - The bible: D41 and the cover art [marketing_style.png](../../game/art-direction/anchors/marketing_style.png) for the nature look, [geometry_rules.yaml](../../game/art-direction/geometry_rules.yaml) for the nature budget of 300 triangles, which the round may ask to change, [palette.json](../../game/art-direction/palette.json) for leaf, grass and stone.
-- The game: [asset_list.md](../../game/art-direction/asset_list.md) for the 9 nature kinds and their slots, [grid-cannons.md](../grid-cannons.md), [CustomModelMaker.gd](/home/womb/repos/grid-cannons/scripts/components/CustomModelMaker.gd), [ShipFleet.gd](/home/womb/repos/grid-cannons/scripts/components/ShipFleet.gd).
-- The check in the game: [tools/shoot_battle.tscn](/home/womb/repos/grid-cannons/tools/shoot_battle.tscn) for buildings, [tools/screenshot.tscn](/home/womb/repos/grid-cannons/tools/screenshot.tscn) in single mode for the ship and the nature.
+- The game: [asset_list.md](../../game/art-direction/asset_list.md) for the 9 nature kinds and their slots, [grid-cannons.md](../grid-cannons.md), [CustomModelMaker.gd](/home/womb/repos/cannonade/scripts/components/CustomModelMaker.gd), [ShipFleet.gd](/home/womb/repos/cannonade/scripts/components/ShipFleet.gd).
+- The check in the game: [tools/shoot_battle.tscn](/home/womb/repos/cannonade/tools/shoot_battle.tscn) for buildings, [tools/screenshot.tscn](/home/womb/repos/cannonade/tools/screenshot.tscn) in single mode for the ship and the nature.
 - [blender.md](../blender.md) before any bpy, [providers.md](../providers.md) before any paid call.
 - Spending cap 10 USD, written in `.env.session` at the end of session 07. Meshy has 350 credits until 11 November, Tripo 500 for simple shapes only (D36).
 

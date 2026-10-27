@@ -1,6 +1,6 @@
 # The era ladder, in words first
 
-Phase F. The game merges upgrade blocks in 2 by 2 and 3 by 3 patterns into bigger guns (D16, D17). Every footprint is a square: `size` in [BuildingDef.gd](/home/womb/repos/grid-cannons/scripts/data/BuildingDef.gd) is the side length in whole tiles, 1, 2 or 3. The data has three gun sizes: `cannon` on one tile, `cannon22a` to `cannon22d` on 2 by 2, `cannon33a` to `cannon33c` on 3 by 3. `flak22`, `shield22` and `supply22` share the 2 by 2 size, `rocket_station` the 3 by 3. So the ladder has three steps, one per size, and each step gets an era. Every step stays inside the River Towns level, the chamfer rule of chapter 3, and the 600-tri budget per building.
+Phase F. The game merges upgrade blocks in 2 by 2 and 3 by 3 patterns into bigger guns (D16, D17). Every footprint is a square: `size` in [BuildingDef.gd](/home/womb/repos/cannonade/scripts/data/BuildingDef.gd) is the side length in whole tiles, 1, 2 or 3. The data has three gun sizes: `cannon` on one tile, `cannon22a` to `cannon22d` on 2 by 2, `cannon33a` to `cannon33c` on 3 by 3. `flak22`, `shield22` and `supply22` share the 2 by 2 size, `rocket_station` the 3 by 3. So the ladder has three steps, one per size, and each step gets an era. Every step stays inside the River Towns level, the chamfer rule of chapter 3, and the 600-tri budget per building.
 
 The sheet is [ladder-sizes.png](ladder-sizes.png). It shows rough sizes only. The 3D build sets each mount from its footprint.
 

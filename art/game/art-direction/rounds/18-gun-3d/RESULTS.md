@@ -147,9 +147,9 @@ Sebastian asked whether fewer views would do. On the large gun, Meshy ran one si
 
 ## The bench in Godot
 
-[tools/gun_test.tscn](/home/womb/repos/grid-cannons/tools/gun_test.tscn) in the game repo is an editable scene with twelve Meshy models: per gun the lowest, the middle and the highest face count from the clean view, and the side-view model. Columns run by vertex count, lowest on the left. The small guns stand in front, the large ones at the back, each on its footprint in grass tiles under the afternoon sun.
+[tools/gun_test.tscn](/home/womb/repos/cannonade/tools/gun_test.tscn) in the game repo is an editable scene with twelve Meshy models: per gun the lowest, the middle and the highest face count from the clean view, and the side-view model. Columns run by vertex count, lowest on the left. The small guns stand in front, the large ones at the back, each on its footprint in grass tiles under the afternoon sun.
 
-- **Open it** in the Godot editor from the project in [/home/womb/repos/grid-cannons](/home/womb/repos/grid-cannons).
+- **Open it** in the Godot editor from the project in [/home/womb/repos/cannonade](/home/womb/repos/cannonade).
 - **Turn a gun.** Select its node `gun` and rotate about Y.
 - **Tilt the barrel.** Expand `gun`, select `barrel` and rotate about X. A positive angle raises the muzzle. The barrel's origin sits on the trunnion axis, found by [barrel.py](../../../../pipeline/barrel.py) from the trunnion caps, or at the footprint centre on the small guns, whose yoke sits centred.
 - **The red dot** is `projectile_spawn` at the muzzle.

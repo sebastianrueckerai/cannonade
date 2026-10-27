@@ -27,15 +27,15 @@ With the new rule both versus games showed 0.
 
 ## Change
 
-- [PlayerController.gd](/home/womb/repos/grid-cannons/scripts/components/PlayerController.gd):
+- [PlayerController.gd](/home/womb/repos/cannonade/scripts/components/PlayerController.gd):
   `can_stack_on` takes the whole held piece, every cell on an own wall with no storey.
   `stack_wall` stacks a block on each cell's wall. `next_wall_to_wall` shows a darkened storey on
   each cell, square to the map, its walkway following that tile's neighbours.
 - `enemy_ground` is ground whose ring owner is another player. `can_place_piece` refuses a cell
   there, and a gun is refused there too.
-- [Wall.gd](/home/womb/repos/grid-cannons/scripts/components/Wall.gd): `paint_piece` turns each cell
+- [Wall.gd](/home/womb/repos/cannonade/scripts/components/Wall.gd): `paint_piece` turns each cell
   back with its piece, after a storey ghost stood square to the map.
-- [RingPlan.gd](/home/womb/repos/grid-cannons/scripts/RingPlan.gd): enemy ground cannot carry an AI
+- [RingPlan.gd](/home/womb/repos/cannonade/scripts/RingPlan.gd): enemy ground cannot carry an AI
   ring, so the AI never plans a ring it may not build.
 - The AI still stacks single blocks only, and its pace and stepping stones stay as I56 made them.
 - The menu's control label, the in-game help line, the README and the rules v3 draft say that a
@@ -43,13 +43,13 @@ With the new rule both versus games showed 0.
 
 ## Tests
 
-- [tests/human.gd](/home/womb/repos/grid-cannons/tests/human.gd): a level three across one wall does
+- [tests/human.gd](/home/womb/repos/cannonade/tests/human.gd): a level three across one wall does
   not stack. A turned three over three own walls shows a darkened storey on each cell, turns back
   to blocks off the walls, and stacks three storeys where their ghosts stood. A 1 x 1 enemy ring in
   the player's reach refuses a block and a gun inside it, and the block places once the ring is gone.
-- [tests/ai_test.gd](/home/womb/repos/grid-cannons/tests/ai_test.gd): with the tile on a free
+- [tests/ai_test.gd](/home/womb/repos/cannonade/tests/ai_test.gd): with the tile on a free
   castle's ring walled in by the human, the AI's ring for that castle goes round it.
-- [tests/sim.gd](/home/womb/repos/grid-cannons/tests/sim.gd): frame by frame, every AI piece and
+- [tests/sim.gd](/home/womb/repos/cannonade/tests/sim.gd): frame by frame, every AI piece and
   gun has a tile within reach of the AI's anchors and none on ground another player's ring
   closed, both derived in the test from the board of the frame before.
 
@@ -79,9 +79,9 @@ like shape on shape.
 - Over an own wall the held piece now always shows its storeys: darkened where it stacks, red where
   it cannot. A cell over a tile that has a storey shows one storey higher. A click on red storeys
   stacks nothing.
-- [materials/wall.gdshader](/home/womb/repos/grid-cannons/materials/wall.gdshader) has a `tint`,
+- [materials/wall.gdshader](/home/womb/repos/cannonade/materials/wall.gdshader) has a `tint`,
   `Wall.paint_art` sets it, white by default.
-- [tests/human.gd](/home/womb/repos/grid-cannons/tests/human.gd): an S stacks on two ring blocks
+- [tests/human.gd](/home/womb/repos/cannonade/tests/human.gd): an S stacks on two ring blocks
   and a two-block piece. A T with its stem on the castle shows red storeys and a click stacks nothing.
   Broken on purpose, each went red: the red preview off, the tint left white, the single-block rule
   back.

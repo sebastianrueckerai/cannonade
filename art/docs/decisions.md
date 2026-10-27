@@ -32,7 +32,7 @@ Every generated image or mesh gets a sidecar JSON with model ID, prompt, referen
 
 ## D8. Game changes are made from here, committed there (2026-10-11, Sebastian)
 
-Changes to [/home/womb/repos/grid-cannons](/home/womb/repos/grid-cannons) happen in sessions planned in this repo and land on its `master`. We touch the art layer, the export pipeline and the preview scene. Gameplay code only when a session plan names it.
+Changes to [/home/womb/repos/cannonade](/home/womb/repos/cannonade) happen in sessions planned in this repo and land on its `master`. We touch the art layer, the export pipeline and the preview scene. Gameplay code only when a session plan names it.
 
 ## D9. Numbers before pixels (2026-10-11, from docs/blender.md)
 
@@ -288,7 +288,7 @@ Amends D28, which said that a gun stands on nothing else. Sebastian: a round gun
 
 A 1x1 base looked small. Sebastian asked for a 2x2 or 3x3 building that is a clear landmark. From three scales of design 1 at 3x3, [07-base-3x3-options.png](sessions/07-base-3x3-options.png), he took option B, the keep 2 m wide and its proportions kept, standing exactly on 2x2 tiles.
 
-- In the game the base is 2x2, and its start ring is 12 walls in a 4x4 square instead of 8 in a 3x3 square. [base.tres](/home/womb/repos/grid-cannons/data/buildings/base.tres), `build_start_base` in [PlayerController.gd](/home/womb/repos/grid-cannons/scripts/components/PlayerController.gd), the new layout of [Sandbox.gd](/home/womb/repos/grid-cannons/scripts/sandbox/Sandbox.gd) and the two example scenarios in [data/scenarios/](/home/womb/repos/grid-cannons/data/scenarios) changed with it.
+- In the game the base is 2x2, and its start ring is 12 walls in a 4x4 square instead of 8 in a 3x3 square. [base.tres](/home/womb/repos/cannonade/data/buildings/base.tres), `build_start_base` in [PlayerController.gd](/home/womb/repos/cannonade/scripts/components/PlayerController.gd), the new layout of [Sandbox.gd](/home/womb/repos/cannonade/scripts/sandbox/Sandbox.gd) and the two example scenarios in [data/scenarios/](/home/womb/repos/cannonade/data/scenarios) changed with it.
 - The keep is 1.9 m square, the footprint less 5 cm on each side like the gun plates, and 4.3 to 5.4 m tall depending on the design.
 
 ## D41. Nature is redone: bigger and more stylized, like the cover art (2026-10-12, Sebastian)
@@ -387,7 +387,7 @@ This amends D39 and session 11b, which let a barrel overhang its plate. The gun 
 
 ## D62. Cannonade is steered from the game repo, blender-ai keeps a copy (2026-10-15, Sebastian)
 
-Amends D2. Sebastian: "I want to steer the project from the project folder for grid-cannons now", "The repo here should only have the template for the art generation in 2d and 3d", "Move everything the project needs there, including a copy of your env.tool keys. Also the skills or docs documenting how to make art and ressocurces. But keep a copy here as well", and "Make it so it also has all the plans there, like our musing about gun combos". The whole of blender-ai, laid out the same way, is copied to this folder, [art/](/home/womb/repos/grid-cannons/art) in the game repo: the process and its docs, the pipeline, the art direction, every model's sources, rules v2, the decisions, the roadmap and the session plans. The game repo takes no Git LFS, so it commits the anchors, the inspirations, each model's final, source.blend, source run and input views, about 200 MB. The round images and render previews are on disk here, ignored, and stay versioned in [blender-ai](/home/womb/repos/blender-ai) with Git LFS. The keys are copied to the ignored `art/.env.tools`. From this date this copy is the live one. blender-ai keeps its copy as the template and its worked example.
+Amends D2. Sebastian: "I want to steer the project from the project folder for grid-cannons now", "The repo here should only have the template for the art generation in 2d and 3d", "Move everything the project needs there, including a copy of your env.tool keys. Also the skills or docs documenting how to make art and ressocurces. But keep a copy here as well", and "Make it so it also has all the plans there, like our musing about gun combos". The whole of blender-ai, laid out the same way, is copied to this folder, [art/](/home/womb/repos/cannonade/art) in the game repo: the process and its docs, the pipeline, the art direction, every model's sources, rules v2, the decisions, the roadmap and the session plans. The game repo takes no Git LFS, so it commits the anchors, the inspirations, each model's final, source.blend, source run and input views, about 200 MB. The round images and render previews are on disk here, ignored, and stay versioned in [blender-ai](/home/womb/repos/blender-ai) with Git LFS. The keys are copied to the ignored `art/.env.tools`. From this date this copy is the live one. blender-ai keeps its copy as the template and its worked example.
 
 ## D63. One roadmap for the game, the art and the process (2026-10-15, Sebastian)
 
@@ -431,7 +431,7 @@ Amends the half-height clause of D68. Sebastian, with the runs on the table: "Le
 
 ## D72. The castle's damage chain: four states from chained picture edits, chunky damage (2026-10-19, Sebastian)
 
-Decides the route of deliverable 3 of session 16. No API edits an existing mesh's shape: Meshy's spec holds 51 endpoints and none takes a mesh plus a prompt that reshapes it, and Meshy Edit is browser-only. The chain therefore runs on pictures: the healthy castle renders to a base picture, then each state is a nano-banana edit of the one before it, so no later state can repair an earlier one, and each picture gets its own Meshy run. Sebastian rejected fine-grained rubble as too high detail ("looks good, but also like the damaged version are very high detail"); the passing prompts demand big simple shapes with sharp edges and ban fine gravel and scattered stones. Four states: `castle_d1` light (chips, torn banner), `castle_d2` heavy (rim bite, half-caved annex roof), `castle_d3` severe (two-thirds drum, no cone roof, ring of blocks), `castle_d4` ruins (quarter-height stub, block mound). Blue team colour only where structure survives, so `castle_d3` and `castle_d4` carry no team material. Sebastian passed the chain ("Looks good!") and asked for it in game: [damage_view.tscn](/home/womb/repos/grid-cannons/tools/damage_view.tscn) shows the four side by side, textured, under the game camera.
+Decides the route of deliverable 3 of session 16. No API edits an existing mesh's shape: Meshy's spec holds 51 endpoints and none takes a mesh plus a prompt that reshapes it, and Meshy Edit is browser-only. The chain therefore runs on pictures: the healthy castle renders to a base picture, then each state is a nano-banana edit of the one before it, so no later state can repair an earlier one, and each picture gets its own Meshy run. Sebastian rejected fine-grained rubble as too high detail ("looks good, but also like the damaged version are very high detail"); the passing prompts demand big simple shapes with sharp edges and ban fine gravel and scattered stones. Four states: `castle_d1` light (chips, torn banner), `castle_d2` heavy (rim bite, half-caved annex roof), `castle_d3` severe (two-thirds drum, no cone roof, ring of blocks), `castle_d4` ruins (quarter-height stub, block mound). Blue team colour only where structure survives, so `castle_d3` and `castle_d4` carry no team material. Sebastian passed the chain ("Looks good!") and asked for it in game: [damage_view.tscn](/home/womb/repos/cannonade/tools/damage_view.tscn) shows the four side by side, textured, under the game camera.
 
 ## D73. The castle ships painted (2026-10-19, Sebastian)
 
@@ -439,7 +439,7 @@ Decides C14, the texturing pass the rules-v3 plan owed. All five castle states p
 
 ## D74. Round 34 picks: 03 win lake, 05 lose river (2026-10-19, Sebastian)
 
-Decides the win and lose art of the rules-v3 plan. Six nano-banana edits in the loading-screen style (D66 voice), grounded in one picked loading look as the style ref and the game's own castle and d4 ruin renders as shape refs; the win prompts say the ref's pink roof is a placeholder for royal blue, the lose prompts want the torn royal blue banner on the rubble and the enemy whole with dark red roofs. Two critics (Gemini) read both boards: win ranked 03, 02, 01 (the lake centres a calm middle for title and buttons), lose ranked 05, 04, 06 (the somber overcast fits a defeat, the river stays calm). Sebastian picked 03 and 05 by number with the boards open. They ship as [win.png](/home/womb/repos/grid-cannons/assets/art/ui/win.png) and [lose.png](/home/womb/repos/grid-cannons/assets/art/ui/lose.png) behind the game-over overlay's Art gate.
+Decides the win and lose art of the rules-v3 plan. Six nano-banana edits in the loading-screen style (D66 voice), grounded in one picked loading look as the style ref and the game's own castle and d4 ruin renders as shape refs; the win prompts say the ref's pink roof is a placeholder for royal blue, the lose prompts want the torn royal blue banner on the rubble and the enemy whole with dark red roofs. Two critics (Gemini) read both boards: win ranked 03, 02, 01 (the lake centres a calm middle for title and buttons), lose ranked 05, 04, 06 (the somber overcast fits a defeat, the river stays calm). Sebastian picked 03 and 05 by number with the boards open. They ship as [win.png](/home/womb/repos/cannonade/assets/art/ui/win.png) and [lose.png](/home/womb/repos/cannonade/assets/art/ui/lose.png) behind the game-over overlay's Art gate.
 
 ## D75. Walls are Rampart pieces of full-tile blocks, placed only near your own (2026-10-19, Sebastian)
 
@@ -488,7 +488,7 @@ of the second cannon set: boom-normal from ElevenLabs with the two Mirelo takes 
 boom-big from ElevenLabs with two more takes of its prompt. "Make sure the levels of these and the other one
 are similar, they seem to have differing volume." So `audio.py final` sets every one-shot by its loudest
 400 ms, -16 LUFS for effects and -22 for UI, under a -1 dBTP limiter, and the picks land in the game's
-[assets/audio/](/home/womb/repos/grid-cannons/assets/audio). The first heavy shot ("sounds like a faint
+[assets/audio/](/home/womb/repos/cannonade/assets/audio). The first heavy shot ("sounds like a faint
 drum beat") and the first crumbles (wanted: stone blocks crumbling) are out. "Eleven seems to be the best
 so far." Then, from the stone sets: "Those 3 can be used for things crumbling (walls, castle)", the crunch
 angle from ElevenLabs and both Mirelo takes, `crumble_1` to `crumble_3`. And: "Use these 3 for castle
@@ -504,7 +504,7 @@ of sail music?" and the three registers that followed: "Use these two musics", c
 chipsail-battle--acestep. A square-wave lead phrased like a fife over concertina-pumping pulse chords, a
 tuba-like triangle bass, a hornpipe lilt, 8-bit through and through. ACE-Step 1.0 on fal, Apache-2.0,
 0.018 USD a clip. They are `build.ogg` and `battle.ogg` in the game's
-[assets/audio/music/](/home/womb/repos/grid-cannons/assets/audio/music), not yet cut to loops. The menu,
+[assets/audio/music/](/home/womb/repos/cannonade/assets/audio/music), not yet cut to loops. The menu,
 win and lose cues come as versions of them, round 38. [PICKS.md](../game/art-direction/rounds/36-music-probe/PICKS.md).
 
 ## D85. The menu, win and lose music are versions of the sail themes (2026-10-20, Sebastian)
@@ -514,7 +514,7 @@ the win music is the battle theme happy and triumphant through the same remix, a
 build theme slow and mournful through Stable Audio 2.5 audio-to-audio at strength 0.6, the one time that
 route beat the ACE-Step remix of the same clip. So a remix of a finished theme does work as a version, on
 both routes. `menu.ogg`, `win.ogg` and `lose.ogg` in the game's
-[assets/audio/music/](/home/womb/repos/grid-cannons/assets/audio/music), full length.
+[assets/audio/music/](/home/womb/repos/cannonade/assets/audio/music), full length.
 [PICKS.md](../game/art-direction/rounds/38-theme-versions/PICKS.md).
 
 ## D86. A round is walls, cannons, battle, on a board the window's shape, and the hand is unseen (2026-10-20, Sebastian)
@@ -633,10 +633,10 @@ demolished, the flag still flies. It only goes down when the castle crumbles and
 castlke gets a dock point for a flag. The flag should also change colors for players." A `flag` model - pole
 and waving cloth, both on the `team` material - docks at a `flag_dock` empty that every keeper state d0 to d3
 carries, placed where that state's keep still stands (a ray cast on the d3 top, authored in the kit).
-[Castle.gd](/home/womb/repos/grid-cannons/scripts/Castle.gd) re-docks the flag at every state swap, so a d3
+[Castle.gd](/home/womb/repos/cannonade/scripts/Castle.gd) re-docks the flag at every state swap, so a d3
 ruin still flies it - the clearest sign the castle is alive - paints it in the owner's colour (neutral the
 brown #9c7a4f) in every state, and topples it away with the crumble at become_ruin. The cloth waves in
-[flag.gdshader](/home/womb/repos/grid-cannons/materials/flag.gdshader). Placed castles turn in random
+[flag.gdshader](/home/womb/repos/cannonade/materials/flag.gdshader). Placed castles turn in random
 90-degree steps, drawn from `Art._rng`, so a battle's numbers stay untouched. Session 68, roadmap I115.
 
 ## D97. Terrain grows as units; the sheer face is the player's alone (2026-10-23, Sebastian)
@@ -681,3 +681,19 @@ the family colour, and above only the family shading goes on - the crown colours
 decoration pass grows beyond the hills: every standing column sprouts its family's makers, rocks draw
 boulders alone and hills the greenery, and a boulder stands on the drape's own surface and flies with the
 block it stood on when that block shatters, the tree's path unchanged. Session 73, roadmap I119.
+
+## D101. The kit shows the game: a castle with its stages in one group, parked assets under one excluded root (2026-10-27, Sebastian)
+
+"This contains a lot of castles and bases. I dont know why these are seperate. Its the same thing. Make sure
+its up to date. Only a few castles made the cut and those I need with the stages of destruction. A castle
+should have its destroyed stages in one folder and naming should be so they are easy to find. Export should
+still work." The bases were the castles before the castles: the `base` building has been parked since the
+looks of round 32 took its place, yet its three models stayed approved, shipped and sat in the kit beside
+the castles. They park now and leave the game. [kit.blend](../game/assets/3d/kit.blend) has two roots:
+`kit` holds what the game plays, `parked`, excluded from the view layer, what a manifest parks, so a
+rejected look keeps its mesh (the per-asset sources left the repo in session 68) without cluttering the
+file. A family with damage stages is one group a look with the stages nested inside: `castle.3` holds
+`castle.3.d0` to `castle.3.d4`, the game's `castle.3` and `castle_d1.3` to `castle_d4.3`, and the body part
+is `castle` in every stage. [kit.py](../pipeline/kit.py) derives the game id from the collection name at
+export and prunes a parked asset's glb, rubble and manifest entry from the game, so the game follows the
+manifests without a hand step. Session 75, roadmap C24.

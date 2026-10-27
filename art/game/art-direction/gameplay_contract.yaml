@@ -1,7 +1,7 @@
-# Measured in /home/womb/repos/grid-cannons on 2026-10-11 (roadmap B1). Pixel sizes are computed from the
+# Measured in /home/womb/repos/cannonade on 2026-10-11 (roadmap B1). Pixel sizes are computed from the
 # camera code and confirmed with tools/preview_glb.tscn on wall_straight (26 by 13 px at the default view).
 engine: Godot 4.7
-game_repo: /home/womb/repos/grid-cannons
+game_repo: /home/womb/repos/cannonade
 renderer: gl_compatibility
 window: {width: 1280, height: 720}
 tile_size_m: 1.0                       # scripts/components/Map.gd:8

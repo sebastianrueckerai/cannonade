@@ -15,7 +15,7 @@ lit the slab and the model on it the same way, and castles flashed white for eve
 
 ## Change
 
-[BuildingPlace.target_on](/home/womb/repos/grid-cannons/scripts/components/BuildingPlace.gd)
+[BuildingPlace.target_on](/home/womb/repos/cannonade/scripts/components/BuildingPlace.gd)
 stands a box of light on the tile: a 1 m cube on the slab top, the size of a wall block,
 unshaded, blend add, `WHITE.lerp(shooter colour, 0.3)` at alpha 0.3, fog off, no shadow. The
 renderer adds the colour to whatever the cube's front faces cover, so the ground, the wall or

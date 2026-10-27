@@ -22,7 +22,7 @@ Sebastian, 2026-10-15 (D64): no siege gun for now. Leave `cannon33a` parked (`pa
 5. **Supply and recipes, sections 6 and 7.** `supply22` gives 10, `supply33` gives 16 and gets its recipe. A building runs when the supply is at least its need. Recipes count iron, a 3x3 forms when its centre comes last, and a ghost shows what the last block makes.
 6. **The AI, section 8.** Same draws, hold slots and queue, `reaction` and `switch` as `--set` values, the 3x3 recipes, the six personalities.
 7. **The bugs of section 10**, each fixed where all callers route through.
-8. **The lab, section 9.** The round robin and the ablation in [tools/lab.tscn](/home/womb/repos/grid-cannons/tools/lab.tscn), the win matrix in [run_tests.sh](/home/womb/repos/grid-cannons/run_tests.sh). The numbers move until the bands of section 9 hold. Then ten matches by hand with Sebastian, because the lab cannot judge feel.
+8. **The lab, section 9.** The round robin and the ablation in [tools/lab.tscn](/home/womb/repos/cannonade/tools/lab.tscn), the win matrix in [run_tests.sh](/home/womb/repos/cannonade/run_tests.sh). The numbers move until the bands of section 9 hold. Then ten matches by hand with Sebastian, because the lab cannot judge feel.
 9. **The crater tile.** A procedural crater look on the tile route, painted on the D49 path, with a small board and Sebastian's pick.
 10. **Gate boards.** One sandbox battle board under rules v2 with all five guns firing, the shards burning their tiles and a crater, every asset big (D48).
 
@@ -34,9 +34,9 @@ Sebastian, 2026-10-15 (D64): no siege gun for now. Leave `cannon33a` parked (`pa
 
 ## Game changes named
 
-- Gameplay code in [scripts/](/home/womb/repos/grid-cannons/scripts) for sections 1 to 8 and 10 of rules.md, and the data in [data/buildings/](/home/womb/repos/grid-cannons/data/buildings) and [data/projectiles/](/home/womb/repos/grid-cannons/data/projectiles).
+- Gameplay code in [scripts/](/home/womb/repos/cannonade/scripts) for sections 1 to 8 and 10 of rules.md, and the data in [data/buildings/](/home/womb/repos/cannonade/data/buildings) and [data/projectiles/](/home/womb/repos/cannonade/data/projectiles).
 - The HUD for the hold slots, the merge ghost and the rule sentence (rules.md section 13).
-- [tools/lab.tscn](/home/womb/repos/grid-cannons/tools/lab.tscn), [run_tests.sh](/home/womb/repos/grid-cannons/run_tests.sh) and the tests that rules v2 changes.
+- [tools/lab.tscn](/home/womb/repos/cannonade/tools/lab.tscn), [run_tests.sh](/home/womb/repos/cannonade/run_tests.sh) and the tests that rules v2 changes.
 - The crater tile model in the art layer.
 
 ## Limits

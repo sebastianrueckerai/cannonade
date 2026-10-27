@@ -14,7 +14,7 @@ was merging master when this session started. Reproduced here on master 1340cdc 
 three tiles, then a click): the gun at (-3.5, 0, 12.5), its plate at (0, 0.1, 0), top level. A plate freezes one
 frame after the gun enters the tree; `U.set_parent` moves the gun by remove and add, and the plate keeps its frozen
 world spot, so it stays where the gun was when it was dealt: the hand at the origin, or the tile under the cursor at
-that moment. With plate-fix's [ArtPlate.gd](/home/womb/repos/grid-cannons/scripts/ArtPlate.gd) copied in, the plate
+that moment. With plate-fix's [ArtPlate.gd](/home/womb/repos/cannonade/scripts/ArtPlate.gd) copied in, the plate
 lay at (-3.5, 0.11, 12.5) under the gun. That session landed it on master (5a3476d) while this one ran; merged here,
 its plate check in `tests/preview_test` places the gun with the left click now.
 

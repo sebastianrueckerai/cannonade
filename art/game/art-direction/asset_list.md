@@ -1,6 +1,6 @@
 # Asset list
 
-Every asset the game needs, read from the game data in [/home/womb/repos/grid-cannons](/home/womb/repos/grid-cannons) on 12 October 2026: `data/buildings/*.tres`, `data/projectiles/*.tres`, `prefabs/`, `prefabs/walls/`, `assets/fbx/`, `assets/nature/`, the scenes and the scripts that pick models. Phase H of [art-direction.md](../../docs/process/art-direction.md). Sebastian set the first batch on 12 October (D33).
+Every asset the game needs, read from the game data in [/home/womb/repos/cannonade](/home/womb/repos/cannonade) on 12 October 2026: `data/buildings/*.tres`, `data/projectiles/*.tres`, `prefabs/`, `prefabs/walls/`, `assets/fbx/`, `assets/nature/`, the scenes and the scripts that pick models. Phase H of [art-direction.md](../../docs/process/art-direction.md). Sebastian set the first batch on 12 October (D33).
 
 ## How to read the list
 

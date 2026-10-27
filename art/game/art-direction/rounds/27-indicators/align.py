@@ -9,7 +9,7 @@ GUNS = GUNS if "GUNS" in dir() else ("cannon", "cannon22a", "cannon33a")
 out = {}
 for gid in GUNS:
     bpy.ops.wm.read_homefile(use_empty=True)
-    bpy.ops.import_scene.gltf(filepath=f"/home/womb/repos/grid-cannons/art/game/assets/3d/{gid}/final.glb")
+    bpy.ops.import_scene.gltf(filepath=f"/home/womb/repos/cannonade/art/game/assets/3d/{gid}/final.glb")
     def centre(name):
         o = bpy.data.objects[name]
         pts = [o.matrix_world @ Vector(c) for c in o.bound_box]
