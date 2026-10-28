@@ -1,14 +1,18 @@
-# Grid Cannons – Godot port
+# Cannonade
 
-The game is released as **Cannonade**. Grid Cannons stays the project name, the repository name and the name in code.
+Enclose castles with walls, mount cannons inside, shoot the enemy's walls apart, rebuild,
+repeat: a Rampart-style castle game that runs in the browser. Play it at
+[moonlightart.itch.io/cannonade](https://moonlightart.itch.io/cannonade).
 
-A Godot 4.7 game (GDScript), ported from the original Unity 2018.3 version. The Unity
-project was removed from the repository; it is still in the git history before the
-port (commit `e45e623`).
+![A cannon fight in Cannonade](art/game/assets/marketing/itch/screenshot_01_cannon_fight.png)
+
+A Godot 4.7.2 game in GDScript, ported from a Unity 2018.3 original. Grid Cannons stays the
+project name in the code and the docs. The licence and the credits are at the
+[end of this file](#licence-and-credits).
 
 ## Running
 
-Open this folder (`project.godot`) in Godot 4.7 (the first import takes a few seconds) and press
+Open this folder (`project.godot`) in Godot 4.7.2 (the first import takes a few seconds) and press
 Play, or from the command line:
 
 ```sh
@@ -173,7 +177,8 @@ building does not fit. **Castle** places the side's 3×3 castle with its wall ri
 Layouts are saved under a name (**Save**) to `user://scenarios/` and loaded from the
 **Scenarios** list; shipped examples (`data/scenarios/`, e.g. *flak_vs_cannons*) are
 in the same list. Scenarios are `ScenarioDef` resources, so they can also be edited as
-text.
+text. A resource file can carry a script that runs when it loads, so a scenario file from
+someone else is a mod: open only the ones you made or trust.
 
 **Playing:** pick the match – **AI vs AI** (default), **Player vs AI**, **Player vs
 dormant AI** (red never fires; the player is blue and aims with the mouse, fires with
@@ -364,3 +369,22 @@ tools/godot_render.sh res://tools/screenshot.tscn -- --mode=ai2 --at=6 --fire=26
 
 `--fire=x,z` fires the first gun that reaches the tile (or places a cannon that does) and captures the muzzle and the landing; `--firegun` re-aims the camera to the gun, `--wet` makes the target water.
 
+## Licence and credits
+
+Cannonade is free software under the [MIT licence](LICENSE). The licence covers the code, the art
+kit, the models, the images, the music and the sounds, including the ones made with AI tools and
+reworked by hand, as far as the author holds rights in them. Work by others keeps its own licence:
+
+* [Alegreya](https://github.com/huertatipografica/Alegreya) by the Alegreya Project Authors, SIL Open
+  Font License 1.1: `assets/art/ui/font.ttf`, licence text in `assets/art/ui/font-OFL.txt`. The font
+  studies in `art/game/art-direction/rounds/30-menu-look/fonts/` (Alegreya, IM Fell English,
+  Metamorphous, Signika) carry their `OFL.txt` too.
+* [Kenney Particle Pack](https://kenney.nl/assets/particle-pack) by Kenney Vleugels, CC0:
+  `assets/art/fx/`, licence text beside the sprites.
+* The 3D models were generated with [Meshy](https://www.meshy.ai) and [Tripo](https://www.tripo3d.ai)
+  from the author's sketches and reworked in Blender. The UI, sky and store images come from Google's
+  Nano Banana model through [fal.ai](https://fal.ai). The music was generated with ACE-Step, the sound
+  effects with ElevenLabs Sound Effects, Stable Audio 2.5 and Mirelo SFX, all through fal.ai. Each
+  provider grants commercial use of its output. The JSON sidecars in `art/game/assets/` record the
+  model, the prompt and the seed of the generated file they sit beside.
+* [Godot Engine](https://godotengine.org), MIT, is not part of this repository.

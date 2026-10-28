@@ -1,4 +1,6 @@
 .godot/
 *.tmp
-.env.tools
+.env*
+!.env.example
 build/
+boards/
